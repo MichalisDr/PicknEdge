@@ -12,3 +12,4 @@
 .fc-wrap{background:#0e1724;border:1px solid #263242;border-radius:10px;padding:8px;overflow-x:auto}.fc-svg{display:block;width:100%;min-width:520px;height:auto}.fc-grid{stroke:#1f2b3a}.fc-tick{font-size:10px;fill:#7d8ea3}.fc-avg{stroke:#8c7b6b;stroke-dasharray:5 4;stroke-width:1.2}.fc-q{font-size:11px;fill:#5f7085;font-style:italic}.fc-axis{font-size:12px;fill:#aebdcc;letter-spacing:.4px}
 .fc-pt circle{fill:#7f93ab;fill-opacity:.85;stroke:#0e1724;stroke-width:1.2}.fc-pt text{font-size:10px;fill:#c6d2df;pointer-events:none}.fc-pt.star circle{fill:#eda65f;fill-opacity:1;stroke:#fff}.fc-pt.star text{fill:#f6d3ae;font-weight:700}.fc-pt{cursor:pointer;outline:none}.fc-pt:hover circle,.fc-pt:focus circle{fill:#b8ee79;fill-opacity:1}.fc-note{font-size:11px;color:#94a3b8;margin:8px 0 0}
 @media(max-width:600px){.fs-filters{gap:8px 10px}.fs-filters select{min-width:80px}}
+.fs-source{color:#8ea0b5}

@@ -51,13 +51,14 @@ python3 -m http.server 8000
 
 | Αρχείο | Ρόλος | Δεδομένα |
 |---|---|---|
+| `fantasy-live.js` | Χτίζει όλα τα δεδομένα του Fantasy (`FANTASY_DATA`, `FANTASY_PERIOD_DATA`, `FANTASY_HISTORY`, `FANTASY_MATCHUP`, `FANTASY_FIXTURES`) από τους αγώνες του `BettingLive`. Ξαναχτίζει σε κάθε ενημέρωση και στέλνει το event `fantasy-live` | Live |
 | `fantasy-stats.js`, `.css` | Ο πίνακας Teams / Players, φίλτρα, ★, hover με καμπύλη, Chart | — |
 | `fantasy-orange.css` | Το πορτοκαλί χρώμα της περιοχής Fantasy | — |
-| `fantasy-data.js` | `FANTASY_DATA`: σύνολα σεζόν παικτών και ομάδων | 3StepsBasket, χειροκίνητο |
-| `fantasy-period-data.js` | `FANTASY_PERIOD_DATA`: τα ίδια για Last 3 / Last 5 | 3StepsBasket, χειροκίνητο |
+| `fantasy-data.js` | Στιγμιότυπο 3StepsBasket (έως R8). Από το Βήμα 1 κρατιέται ως `FANTASY_SNAPSHOT` μόνο για τις ζώνες σουτ και τα στοιχεία παικτών (θέση, ύψος) | 3StepsBasket, χειροκίνητο |
+| `fantasy-period-data.js` | Το ίδιο για Last 3 / Last 5 | 3StepsBasket, χειροκίνητο |
 | `period-data.js` | `PERIOD_DATA`: παλαιότερη έκδοση των περιόδων, τη διαβάζουν ακόμη ορισμένα αρχεία | 3StepsBasket, χειροκίνητο |
-| `fantasy-history-data.js` | `FANTASY_HISTORY`: γραμμές ανά αγώνα για καμπύλες και «Λεπτά & ρόλος» | Χειροκίνητο |
-| `fantasy-matchup-data.js` | `FANTASY_MATCHUP`, `FANTASY_FIXTURES`: τι έδωσε κάθε ομάδα σε G/F/C ανά αγώνα, πρόγραμμα με Turn. Παράγεται εκτός site από τα box score του Betting | Χειροκίνητο, έως γύρο 8 |
+| `fantasy-history-data.js` | Παλιό στατικό ιστορικό. Το φορτώνουν μόνο οι σελίδες κάρτας όταν ανοίγουν μόνες τους· κανονικά παίρνουν το live | Χειροκίνητο, εφεδρεία |
+| `fantasy-matchup-data.js` | Παλιά στατικά δεδομένα Matchup. Από το Βήμα 1 χρησιμοποιείται μόνο το πρόγραμμα R9–R10 που περιέχει, ως εφεδρεία όταν δεν απαντά το feed προγράμματος | Χειροκίνητο, εφεδρεία |
 | `fantasy-provider-snapshots.js` | `FANTASY_SNAPSHOTS`: στιγμιότυπα 3StepsBasket ανά γύρο για τις καμπύλες | Χειροκίνητο |
 | `fantasy-player-ranks.js` | `FANTASY_PLAYER_RANKS`: παλιές κατατάξεις παικτών. Η κάρτα δεν τις δείχνει πια· αφαιρείται | Χειροκίνητο |
 | `fantasy-history.js`, `.css` | Η καμπύλη αγώνα-αγώνα όταν πατάς δείκτη στην κάρτα | — |
@@ -71,8 +72,8 @@ python3 -m http.server 8000
 ## Ροή δεδομένων σήμερα
 
 - **Betting:** EuroLeague → `betting-live-data.js` → `localStorage` → πίνακες και κάρτες. Ενημερώνεται μόνο του σε κάθε άνοιγμα.
-- **Fantasy:** εξαγωγές 3StepsBasket → χειροκίνητα αρχεία `fantasy-*-data.js` → πίνακας και κάρτες. Ενημερώνεται μόνο όταν ανέβουν νέα αρχεία.
-- Οι δύο περιοχές έχουν σήμερα **διαφορετική πηγή** για τους ίδιους δείκτες (π.χ. USG%, κατοχές). Το Βήμα 1 του πλάνου τις ενώνει πάνω στα live δεδομένα του Betting.
+- **Fantasy (από το Βήμα 1):** `BettingLive` → `fantasy-live.js` → πίνακας και κάρτες. Ίδια πηγή και ίδιοι τύποι με το Betting. Εξαίρεση: οι ζώνες σουτ, από το στιγμιότυπο 3StepsBasket μέχρι το Βήμα 3.
+- **Κάρτες:** οι σελίδες `fantasy-profiles*.html` ανοίγουν σε iframe και παίρνουν τα live δεδομένα από τη σελίδα που τις άνοιξε (μικρό script πριν από το `player-card.js`). Αν ανοιχτούν μόνες τους, πέφτουν στα στατικά αρχεία.
 
 ## Αποθήκευση στον browser
 

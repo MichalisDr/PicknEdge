@@ -17,11 +17,11 @@
 (function(g){
 'use strict';
 const SEASON='E2026',API='https://live.euroleague.net/api/',FEED='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/games';
-const KEY='courtvision-betting-live-'+SEASON+'-v2',VERSION=2,PEOPLE_KEY='courtvision-betting-people-'+SEASON+'-v1',CLUBS='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/clubs/',PEOPLE_RETRY=12*60*60*1000,PARALLEL=2,MAX_ROUND=38,MAX_CODE=400,BLOCK=10,RECHECK_DAYS=2,RECHECK_AFTER=60*60*1000;
+const KEY='courtvision-betting-live-'+SEASON+'-v3',VERSION=3,PEOPLE_KEY='courtvision-betting-people-'+SEASON+'-v1',CLUBS='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/clubs/',PEOPLE_RETRY=12*60*60*1000,PARALLEL=2,MAX_ROUND=38,MAX_CODE=400,BLOCK=10,RECHECK_DAYS=2,RECHECK_AFTER=60*60*1000;
 const CID={IST:'anadolu-efes-istanbul',ASV:'asvel-lyon-villeurbanne',BAR:'barcelona',BAS:'baskonia',MUN:'bayern-munich',BES:'besiktas',DUB:'dubai',ULK:'fenerbahce-ulker',HTA:'hapoel-tel-aviv',RED:'kk-crvena-zvezda',TEL:'maccabi-tel-aviv',MIL:'milano',OLY:'olympiacos',PAN:'panathinaikos',PRS:'paris-basketball',PAR:'partizan',MAD:'real-madrid',PAM:'valencia',VIR:'virtus-bologna',ZAL:'zalgiris-kaunas'};
 const FIELDS=['M1','A1','M2','A2','M3','A3','OR','DR','As','St','Tv','Bl','FC'];
-/* Γραμμή παίκτη σε κάθε αγώνα: [κωδικός παίκτη, ...PFIELDS] */
-const PFIELDS=['GS','Sec','M2','A2','M3','A3','M1','A1','OR','DR','As','St','Tv','Bl','FD','PF'];
+/* Γραμμή παίκτη σε κάθε αγώνα: [κωδικός παίκτη, ...PFIELDS]. BA = κοψίματα που δέχτηκε (χρειάζεται για το PIR). */
+const PFIELDS=['GS','Sec','M2','A2','M3','A3','M1','A1','OR','DR','As','St','Tv','Bl','FD','PF','BA'];
 const POS={Guard:'G',Forward:'F',Center:'C'};
 const QUARTERS=['FirstQuarter','SecondQuarter','ThirdQuarter','ForthQuarter','ExtraTime'];
 const OWN=new Set(['2FGA','2FGM','3FGA','3FGM','FTA','FTM','TO','O','D','ST','AS']),SHOTS=new Set(['2FGA','2FGM','3FGA','3FGM']),TECH=new Set(['CMT1','CMT2','C','B']);
@@ -39,7 +39,7 @@ function seed(){const s=g.BETTING_GAMES_SEED,ps=g.BETTING_PLAYERS_SEED,out={};if
   const lines=pl&&pl.games[code];if(lines)out[code].players={[home]:lines[0].map(r=>[id(r[0]),...r.slice(1)]),[away]:lines[1].map(r=>[id(r[0]),...r.slice(1)])};
   seedAt[code]=at;}
  return out;}
-function read(){try{const c=JSON.parse(localStorage.getItem(KEY)||'null');return c&&c.v===VERSION&&c.games?c.games:{};}catch{return {};}}
+function read(){try{localStorage.removeItem('courtvision-betting-live-'+SEASON+'-v2');}catch{}try{const c=JSON.parse(localStorage.getItem(KEY)||'null');return c&&c.v===VERSION&&c.games?c.games:{};}catch{return {};}}
 /* Αποθηκεύονται μόνο οι αγώνες που δεν υπάρχουν στο seed (ή ξαναδιαβάστηκαν μετά από αυτό). */
 function write(){try{const games=Object.fromEntries(Object.entries(records).filter(([c,r])=>!(c in seedAt)||r.at>seedAt[c]));localStorage.setItem(KEY,JSON.stringify({v:VERSION,saved:Date.now(),games}));}catch{}}
 /* Ρόστερ που κατέβηκαν από το feed: ομάδα → {at, list:[[κωδικός, όνομα, θέση, νούμερο, ύψος, ενεργός]]} */
@@ -56,7 +56,7 @@ function clock(m){const [a,b]=String(m||'').split(':').map(Number);return Number
 /* Γραμμές παικτών ενός box score. Όσοι δεν αγωνίστηκαν (0″) παραλείπονται. */
 function lines(stats,team){const out=[];for(const p of stats?.PlayersStats||[]){const s=clock(p.Minutes),id=pid(p.Player_ID);if(!s||!id)continue;
   if(!info[id])info[id]={name:String(p.Player||'').trim(),team,pos:'',dorsal:String(p.Dorsal??'').trim(),height:0};
-  out.push([id,p.IsStarter?1:0,s,p.FieldGoalsMade2,p.FieldGoalsAttempted2,p.FieldGoalsMade3,p.FieldGoalsAttempted3,p.FreeThrowsMade,p.FreeThrowsAttempted,p.OffensiveRebounds,p.DefensiveRebounds,p.Assistances,p.Steals,p.Turnovers,p.BlocksFavour,p.FoulsReceived,p.FoulsCommited].map((v,i)=>i?Number(v)||0:v));}
+  out.push([id,p.IsStarter?1:0,s,p.FieldGoalsMade2,p.FieldGoalsAttempted2,p.FieldGoalsMade3,p.FieldGoalsAttempted3,p.FreeThrowsMade,p.FreeThrowsAttempted,p.OffensiveRebounds,p.DefensiveRebounds,p.Assistances,p.Steals,p.Turnovers,p.BlocksFavour,p.FoulsReceived,p.FoulsCommited,p.BlocksAgainst].map((v,i)=>i?Number(v)||0:v));}
  return out;}
 function side(t){return {M1:t.FreeThrowsMade,A1:t.FreeThrowsAttempted,M2:t.FieldGoalsMade2,A2:t.FieldGoalsAttempted2,M3:t.FieldGoalsMade3,A3:t.FieldGoalsAttempted3,OR:t.OffensiveRebounds,DR:t.DefensiveRebounds,As:t.Assistances,St:t.Steals,Tv:t.Turnovers,Bl:t.BlocksFavour,FC:t.FoulsCommited};}
 function seconds(minutes){const [m,s]=String(minutes||'').split(':').map(Number),team=((m||0)*60+(s||0))/5;return 2400+300*Math.max(0,Math.round((team-2400)/300));}
