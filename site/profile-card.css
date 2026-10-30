@@ -1,0 +1,7 @@
+html,body{margin:0;background:#0e1724;color:#eff4fa}
+#basket-dashboard.entity-profile-card{max-width:100%!important;width:100%;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent}
+#basket-dashboard.entity-profile-card #players-profile,
+#basket-dashboard.entity-profile-card #milan-defense{max-width:100%;width:100%;margin:0;border:0;border-radius:0;background:#0e1724}
+.entity-profile-card [hidden]{display:none!important}
+.entity-profile-card .profile-switch{position:sticky;top:0;z-index:5;background:#0e1724;overflow-x:auto}
+.profile-unavailable{padding:28px;font:14px/1.6 'Segoe UI',sans-serif;color:#a7b7cd}
