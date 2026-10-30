@@ -29,7 +29,7 @@ function factor(key,t,l){if(key==='p2')return t[MI.a2]&&l[MI.a2]?(t[MI.m2]/t[MI.
 function pct(key,t){const m=key==='p2'?[MI.m2,MI.a2]:[MI.m3,MI.a3];return t[m[1]]?100*t[m[0]]/t[m[1]]:null;}
 function paceOf(cid,n){const gs=teamGames(cid,n);return gs.length?gs.reduce((a,x)=>a+x.po,0)/gs.length:null;}
 function leaguePace(n){const ids=Object.keys(g.FANTASY_MATCHUP.teams);return ids.reduce((a,c)=>a+(paceOf(c,n)||0),0)/ids.length;}
-function fixturesFor(cid){const through=g.FANTASY_MATCHUP?.through||0;return (g.FANTASY_FIXTURES||[]).filter(f=>f.round>through&&(f.home===cid||f.away===cid)).map(f=>({round:f.round,opp:f.home===cid?f.away:f.home,home:f.home===cid,turn:f.turn,date:f.date}));}
+function fixturesFor(cid){const through=g.FANTASY_MATCHUP?.through||0;return (g.FANTASY_FIXTURES||[]).filter(f=>(f.played===undefined?f.round>through:!f.played)&&(f.home===cid||f.away===cid)).map(f=>({round:f.round,opp:f.home===cid?f.away:f.home,home:f.home===cid,turn:f.turn,date:f.date}));}
 const cls=(f,neg)=>!Number.isFinite(f)?'na':neg?(f>=1.08?'cut':f<=0.92?'give':'neu'):(f>=1.08?'give':f<=0.92?'cut':'neu');
 const CLS={give:['ΔΙΝΕΙ','#7fc6ac'],neu:['ΟΥΔΕΤΕΡΟ','#b8c6d7'],cut:['ΚΟΒΕΙ','#e7919b'],na:['—','#6e839b']};
 function matchupHtml(p,data,esc2){
@@ -37,7 +37,7 @@ function matchupHtml(p,data,esc2){
  const teamsAll=g.FANTASY_DATA.teams,nameOf=id=>teamsAll.find(t=>t.id===id)?.label||id;
  const next=fixturesFor(p.CID);if(!mxState.opp||mxState.opp===p.CID)mxState.opp=next[0]?.opp||teamsAll.find(t=>t.id!==p.CID).id;
  const opp=mxState.opp,pos=p.Pos,fx=next.find(f=>f.opp===opp);
- const H=g.FANTASY_HISTORY,hist=(H?.players?.[p.PID]||[]).filter(r=>r.played),n=Number(mxState.win),rows=hist.slice(-n);
+ const H=g.FANTASY_HISTORY,hist=(H?.players?.[p.PID]||[]).filter(r=>r.played),n=Number(mxState.win),rows=(H?.players?.[p.PID]||[]).slice(-n).filter(r=>r.played)/* Last N = οι τελευταίοι N αγώνες της ομάδας */;
  const sel=`<div class="mu-controls"><label>Αντίπαλος <select data-mu="opp" aria-label="Αντίπαλος">${next.length?`<optgroup label="Επόμενοι αγώνες">${next.map(f=>`<option value="${f.opp}" ${f.opp===opp?'selected':''}>${esc2(`R${f.round} · T${f.turn} · ${nameOf(f.opp)} (${f.home?'εντός':'εκτός'})`)}</option>`).join('')}</optgroup>`:''}<optgroup label="Όλες οι ομάδες">${teamsAll.filter(t=>t.id!==p.CID).map(t=>`<option value="${t.id}" ${t.id===opp&&!fx?'selected':''}>${esc2(t.label)}</option>`).join('')}</optgroup></select></label><div role="group" aria-label="Δείγμα παίκτη"><button data-mu="win" data-v="3" aria-pressed="${mxState.win==='3'}">Παίκτης: τελ. 3</button><button data-mu="win" data-v="5" aria-pressed="${mxState.win==='5'}">Παίκτης: τελ. 5</button></div></div>`;
  if(!rows.length)return sel+'<p class="pc-empty">Δεν υπάρχουν πρόσφατοι αγώνες για τον παίκτη.</p>';
  const t3=posTotals(opp,pos,3),t5=posTotals(opp,pos,5),l3=leagueTotals(pos,3),l5=leagueTotals(pos,5);
