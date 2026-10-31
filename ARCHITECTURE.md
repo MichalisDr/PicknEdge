@@ -26,9 +26,8 @@ python3 -m http.server 8000
 
 | Σελίδα | Τι είναι |
 |---|---|
-| `index.html` | Η κεντρική σελίδα. Φορτώνει τα αρχεία Betting και Fantasy και κάνει τη δρομολόγηση με το `#` της διεύθυνσης: `#fantasy`, `#betting`, `#schedule`, `#data`, `#manual`, `#saved` |
-| `fantasy-profiles.html` | Η σελίδα που ανοίγει σε iframe για την κάρτα παίκτη / ομάδας (Season). Περιέχει μέσα της το παλιό dashboard και φορτώνει τα αρχεία της κάρτας |
-| `fantasy-profiles-3.html`, `fantasy-profiles-5.html` | Ίδιες, για Last 3 και Last 5 |
+| `index.html` | Η κεντρική σελίδα: Fantasy και Betting, δρομολόγηση με το `#`: `#fantasy` (Teams), `#fantasy/players`, `#betting`, `#schedule`, `#data`, `#manual`, `#saved` |
+| `fantasy-profiles.html`, `-3.html`, `-5.html` | Μόνο ανακατεύθυνση στο `#fantasy` (παλιοί σύνδεσμοι)· χωρίς iframe ή δεδομένα |
 
 ## Αρχεία και ρόλοι
 
@@ -36,14 +35,11 @@ python3 -m http.server 8000
 
 | Αρχείο | Ρόλος | Δεδομένα |
 |---|---|---|
-| `betting-live-data.js` | Κατεβάζει πρόγραμμα, box score και play-by-play από την EuroLeague, μετράει κατοχές, κρατά τους αγώνες στο `localStorage` | Live |
-| `betting-games-seed.js` | Έτοιμοι αγώνες 1–80, για να μην κατεβαίνουν όλοι σε κάθε νέο browser | Στιγμιότυπο |
-| `betting-players-seed.js` | Γραμμές box score παικτών για τους ίδιους αγώνες + ρόστερ με θέση | Στιγμιότυπο |
+| `betting-live-data.js` | Κατεβάζει πρόγραμμα, box score και play-by-play από την EuroLeague, μετράει κατοχές, κρατά τους αγώνες και το πρόγραμμα στο `localStorage`, φορτώνει ρόστερ (θέση, ύψος) | Live |
 | `betting-stats.js`, `.css` | Πίνακας ομάδων (επίθεση / άμυνα), κατάταξη 1–20, ανανέωση | — |
 | `betting-players.js`, `.css` | Πίνακας παικτών, κάρτα παίκτη, μετρητής γραμμής, με/χωρίς συμπαίκτη, «τι επιτρέπει ανά θέση» | — |
 | `betting-schedule.js`, `.css` | «Βάσει προγράμματος»: σημεία ομάδων ανά αγώνα | — |
 | `team-history.js`, `.css` | Last 3/5/10 ομάδας, game log, γράφημα | — |
-| `betting-team-data.js` | Παλιό στιγμιότυπο 3StepsBasket. Εφεδρεία μόνο | Στιγμιότυπο |
 
 Πλήρης περιγραφή: `notes/chatgpt/BETTING-LIVE.md`.
 
@@ -51,37 +47,36 @@ python3 -m http.server 8000
 
 | Αρχείο | Ρόλος | Δεδομένα |
 |---|---|---|
-| `fantasy-live.js` | Χτίζει όλα τα δεδομένα του Fantasy (`FANTASY_DATA`, `FANTASY_PERIOD_DATA`, `FANTASY_HISTORY`, `FANTASY_MATCHUP`, `FANTASY_FIXTURES`) από τους αγώνες του `BettingLive`. Ξαναχτίζει σε κάθε ενημέρωση και στέλνει το event `fantasy-live` | Live |
-| `fantasy-stats.js`, `.css` | Ο πίνακας Teams / Players, φίλτρα, ★, hover με καμπύλη, Chart | — |
-| `fantasy-orange.css` | Το πορτοκαλί χρώμα της περιοχής Fantasy | — |
-| `fantasy-data.js` | Στιγμιότυπο 3StepsBasket (έως R8). Από το Βήμα 1 κρατιέται ως `FANTASY_SNAPSHOT` μόνο για τις ζώνες σουτ και τα στοιχεία παικτών (θέση, ύψος) | 3StepsBasket, χειροκίνητο |
-| `fantasy-period-data.js` | Το ίδιο για Last 3 / Last 5 | 3StepsBasket, χειροκίνητο |
-| `period-data.js` | `PERIOD_DATA`: παλαιότερη έκδοση των περιόδων, τη διαβάζουν ακόμη ορισμένα αρχεία | 3StepsBasket, χειροκίνητο |
-| `fantasy-history-data.js` | Παλιό στατικό ιστορικό. Το φορτώνουν μόνο οι σελίδες κάρτας όταν ανοίγουν μόνες τους· κανονικά παίρνουν το live | Χειροκίνητο, εφεδρεία |
-| `fantasy-matchup-data.js` | Παλιά στατικά δεδομένα Matchup. Από το Βήμα 1 χρησιμοποιείται μόνο το πρόγραμμα R9–R10 που περιέχει, ως εφεδρεία όταν δεν απαντά το feed προγράμματος | Χειροκίνητο, εφεδρεία |
-| `fantasy-provider-snapshots.js` | `FANTASY_SNAPSHOTS`: στιγμιότυπα 3StepsBasket ανά γύρο για τις καμπύλες | Χειροκίνητο |
-| `fantasy-player-ranks.js` | `FANTASY_PLAYER_RANKS`: παλιές κατατάξεις παικτών. Η κάρτα δεν τις δείχνει πια· αφαιρείται | Χειροκίνητο |
-| `fantasy-history.js`, `.css` | Η καμπύλη αγώνα-αγώνα όταν πατάς δείκτη στην κάρτα | — |
-| `fantasy-trends.js` | Ορισμοί δεικτών για τις καμπύλες ομάδων | — |
+| `fantasy-live.js` | Χτίζει `FANTASY_DATA`, `FANTASY_PERIOD_DATA`, `FANTASY_HISTORY`, `FANTASY_MATCHUP`, `FANTASY_FIXTURES` από τους αγώνες του `BettingLive`. Ξαναχτίζει σε κάθε ενημέρωση (`fantasy-live`) | Live |
+| `fantasy-shots.js` | Σουτ ανά αγώνα από το επίσημο Points feed, με έλεγχο έναντι του box score· cache σε `localStorage` | Live |
+| `fantasy-metrics.js` | Ορισμοί δεικτών (πίνακες, καρτέλες, hover) και κατάταξη | — |
+| `fantasy-workbench.js`, `.css` | Η οθόνη Fantasy: Players / Teams, Profile / Shooting, Table / Charts, κάρτες | — |
 | `fantasy-viz.js` | Radar και shooting chart (ζώνες) | — |
-| `player-card.js`, `.css` | Κάρτα παίκτη: Profile, Shooting, Matchup | — |
-| `team-card.js`, `.css` | Κάρτα ομάδας | — |
-| `profile-card.js`, `.css` | Μέσα στο `fantasy-profiles*.html`: δείχνει μόνο τον παίκτη ή την ομάδα που ζητήθηκε | — |
-| `fantasy-card-fixes.css` | Διορθώσεις εμφάνισης κάρτας | — |
+| `fantasy-stats.css`, `player-card.css`, `fantasy-orange.css` | Στυλ της περιοχής Fantasy | — |
+| `team-assets.js` | `PICKNEDGE_TEAMS`: αναγνωριστικό, όνομα, σήμα ομάδας | Στατικό (ταυτότητα) |
+| `fantasy-profiles*.html` | Ανακατεύθυνση στο `#fantasy` για παλιούς συνδέσμους | — |
+
+Αφαιρέθηκαν (31/10/2026): `fantasy-data.js`, `fantasy-period-data.js`, `period-data.js`, `fantasy-matchup-data.js`, `fantasy-history-data.js`, `fantasy-provider-snapshots.js`, `fantasy-player-ranks.js`, `betting-team-data.js`, οι παλιές κάρτες (`player-card.js`, `team-card.js`, `profile-card.js`), `fantasy-stats.js`, `fantasy-history.js`, `fantasy-trends.js`. Τα seeds (`betting-games-seed.js`, `betting-players-seed.js`, `fantasy-shots-seed.js`) μετακινήθηκαν σε `tests/fixtures/` και χρησιμοποιούνται μόνο από τα τεστ.
 
 ## Ροή δεδομένων σήμερα
 
-- **Betting:** EuroLeague → `betting-live-data.js` → `localStorage` → πίνακες και κάρτες. Ενημερώνεται μόνο του σε κάθε άνοιγμα.
-- **Fantasy (από το Βήμα 1):** `BettingLive` → `fantasy-live.js` → πίνακας και κάρτες. Ίδια πηγή και ίδιοι τύποι με το Betting. Εξαίρεση: οι ζώνες σουτ, από το στιγμιότυπο 3StepsBasket μέχρι το Βήμα 3.
-- **Κάρτες:** οι σελίδες `fantasy-profiles*.html` ανοίγουν σε iframe και παίρνουν τα live δεδομένα από τη σελίδα που τις άνοιξε (μικρό script πριν από το `player-card.js`). Αν ανοιχτούν μόνες τους, πέφτουν στα στατικά αρχεία.
+**EuroLeague → `betting-live-data.js` (+ `fantasy-shots.js`) → `localStorage` → Betting και Fantasy.** Ένα κοινό σύνολο δεδομένων, χωρίς seeds, 3StepsBasket, iframes ή στατικά datasets στο runtime.
+
+- **Πρώτο άνοιγμα (καθαρός browser):** λήψη προγράμματος, box score, play-by-play και σουτ όλων των αγώνων, με 2 παράλληλα αιτήματα και ελάχιστη απόσταση 0,5″. Το Fantasy δείχνει «Λήψη δεδομένων EuroLeague… n/N». Αν η EuroLeague περιορίσει τα αιτήματα (στον browser φαίνεται ως σφάλμα δικτύου), γίνονται 2 ελεγχόμενες επαναλήψεις με αναμονή και μετά διακοπή· ό,τι κατέβηκε κρατιέται και η λήψη συνεχίζεται στο επόμενο άνοιγμα.
+- **Επόμενα ανοίγματα:** άμεση εμφάνιση από την προσωρινή μνήμη (τα τελευταία έγκυρα δεδομένα της ίδιας πηγής) και λήψη μόνο όσων λείπουν ή άλλαξαν.
+- **Θέσεις, ύψη:** ρόστερ EuroLeague (`feeds.incrowdsports.com`). Όπου λείπουν, φαίνεται «—» και το πλήθος καταγράφεται στη γραμμή κατάστασης.
+- **Ομάδες και σήματα:** `team-assets.js` (μόνο ταυτότητα· δεν περιέχει στατιστικά).
+- **Δεν υπάρχει εφεδρεία** σε διαφορετικό dataset: χωρίς δεδομένα εμφανίζεται κατάσταση φόρτωσης ή «—».
 
 ## Αποθήκευση στον browser
 
 | Κλειδί | Τι κρατά |
 |---|---|
-| `courtvision-betting-live-E2026-v2` | Αγώνες που κατέβηκαν και δεν υπάρχουν στο seed |
-| `courtvision-betting-people-E2026-v1` | Ρόστερ ομάδων για νέους παίκτες (ανανέωση το πολύ ανά 12 ώρες) |
-| `cv-fantasy-stars-v1` | Οι ★ παίκτες |
+| `courtvision-betting-live-E2026-v3` | Αγώνες EuroLeague (σύνολα, παίκτες, κατοχές) |
+| `courtvision-betting-people-E2026-v1` | Ρόστερ ομάδων: θέση και ύψος παικτών (ανανέωση το πολύ ανά 12 ώρες) |
+| `picknedge-shots-E2026-v1` | Σουτ ανά αγώνα (συντεταγμένες, fast break, second chance, points off turnover) |
+| `picknedge-schedule-E2026-v1` | Τελευταίο έγκυρο πρόγραμμα EuroLeague |
+| `cv-fantasy-stars-v1` | Οι ★ παίκτες (δεν χρησιμοποιούνται πια από το Fantasy UI· δεν διαγράφονται) |
 | `courtvision-analyses-v1` | Οι αποθηκευμένες αναλύσεις Betting |
 | `cv-hypothesis` (sessionStorage) | Υπόθεση που περνά από το πρόγραμμα στη χειροκίνητη ανάλυση |
 
@@ -89,7 +84,7 @@ python3 -m http.server 8000
 
 ## Κανόνες αλλαγής
 
-1. **Εκδόσεις αρχείων.** Κάθε αρχείο φορτώνεται με `?v=…` (π.χ. `?v=20261029-matchup2`). Όταν αλλάζει ένα αρχείο, αλλάζει το `?v=` του σε **όλες** τις σελίδες που το φορτώνουν (`index.html` και τα τρία `fantasy-profiles*.html`), αλλιώς ο browser κρατά το παλιό.
+1. **Εκδόσεις αρχείων.** Κάθε αρχείο φορτώνεται με `?v=…` (π.χ. `?v=20261031-euroleague2`). Όταν αλλάζει ένα αρχείο, αλλάζει το `?v=` του στο `index.html`, αλλιώς ο browser κρατά το παλιό. Τα `fantasy-profiles*.html` είναι μόνο ανακατευθύνσεις.
 2. **Ένα βήμα, ένας κλάδος.** Δουλειά σε branch, έλεγχος, μετά merge στο `main`. Το `main` είναι πάντα αυτό που είναι ή θα είναι live.
 3. **Ιδιοκτησία.** Τα αρχεία Betting τα αλλάζει ο Claude· αλλαγή από άλλον μόνο με συνεννόηση (`PLAN.md` §8). Αρχεία Fantasy: όποιος έχει το βήμα, δηλωμένο στο `PLAN.md`.
 4. **Κανένα νούμερο με το χέρι στον κώδικα.** Ό,τι αλλάζει ανά γύρο έρχεται από δεδομένα.

@@ -12,12 +12,11 @@
    - Όλα τα ποσοστά και τα «ανά 100» από αθροίσματα του δείγματος.
    - Κατοχές στο γήπεδο ≈ Σ(μερίδιο λεπτών × κατοχές ομάδας), όπως στο Betting. Ακριβείς πεντάδες έρχονται στο Βήμα 2.
    - USG% = (FGA + 0,44·FTA + TOV) ÷ Σ(μερίδιο × ίδια μεγέθη ομάδας), ίδιος τύπος με το Betting.
-   - Ζώνες σουτ: μένουν από το στιγμιότυπο 3StepsBasket (FANTASY_SNAPSHOT) μέχρι το Βήμα 3.
+   - Ζώνες σουτ, θέσεις και ύψη: επίσημα δεδομένα EuroLeague. Ομάδες και σήματα: team-assets.js.
 */
 (function(g){
 'use strict';
-const SNAP={data:g.FANTASY_DATA,period:g.FANTASY_PERIOD_DATA,history:g.FANTASY_HISTORY,fixtures:g.FANTASY_FIXTURES||[]};
-g.FANTASY_SNAPSHOT=SNAP;
+const TEAMS=g.PICKNEDGE_TEAMS||[];
 const r2=v=>Math.round(v*100)/100;
 const div=(a,b,k=1)=>b>0?k*a/b:null;
 const TEAM_FIELDS=['M1','A1','M2','A2','M3','A3','OR','DR','As','St','Tv','Bl','FC'];
@@ -31,10 +30,7 @@ const strip=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'');
 const slug=s=>strip(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 const title=s=>String(s||'').toLowerCase().replace(/(^|[\s\-'’.])([a-zà-ÿ])/g,(m,a,b)=>a+b.toUpperCase());
 function splitName(name){const [last,first]=String(name||'').split(',').map(x=>x.trim());return first?{Fn:title(first),Sn:title(last)}:{Fn:'',Sn:title(last)};}
-function identity(){
- const map={...KNOWN_IDS};const snapPlayers=SNAP.data?.players||[];
- for(const [code,pid] of Object.entries(SNAP.history?.identityMap||{}))map[code.replace(/^P/,'')]=pid;
- return {map,byPid:Object.fromEntries(snapPlayers.map(p=>[p.PID,p]))};}
+function identity(){return {map:{...KNOWN_IDS}};}
 
 /* ---------- αγώνες ---------- */
 function games(L){
@@ -83,7 +79,6 @@ const athensDay=d=>{try{return new Date(d).toLocaleDateString('sv-SE',{timeZone:
 function fixtures(L,list){
  const played=new Map();for(const x of list)if(x.home)played.set(x.code,{round:x.round,home:x.cid,away:x.ocid,date:x.date,code:x.code,played:true});
  const all=new Map();
- for(const f of SNAP.fixtures)all.set(f.round+'|'+f.home+'|'+f.away,{...f});
  for(const x of (L.schedule()||[])){const home=L.cid[x.home],away=L.cid[x.away];if(!home||!away)continue;all.set(x.round+'|'+home+'|'+away,{round:Number(x.round),home,away,date:x.date,code:x.code});}
  for(const f of played.values())all.set(f.round+'|'+f.home+'|'+f.away,{...(all.get(f.round+'|'+f.home+'|'+f.away)||{}),...f,date:all.get(f.round+'|'+f.home+'|'+f.away)?.date||f.date});
  const arr=[...all.values()].map(f=>({...f,played:Boolean(f.played)||[...played.values()].some(p=>p.round===f.round&&p.home===f.home&&p.away===f.away)}));
@@ -96,10 +91,10 @@ function gsFor(byTeam,id,n){const rows=byTeam[id]||[];return n?rows.slice(-n):ro
 function shotTotals(gs,ids,opponent){let made=Array(11).fill(0),attempts=Array(11).fill(0),covered=0;gs.forEach((gm,i)=>{const sh=g.FantasyShots?.summary(gm.code,opponent?gm.oppCode:gm.teamCode,ids?.[i]);if(!sh)return;covered++;sh.made.forEach((v,k)=>made[k]+=v);sh.attempts.forEach((v,k)=>attempts[k]+=v);});return {made,attempts,assists:Array(11).fill(0),shotGames:covered,shotExpected:gs.length,shotComplete:covered===gs.length&&gs.length>0,shotSource:'EuroLeague'};}
 function teamExtras(gs){let fb=0,sc=0,pot=0,covered=0,potCovered=0;const zm=Array(11).fill(0),za=Array(11).fill(0),production={Gm:gs.length,OfPo:0,DePo:0};for(const k of ['M1','A1','M2','A2','M3','A3','OR','DR','As','St','BF','FR'])production[k]=0;for(const gm of gs){production.OfPo+=gm.o.Po;production.DePo+=gm.o.Po;for(const row of gm.orows)for(const k of ['M1','A1','M2','A2','M3','A3','OR','DR','As','St','BF','FR'])production[k]+=row[k]||0;const sh=g.FantasyShots?.summary(gm.code,gm.oppCode);if(sh){covered++;fb+=sh.fb;sc+=sh.sc;sh.made.forEach((v,i)=>{zm[i]+=v;za[i]+=sh.attempts[i];});if(sh.pot!==null){potCovered++;pot+=sh.pot;}}}return {OFB:covered===gs.length?fb:null,OSC:covered===gs.length?sc:null,OPT:potCovered===gs.length?pot:null,...(covered===gs.length?{made:zm,attempts:za}:{}),shotCoverage:covered,production};}
 function build(){
- const L=g.BettingLive;if(!L||!SNAP.data)return false;
+ const L=g.BettingLive;if(!L||!TEAMS.length)return false;
  const {list,hasBA}=games(L);if(!list.length)return false;
- const {map,byPid}=identity(),info=L.info||{};
- const teamsSnap=SNAP.data.teams||[],teamName=cid=>teamsSnap.find(t=>t.id===cid)?.name||cid,clName=cid=>(SNAP.data.raw||[]).find(t=>t.CID===cid)?.Cl||teamName(cid);
+ const {map}=identity(),info=L.info||{};
+ const teamsSnap=TEAMS,teamName=cid=>teamsSnap.find(t=>t.id===cid)?.name||cid,clName=teamName;
  const through=Math.max(...list.map(x=>x.round));
  const byTeam={};for(const x of list)(byTeam[x.cid]=byTeam[x.cid]||[]).push(x);
  const pidOf=id=>{if(map[id])return map[id];const nm=splitName(info[id]?.name);return slug(nm.Fn+' '+nm.Sn)||'p'+id;};
@@ -110,19 +105,15 @@ function build(){
  for(const [key,n] of Object.entries(windows)){
   const codes={};for(const [cid,gs] of Object.entries(byTeam))codes[cid]=new Set((n?gs.slice(-n):gs).map(x=>x.code));
   const inWin=gm=>codes[gm.cid]?.has(gm.code);
-  const snapSet=key==='season'?SNAP.data:SNAP.period?.[key];const snapBy=Object.fromEntries((snapSet?.players||[]).map(p=>[p.PID,p]));
   const players=[];
   for(const [pid,P] of Object.entries(lines)){const rows=P.rows.filter(r=>!n||codes[currentTeam(pid)]?.has(r.gm.code));const t=playerTotals(rows);if(!t.Gm)continue;
-   const base=snapBy[pid]||byPid[pid],cid=currentTeam(pid),nm=splitName(info[P.id]?.name),pos=base?.Pos||info[P.id]?.pos||'';
-   const p={...(base||{made:Array(11).fill(0),attempts:Array(11).fill(0),assists:Array(11).fill(0),shotGames:0,shotPoss:0}),
-    PID:pid,code:P.id,Fn:base?.Fn||nm.Fn,Sn:base?.Sn||nm.Sn,He:base?.He||(info[P.id]?.height?info[P.id].height/100:null),Pos:pos,CID:cid,Cl:clName(cid),label:base?.label||nm.Sn,...t,noSample:false};
-   for(const k of ['OfPl','DePl','PA','TPA','OPA'])delete p[k];
-   if(!snapBy[pid]){p.made=Array(11).fill(0);p.attempts=Array(11).fill(0);p.assists=Array(11).fill(0);p.shotGames=0;p.shotPoss=0;}
+   const cid=currentTeam(pid),nm=splitName(info[P.id]?.name),pos=info[P.id]?.pos||'';
+   const p={PID:pid,code:P.id,Fn:nm.Fn,Sn:nm.Sn,He:info[P.id]?.height?info[P.id].height/100:null,Pos:pos,CID:cid,Cl:clName(cid),label:nm.Sn,...t,noSample:false};
    const sh=shotTotals(rows.map(r=>r.gm),rows.map(r=>r.x.id),false);Object.assign(p,sh);p.estimatedPossessions=true;players.push(p);}
   const raw=Object.entries(byTeam).map(([cid,gs])=>({CID:cid,Cl:clName(cid),...teamTotals(gs.filter(inWin)),...teamExtras(gs.filter(inWin))}));
   const teams=teamsSnap.map(t=>{const rw=raw.find(r=>r.CID===t.id);return {...t,...shotTotals(gsFor(byTeam,t.id,n),null,true),games:rw?.Gm||0,pace:rw?div(rw.OfPo+rw.DePo,rw.Sec,1200):null};});
   const rounds=list.filter(inWin).map(x=>x.round);
-  out[key]={players,raw,teams,teamShots:snapSet?.teamShots||SNAP.data.teamShots,teamThroughRound:through,playerThroughRound:through,fromRound:Math.min(...rounds),toRound:Math.max(...rounds),live:true};}
+  out[key]={players,raw,teams,teamThroughRound:through,playerThroughRound:through,fromRound:Math.min(...rounds),toRound:Math.max(...rounds),live:true};}
  /* ιστορικό */
  const histPlayers={},histTeams={},missingByPlayer={},missingByTeam={};
  for(const [pid,P] of Object.entries(lines)){const cid=currentTeam(pid),own=new Map(P.rows.map(r=>[r.gm.code+'|'+r.gm.cid,r]));
@@ -152,7 +143,7 @@ function build(){
  g.FANTASY_HISTORY={season:'2026/27',throughRound:through,source:'EuroLeague official boxscores (live)',retrievedAt:new Date().toISOString(),missingGames:[],missingByTeam,missingByPlayer,players:histPlayers,teams:histTeams,identityMap};
  g.FANTASY_MATCHUP={through,keys:MATCHUP_KEYS,teams:mteams,live:true};
  g.FANTASY_FIXTURES=fx;g.FANTASY_SCHEDULE=fx.map(f=>[f.round,f.home,f.away]);
- Object.assign(state,{ready:true,through,upstreamStatus:L.state.status,upstreamError:L.state.error,upstreamUpdated:L.state.updated,games:list.length/2,players:out.season.players.length,builtAt:new Date().toISOString(),pirExact:hasBA,error:null});
+ Object.assign(state,{ready:true,through,upstreamStatus:L.state.status,upstreamError:L.state.error,upstreamUpdated:L.state.updated,games:list.length/2,players:out.season.players.length,positionsMissing:out.season.players.filter(p=>!p.Pos).length,builtAt:new Date().toISOString(),pirExact:hasBA,error:null});
  g.FANTASY_LIVE=state;
  return true;}
 
