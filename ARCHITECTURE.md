@@ -49,6 +49,10 @@ python3 -m http.server 8000
 
 ### Fantasy
 
+CR/Value (31/10/2026): `fantasy-credits.js` περιέχει τον κοινό υπολογισμό, τη σελίδα `#credits`, την αντιστοίχιση εισαγωγής και το ιστορικό τιμών. Φορτώνεται πριν από `fantasy-stats.js` και `player-card.js` και στις τρεις profile σελίδες. Αποθήκευση `picknedge-fantasy-credits-v1`, schema version 1, σεζόν `2026/27`, `activeRound` και `rounds[round].prices[PID]`. Μερική εισαγωγή ενημερώνει μόνο τους επιλεγμένους παίκτες του γύρου. Το `fantasy-credits` event ενημερώνει τον πίνακα/καρτέλα· το `storage` event καλύπτει iframe και άλλα tabs. Το JSON backup περιέχει τις τιμές όλων των γύρων και γίνεται validate πριν εφαρμοστεί. Δεν περιλαμβάνονται πραγματικές τιμές ή δοκιμαστικά δεδομένα στο repository.
+
+Έλεγχος: `node --test tests/fantasy-credits.test.cjs` (Node 22+). Η εισαγωγή δέχεται γραμμές `Όνομα Επώνυμο ; 12,5`, tab αντί για `;`, ή ακριβές PID. Άγνωστα/αμφίσημα ονόματα απαιτούν αντιστοίχιση πριν αποθηκευτούν. Το Value χρησιμοποιεί ρητά επιλεγμένο CR, όχι αυτόματη επιλογή ιστορικής τιμής.
+
 | Αρχείο | Ρόλος | Δεδομένα |
 |---|---|---|
 | `fantasy-live.js` | Χτίζει όλα τα δεδομένα του Fantasy (`FANTASY_DATA`, `FANTASY_PERIOD_DATA`, `FANTASY_HISTORY`, `FANTASY_MATCHUP`, `FANTASY_FIXTURES`) από τους αγώνες του `BettingLive`. Ξαναχτίζει σε κάθε ενημέρωση και στέλνει το event `fantasy-live` | Live |
