@@ -68,20 +68,48 @@ function oliver(s,o){const fga=s.A2+s.A3,fgm=s.M2+s.M3,orb=s.OR+o.DR;return fga+
 /* Κατοχή = συνεχόμενη σειρά γεγονότων της ίδιας ομάδας (σουτ, βολές, λάθη, ριμπάουντ, κλεψίματα, ασίστ).
    Νέα κατοχή μετρά σε κάθε αλλαγή ομάδας και στην αρχή κάθε περιόδου.
    Οι βολές τεχνικής ποινής (στην ίδια χρονική στιγμή με την τεχνική) δεν αλλάζουν κατοχή. */
-function possessions(pbp,a,b){
- const count={[a]:0,[b]:0},fga={[a]:0,[b]:0},other={[a]:b,[b]:a},tech={[a]:0,[b]:0};let events=0,techTime=null;
- for(const q of QUARTERS){let owner=null;
+function possessions(pbp,a,b,track){
+ const count={[a]:0,[b]:0},fga={[a]:0,[b]:0},other={[a]:b,[b]:a},tech={[a]:0,[b]:0};let events=0,techTime=null,lastFT='',lastFGM='';
+ QUARTERS.forEach((q,qi)=>{let owner=null;track?.start(qi);
   for(const e of pbp?.[q]||[]){const type=String(e.PLAYTYPE||'').trim(),team=String(e.CODETEAM||'').trim(),time=String(e.MARKERTIME||'').trim();
+   track?.event(e,type,team,time);
    if(type==='BP'){owner=null;tech[a]=tech[b]=0;techTime=null;continue;}
    if(techTime!==null&&time&&time!==techTime){tech[a]=tech[b]=0;techTime=null;}
    if(!(team in count))continue;
    if(TECH.has(type)){tech[other[team]]+=type==='CMT2'?2:1;techTime=time;continue;}
    if(!OWN.has(type))continue;
    events++;if(SHOTS.has(type))fga[team]++;
-   if((type==='FTA'||type==='FTM')&&tech[team]>0){tech[team]--;if(owner!==team)continue;}
-   if(team!==owner){count[team]++;owner=team;}
-  }}
+   const key=team+'|'+String(e.PLAYER_ID||'').trim()+'|'+qi+'|'+time;
+   if(SHOTS.has(type)){track?.sa(team,e);if(type.endsWith('M'))lastFGM=key;}
+   if(type==='TO')track?.tov(team);
+   if((type==='FTA'||type==='FTM')){const isTech=tech[team]>0;
+    /* Σεριά βολών = 1 SA. And-one (βολή στην ίδια στιγμή με εύστοχο σουτ του ίδιου παίκτη) δεν προσθέτει SA. Βολές τεχνικής δεν μετρούν. */
+    if(!isTech&&key!==lastFT&&key!==lastFGM)track?.sa(team,e);if(!isTech)lastFT=key;
+    if(isTech){tech[team]--;if(owner!==team)continue;}}
+   if(team!==owner){count[team]++;owner=team;track?.poss(team);}
+  }track?.end(qi);});
  return {count,fga,events};}
+/* Πεντάδες και εκτός/εντός γηπέδου από το play-by-play: για κάθε παίκτη, SA/TOV/κατοχές ομάδας όσο παίζει. Επαλήθευση: δευτερόλεπτα έναντι box score. */
+const TOL=75;/* ανοχή ανά παίκτη (δευτερόλεπτα): αργοπορημένες καταγραφές αλλαγών στο play-by-play */
+function tracker(a,b,boxLines){
+ const lineup={[a]:new Set(),[b]:new Set()},sec={},on={},own={},teamOf={},Q=[600,600,600,600,300];let last=0,qstart=0,qlen=600,sawSub=false,any=false;
+ for(const t of [a,b])for(const r of boxLines[t]||[]){teamOf[r[0]]=t;if(r[1])lineup[t].add(r[0]);}
+ const row=id=>on[id]||(on[id]=[0,0,0,0]),each=(t,fn)=>{for(const id of lineup[t])fn(row(id));};
+ const adv=t=>{const d=Math.max(0,t-last);if(d){for(const x of [a,b])for(const id of lineup[x])sec[id]=(sec[id]||0)+d;}last=t;};
+ return {
+  start(qi){any=false;qstart=Q.slice(0,qi).reduce((n,x)=>n+x,0);qlen=Q[qi];last=qstart;},
+  end(){if(any)adv(qstart+qlen);},
+  event(e,type,team,time){any=true;let t=last;if(/^\d+:\d+$/.test(time))t=Math.min(qstart+qlen,Math.max(last,qstart+qlen-clock(time)));adv(t);
+   const id=pid(e.PLAYER_ID);if((type==='IN'||type==='OUT')&&team in lineup&&id){sawSub=true;type==='IN'?lineup[team].add(id):lineup[team].delete(id);}},
+  sa(team,e){const id=pid(e.PLAYER_ID);if(id)own[id]=(own[id]||0)+1;each(team,r=>{r[0]++;});},
+  tov(team){each(team,r=>{r[1]++;});},
+  poss(team){each(team,r=>{r[2]++;});each(team===a?b:a,r=>{r[3]++;});},
+  /* [SA παίκτη, SA ομάδας, TOV ομάδας, OfPo, DePo] ανά παίκτη· null αν οι πεντάδες δεν συμφωνούν με το box score */
+  result(){const out={a:{},b:{}},bad=[];
+   for(const t of [a,b])for(const r of boxLines[t]||[]){const s=sec[r[0]]||0;if(Math.abs(s-r[2])>TOL)bad.push(r[0]+':'+Math.round(s)+'/'+r[2]);const o=on[r[0]]||[0,0,0,0];out[t===a?'a':'b'][r[0]]=[own[r[0]]||0,o[0],o[1],o[2],o[3]];}
+   const fine=sawSub&&!bad.length;
+   return fine?{[a]:out.a,[b]:out.b}:{bad:sawSub?bad:['no-substitutions']};}
+ };}
 function isoDate(d){const s=String(d||'');if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const [day,month,year]=s.split('/');return year?`${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`:'';}
 /* x: {home, away, homeName, awayName, round, date, score} από το πρόγραμμα ή το Header */
 function parse(code,x,box,pbp){
@@ -89,12 +117,13 @@ function parse(code,x,box,pbp){
  const home=st.find(s=>up(s.Team)===up(x.homeName))||st[0],away=st.find(s=>s!==home&&up(s.Team)===up(x.awayName))||st.find(s=>s!==home);
  if(!a||!b||!home||!away)throw new Error('Ελλιπή στοιχεία αγώνα '+code);
  const sides={[a]:side(home.totr),[b]:side(away.totr)},sec=Math.max(seconds(home.totr.Minutes),seconds(away.totr.Minutes));
- const p=possessions(pbp,a,b),fgaOK=[a,b].every(c=>Math.abs(p.fga[c]-(sides[c].A2+sides[c].A3))<=2),countOK=[a,b].every(c=>p.count[c]>40)&&Math.abs(p.count[a]-p.count[b])<=6;
+ const boxLines={[a]:lines(home,a),[b]:lines(away,b)},trk=pbp?tracker(a,b,boxLines):null,p=possessions(pbp,a,b,trk),fgaOK=[a,b].every(c=>Math.abs(p.fga[c]-(sides[c].A2+sides[c].A3))<=2),countOK=[a,b].every(c=>p.count[c]>40)&&Math.abs(p.count[a]-p.count[b])<=6;
  const src=p.events&&fgaOK&&countOK?'pbp':'est';
  sides[a].Po=src==='pbp'?p.count[a]:Math.round(oliver(sides[a],sides[b])*10)/10;
  sides[b].Po=src==='pbp'?p.count[b]:Math.round(oliver(sides[b],sides[a])*10)/10;
  const pts=s=>s.M1+2*s.M2+3*s.M3;
- return {code,round:Number(x.round)||Math.ceil(code/10),date:isoDate(x.date),home:a,away:b,score:[pts(sides[a]),pts(sides[b])],sec,src,sides,players:{[a]:lines(home,a),[b]:lines(away,b)},at:Date.now()};}
+ const res=src==='pbp'&&trk?trk.result():null,on=res&&!res.bad?res:null;
+ return {code,round:Number(x.round)||Math.ceil(code/10),date:isoDate(x.date),home:a,away:b,score:[pts(sides[a]),pts(sides[b])],sec,src,sides,players:boxLines,on,onErr:on?undefined:(src==='pbp'?'lineup':'pbp'),onBad:res?.bad,onTol:TOL,at:Date.now()};}
 
 /* ---------- λήψη ---------- */
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -160,7 +189,7 @@ async function refresh(){
   blocked=false;Object.assign(state,{status:'loading',error:null,missing:[],live:[],progress:{done:0,total:0}});emit();
   try{
    let list;try{list=await fixtures();schedule=list;g.BETTING_SCHEDULE=list;writeSchedule(list);}catch{list=await scan();}
-   const todo=list.filter(x=>x.status==='result'&&(!records[x.code]||recheck(records[x.code])));
+   const todo=list.filter(x=>x.status==='result'&&(!records[x.code]||recheck(records[x.code])||(!records[x.code].on&&(!records[x.code].onErr||records[x.code].onTol!==TOL)&&!(x.code in seedAt))));
    state.live=list.filter(x=>/live|play|progress/i.test(String(x.status||''))).map(x=>x.code);
    state.progress.total=todo.length;emit();
    let failed=[],queue=todo;

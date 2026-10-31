@@ -41,7 +41,7 @@ function games(L){
   const cid=L.cid[me],ocid=L.cid[op];if(!cid||!ocid)continue;
   const s=r.sides[me],o=r.sides[op];
   const rows=(r.players[me]||[]).map(x=>({id:x[0],GS:x[X.GS],Sec:x[X.Sec],M2:x[X.M2],A2:x[X.A2],M3:x[X.M3],A3:x[X.A3],M1:x[X.M1],A1:x[X.A1],OR:x[X.OR],DR:x[X.DR],As:x[X.As],St:x[X.St],Tv:x[X.Tv],BF:x[X.Bl],FR:x[X.FD],FC:x[X.PF],BA:hasBA?x[X.BA]:0}));
-  out.push({code:r.code,round:r.round,date:r.date,sec:r.sec,cid,ocid,home:me===r.home,src:r.src,s,o,rows,orows:null,teamCode:me,oppCode:op});}
+  out.push({code:r.code,round:r.round,date:r.date,sec:r.sec,cid,ocid,home:me===r.home,src:r.src,s,o,rows,orows:null,teamCode:me,oppCode:op,on:r.on?.[me]||null,onErr:r.onErr||(r.on?undefined:'pbp')});}
  const byKey=new Map(out.map(x=>[x.code+'|'+x.cid,x]));
  for(const x of out)x.orows=byKey.get(x.code+'|'+x.ocid)?.rows||[];
  return {list:out,hasBA};}
@@ -55,15 +55,19 @@ function teamTotals(gs){
  t.TSA=r2(t.TA2+t.TA3+0.44*t.TA1);t.OSA=r2(t.OA2+t.OA3+0.44*t.OA1);
  for(const k of ['OfPo','DePo'])t[k]=r2(t[k]);return t;}
 function playerTotals(rows){
- const p={Gm:0,Sec:0,M1:0,A1:0,M2:0,A2:0,M3:0,A3:0,OR:0,DR:0,As:0,St:0,Tv:0,BF:0,BA:0,FC:0,FR:0,GS:0,OfPo:0,DePo:0,TSA:0,TTv:0};
+ const p={Gm:0,Sec:0,M1:0,A1:0,M2:0,A2:0,M3:0,A3:0,OR:0,DR:0,As:0,St:0,Tv:0,BF:0,BA:0,FC:0,FR:0,GS:0,OfPo:0,DePo:0,TSA:0,TTv:0,USA:0,TUSA:0,OnG:0,OfPoR:0,DePoR:0};
  for(const f of TEAM_FIELDS){p['T'+f]=0;p['O'+f]=0;}
  for(const {x,gm} of rows){if(!(x.Sec>0))continue;p.Gm++;p.GS+=x.GS?1:0;
   for(const k of ['Sec','M1','A1','M2','A2','M3','A3','OR','DR','As','St','Tv','BF','BA','FC','FR'])p[k]+=x[k]||0;
-  const share=x.Sec/gm.sec;p.OfPo+=share*gm.s.Po;p.DePo+=share*gm.o.Po;
+  const o=gm.on?.[x.id];if(o){p.OnG++;p.USA+=o[0];p.TUSA+=o[1]+o[2];p.OfPoR+=o[3];p.DePoR+=o[4];}
+   const share=x.Sec/gm.sec;p.OfPo+=share*gm.s.Po;p.DePo+=share*gm.o.Po;
   p.TSA+=share*(gm.s.A2+gm.s.A3+0.44*gm.s.A1);p.TTv+=share*gm.s.Tv;
   for(const f of TEAM_FIELDS){p['T'+f]+=share*(gm.s[f]||0);p['O'+f]+=share*(gm.o[f]||0);}}
  p.SA=r2(p.A2+p.A3+0.44*p.A1);
+ /* Κατοχές στο γήπεδο και USG: πραγματική καταμέτρηση από play-by-play/πεντάδες. Αν λείπει έστω ένας αγώνας του δείγματος: null (εμφανίζεται «—»). */
  for(const k of ['OfPo','DePo','TSA','TTv',...TEAM_FIELDS.flatMap(f=>['T'+f,'O'+f])])p[k]=r2(p[k]);
+ p.onCourtExact=p.Gm>0&&p.OnG===p.Gm;
+ if(p.onCourtExact){p.OfPo=p.OfPoR;p.DePo=p.DePoR;}else{p.OfPo=null;p.DePo=null;p.USA=null;p.TUSA=null;}
  return p;}
 
 /* ---------- σειρές ιστορικού ---------- */
@@ -109,7 +113,7 @@ function build(){
   for(const [pid,P] of Object.entries(lines)){const rows=P.rows.filter(r=>!n||codes[currentTeam(pid)]?.has(r.gm.code));const t=playerTotals(rows);if(!t.Gm)continue;
    const cid=currentTeam(pid),nm=splitName(info[P.id]?.name),pos=info[P.id]?.pos||'';
    const p={PID:pid,code:P.id,Fn:nm.Fn,Sn:nm.Sn,He:info[P.id]?.height?info[P.id].height/100:null,Pos:pos,CID:cid,Cl:clName(cid),label:nm.Sn,...t,noSample:false};
-   const sh=shotTotals(rows.map(r=>r.gm),rows.map(r=>r.x.id),false);Object.assign(p,sh);p.estimatedPossessions=true;players.push(p);}
+   const sh=shotTotals(rows.map(r=>r.gm),rows.map(r=>r.x.id),false);Object.assign(p,sh);p.estimatedPossessions=!p.onCourtExact;players.push(p);}
   const raw=Object.entries(byTeam).map(([cid,gs])=>({CID:cid,Cl:clName(cid),...teamTotals(gs.filter(inWin)),...teamExtras(gs.filter(inWin))}));
   const teams=teamsSnap.map(t=>{const rw=raw.find(r=>r.CID===t.id);return {...t,...shotTotals(gsFor(byTeam,t.id,n),null,true),games:rw?.Gm||0,pace:rw?div(rw.OfPo+rw.DePo,rw.Sec,1200):null};});
   const rounds=list.filter(inWin).map(x=>x.round);
@@ -143,7 +147,7 @@ function build(){
  g.FANTASY_HISTORY={season:'2026/27',throughRound:through,source:'EuroLeague official boxscores (live)',retrievedAt:new Date().toISOString(),missingGames:[],missingByTeam,missingByPlayer,players:histPlayers,teams:histTeams,identityMap};
  g.FANTASY_MATCHUP={through,keys:MATCHUP_KEYS,teams:mteams,live:true};
  g.FANTASY_FIXTURES=fx;g.FANTASY_SCHEDULE=fx.map(f=>[f.round,f.home,f.away]);
- Object.assign(state,{ready:true,through,upstreamStatus:L.state.status,upstreamError:L.state.error,upstreamUpdated:L.state.updated,games:list.length/2,players:out.season.players.length,positionsMissing:out.season.players.filter(p=>!p.Pos).length,builtAt:new Date().toISOString(),pirExact:hasBA,error:null});
+ Object.assign(state,{ready:true,through,upstreamStatus:L.state.status,upstreamError:L.state.error,upstreamUpdated:L.state.updated,games:list.length/2,players:out.season.players.length,positionsMissing:out.season.players.filter(p=>!p.Pos).length,onMissing:new Set(list.filter(x=>!x.on).map(x=>x.code)).size,builtAt:new Date().toISOString(),pirExact:hasBA,error:null});
  g.FANTASY_LIVE=state;
  return true;}
 
