@@ -39,13 +39,13 @@ function identity(){
 /* ---------- αγώνες ---------- */
 function games(L){
  const X=Object.fromEntries(L.PFIELDS.map((k,i)=>[k,i+1])),hasBA='BA' in X;
- const list=Object.values(L.records()).filter(r=>r.players&&r.sides).sort((a,b)=>a.round-b.round||String(a.date).localeCompare(String(b.date))||a.code-b.code);
+ const list=Object.values(L.records()).filter(r=>r.players&&r.sides).sort((a,b)=>String(a.date).localeCompare(String(b.date))||a.round-b.round||a.code-b.code);
  const out=[];
  for(const r of list)for(const [me,op] of [[r.home,r.away],[r.away,r.home]]){
   const cid=L.cid[me],ocid=L.cid[op];if(!cid||!ocid)continue;
   const s=r.sides[me],o=r.sides[op];
   const rows=(r.players[me]||[]).map(x=>({id:x[0],GS:x[X.GS],Sec:x[X.Sec],M2:x[X.M2],A2:x[X.A2],M3:x[X.M3],A3:x[X.A3],M1:x[X.M1],A1:x[X.A1],OR:x[X.OR],DR:x[X.DR],As:x[X.As],St:x[X.St],Tv:x[X.Tv],BF:x[X.Bl],FR:x[X.FD],FC:x[X.PF],BA:hasBA?x[X.BA]:0}));
-  out.push({code:r.code,round:r.round,date:r.date,sec:r.sec,cid,ocid,home:me===r.home,src:r.src,s,o,rows,orows:null});}
+  out.push({code:r.code,round:r.round,date:r.date,sec:r.sec,cid,ocid,home:me===r.home,src:r.src,s,o,rows,orows:null,teamCode:me,oppCode:op});}
  const byKey=new Map(out.map(x=>[x.code+'|'+x.cid,x]));
  for(const x of out)x.orows=byKey.get(x.code+'|'+x.ocid)?.rows||[];
  return {list:out,hasBA};}
@@ -92,6 +92,9 @@ function fixtures(L,list){
  return arr.sort((a,b)=>a.round-b.round||String(a.date).localeCompare(String(b.date)));}
 
 /* ---------- κύριο χτίσιμο ---------- */
+function gsFor(byTeam,id,n){const rows=byTeam[id]||[];return n?rows.slice(-n):rows;}
+function shotTotals(gs,ids,opponent){let made=Array(11).fill(0),attempts=Array(11).fill(0),covered=0;gs.forEach((gm,i)=>{const sh=g.FantasyShots?.summary(gm.code,opponent?gm.oppCode:gm.teamCode,ids?.[i]);if(!sh)return;covered++;sh.made.forEach((v,k)=>made[k]+=v);sh.attempts.forEach((v,k)=>attempts[k]+=v);});return {made,attempts,assists:Array(11).fill(0),shotGames:covered,shotExpected:gs.length,shotComplete:covered===gs.length&&gs.length>0,shotSource:'EuroLeague'};}
+function teamExtras(gs){let fb=0,sc=0,pot=0,covered=0,potCovered=0;const zm=Array(11).fill(0),za=Array(11).fill(0),production={Gm:gs.length,OfPo:0,DePo:0};for(const k of ['M1','A1','M2','A2','M3','A3','OR','DR','As','St','BF','FR'])production[k]=0;for(const gm of gs){production.OfPo+=gm.o.Po;production.DePo+=gm.o.Po;for(const row of gm.orows)for(const k of ['M1','A1','M2','A2','M3','A3','OR','DR','As','St','BF','FR'])production[k]+=row[k]||0;const sh=g.FantasyShots?.summary(gm.code,gm.oppCode);if(sh){covered++;fb+=sh.fb;sc+=sh.sc;sh.made.forEach((v,i)=>{zm[i]+=v;za[i]+=sh.attempts[i];});if(sh.pot!==null){potCovered++;pot+=sh.pot;}}}return {OFB:covered===gs.length?fb:null,OSC:covered===gs.length?sc:null,OPT:potCovered===gs.length?pot:null,...(covered===gs.length?{made:zm,attempts:za}:{}),shotCoverage:covered,production};}
 function build(){
  const L=g.BettingLive;if(!L||!SNAP.data)return false;
  const {list,hasBA}=games(L);if(!list.length)return false;
@@ -109,15 +112,15 @@ function build(){
   const inWin=gm=>codes[gm.cid]?.has(gm.code);
   const snapSet=key==='season'?SNAP.data:SNAP.period?.[key];const snapBy=Object.fromEntries((snapSet?.players||[]).map(p=>[p.PID,p]));
   const players=[];
-  for(const [pid,P] of Object.entries(lines)){const rows=P.rows.filter(r=>inWin(r.gm));const t=playerTotals(rows);if(!t.Gm)continue;
+  for(const [pid,P] of Object.entries(lines)){const rows=P.rows.filter(r=>!n||codes[currentTeam(pid)]?.has(r.gm.code));const t=playerTotals(rows);if(!t.Gm)continue;
    const base=snapBy[pid]||byPid[pid],cid=currentTeam(pid),nm=splitName(info[P.id]?.name),pos=base?.Pos||info[P.id]?.pos||'';
    const p={...(base||{made:Array(11).fill(0),attempts:Array(11).fill(0),assists:Array(11).fill(0),shotGames:0,shotPoss:0}),
     PID:pid,code:P.id,Fn:base?.Fn||nm.Fn,Sn:base?.Sn||nm.Sn,He:base?.He||(info[P.id]?.height?info[P.id].height/100:null),Pos:pos,CID:cid,Cl:clName(cid),label:base?.label||nm.Sn,...t,noSample:false};
    for(const k of ['OfPl','DePl','PA','TPA','OPA'])delete p[k];
    if(!snapBy[pid]){p.made=Array(11).fill(0);p.attempts=Array(11).fill(0);p.assists=Array(11).fill(0);p.shotGames=0;p.shotPoss=0;}
-   players.push(p);}
-  const raw=Object.entries(byTeam).map(([cid,gs])=>({CID:cid,Cl:clName(cid),...teamTotals(gs.filter(inWin))}));
-  const teams=teamsSnap.map(t=>{const rw=raw.find(r=>r.CID===t.id);return {...t,games:rw?.Gm||0,pace:rw?div(rw.OfPo+rw.DePo,rw.Sec,1200):null};});
+   const sh=shotTotals(rows.map(r=>r.gm),rows.map(r=>r.x.id),false);Object.assign(p,sh);p.estimatedPossessions=true;players.push(p);}
+  const raw=Object.entries(byTeam).map(([cid,gs])=>({CID:cid,Cl:clName(cid),...teamTotals(gs.filter(inWin)),...teamExtras(gs.filter(inWin))}));
+  const teams=teamsSnap.map(t=>{const rw=raw.find(r=>r.CID===t.id);return {...t,...shotTotals(gsFor(byTeam,t.id,n),null,true),games:rw?.Gm||0,pace:rw?div(rw.OfPo+rw.DePo,rw.Sec,1200):null};});
   const rounds=list.filter(inWin).map(x=>x.round);
   out[key]={players,raw,teams,teamShots:snapSet?.teamShots||SNAP.data.teamShots,teamThroughRound:through,playerThroughRound:through,fromRound:Math.min(...rounds),toRound:Math.max(...rounds),live:true};}
  /* ιστορικό */
@@ -126,13 +129,13 @@ function build(){
   const gamesOf=[...new Set([...P.rows.map(r=>r.gm),...(byTeam[cid]||[])])].sort((a,b)=>a.round-b.round||String(a.date).localeCompare(String(b.date)));
   histPlayers[pid]=gamesOf.map(gm=>{const r=own.get(gm.code+'|'+gm.cid),played=Boolean(r&&r.x.Sec>0);const base={game:gm.code,round:gm.round,date:gm.date,opponent:teamName(gm.ocid),home:gm.home,source:'EuroLeague',url:url(gm.code)};
    if(!played)return {...base,M1:0,A1:0,M2:0,A2:0,M3:0,A3:0,OR:0,DR:0,As:0,St:0,Tv:0,BF:0,BA:0,FC:0,FR:0,minutes:null,points:0,pir:0,rebounds:0,assists:0,netSfp:0,ftr:null,efg:null,two:null,three:null,ft:null,played:false};
-   return {...base,...statRow(r.x),minutes:r.x.Sec/60,starter:Boolean(r.x.GS),played:true};});
+   return {...base,...statRow(r.x),totals:playerTotals([r]),minutes:r.x.Sec/60,starter:Boolean(r.x.GS),played:true};});
   missingByPlayer[pid]=[];}
  for(const [cid,gs] of Object.entries(byTeam)){missingByTeam[cid]=[];
   histTeams[cid]=gs.map(gm=>{const me=teamSide(gm.s,gm.rows,gm.sec),op=teamSide(gm.o,gm.orows,gm.sec);
    const byPos={G:0,F:0,C:0},cover={known:0,total:gm.orows.filter(y=>y.Sec>0).length};
    for(const y of gm.orows){if(!(y.Sec>0))continue;const pos=info[y.id]?.pos;if(byPos[pos]===undefined)continue;byPos[pos]+=pirOf(y);cover.known++;}
-   return {game:gm.code,round:gm.round,date:gm.date,opponent:teamName(gm.ocid),home:gm.home,source:'EuroLeague',url:url(gm.code),...me,
+   return {game:gm.code,round:gm.round,date:gm.date,opponent:teamName(gm.ocid),home:gm.home,source:'EuroLeague',url:url(gm.code),...me,totals:{...teamTotals([gm]),...teamExtras([gm])},
     opponentStats:op,oppTwo:op.two,oppThree:op.three,oppFt:op.ft,oppPoints:op.points,oppAssists:op.assists,oppEfg:op.efg,oppFtr:op.ftr,
     drebPct:div(gm.s.DR,gm.s.DR+gm.o.OR,100),oppPir:op.pir,pirByPosition:byPos,positionCoverage:cover,possessions:{own:gm.s.Po,opp:gm.o.Po,source:gm.src}};});}
  const identityMap={};for(const P of Object.values(lines))identityMap['P'+P.id]=pidOf(P.id);
@@ -149,7 +152,7 @@ function build(){
  g.FANTASY_HISTORY={season:'2026/27',throughRound:through,source:'EuroLeague official boxscores (live)',retrievedAt:new Date().toISOString(),missingGames:[],missingByTeam,missingByPlayer,players:histPlayers,teams:histTeams,identityMap};
  g.FANTASY_MATCHUP={through,keys:MATCHUP_KEYS,teams:mteams,live:true};
  g.FANTASY_FIXTURES=fx;g.FANTASY_SCHEDULE=fx.map(f=>[f.round,f.home,f.away]);
- Object.assign(state,{ready:true,through,games:list.length/2,players:out.season.players.length,builtAt:new Date().toISOString(),pirExact:hasBA,error:null});
+ Object.assign(state,{ready:true,through,upstreamStatus:L.state.status,upstreamError:L.state.error,upstreamUpdated:L.state.updated,games:list.length/2,players:out.season.players.length,builtAt:new Date().toISOString(),pirExact:hasBA,error:null});
  g.FANTASY_LIVE=state;
  return true;}
 

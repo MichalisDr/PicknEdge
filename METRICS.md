@@ -33,7 +33,8 @@
 | `pir_g` | PIR | PIR / Gm | ανά αγώνα | Σε χρήση |
 | `pir_min` | PIR / λεπτό | Σ PIR ÷ Σ λεπτά | ανά λεπτό | Συμφωνημένο (ζητήθηκε δίπλα στο PIR) |
 | `net_pir_usg` | NET PIR / χρήση | (PTS − (A1−M1) − (A2−M2) − (A3−M3) − Tv) ÷ (FGA + 0,44·FTA + Tv) | ανά χρήση | Προς κλείδωμα: ορισμός «χρήσης» |
-| `net_sfp` | NET SFP | (OR + DR + As + St + BF + FR − FC − BA − Tv) / Gm | ανά αγώνα | Σε χρήση· ζητήθηκε και ανά λεπτό |
+| `fd` | FD | FR × 100 / OfPo στο γήπεδο | ανά 100 | Σε χρήση (31/10)· μονάδα ίδια με PTS και AST, προς επιβεβαίωση |
+| `net_sfp` | Non-scoring PIR (πρώην NET SFP) | (OR + DR + As + St + BF + FR − FC − BA − Tv) / Gm | ανά αγώνα | Σε χρήση· ζητήθηκε και ανά λεπτό |
 | `cr` | CR | Τιμή του παίκτη στη Dunkest | credits | Συμφωνημένο, χωρίς πηγή ακόμη |
 | `value_g` | Value / αγώνα | [Σ PIR(W) ÷ συμμετοχές(W)] ÷ CR | — | Συμφωνημένο |
 | `value_min` | Value / λεπτό | [Σ PIR(W) ÷ Σ λεπτά(W)] ÷ CR | — | Συμφωνημένο |
@@ -49,12 +50,15 @@ W = το επιλεγμένο δείγμα (Season / Last 3 / Last 5). CR που
 | `pace` | Pace | (OfPo + DePo) × 1200 / Sec | κατοχές / 40′ | Σε χρήση. Στυλ, όχι ποιότητα άμυνας |
 | `drtg` | DRtg | (OM1 + 2·OM2 + 3·OM3) × 100 / DePo | πόντοι / 100 | Σε χρήση |
 | `opp_efg` | Opp eFG% | (OM2 + 1,5·OM3) ÷ (OA2 + OA3) × 100 | % | Σε χρήση |
-| `opp_tov` | Opp TOV% | OTv × 100 / DePo | λάθη / 100 κατοχές | Προς κλείδωμα: είναι «ανά 100», όχι ποσοστό· πρόταση μετονομασίας σε «Opp TOV / 100» |
+| `opp_tov` | Opp TOV / 100 | OTv × 100 / DePo | λάθη / 100 κατοχές | Σε χρήση (μετονομάστηκε 31/10 από «Opp TOV%»). Ο ΙΔΙΟΣ παρονομαστής (DePo) χρησιμοποιείται για Second Chance, Fast Break και Points off TO |
 | `dreb` | DREB% | TDR ÷ (TDR + OOR) × 100 | % | Σε χρήση |
 | `opp_ast` | Opp AST | OAs × 100 / DePo | ανά 100 | Σε χρήση |
 | `opp_ftr` | Opp FTr | OA1 ÷ (OA2 + OA3) × 100 | % | Σε χρήση |
-| `opp_fb` | Opp Fast Break PTS | πόντοι αντιπάλων με σήμα fastbreak × 100 / DePo | ανά 100 | Συμφωνημένο (Βήμα 2) |
-| `opp_2nd` | Opp Second Chance PTS | πόντοι αντιπάλων με σήμα second chance × 100 / DePo | ανά 100 | Συμφωνημένο (Βήμα 2)· έλεγχος επικάλυψης με fastbreak |
+| `opp_fb` | Opp Fast Break PTS | 100 × Σ πόντων αντιπάλων με σήμα FASTBREAK ÷ Σ DePo | ανά 100 | Σε χρήση από το επίσημο Points feed |
+| `opp_2nd` | Opp Second Chance PTS | 100 × Σ πόντων αντιπάλων με σήμα SECOND_CHANCE ÷ Σ DePo | ανά 100 | Σε χρήση. Οι κατηγορίες επικαλύπτονται· δεν αθροίζονται |
+| `opp_pot` | Opp Points off TO | 100 × Σ πόντων αντιπάλων με σήμα POINTS_OFF_TURNOVER ÷ Σ DePo | ανά 100 | Σε χρήση (31/10). Χωρίς νέα μέθοδο κατοχών· ελλιπής κάλυψη = «—» |
+| `opp_efg` | Opp eFG% | (OM2 + 1,5·OM3) ÷ (OA2 + OA3) × 100 | % | Σε χρήση στη σειρά Profile (ίδιος τύπος με Shooting) |
+| `opp_zone` | Opp Paint / Mid / Corner / Arc FG% | Σ εύστοχων ÷ Σ προσπαθειών των ζωνών (Paint = 2, Mid = 1,3,5,6,7, Corner = 0,4, Arc = 8,9,10)· ζώνες από `fantasy-shots.js` | % | Σε χρήση (Teams · Shooting). Χωρίς μοντέλο shot quality ή διαχωρισμό Rim/Paint |
 | `opp_2p`, `opp_3p` | Opp 2FG%, Opp 3FG% | OM2 ÷ OA2, OM3 ÷ OA3 | % | Συμφωνημένο (Teams · Shooting) |
 
 ## Shooting (`fantasy-viz.js`)
