@@ -107,7 +107,7 @@ const api=(path,code)=>json(API+path+'?gamecode='+code+'&seasoncode='+SEASON);
 async function round(n){const d=await json(FEED+'?roundNumber='+n);return (d?.data||[]).map(x=>({code:x.code,round:x.round?.round??n,date:x.date,status:x.status,home:x.home?.code,away:x.away?.code,homeName:x.home?.name,awayName:x.away?.name,score:[x.home?.score,x.away?.score],ot:Boolean(x.home?.quarters?.ot1)}));}
 /* Αγωνιστικές από την τελευταία γνωστή μέχρι την πρώτη χωρίς αποτέλεσμα. */
 async function fixtures(){
- const known=Object.values(records),start=known.length?Math.max(...known.map(r=>r.round)):1,out=[];
+ const start=1,out=[];/* πάντα από τον γύρο 1: αλλιώς μερική cache δεν συμπληρώνει ποτέ τους προηγούμενους γύρους */
  for(let n=start;n<=MAX_ROUND;n++){const games=await round(n);out.push(...games);if(!games.some(x=>x.status==='result'))break;}
  return out;}
 async function loadGame(x){
