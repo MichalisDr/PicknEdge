@@ -18,7 +18,7 @@ function metrics(t,side){
     Άμυνα: κοψίματα της ομάδας ανά δίποντο αντιπάλου και κλεψίματα ανά αμυντική κατοχή. */
  const blk=off?t.OBl:t.TBl,blkBase=off?t.TA2:t.OA2,stl=off?t.OSt:t.TSt;
  const required=[[t.OfPo,t.DePo,t.Sec],[m1,m2,m3,poss],[m2,m3,a2,a3],[m2,a2],[m3,a3],[a3,a2],[a1,a2,a3],[reb,rebOpp],[t[p+'Tv'],poss],[t[p+'As'],poss],[blk,blkBase],[stl,poss]];
- return [div(t.OfPo+t.DePo,t.Sec,1200),div(pts,poss,100),div(m2+1.5*m3,fga,100),div(m2,a2,100),div(m3,a3,100),div(a3,fga,100),div(a1,fga,100),div(reb,reb+rebOpp,100),div(t[p+'Tv'],poss,100),div(t[p+'As'],poss,100),div(blk,blkBase,100),div(stl,poss,100)].map((v,i)=>required[i].every(Number.isFinite)?v:null);
+ return [global.EuroLeagueData.metrics.pace(t.OfPo,t.DePo,t.Sec),div(pts,poss,100),div(m2+1.5*m3,fga,100),div(m2,a2,100),div(m3,a3,100),div(a3,fga,100),div(a1,fga,100),div(reb,reb+rebOpp,100),div(t[p+'Tv'],poss,100),div(t[p+'As'],poss,100),div(blk,blkBase,100),div(stl,poss,100)].map((v,i)=>required[i].every(Number.isFinite)?v:null);
 }
 function columns(side){const off=side==='offense',opp=off?'':'Opp ';
  return [

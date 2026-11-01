@@ -9,6 +9,7 @@
 'use strict';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 /* Θέσεις στη γραμμή παίκτη: [κωδικός, GS, Sec, M2, A2, M3, A3, M1, A1, OR, DR, As, St, Tv, Bl, FD, PF] */
+const M=g.EuroLeagueData.metrics;/* ορισμοί κοινοί με το Fantasy (euroleague-data.js) */
 const X={GS:1,Sec:2,M2:3,A2:4,M3:5,A3:6,M1:7,A1:8,OR:9,DR:10,As:11,St:12,Tv:13,Bl:14,FD:15,PF:16};
 const POS={G:'Guard',F:'Forward',C:'Center'},POSGR={G:'γκαρντ',F:'φόργουορντ',C:'σέντερ'};
 const LABEL={season:'Σεζόν',3:'Last 3',5:'Last 5',10:'Last 10'};
@@ -59,11 +60,11 @@ function agg(lines){
  const o={gp:lines.length,gs:0,sec:0,M2:0,A2:0,M3:0,A3:0,M1:0,A1:0,OR:0,DR:0,As:0,St:0,Tv:0,Bl:0,FD:0,PF:0,use:0,fgmOn:0,orb:0,drb:0,po:0,dpo:0,oa2:0,secs:[]};
  for(const {g:t,row} of lines){const sh=t.tm.sec?row[X.Sec]/(t.tm.sec/5):0;o.gs+=row[X.GS];o.sec+=row[X.Sec];o.secs.push(row[X.Sec]);
   for(const [k,i] of Object.entries(X))if(i>2)o[k]+=row[i];
-  o.use+=sh*(t.tm.fga+0.44*t.tm.fta+t.tm.tov);o.fgmOn+=sh*t.tm.fgm;o.orb+=sh*(t.tm.or+t.op.dr);o.drb+=sh*(t.tm.dr+t.op.or);o.po+=sh*(t.tm.po||0);o.dpo+=sh*(t.op.po||0);o.oa2+=sh*t.op.a2;}
- const fga=o.A2+o.A3,fgm=o.M2+o.M3,p=o.M1+2*o.M2+3*o.M3,r=(a,b,k=100)=>b>0?k*a/b:null;
+  o.use+=sh*(M.saOf(t.tm.fga,t.tm.fta)+t.tm.tov);o.fgmOn+=sh*t.tm.fgm;o.orb+=sh*(t.tm.or+t.op.dr);o.drb+=sh*(t.tm.dr+t.op.or);o.po+=sh*(t.tm.po||0);o.dpo+=sh*(t.op.po||0);o.oa2+=sh*t.op.a2;}
+ const fga=o.A2+o.A3,fgm=o.M2+o.M3,p=o.M1+2*o.M2+3*o.M3,r=(a,b,k=100)=>M.div(a,b,k),sa=M.saOf(fga,o.A1);
  Object.assign(o,{pts:p,fga,fgm,reb:o.OR+o.DR,min:o.gp?o.sec/60/o.gp:null,
-  usg:r(fga+0.44*o.A1+o.Tv,o.use),ts:r(p,2*(fga+0.44*o.A1)),efg:r(o.M2+1.5*o.M3,fga),astp:r(o.As,o.fgmOn-fgm),orp:r(o.OR,o.orb),drp:r(o.DR,o.drb),
-  tovp:r(o.Tv,fga+0.44*o.A1+o.Tv),stlp:r(o.St,o.dpo),blkp:r(o.Bl,o.oa2),p3r:r(o.A3,fga),ftr:r(o.A1,fga),p2:r(o.M2,o.A2),p3:r(o.M3,o.A3),ft:r(o.M1,o.A1)});
+  usg:r(sa+o.Tv,o.use),ts:r(p,2*sa),efg:r(o.M2+1.5*o.M3,fga),astp:r(o.As,o.fgmOn-fgm),orp:r(o.OR,o.orb),drp:r(o.DR,o.drb),
+  tovp:r(o.Tv,sa+o.Tv),stlp:r(o.St,o.dpo),blkp:r(o.Bl,o.oa2),p3r:r(o.A3,fga),ftr:r(o.A1,fga),p2:r(o.M2,o.A2),p3:r(o.M3,o.A3),ft:r(o.M1,o.A1)});
  return o;}
 /* Ανά 100 κατοχές: κατοχές όσο ήταν στο παρκέ = μέσος όρος επιθετικών και αμυντικών (όπως το Pace της ομάδας). */
 const pg=(o,k)=>o.gp?o[k]/o.gp:null,p100=(o,k)=>{const n=(o.po+o.dpo)/2;return n>0?100*o[k]/n:null;};

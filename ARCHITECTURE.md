@@ -35,7 +35,8 @@ python3 -m http.server 8000
 
 | Αρχείο | Ρόλος | Δεδομένα |
 |---|---|---|
-| `betting-live-data.js` | Κατεβάζει πρόγραμμα, box score και play-by-play από την EuroLeague, μετράει κατοχές, κρατά τους αγώνες και το πρόγραμμα στο `localStorage`, φορτώνει ρόστερ (θέση, ύψος) | Live |
+| `euroleague-data.js` | Κοινή μηχανή (Fantasy + Betting): κατεβάζει πρόγραμμα, box score και play-by-play από την EuroLeague, μετράει κατοχές και πεντάδες, ελέγχει εγκυρότητα, κρατά αγώνες/πρόγραμμα/ρόστερ στο `localStorage` (ξαναλαμβάνει αποτυχημένους αγώνες όταν αλλάζει το `CALC`), εκθέτει `EuroLeagueData` + κοινούς ορισμούς δεικτών (`metrics`), event `euroleague-data` | Live |
+| `betting-live-data.js` | Betting: χτίζει `BETTING_TEAMS` / `BETTING_HISTORY` / `BETTING_SCHEDULE` από τη μηχανή. Δεν κάνει αιτήματα. Πρόσοψη `BettingLive` για τα υπόλοιπα αρχεία Betting | Live |
 | `betting-stats.js`, `.css` | Πίνακας ομάδων (επίθεση / άμυνα), κατάταξη 1–20, ανανέωση | — |
 | `betting-players.js`, `.css` | Πίνακας παικτών, κάρτα παίκτη, μετρητής γραμμής, με/χωρίς συμπαίκτη, «τι επιτρέπει ανά θέση» | — |
 | `betting-schedule.js`, `.css` | «Βάσει προγράμματος»: σημεία ομάδων ανά αγώνα | — |
@@ -47,7 +48,7 @@ python3 -m http.server 8000
 
 | Αρχείο | Ρόλος | Δεδομένα |
 |---|---|---|
-| `fantasy-live.js` | Χτίζει `FANTASY_DATA`, `FANTASY_PERIOD_DATA`, `FANTASY_HISTORY`, `FANTASY_MATCHUP`, `FANTASY_FIXTURES` από τους αγώνες του `BettingLive`. Ξαναχτίζει σε κάθε ενημέρωση (`fantasy-live`) | Live |
+| `fantasy-live.js` | Χτίζει `FANTASY_DATA`, `FANTASY_PERIOD_DATA`, `FANTASY_HISTORY`, `FANTASY_MATCHUP`, `FANTASY_FIXTURES` από τους αγώνες του `EuroLeagueData`. Ξαναχτίζει σε κάθε ενημέρωση (`euroleague-data` → `fantasy-live`) | Live |
 | `fantasy-shots.js` | Σουτ ανά αγώνα από το επίσημο Points feed, με έλεγχο έναντι του box score· cache σε `localStorage` | Live |
 | `fantasy-metrics.js` | Ορισμοί δεικτών (πίνακες, καρτέλες, hover) και κατάταξη | — |
 | `fantasy-workbench.js`, `.css` | Η οθόνη Fantasy: Players / Teams, Profile / Shooting, Table / Charts, κάρτες | — |
@@ -60,7 +61,7 @@ python3 -m http.server 8000
 
 ## Ροή δεδομένων σήμερα
 
-**EuroLeague → `betting-live-data.js` (+ `fantasy-shots.js`) → `localStorage` → Betting και Fantasy.** Ένα κοινό σύνολο δεδομένων, χωρίς seeds, 3StepsBasket, iframes ή στατικά datasets στο runtime.
+**EuroLeague → `euroleague-data.js` (+ `fantasy-shots.js`) → `localStorage` → Betting (`betting-live-data.js`) και Fantasy (`fantasy-live.js`).** Ένα κοινό σύνολο δεδομένων, χωρίς seeds, 3StepsBasket, iframes ή στατικά datasets στο runtime.
 
 - **Πρώτο άνοιγμα (καθαρός browser):** λήψη προγράμματος, box score, play-by-play και σουτ όλων των αγώνων, με 2 παράλληλα αιτήματα και ελάχιστη απόσταση 0,5″. Το Fantasy δείχνει «Λήψη δεδομένων EuroLeague… n/N». Αν η EuroLeague περιορίσει τα αιτήματα (στον browser φαίνεται ως σφάλμα δικτύου), γίνονται 2 ελεγχόμενες επαναλήψεις με αναμονή και μετά διακοπή· ό,τι κατέβηκε κρατιέται και η λήψη συνεχίζεται στο επόμενο άνοιγμα.
 - **Επόμενα ανοίγματα:** άμεση εμφάνιση από την προσωρινή μνήμη (τα τελευταία έγκυρα δεδομένα της ίδιας πηγής) και λήψη μόνο όσων λείπουν ή άλλαξαν.

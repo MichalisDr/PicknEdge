@@ -1,10 +1,6 @@
 /* One definition per metric: tables, cards and history use these same functions. */
 (function(g){
-const div=(n,d,k=1)=>Number.isFinite(n)&&Number.isFinite(d)&&d>0?k*n/d:null;
-const pts=p=>p.M1+2*p.M2+3*p.M3;
-const net=p=>pts(p)-(p.A1-p.M1)-(p.A2-p.M2)-(p.A3-p.M3)-p.Tv;
-const other=p=>p.OR+p.DR+p.As+p.St+p.BF+p.FR-p.FC-p.BA;
-const pir=p=>net(p)+other(p),sfp=p=>other(p)-p.Tv;
+const {div,pts,net,pir,sfp,pace}=g.EuroLeagueData.metrics;/* ορισμοί κοινοί με το Betting (euroleague-data.js) */
 const metric=(key,label,unit,get,options={})=>({key,label,unit,get,...options});
 const pg=(p,n)=>div(n,p.Gm),per=(p,n)=>div(n,p.OfPo,100);
 const players=[
@@ -23,7 +19,7 @@ const players=[
  metric('value','Value','PIR/G ÷ CR',p=>div(pg(p,pir(p)),p.CR),{section:'fantasy',digits:2,description:'PIR ανά αγώνα ÷ CR. Χωρίς CR εμφανίζεται —.'})
 ];
 const teams=[
- metric('pace','Pace','/40′',t=>div(t.OfPo+t.DePo,t.Sec,1200),{neutral:true,full:'Possessions per 40 minutes',description:'Ρυθμός ανά 40 λεπτά. Η υψηλή τιμή δεν σημαίνει αδύναμη άμυνα.'}),
+ metric('pace','Pace','/40′',t=>pace(t.OfPo,t.DePo,t.Sec),{neutral:true,full:'Possessions per 40 minutes',description:'Ρυθμός ανά 40 λεπτά. Η υψηλή τιμή δεν σημαίνει αδύναμη άμυνα.'}),
  metric('drtg','DRtg','PTS/100',t=>div(t.OM1+2*t.OM2+3*t.OM3,t.DePo,100),{rankHigher:false,full:'Defensive rating: opponent points per 100 possessions',secondary:t=>div(t.OM1+2*t.OM2+3*t.OM3,t.Gm),secondaryUnit:'/game'}),
  metric('efg','Opp eFG%','',t=>div(t.OM2+1.5*t.OM3,t.OA2+t.OA3,100),{pct:true,rankHigher:false,full:'Opponent effective field goal percentage'}),
  metric('tov','Opp TOV','/100 poss',t=>div(t.OTv,t.DePo,100),{goodHigher:false,full:'Opponent turnovers per 100 possessions',description:'Λάθη αντιπάλων × 100 / αμυντικές κατοχές. Παρονομαστής για όλους τους δείκτες «Opp … / 100» που ακολουθούν.'}),

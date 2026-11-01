@@ -1,6 +1,6 @@
 /* Pick n Edge · Fantasy · live δεδομένα
-   Χτίζει τα δεδομένα του Fantasy από τους αγώνες που κατεβάζει το betting-live-data.js (επίσημα box score
-   και play-by-play της EuroLeague). Δεν κάνει δικά του αιτήματα. Ξαναχτίζει σε κάθε ενημέρωση του BettingLive.
+   Χτίζει τα δεδομένα του Fantasy από τους αγώνες της κοινής μηχανής euroleague-data.js (επίσημα box score
+   και play-by-play της EuroLeague). Δεν κάνει δικά του αιτήματα. Ξαναχτίζει σε κάθε ενημέρωση της μηχανής (event euroleague-data).
 
    Παράγει, με το ίδιο σχήμα που διάβαζε μέχρι τώρα το site από τα χειροκίνητα αρχεία:
    - FANTASY_DATA (Season) και FANTASY_PERIOD_DATA['3'|'5'] (Last 3 / Last 5)
@@ -17,8 +17,8 @@
 (function(g){
 'use strict';
 const TEAMS=g.PICKNEDGE_TEAMS||[];
-const r2=v=>Math.round(v*100)/100;
-const div=(a,b,k=1)=>b>0?k*a/b:null;
+/* Κοινοί ορισμοί δεικτών (METRICS.md) από τη μηχανή· το Betting χρησιμοποιεί τους ίδιους. */
+const M=g.EuroLeagueData.metrics,{r2,div}=M,pirOf=M.pir,ptsOf=M.pts;
 const TEAM_FIELDS=['M1','A1','M2','A2','M3','A3','OR','DR','As','St','Tv','Bl','FC'];
 const MATCHUP_KEYS=['min','m2','a2','m3','a3','m1','a1','or','dr','as','st','tv','bl','fd','pf','ba','pir'];
 /* Κωδικός EuroLeague → PID για τους παίκτες που υπήρχαν πριν (κρατά τα ★ που έχουν ήδη αποθηκευτεί). */
@@ -45,14 +45,12 @@ function games(L){
  const byKey=new Map(out.map(x=>[x.code+'|'+x.cid,x]));
  for(const x of out)x.orows=byKey.get(x.code+'|'+x.ocid)?.rows||[];
  return {list:out,hasBA};}
-const pirOf=x=>x.M1+2*x.M2+3*x.M3+x.OR+x.DR+x.As+x.St+x.BF+x.FR-(x.A2-x.M2)-(x.A3-x.M3)-(x.A1-x.M1)-x.Tv-x.FC-x.BA;
-const ptsOf=x=>x.M1+2*x.M2+3*x.M3;
 
 /* ---------- σύνολα ---------- */
 function teamTotals(gs){
  const t={Sec:0,Gm:gs.length,OfPo:0,DePo:0};for(const f of TEAM_FIELDS){t['T'+f]=0;t['O'+f]=0;}
  for(const x of gs){t.Sec+=x.sec;t.OfPo+=x.s.Po;t.DePo+=x.o.Po;for(const f of TEAM_FIELDS){t['T'+f]+=x.s[f]||0;t['O'+f]+=x.o[f]||0;}}
- t.TSA=r2(t.TA2+t.TA3+0.44*t.TA1);t.OSA=r2(t.OA2+t.OA3+0.44*t.OA1);
+ t.TSA=r2(M.sa({A1:t.TA1,A2:t.TA2,A3:t.TA3}));t.OSA=r2(M.sa({A1:t.OA1,A2:t.OA2,A3:t.OA3}));
  for(const k of ['OfPo','DePo'])t[k]=r2(t[k]);return t;}
 function playerTotals(rows){
  const p={Gm:0,Sec:0,M1:0,A1:0,M2:0,A2:0,M3:0,A3:0,OR:0,DR:0,As:0,St:0,Tv:0,BF:0,BA:0,FC:0,FR:0,GS:0,OfPo:0,DePo:0,TSA:0,TTv:0,USA:0,TUSA:0,OnG:0,OfPoR:0,DePoR:0};
@@ -61,9 +59,9 @@ function playerTotals(rows){
   for(const k of ['Sec','M1','A1','M2','A2','M3','A3','OR','DR','As','St','Tv','BF','BA','FC','FR'])p[k]+=x[k]||0;
   const o=gm.on?.[x.id];if(o){p.OnG++;p.USA+=o[0];p.TUSA+=o[1]+o[2];p.OfPoR+=o[3];p.DePoR+=o[4];}
    const share=x.Sec/gm.sec;p.OfPo+=share*gm.s.Po;p.DePo+=share*gm.o.Po;
-  p.TSA+=share*(gm.s.A2+gm.s.A3+0.44*gm.s.A1);p.TTv+=share*gm.s.Tv;
+  p.TSA+=share*M.sa(gm.s);p.TTv+=share*gm.s.Tv;
   for(const f of TEAM_FIELDS){p['T'+f]+=share*(gm.s[f]||0);p['O'+f]+=share*(gm.o[f]||0);}}
- p.SA=r2(p.A2+p.A3+0.44*p.A1);
+ p.SA=r2(M.sa(p));
  /* Κατοχές στο γήπεδο και USG: πραγματική καταμέτρηση από play-by-play/πεντάδες. Αν λείπει έστω ένας αγώνας του δείγματος: null (εμφανίζεται «—»). */
  for(const k of ['OfPo','DePo','TSA','TTv',...TEAM_FIELDS.flatMap(f=>['T'+f,'O'+f])])p[k]=r2(p[k]);
  p.onCourtExact=p.Gm>0&&p.OnG===p.Gm;
@@ -95,7 +93,7 @@ function gsFor(byTeam,id,n){const rows=byTeam[id]||[];return n?rows.slice(-n):ro
 function shotTotals(gs,ids,opponent){let made=Array(11).fill(0),attempts=Array(11).fill(0),covered=0;gs.forEach((gm,i)=>{const sh=g.FantasyShots?.summary(gm.code,opponent?gm.oppCode:gm.teamCode,ids?.[i]);if(!sh)return;covered++;sh.made.forEach((v,k)=>made[k]+=v);sh.attempts.forEach((v,k)=>attempts[k]+=v);});return {made,attempts,assists:Array(11).fill(0),shotGames:covered,shotExpected:gs.length,shotComplete:covered===gs.length&&gs.length>0,shotSource:'EuroLeague'};}
 function teamExtras(gs){let fb=0,sc=0,pot=0,covered=0,potCovered=0;const zm=Array(11).fill(0),za=Array(11).fill(0),production={Gm:gs.length,OfPo:0,DePo:0};for(const k of ['M1','A1','M2','A2','M3','A3','OR','DR','As','St','BF','FR'])production[k]=0;for(const gm of gs){production.OfPo+=gm.o.Po;production.DePo+=gm.o.Po;for(const row of gm.orows)for(const k of ['M1','A1','M2','A2','M3','A3','OR','DR','As','St','BF','FR'])production[k]+=row[k]||0;const sh=g.FantasyShots?.summary(gm.code,gm.oppCode);if(sh){covered++;fb+=sh.fb;sc+=sh.sc;sh.made.forEach((v,i)=>{zm[i]+=v;za[i]+=sh.attempts[i];});if(sh.pot!==null){potCovered++;pot+=sh.pot;}}}return {OFB:covered===gs.length?fb:null,OSC:covered===gs.length?sc:null,OPT:potCovered===gs.length?pot:null,...(covered===gs.length?{made:zm,attempts:za}:{}),shotCoverage:covered,production};}
 function build(){
- const L=g.BettingLive;if(!L||!TEAMS.length)return false;
+ const L=g.EuroLeagueData;if(!L||!TEAMS.length)return false;
  const {list,hasBA}=games(L);if(!list.length)return false;
  const {map}=identity(),info=L.info||{};
  const teamsSnap=TEAMS,teamName=cid=>teamsSnap.find(t=>t.id===cid)?.name||cid,clName=teamName;
@@ -115,7 +113,7 @@ function build(){
    const p={PID:pid,code:P.id,Fn:nm.Fn,Sn:nm.Sn,He:info[P.id]?.height?info[P.id].height/100:null,Pos:pos,CID:cid,Cl:clName(cid),label:nm.Sn,...t,noSample:false};
    const sh=shotTotals(rows.map(r=>r.gm),rows.map(r=>r.x.id),false);Object.assign(p,sh);p.estimatedPossessions=!p.onCourtExact;players.push(p);}
   const raw=Object.entries(byTeam).map(([cid,gs])=>({CID:cid,Cl:clName(cid),...teamTotals(gs.filter(inWin)),...teamExtras(gs.filter(inWin))}));
-  const teams=teamsSnap.map(t=>{const rw=raw.find(r=>r.CID===t.id);return {...t,...shotTotals(gsFor(byTeam,t.id,n),null,true),games:rw?.Gm||0,pace:rw?div(rw.OfPo+rw.DePo,rw.Sec,1200):null};});
+  const teams=teamsSnap.map(t=>{const rw=raw.find(r=>r.CID===t.id);return {...t,...shotTotals(gsFor(byTeam,t.id,n),null,true),games:rw?.Gm||0,pace:rw?M.pace(rw.OfPo,rw.DePo,rw.Sec):null};});
   const rounds=list.filter(inWin).map(x=>x.round);
   out[key]={players,raw,teams,teamThroughRound:through,playerThroughRound:through,fromRound:Math.min(...rounds),toRound:Math.max(...rounds),live:true};}
  /* ιστορικό */
@@ -155,5 +153,5 @@ function rebuild(){try{if(!build())return;}catch(e){state.error=String(e.message
  try{g.dispatchEvent(new CustomEvent('fantasy-live',{detail:state}));}catch{}}
 g.FantasyLive={state,rebuild,build};
 rebuild();
-try{g.addEventListener('betting-live',e=>{if(e.detail?.status==='loading')return;rebuild();});}catch{}
+try{g.addEventListener('euroleague-data',e=>{if(e.detail?.status==='loading')return;rebuild();});}catch{}
 })(globalThis);
