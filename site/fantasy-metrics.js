@@ -30,13 +30,13 @@ const teams=[
  metric('fb','OppFBP','/100 poss',t=>div(t.OFB,t.DePo,100),{rankHigher:false,full:'Opponent fast break points per 100 possessions',secondary:t=>div(t.OFB,t.Gm),secondaryUnit:'/game',description:'Πόντοι αντιπάλων με επίσημο tag FASTBREAK × 100 / αμυντικές κατοχές. Ελλιπής κάλυψη εμφανίζεται ως —.'}),
  metric('pot','OppPOT','/100 poss',t=>div(t.OPT,t.DePo,100),{rankHigher:false,full:'Opponent points off turnovers per 100 possessions',secondary:t=>div(t.OPT,t.Gm),secondaryUnit:'/game',description:'Πόντοι αντιπάλων με επίσημο tag POINTS_OFF_TURNOVER × 100 / αμυντικές κατοχές (ίδιος παρονομαστής με το Opp TOV / 100). Ελλιπής κάλυψη εμφανίζεται ως —.'})
 ];
-/* Zone indexes follow fantasy-viz.js / fantasy-shots.js: 0,4 corner 3 · 1,3,5,6,7 mid-range · 2 paint · 8,9,10 arc 3. */
-const ZONE_GROUPS=[['paint','Paint',[2]],['mid','Mid',[1,3,5,6,7]],['corner','Corner',[0,4]],['arc','Arc',[8,9,10]]];
+/* The 6 sub-areas and their zones come from shot-zones.js, the same definition the shot chart draws. */
+const ZONE_GROUPS=g.ShotZones.SUBS.map(s=>[s.key,s.name,s.ids]);
 const zoneSum=(arr,idx)=>Array.isArray(arr)?idx.reduce((n,i)=>n+(arr[i]||0),0):null;
 function shooting(kind){const team=kind==='teams',k=key=>team?'O'+key:key;return [
  metric('efg',team?'Opp eFG%':'eFG%','',p=>div(p[k('M2')]+1.5*p[k('M3')],p[k('A2')]+p[k('A3')],100),{pct:true,rankHigher:false}),
  ...['2','3',...(team?[]:['1'])].map(n=>metric('shot'+n,(team?'Opp ':'')+(n==='1'?'FT%':n+'FG%'),'',p=>div(p[k('M'+n)],p[k('A'+n)],100),{pct:true,rankHigher:false,detail:p=>format(div(p[k('M'+n)],p.Gm))+' / '+format(div(p[k('A'+n)],p.Gm))+' M/A / GAME'})),
- ...(team?ZONE_GROUPS.map(([key,label,idx])=>metric('zone'+key,'Opp '+label+' FG%','',t=>div(zoneSum(t.made,idx),zoneSum(t.attempts,idx),100),{pct:true,rankHigher:false,detail:t=>zoneSum(t.attempts,idx)===null?'':zoneSum(t.made,idx)+'/'+zoneSum(t.attempts,idx)+' FGA',description:'FG% αντιπάλων στη ζώνη, από τις ζώνες σουτ EuroLeague. Ο όγκος προσπαθειών φαίνεται στο hover.'})):[])
+ ...(team?ZONE_GROUPS.map(([key,label,idx])=>metric('zone'+key,'Opp '+label+' FG%','',t=>div(zoneSum(t.made,idx),zoneSum(t.attempts,idx),100),{pct:true,rankHigher:false,detail:t=>zoneSum(t.attempts,idx)===null?'':zoneSum(t.made,idx)+'/'+zoneSum(t.attempts,idx)+' FGA',description:'FG% αντιπάλων στην υποπεριοχή (άθροισμα εύστοχων ÷ άθροισμα προσπαθειών των ζωνών της), από τα σουτ EuroLeague. Ζώνες: shot-zones.js.'})):[])
 ];}
 function defs(kind,view){return view==='shooting'?shooting(kind):kind==='teams'?teams:players;}
 function dataset(period){return period==='season'?g.FANTASY_DATA:g.FANTASY_PERIOD_DATA[period];}

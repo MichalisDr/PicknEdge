@@ -1,0 +1,3 @@
+.sz-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}.sz-head h3{margin:0;font-size:12px;letter-spacing:.6px}.sz-switch{display:flex;gap:4px}.sz-switch button{width:auto;margin:0;padding:6px 12px;background:transparent;color:#d9e3ef;border:1px solid #324052;border-radius:6px;font:inherit;font-size:12px;cursor:pointer}.sz-switch button[aria-pressed=true]{background:#ef3d25;border-color:#ef3d25;color:#fff}
+.sz-court.pc-court{display:block;width:100%;max-width:600px;height:auto;margin:8px auto;background:#0e1724;border-radius:8px}.sz-court[hidden]{display:none}
+.sz-hex polygon{fill:#9fb0c5;stroke:#0e1724;stroke-width:.4}.sz-made{fill:#dbe5ef}.sz-miss{fill:none;stroke:#8da0b8;stroke-width:.8}
