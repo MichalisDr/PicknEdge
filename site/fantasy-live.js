@@ -33,19 +33,20 @@ function splitName(name){const [last,first]=String(name||'').split(',').map(x=>x
 function identity(){return {map:{...KNOWN_IDS}};}
 
 /* ---------- επιλεξιμότητα παικτών ----------
-   Μόνο βασικά δεδομένα συμμετοχής και χρόνου (Sec ανά αγώνα), πριν από οποιαδήποτε βαριά ανάλυση ή chart.
-   Συμμετοχή = καταγεγραμμένος χρόνος > 0. Οι απουσίες δεν μπαίνουν ως μηδενικά στον μέσο χρόνο.
-   Τιμή χρόνου που δεν είναι αριθμός = ελλιπές δεδομένο: δεν μετρά ούτε ως συμμετοχή ούτε ως μηδέν. */
-const ELIGIBLE={teamGames5:5,minPlayed5:3,teamGames3:3,recentAppearances:3,minAvgSec:600};
+   Ίδιοι ορισμοί με τα Last 3 / Last 5 του συστήματος: δείγμα = οι τελευταίοι N ολοκληρωμένοι αγώνες της ομάδας του παίκτη,
+   GP = αγώνες με χρόνο > 0, MIN/game = Σ λεπτά ÷ GP, PIR/game = Σ PIR ÷ GP (τα γραμμικά PIR αθροίζονται ανά αγώνα).
+   Υπολογίζεται μόνο από τα βασικά δεδομένα (Sec και στατιστικά ανά αγώνα), πριν από οποιαδήποτε βαριά ανάλυση ή chart,
+   και δεν εξαρτάται από το επιλεγμένο tab. Τιμή που δεν είναι αριθμός = ελλιπές δεδομένο: ούτε συμμετοχή, ούτε μηδέν.
+   Όλα AND, εκτός από τα δύο PIR (OR). Οι συγκρίσεις γίνονται με αθροίσματα (χωρίς διαίρεση/στρογγυλοποίηση). */
+const ELIGIBLE={gp5:3,gp3:1,min3:10,pir:5};
 const played=sec=>Number.isFinite(sec)&&sec>0;
-/* teamSecs: χρόνος του παίκτη (sec) σε κάθε ολοκληρωμένο αγώνα της ομάδας του, παλιότερος πρώτα (0 = δεν αγωνίστηκε).
-   allSecs: χρόνος σε όλες τις καταγραφές του, παλιότερη πρώτα (και από άλλες ομάδες). */
-function eligibility(teamSecs,allSecs){
- const gp5=teamSecs.slice(-ELIGIBLE.teamGames5).filter(played).length,gp3=teamSecs.slice(-ELIGIBLE.teamGames3).filter(played).length;
- const recent=allSecs.filter(played).slice(-ELIGIBLE.recentAppearances),total=recent.reduce((n,s)=>n+s,0);/* ακριβής διάρκεια, χωρίς στρογγυλοποίηση */
- const c1=gp5>=ELIGIBLE.minPlayed5,c2=recent.length===ELIGIBLE.recentAppearances&&total>=ELIGIBLE.recentAppearances*ELIGIBLE.minAvgSec,c3=gp3>=1;
- return {eligible:c1&&c2&&c3,gp5,gp3,appearances:recent.length,avgMinutes:recent.length?total/recent.length/60:null,c1,c2,c3};}
-
+function windowStats(games){let gp=0,sec=0,pir=0,pirOk=true;for(const x of games){if(!played(x.sec))continue;gp++;sec+=x.sec;if(Number.isFinite(x.pir))pir+=x.pir;else pirOk=false;}return {gp,sec,pir:pirOk?pir:null};}
+/* teamGames: για κάθε ολοκληρωμένο αγώνα της ομάδας (παλιότερος πρώτα) {sec,pir} του παίκτη· {sec:0} όταν δεν αγωνίστηκε. */
+function eligibility(teamGames){
+ const w5=windowStats(teamGames.slice(-5)),w3=windowStats(teamGames.slice(-3));
+ const c1=w5.gp>=ELIGIBLE.gp5,c2=w3.gp>=ELIGIBLE.gp3,c3=w3.gp>0&&w3.sec>=ELIGIBLE.min3*60*w3.gp;
+ const c4a=w5.gp>0&&w5.pir!==null&&w5.pir>=ELIGIBLE.pir*w5.gp,c4b=w3.gp>0&&w3.pir!==null&&w3.pir>=ELIGIBLE.pir*w3.gp;
+ return {eligible:c1&&c2&&c3&&(c4a||c4b),gp5:w5.gp,gp3:w3.gp,min3:w3.gp?w3.sec/60/w3.gp:null,pir5:w5.gp&&w5.pir!==null?w5.pir/w5.gp:null,pir3:w3.gp&&w3.pir!==null?w3.pir/w3.gp:null,c1,c2,c3,c4:c4a||c4b};}
 /* ---------- αγώνες ---------- */
 function games(L){
  const X=Object.fromEntries(L.PFIELDS.map((k,i)=>[k,i+1])),hasBA='BA' in X;
@@ -118,7 +119,7 @@ function build(){
  const lines={};for(const x of list)for(const y of x.rows){const pid=pidOf(y.id);(lines[pid]=lines[pid]||{id:y.id,rows:[]}).rows.push({x:y,gm:x});}
  const currentTeam=pid=>{const r=lines[pid].rows;return r[r.length-1].gm.cid;};
  /* Έλεγχος ένταξης από τα βασικά δεδομένα, πριν από playerTotals/σουτ/ιστορικό. Οι αποκλεισμένοι παραλείπονται από όλα τα παρακάτω. */
- const elig={};for(const [pid,P] of Object.entries(lines)){const cid=currentTeam(pid);elig[pid]=eligibility((byTeam[cid]||[]).slice(-ELIGIBLE.teamGames5).map(gm=>{const r=P.rows.find(r=>r.gm.code===gm.code&&r.gm.cid===cid);return r?r.x.Sec:0;}),P.rows.map(r=>r.x.Sec));}
+ const elig={};for(const [pid,P] of Object.entries(lines)){const cid=currentTeam(pid);elig[pid]=eligibility((byTeam[cid]||[]).slice(-5).map(gm=>{const r=P.rows.find(r=>r.gm.code===gm.code&&r.gm.cid===cid);return r?{sec:r.x.Sec,pir:pirOf(r.x)}:{sec:0};}));}
  const windows={season:null,'3':3,'5':5};const out={};
  for(const [key,n] of Object.entries(windows)){
   const codes={};for(const [cid,gs] of Object.entries(byTeam))codes[cid]=new Set((n?gs.slice(-n):gs).map(x=>x.code));
