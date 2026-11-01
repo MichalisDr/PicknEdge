@@ -14,7 +14,7 @@
 (function(g){
 'use strict';
 const SEASON='E2026',API='https://live.euroleague.net/api/',FEED='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/games';
-const SCHEDULE_KEY='picknedge-schedule-'+SEASON+'-v1',KEY='courtvision-betting-live-'+SEASON+'-v3',VERSION=3,CALC=2,PEOPLE_KEY='courtvision-betting-people-'+SEASON+'-v1',CLUBS='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/clubs/',PEOPLE_RETRY=12*60*60*1000,PARALLEL=2,MAX_ROUND=38,MAX_CODE=400,BLOCK=10,RECHECK_DAYS=2,RECHECK_AFTER=60*60*1000;
+const SCHEDULE_KEY='picknedge-schedule-'+SEASON+'-v1',KEY='courtvision-betting-live-'+SEASON+'-v3',VERSION=3,CALC=3,FIXED=new Set([75]),PEOPLE_KEY='courtvision-betting-people-'+SEASON+'-v1',CLUBS='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/clubs/',PEOPLE_RETRY=12*60*60*1000,PARALLEL=2,MAX_ROUND=38,MAX_CODE=400,BLOCK=10,RECHECK_DAYS=2,RECHECK_AFTER=60*60*1000;
 const CID={IST:'anadolu-efes-istanbul',ASV:'asvel-lyon-villeurbanne',BAR:'barcelona',BAS:'baskonia',MUN:'bayern-munich',BES:'besiktas',DUB:'dubai',ULK:'fenerbahce-ulker',HTA:'hapoel-tel-aviv',RED:'kk-crvena-zvezda',TEL:'maccabi-tel-aviv',MIL:'milano',OLY:'olympiacos',PAN:'panathinaikos',PRS:'paris-basketball',PAR:'partizan',MAD:'real-madrid',PAM:'valencia',VIR:'virtus-bologna',ZAL:'zalgiris-kaunas'};
 const FIELDS=['M1','A1','M2','A2','M3','A3','OR','DR','As','St','Tv','Bl','FC'];
 /* Γραμμή παίκτη σε κάθε αγώνα: [κωδικός παίκτη, ...PFIELDS]. BA = κοψίματα που δέχτηκε (χρειάζεται για το PIR). */
@@ -64,10 +64,16 @@ function oliver(s,o){const fga=s.A2+s.A3,fgm=s.M2+s.M3,orb=s.OR+o.DR;return fga+
 /* Κατοχή = συνεχόμενη σειρά γεγονότων της ίδιας ομάδας (σουτ, βολές, λάθη, ριμπάουντ, κλεψίματα, ασίστ).
    Νέα κατοχή μετρά σε κάθε αλλαγή ομάδας και στην αρχή κάθε περιόδου.
    Οι βολές τεχνικής ποινής (στην ίδια χρονική στιγμή με την τεχνική) δεν αλλάζουν κατοχή. */
+/* Το play-by-play βάζει μερικές φορές στην αρχή μιας περιόδου γεγονότα του τέλους της προηγούμενης: ώρα 00:00 αλλά MINUTE του πρώτου λεπτού της νέας (αγώνας 75, #168/#169: ριμπάουντ και σουτ του Clyburn στο buzzer της 1ης, καταγεγραμμένα μετά το End Period). Μεταφέρονται, με σειρά NUMBEROFPLAY, στο τέλος της προηγούμενης περιόδου. */
+function periods(pbp){const p=QUARTERS.map(q=>[...(pbp?.[q]||[])]);
+ for(let qi=1;qi<p.length;qi++){const stray=e=>String(e.MARKERTIME||'').trim()==='00:00'&&Number(e.MINUTE)===qi*10+1,moved=p[qi].filter(stray);
+  if(moved.length){p[qi]=p[qi].filter(e=>!stray(e));p[qi-1].push(...moved.sort((x,y)=>x.NUMBEROFPLAY-y.NUMBEROFPLAY));}}
+ return p;}
 function possessions(pbp,a,b,track){
  const count={[a]:0,[b]:0},fga={[a]:0,[b]:0},other={[a]:b,[b]:a},tech={[a]:0,[b]:0};let events=0,techTime=null,lastFT='',lastFGM='';
+ const per=periods(pbp);
  QUARTERS.forEach((q,qi)=>{let owner=null;track?.start(qi);
-  for(const e of pbp?.[q]||[]){const type=String(e.PLAYTYPE||'').trim(),team=String(e.CODETEAM||'').trim(),time=String(e.MARKERTIME||'').trim();
+  for(const e of per[qi]){const type=String(e.PLAYTYPE||'').trim(),team=String(e.CODETEAM||'').trim(),time=String(e.MARKERTIME||'').trim();
    track?.event(e,type,team,time);
    if(type==='BP'){owner=null;tech[a]=tech[b]=0;techTime=null;continue;}
    if(techTime!==null&&time&&time!==techTime){tech[a]=tech[b]=0;techTime=null;}
@@ -190,7 +196,7 @@ function apply(){
  return true;}
 
 /* Αγώνας που πρέπει να ξαναληφθεί: δεν υπάρχει, είναι πρόσφατος, ή έμεινε χωρίς επαληθευμένες πεντάδες με παλαιότερη έκδοση υπολογισμού (CALC) — έτσι ανανεώνονται και τα παλιά αποθηκευμένα αποτυχημένα αποτελέσματα. */
-function needs(x){const r=records[x.code];return !r||recheck(r)||(!r.on&&r.calc!==CALC&&!(x.code in seedAt));}
+function needs(x){const r=records[x.code];return !r||recheck(r)||(r.calc!==CALC&&(!r.on||FIXED.has(x.code))&&!(x.code in seedAt));}
 
 async function refresh(){
  if(running)return running;
