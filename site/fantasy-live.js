@@ -32,6 +32,20 @@ const title=s=>String(s||'').toLowerCase().replace(/(^|[\s\-'’.])([a-zà-ÿ])/
 function splitName(name){const [last,first]=String(name||'').split(',').map(x=>x.trim());return first?{Fn:title(first),Sn:title(last)}:{Fn:'',Sn:title(last)};}
 function identity(){return {map:{...KNOWN_IDS}};}
 
+/* ---------- επιλεξιμότητα παικτών ----------
+   Μόνο βασικά δεδομένα συμμετοχής και χρόνου (Sec ανά αγώνα), πριν από οποιαδήποτε βαριά ανάλυση ή chart.
+   Συμμετοχή = καταγεγραμμένος χρόνος > 0. Οι απουσίες δεν μπαίνουν ως μηδενικά στον μέσο χρόνο.
+   Τιμή χρόνου που δεν είναι αριθμός = ελλιπές δεδομένο: δεν μετρά ούτε ως συμμετοχή ούτε ως μηδέν. */
+const ELIGIBLE={teamGames5:5,minPlayed5:3,teamGames3:3,recentAppearances:3,minAvgSec:600};
+const played=sec=>Number.isFinite(sec)&&sec>0;
+/* teamSecs: χρόνος του παίκτη (sec) σε κάθε ολοκληρωμένο αγώνα της ομάδας του, παλιότερος πρώτα (0 = δεν αγωνίστηκε).
+   allSecs: χρόνος σε όλες τις καταγραφές του, παλιότερη πρώτα (και από άλλες ομάδες). */
+function eligibility(teamSecs,allSecs){
+ const gp5=teamSecs.slice(-ELIGIBLE.teamGames5).filter(played).length,gp3=teamSecs.slice(-ELIGIBLE.teamGames3).filter(played).length;
+ const recent=allSecs.filter(played).slice(-ELIGIBLE.recentAppearances),total=recent.reduce((n,s)=>n+s,0);/* ακριβής διάρκεια, χωρίς στρογγυλοποίηση */
+ const c1=gp5>=ELIGIBLE.minPlayed5,c2=recent.length===ELIGIBLE.recentAppearances&&total>=ELIGIBLE.recentAppearances*ELIGIBLE.minAvgSec,c3=gp3>=1;
+ return {eligible:c1&&c2&&c3,gp5,gp3,appearances:recent.length,avgMinutes:recent.length?total/recent.length/60:null,c1,c2,c3};}
+
 /* ---------- αγώνες ---------- */
 function games(L){
  const X=Object.fromEntries(L.PFIELDS.map((k,i)=>[k,i+1])),hasBA='BA' in X;
@@ -103,12 +117,14 @@ function build(){
  /* γραμμές ανά παίκτη */
  const lines={};for(const x of list)for(const y of x.rows){const pid=pidOf(y.id);(lines[pid]=lines[pid]||{id:y.id,rows:[]}).rows.push({x:y,gm:x});}
  const currentTeam=pid=>{const r=lines[pid].rows;return r[r.length-1].gm.cid;};
+ /* Έλεγχος ένταξης από τα βασικά δεδομένα, πριν από playerTotals/σουτ/ιστορικό. Οι αποκλεισμένοι παραλείπονται από όλα τα παρακάτω. */
+ const elig={};for(const [pid,P] of Object.entries(lines)){const cid=currentTeam(pid);elig[pid]=eligibility((byTeam[cid]||[]).slice(-ELIGIBLE.teamGames5).map(gm=>{const r=P.rows.find(r=>r.gm.code===gm.code&&r.gm.cid===cid);return r?r.x.Sec:0;}),P.rows.map(r=>r.x.Sec));}
  const windows={season:null,'3':3,'5':5};const out={};
  for(const [key,n] of Object.entries(windows)){
   const codes={};for(const [cid,gs] of Object.entries(byTeam))codes[cid]=new Set((n?gs.slice(-n):gs).map(x=>x.code));
   const inWin=gm=>codes[gm.cid]?.has(gm.code);
   const players=[];
-  for(const [pid,P] of Object.entries(lines)){const rows=P.rows.filter(r=>!n||codes[currentTeam(pid)]?.has(r.gm.code));const t=playerTotals(rows);if(!t.Gm)continue;
+  for(const [pid,P] of Object.entries(lines)){if(!elig[pid].eligible)continue;const rows=P.rows.filter(r=>!n||codes[currentTeam(pid)]?.has(r.gm.code));const t=playerTotals(rows);if(!t.Gm)continue;
    const cid=currentTeam(pid),nm=splitName(info[P.id]?.name),pos=info[P.id]?.pos||'';
    const p={PID:pid,code:P.id,Fn:nm.Fn,Sn:nm.Sn,He:info[P.id]?.height?info[P.id].height/100:null,Pos:pos,CID:cid,Cl:clName(cid),label:nm.Sn,...t,noSample:false};
    const sh=shotTotals(rows.map(r=>r.gm),rows.map(r=>r.x.id),false);Object.assign(p,sh);p.estimatedPossessions=!p.onCourtExact;players.push(p);}
@@ -118,7 +134,7 @@ function build(){
   out[key]={players,raw,teams,teamThroughRound:through,playerThroughRound:through,fromRound:Math.min(...rounds),toRound:Math.max(...rounds),live:true};}
  /* ιστορικό */
  const histPlayers={},histTeams={},missingByPlayer={},missingByTeam={};
- for(const [pid,P] of Object.entries(lines)){const cid=currentTeam(pid),own=new Map(P.rows.map(r=>[r.gm.code+'|'+r.gm.cid,r]));
+ for(const [pid,P] of Object.entries(lines)){if(!elig[pid].eligible)continue;const cid=currentTeam(pid),own=new Map(P.rows.map(r=>[r.gm.code+'|'+r.gm.cid,r]));
   const gamesOf=[...new Set([...P.rows.map(r=>r.gm),...(byTeam[cid]||[])])].sort((a,b)=>a.round-b.round||String(a.date).localeCompare(String(b.date)));
   histPlayers[pid]=gamesOf.map(gm=>{const r=own.get(gm.code+'|'+gm.cid),played=Boolean(r&&r.x.Sec>0);const base={game:gm.code,round:gm.round,date:gm.date,opponent:teamName(gm.ocid),home:gm.home,source:'EuroLeague',url:url(gm.code)};
    if(!played)return {...base,M1:0,A1:0,M2:0,A2:0,M3:0,A3:0,OR:0,DR:0,As:0,St:0,Tv:0,BF:0,BA:0,FC:0,FR:0,minutes:null,points:0,pir:0,rebounds:0,assists:0,netSfp:0,ftr:null,efg:null,two:null,three:null,ft:null,played:false};
@@ -144,14 +160,15 @@ function build(){
  g.FANTASY_DATA=out.season;g.FANTASY_PERIOD_DATA={'3':out['3'],'5':out['5']};
  g.FANTASY_HISTORY={season:'2026/27',throughRound:through,source:'EuroLeague official boxscores (live)',retrievedAt:new Date().toISOString(),missingGames:[],missingByTeam,missingByPlayer,players:histPlayers,teams:histTeams,identityMap};
  g.FANTASY_MATCHUP={through,keys:MATCHUP_KEYS,teams:mteams,live:true};
+ g.FANTASY_ELIGIBILITY=elig;
  g.FANTASY_FIXTURES=fx;g.FANTASY_SCHEDULE=fx.map(f=>[f.round,f.home,f.away]);
- Object.assign(state,{ready:true,through,upstreamStatus:L.state.status,upstreamError:L.state.error,upstreamUpdated:L.state.updated,games:list.length/2,players:out.season.players.length,positionsMissing:out.season.players.filter(p=>!p.Pos).length,onMissing:new Set(list.filter(x=>!x.on).map(x=>x.code)).size,builtAt:new Date().toISOString(),pirExact:hasBA,error:null});
+ Object.assign(state,{ready:true,through,upstreamStatus:L.state.status,upstreamError:L.state.error,upstreamUpdated:L.state.updated,games:list.length/2,players:out.season.players.length,excluded:Object.values(elig).filter(e=>!e.eligible).length,positionsMissing:out.season.players.filter(p=>!p.Pos).length,onMissing:new Set(list.filter(x=>!x.on).map(x=>x.code)).size,builtAt:new Date().toISOString(),pirExact:hasBA,error:null});
  g.FANTASY_LIVE=state;
  return true;}
 
 function rebuild(){try{if(!build())return;}catch(e){state.error=String(e.message||e);g.FANTASY_LIVE=state;console.error('[fantasy-live]',e);return;}
  try{g.dispatchEvent(new CustomEvent('fantasy-live',{detail:state}));}catch{}}
-g.FantasyLive={state,rebuild,build};
+g.FantasyLive={state,rebuild,build,eligibility};
 rebuild();
 try{g.addEventListener('euroleague-data',e=>{if(e.detail?.status==='loading')return;rebuild();});}catch{}
 })(globalThis);
