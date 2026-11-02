@@ -16,7 +16,7 @@ const players=[
  metric('sfp','Non-scoring PIR','/game',p=>pg(p,sfp(p)),{section:'fantasy',secondary:p=>div(sfp(p),p.Sec/60),secondaryUnit:'/ MIN',secondaryDigits:3,description:'Ό,τι δεν είναι σκοράρισμα: REB + AST + STL + BLK + FD − PF − BA − TOV, ανά συμμετοχή (πρώην NET SFP).'}),
  metric('netUsage','NET PIR / USG','scoring only',p=>div(net(p),p.SA+p.Tv),{section:'fantasy',digits:3,description:'Καθαρή συνεισφορά σκοραρίσματος (πόντοι − άστοχα − λάθη) / εκτιμώμενη χρήση (FGA + 0,44 × FTA + TOV). Δεν είναι συνολικό PIR / USG%. Ο ορισμός και το όνομα δεν έχουν κλειδώσει.'}),
  metric('cr','CR','credits',p=>Number.isFinite(p.CR)?p.CR:null,{section:'fantasy',description:'Τιμή Fantasy. Δεν υπάρχει ακόμη πηγή τιμών· εμφανίζεται — μέχρι να συνδεθεί.'}),
- metric('value','Value','PIR/G ÷ CR',p=>div(pg(p,pir(p)),p.CR),{section:'fantasy',digits:2,description:'PIR ανά αγώνα ÷ CR. Χωρίς CR εμφανίζεται —.'})
+ metric('value','Value','PIR/G ÷ CR',p=>div(pg(p,pir(p)),p.CR),{section:'fantasy',digits:2,secondary:p=>div(div(pir(p),p.Sec/60),p.CR),secondaryUnit:'/ MIN',secondaryDigits:3,description:'PIR ανά αγώνα ÷ CR. Χωρίς CR εμφανίζεται —.'})
 ];
 const teams=[
  metric('pace','Pace','/40′',t=>pace(t.OfPo,t.DePo,t.Sec),{neutral:true,full:'Possessions per 40 minutes',description:'Ρυθμός ανά 40 λεπτά. Η υψηλή τιμή δεν σημαίνει αδύναμη άμυνα.'}),
