@@ -37,7 +37,7 @@ function identity(){return {map:{...KNOWN_IDS}};}
    GP = αγώνες με χρόνο > 0, MIN/game = Σ λεπτά ÷ GP, PIR/game = Σ PIR ÷ GP (τα γραμμικά PIR αθροίζονται ανά αγώνα).
    Υπολογίζεται μόνο από τα βασικά δεδομένα (Sec και στατιστικά ανά αγώνα), πριν από οποιαδήποτε βαριά ανάλυση ή chart,
    και δεν εξαρτάται από το επιλεγμένο tab. Τιμή που δεν είναι αριθμός = ελλιπές δεδομένο: ούτε συμμετοχή, ούτε μηδέν.
-   Όλα AND, εκτός από τα δύο PIR (OR). Οι συγκρίσεις γίνονται με αθροίσματα (χωρίς διαίρεση/στρογγυλοποίηση). */
+   Κανόνας: GP3≥1 AND MIN3≥10 AND ((GP5≥3 AND PIR5≥5) OR PIR3≥5). Οι συγκρίσεις γίνονται με αθροίσματα (χωρίς διαίρεση/στρογγυλοποίηση). */
 const ELIGIBLE={gp5:3,gp3:1,min3:10,pir:5};
 const played=sec=>Number.isFinite(sec)&&sec>0;
 function windowStats(games){let gp=0,sec=0,pir=0,pirOk=true;for(const x of games){if(!played(x.sec))continue;gp++;sec+=x.sec;if(Number.isFinite(x.pir))pir+=x.pir;else pirOk=false;}return {gp,sec,pir:pirOk?pir:null};}
@@ -46,7 +46,7 @@ function eligibility(teamGames){
  const w5=windowStats(teamGames.slice(-5)),w3=windowStats(teamGames.slice(-3));
  const c1=w5.gp>=ELIGIBLE.gp5,c2=w3.gp>=ELIGIBLE.gp3,c3=w3.gp>0&&w3.sec>=ELIGIBLE.min3*60*w3.gp;
  const c4a=w5.gp>0&&w5.pir!==null&&w5.pir>=ELIGIBLE.pir*w5.gp,c4b=w3.gp>0&&w3.pir!==null&&w3.pir>=ELIGIBLE.pir*w3.gp;
- return {eligible:c1&&c2&&c3&&(c4a||c4b),gp5:w5.gp,gp3:w3.gp,min3:w3.gp?w3.sec/60/w3.gp:null,pir5:w5.gp&&w5.pir!==null?w5.pir/w5.gp:null,pir3:w3.gp&&w3.pir!==null?w3.pir/w3.gp:null,c1,c2,c3,c4:c4a||c4b};}
+ return {eligible:c2&&c3&&((c1&&c4a)||c4b),gp5:w5.gp,gp3:w3.gp,min3:w3.gp?w3.sec/60/w3.gp:null,pir5:w5.gp&&w5.pir!==null?w5.pir/w5.gp:null,pir3:w3.gp&&w3.pir!==null?w3.pir/w3.gp:null,c1,c2,c3,c4:c4a||c4b};}
 /* ---------- αγώνες ---------- */
 function games(L){
  const X=Object.fromEntries(L.PFIELDS.map((k,i)=>[k,i+1])),hasBA='BA' in X;
