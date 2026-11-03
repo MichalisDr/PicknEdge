@@ -34,11 +34,19 @@ function summary(code,team,player){const rec=g.EuroLeagueData?.records()[code],a
 function events(code,team,player){const rec=g.EuroLeagueData?.records()[code],all=data[code];if(!rec||!valid(all,rec))return null;return all.filter(r=>r[0]===team&&(!player||r[1]===player)&&/^[23]FG[AM]$/.test(r[2])).map(r=>({x:r[3],y:r[4],three:r[2][0]==='3',made:r[2].endsWith('M'),ast:r[9]===1?1:r[9]===0?0:null,zone:zone(r)}));}
 /* Every shot of the sample: [{code,team,player}] -> events, or null if any game is missing/unusable. */
 function eventsOf(keys){const out=[];for(const [code,team,player] of keys){const ev=events(code,team,player);if(!ev||ev.some(e=>e.zone<0))return null;out.push(...ev);}return out;}
-/* Ένα αίτημα τη φορά. Σε 429: αναμονή όσο λέει το Retry-After (ή αυξανόμενη), το πολύ 3 επαναλήψεις, μετά διακοπή χωρίς παράκαμψη. */
-async function getFeed(kind,code){await new Promise(r=>setTimeout(r,500));for(let attempt=0;;attempt++){let res;try{res=await fetch('https://live.euroleague.net/api/'+kind+'?gamecode='+code+'&seasoncode=E2026');}catch(e){if(attempt<2){await new Promise(r=>setTimeout(r,20000*(attempt+1)));continue;}throw e;}if(res.status===429&&attempt<3){const h=res.headers.get('Retry-After'),s=Number(h),d=Date.parse(h||'');await new Promise(r=>setTimeout(r,h&&Number.isFinite(s)?Math.min(s,120)*1000:Number.isFinite(d)?Math.min(Math.max(d-Date.now(),1000),120000):15000*(attempt+1)));continue;}if(!res.ok)throw Error('HTTP '+res.status);return res.json();}}
-let running=false,shown=0;/* games arrive one by one: redraw an open chart at most every 4 s while loading */
-async function refresh(){if(running||g.FANTASY_SHOTS_DISABLED)return;running=true;state.loading=true;state.error=null;try{for(const rec of Object.values(g.EuroLeagueData?.records()||{})){if(valid(data[rec.code],rec)&&hasPot(data[rec.code])&&hasAst(data[rec.code]))continue;const raw=await getFeed('Points',rec.code),pbp=await getFeed('PlayByPlay',rec.code),flags=assistedShots(pbp,raw.Rows,rec),rows=(raw.Rows||[]).map(r=>compact(r,flags));if(!valid(rows,rec))throw Error('Ελλιπή δεδομένα σουτ αγώνα '+rec.code);data[rec.code]=rows;try{const extra=Object.fromEntries(Object.entries(data).filter(([k])=>!g.FANTASY_SHOTS_SEED?.[k]));localStorage.setItem(KEY,JSON.stringify(extra));}catch{}g.FantasyLive?.rebuild();if(Date.now()-shown>4000){shown=Date.now();g.dispatchEvent(new Event('fantasy-shots'));}}}catch(e){state.error=String(e.message||e);}finally{running=false;state.loading=false;g.dispatchEvent(new Event('fantasy-shots'));if(state.error&&(state.retries=(state.retries||0)+1)<=5)setTimeout(refresh,75000);}}
-g.FantasyShots={summary,events,eventsOf,refresh,state,compact,valid,zone,assistedShots};
-g.addEventListener('euroleague-data',e=>{if(e.detail?.status!=='loading')refresh();});
-g.FantasyLive?.rebuild();refresh();
+/* Δεν υπάρχει δική μας λήψη: τα feeds (Points, PlayByPlay) τα ζητά ο κοινός μηχανισμός του euroleague-data.js, μία φορά ανά αγώνα, και τα παραδίδει εδώ. */
+let shown=0;/* games arrive one by one: redraw an open chart at most every 4 s while loading */
+const complete=(code,rec)=>valid(data[code],rec)&&hasPot(data[code])&&hasAst(data[code]);
+function accept(code,rec,feeds){
+ if(!feeds.Points||!feeds.PlayByPlay)return;/* λείπει feed: μένει σε αναμονή και ξαναζητείται στην επόμενη ενημέρωση */
+ const flags=assistedShots(feeds.PlayByPlay,feeds.Points.Rows,rec),rows=(feeds.Points.Rows||[]).map(r=>compact(r,flags));
+ if(!valid(rows,rec)){state.error='Ελλιπή δεδομένα σουτ αγώνα '+code;return;}
+ data[code]=rows;try{const extra=Object.fromEntries(Object.entries(data).filter(([k])=>!g.FANTASY_SHOTS_SEED?.[k]));localStorage.setItem(KEY,JSON.stringify(extra));}catch{}
+ g.FantasyLive?.rebuild();if(Date.now()-shown>4000){shown=Date.now();g.dispatchEvent(new Event('fantasy-shots'));}
+}
+const refresh=()=>g.EuroLeagueData?.refresh();
+g.FantasyShots={summary,events,eventsOf,refresh,state,compact,valid,zone,assistedShots,accept};
+if(!g.FANTASY_SHOTS_DISABLED&&g.EuroLeagueData?.register)g.EuroLeagueData.register({feeds:['Points','PlayByPlay'],needs:(code,rec)=>!rec||!complete(code,rec),accept});
+g.addEventListener('euroleague-data',e=>{const loading=e.detail?.status==='loading';if(loading===state.loading)return;state.loading=loading;if(loading)state.error=null;else g.dispatchEvent(new Event('fantasy-shots'));});
+g.FantasyLive?.rebuild();
 })(globalThis);

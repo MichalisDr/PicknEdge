@@ -147,9 +147,13 @@ async function fixtures(){
 async function loadGame(x){
  if(blocked)return {code:x.code,state:'skipped'};
  try{
-  const [box,pbp]=await Promise.all([api('Boxscore',x.code),api('PlayByPlay',x.code).catch(()=>null)]);
-  if(!box||box.Live===true||!(box.Stats||[]).length)return {code:x.code,state:'pending'};
-  const rec=parse(x.code,x,box,pbp);records[rec.code]=rec;write();return {code:x.code,state:'final'};
+  /* Ένας μηχανισμός λήψης: κάθε feed ενός αγώνα ζητείται μία φορά και μοιράζεται στους καταναλωτές (π.χ. σουτ). Ο αγώνας που έχει ήδη εγγραφή ξαναζητά μόνο ό,τι λείπει. */
+  const wantRec=needs(x),extra=consumers.filter(c=>c.needs(x.code,records[x.code])),feeds=new Set(extra.flatMap(c=>c.feeds));
+  const [box,pbp,points]=await Promise.all([wantRec?api('Boxscore',x.code):null,wantRec||feeds.has('PlayByPlay')?api('PlayByPlay',x.code).catch(()=>null):null,feeds.has('Points')?api('Points',x.code):null]);
+  let rec=records[x.code];
+  if(wantRec){if(!box||box.Live===true||!(box.Stats||[]).length)return {code:x.code,state:'pending'};rec=parse(x.code,x,box,pbp);records[rec.code]=rec;write();}
+  for(const c of extra)c.accept(x.code,rec,{PlayByPlay:pbp,Points:points});
+  return {code:x.code,state:'final'};
  }catch(e){blocked=true;return {code:x.code,state:'error',error:String(e.message||e)};}}
 /* Θέση/ύψος για παίκτες που δεν υπάρχουν στο seed: ρόστερ της ομάδας τους (ένα αίτημα ανά ομάδα, το πολύ ανά 12 ώρες). */
 async function fillPeople(){
@@ -204,7 +208,7 @@ async function refresh(){
   blocked=false;Object.assign(state,{status:'loading',error:null,missing:[],live:[],progress:{done:0,total:0}});emit();
   try{
    let list;try{list=await fixtures();schedule=list;writeSchedule(list);}catch{list=await scan();}
-   const todo=list.filter(x=>x.status==='result'&&needs(x));
+   const todo=list.filter(x=>x.status==='result'&&(needs(x)||consumers.some(c=>c.needs(x.code,records[x.code]))));
    state.live=list.filter(x=>/live|play|progress/i.test(String(x.status||''))).map(x=>x.code);
    state.progress.total=todo.length;emit();
    let failed=[],queue=todo;
@@ -228,6 +232,8 @@ function reset(){records=seed();try{localStorage.removeItem(KEY);}catch{}return 
 records=Object.assign(seed(),read());readPeople();schedule=readSchedule();
 try{if(apply())state.status='cached';}catch(e){records={};state.error=String(e.message||e);}
 
-g.EuroLeagueData={state,refresh,reset,records:()=>records,schedule:()=>schedule,possessions,parse,tracker,season:SEASON,cid:CID,info,rosters,PFIELDS,FIELDS,TOL,CALC,needs,metrics:M};
+/* Καταναλωτές των feeds ενός αγώνα: {feeds:['Points'|'PlayByPlay'], needs(code,rec), accept(code,rec,{PlayByPlay,Points})}. */
+const consumers=[];
+g.EuroLeagueData={state,refresh,reset,register:c=>{consumers.push(c);},records:()=>records,schedule:()=>schedule,possessions,parse,tracker,season:SEASON,cid:CID,info,rosters,PFIELDS,FIELDS,TOL,CALC,needs,metrics:M};
 if(typeof fetch==='function'&&!g.EUROLEAGUE_DATA_DISABLED&&!g.BETTING_LIVE_DISABLED&&typeof setTimeout==='function')setTimeout(refresh,0);/* μετά τη φόρτωση όλων των scripts, ώστε να προλάβουν να ακούσουν το event */
 })(globalThis);

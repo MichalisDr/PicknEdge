@@ -49,7 +49,7 @@ python3 -m http.server 8000
 | Αρχείο | Ρόλος | Δεδομένα |
 |---|---|---|
 | `fantasy-live.js` | Χτίζει `FANTASY_DATA`, `FANTASY_PERIOD_DATA`, `FANTASY_HISTORY`, `FANTASY_MATCHUP`, `FANTASY_FIXTURES` από τους αγώνες του `EuroLeagueData`. Ξαναχτίζει σε κάθε ενημέρωση (`euroleague-data` → `fantasy-live`) | Live |
-| `fantasy-shots.js` | Σουτ ανά αγώνα από το επίσημο Points feed και ασίστ από το PlayByPlay (`assistedShots`, 10ο πεδίο 1/0/null), με έλεγχο έναντι του box score· cache σε `localStorage` | Live |
+| `fantasy-shots.js` | Σουτ ανά αγώνα και ασίστ: δεν κάνει δικές του λήψεις· το `euroleague-data.js` ζητά μία φορά ανά αγώνα Boxscore/PlayByPlay/Points και μοιράζει τα feeds στους καταναλωτές (`EuroLeagueData.register`). Εδώ: Points + PlayByPlay (`assistedShots`, 10ο πεδίο 1/0/null), με έλεγχο έναντι του box score· cache σε `localStorage` | Live |
 | `fantasy-metrics.js` | Ορισμοί δεικτών (πίνακες, καρτέλες, hover) και κατάταξη | — |
 | `fantasy-workbench.js`, `.css` | Η οθόνη Fantasy: Players / Teams, Profile / Shooting, Table / Charts, κάρτες | — |
 | `shot-zones.js`, `.css` | Ορισμός 12 ζωνών / 6 υποπεριοχών / 3 περιοχών, ταξινόμηση σουτ, σταθερό εξαγωνικό πλέγμα, γραμμές γηπέδου. Κοινός για υπολογισμό (`fantasy-shots.js`) και σχεδίαση | — |

@@ -224,3 +224,4 @@ test('Zone card data: Last 3 / Last 5 compare with the same entity\'s Season; Se
  assert.ok(zs.every(z=>z.d===null),'Season: none');
  z3.forEach((z,i)=>{const cur=p.attempts[i],b=base.attempts[i];if(!cur||!b)assert.equal(z.d,'—');else{const d=100*p.made[i]/cur-100*base.made[i]/b;assert.ok(Math.abs(d)<.05?z.d.startsWith('0,0'):z.d.startsWith(d>0?'↑':'↓'),i);}});
 });
+test('Shots consumer: a missing feed leaves the game waiting (no data stored, no error)',()=>{const before=c.FantasyShots.state.error;c.FantasyShots.accept('999',{},{Points:null,PlayByPlay:{}});c.FantasyShots.accept('999',{},{Points:{Rows:[]},PlayByPlay:null});assert.equal(c.FantasyShots.state.error,before);assert.ok(!('999' in S));});
