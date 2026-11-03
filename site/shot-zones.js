@@ -44,32 +44,30 @@ function classify(x,y,three){
 }
 
 /* ---------- evaluation of a zone against the league ----------
-   League FG% of a zone = Σ made / Σ attempts of the league sample (all shots of the period), never an average of rates.
-   Real spread (tau): how far true shooting talent differs between entities (players, or teams' opponents) in that zone, estimated
-   from the data by the method of moments: E[n(p-p0)^2] = p0(1-p0) + n·tau², so tau² = (Σ n(p-p0)² − N·p0(1-p0)) / Σ n.
-   Small samples: beta-binomial shrinkage with prior strength k = p0(1-p0)/tau² − 1, shrunk rate = (made + k·p0) / (attempts + k).
-   A tiny sample therefore stays near the league; a large one moves freely. Grade = shrunk gap in units of tau, cut at ±0.5 and ±1.5 tau
-   (average within half a true-talent SD, very good/bad beyond one and a half). Nothing is a fixed quota: all numbers follow the league data. */
-const LEVEL_CUTS=[-1.5,-.5,.5,1.5],LEVEL_NAMES=['very bad','bad','average','good','very good'];
-/* True spread per sub-area (tau², rate scale). It is a property of the whole season's talent, so it is estimated from Season data
-   (entities: all players, or all teams as opponents' targets) and pooled over the zones of the sub-area for stability; Last 3 / Last 5 reuse it. */
-function dispersion(leagueMade,leagueAtt,entities){
- return SUBS.map(s=>{let Q=0,NV=0,S=0;
-  for(const z of s.ids){const A=leagueAtt[z];if(!(A>0))continue;const p0=leagueMade[z]/A,v=p0*(1-p0);
-   for(const e of entities){const n=(e.attempts||e.att)[z];if(!n)continue;const p=e.made[z]/n;Q+=n*(p-p0)*(p-p0);NV+=v;S+=n;}}
-  return S>0?Math.max(0,(Q-NV)/S):0;});
+   League FG% of a zone = Σ made / Σ attempts of the league sample of the selected period (never an average of rates).
+   Gap = recorded FG% of the entity − league FG%, in percentage points. No shrinkage, dispersion, percentiles, points conversion or quotas:
+   volume and small-sample reliability are handled separately (the hexagon size already shows volume).
+   Five grades by fixed cut-offs on the gap: very bad < −10 ≤ bad < −5 ≤ average < +5 ≤ good < +10 ≤ very good (a gap exactly on a cut-off goes to the higher grade).
+   The cut-offs are a Pick n Edge presentation convention (round, symmetric steps of about 1 make in 20 and 1 in 10); the same for every zone, Players and Teams, and period. */
+const GAP_CUTS=[-10,-5,5,10],LEVEL_NAMES=['very bad','bad','average','good','very good'];
+/* One entry per zone for a period: league made/attempts and FG% (null without attempts). */
+function model(leagueMade,leagueAtt){
+ return ZONES.map((_,z)=>({made:leagueMade[z],attempts:leagueAtt[z],p0:leagueAtt[z]>0?leagueMade[z]/leagueAtt[z]:null}));
 }
-/* One entry per zone for a period: league FG% of that period, true spread, prior strength k. */
-function model(leagueMade,leagueAtt,tau2){
- return ZONES.map((zn,z)=>{
-  const A=leagueAtt[z],p0=A>0?leagueMade[z]/A:null,t2=tau2[SUBS.findIndex(s=>s.key===zn.sub)];
-  if(p0===null)return {p0:null,tau:0,k:Infinity,leagueMade:leagueMade[z],leagueAttempts:A};
-  const v=p0*(1-p0);return {p0,tau:Math.sqrt(t2),k:t2>0?Math.max(0,v/t2-1):Infinity,leagueMade:leagueMade[z],leagueAttempts:A};
- });
-}function grade(mz,made,att){
- if(!mz||mz.p0===null||!(att>0))return null;
- const shrunk=Number.isFinite(mz.k)?(made+mz.k*mz.p0)/(att+mz.k):mz.p0,d=shrunk-mz.p0,z=mz.tau>0?d/mz.tau:0;
- return {level:LEVEL_CUTS.filter(c=>z>=c).length,z,shrunk,gap:d};
+/* Grade of an entity's recorded FG% in a zone. Exact integer comparison: 100·(m/n − M/A) >= cut ⇔ 100·(m·A − M·n) >= cut·n·A. */
+function grade(mz,made,att){
+ if(!mz||!(mz.attempts>0)||!(att>0))return null;
+ const num=made*mz.attempts-mz.made*att,den=att*mz.attempts;
+ return {level:GAP_CUTS.filter(c=>100*num>=c*den).length,gap:100*num/den};
+}
+/* Raw opponent FG% defensive rank. Exact ties share competition rank; no attempts have no rank.
+   Rank is independent of grade/colour and never recomputed on a search-filtered cohort. */
+function teamRanks(made,att,cohort){
+ const current=rollup(made,att),others=cohort.filter(t=>t.shotComplete).map(t=>rollup(t.made,t.attempts));
+ return Object.fromEntries(['zones','subs','mains'].map(level=>[level,current[level].map((v,i)=>{
+  if(!v.att)return null;const valid=others.map(o=>o[level][i]).filter(o=>o.att>0);if(!valid.length)return null;
+  return {rank:1+valid.filter(o=>o.made*v.att<v.made*o.att).length,n:valid.length};
+ })]));
 }
 const LEVEL_COLORS=['#d6455d','#e39a8f','#aeb8c6','#8fcdb0','#38b27f'],NEUTRAL='#aeb8c6';
 /* Players: very bad red … very good green. Teams (opponent shooting against them): very bad (opponents shoot well) green … very good red. */
@@ -114,5 +112,5 @@ function court(){
  const marks=`M${P(-SIDE,BASELINE)}V${Y(HALF)}H${X(SIDE)}V${Y(BASELINE)}Z M${P(-LANE,BASELINE)}V${Y(FT)}H${X(LANE)}V${Y(BASELINE)} M${P(-RIM_R,RIM_STRIP_Y)}V${Y(0)}A${R(RIM_R)} ${R(RIM_R)} 0 0 0 ${P(RIM_R,0)}V${Y(RIM_STRIP_Y)}Z M${P(-CORNER_X,BASELINE)}V${Y(CORNER_Y)}A${R(ARC)} ${R(ARC)} 0 0 0 ${P(CORNER_X,CORNER_Y)}V${Y(BASELINE)} M${P(-180,FT)}A${R(180)} ${R(180)} 0 0 1 ${P(180,FT)} M${P(-90,-37.5)}H${X(90)}`;
  return `<g class="sz-borders" fill="none" stroke="#4a5b72" stroke-width=".8" stroke-dasharray="3 3"><path d="${rays.join('')}"/></g><g class="sz-lines" fill="none" stroke="#7a8ba2" stroke-width="1"><path d="${marks}"/><circle cx="${X(0)}" cy="${Y(0)}" r="${R(22.5)}"/></g>`;
 }
-g.ShotZones={BASELINE,LANE,FT,RIM_R,RIM_STRIP_Y,ARC,CORNER_X,CORNER_Y,DIAG_DEG,B_DEG,ZONES,SUBS,MAINS,COUNT,CELL,MAX_R,DOT_R,LEVEL_CUTS,LEVEL_NAMES,LEVEL_COLORS,NEUTRAL,LABELS,dispersion,model,grade,levelColor,levelName,VIEW,SC,classify,rollup,cellOf,cellCenter,hexPts,bin,court,X,Y};
+g.ShotZones={BASELINE,LANE,FT,RIM_R,RIM_STRIP_Y,ARC,CORNER_X,CORNER_Y,DIAG_DEG,B_DEG,ZONES,SUBS,MAINS,COUNT,CELL,MAX_R,DOT_R,GAP_CUTS,LEVEL_NAMES,LEVEL_COLORS,NEUTRAL,LABELS,model,grade,teamRanks,levelColor,levelName,VIEW,SC,classify,rollup,cellOf,cellCenter,hexPts,bin,court,X,Y};
 })(globalThis);

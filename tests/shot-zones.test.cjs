@@ -73,32 +73,51 @@ test('Rendered Shooting: Hex default, Shots on the same data and geometry',()=>{
  }
  const bad=c.FantasyViz.shooting({made:Array(12).fill(0),attempts:Array(12).fill(0),shotKeys:[['nope','X']],Gm:1,M1:0,A1:0,M2:0,A2:0,M3:0,A3:0},{team:false});assert.ok(bad.includes('fw-empty'),'missing data is not drawn as zero');
 });const S5=(rows,k)=>Array.from({length:12},(_,i)=>rows.reduce((n,t)=>n+t[k][i],0));
-const modelFor=(kind,period)=>{const ok=r=>r.filter(x=>x.shotComplete),sT=ok(M.rows('teams','season')),teams=ok(M.rows('teams',period));return c.ShotZones.model(S5(teams,'made'),S5(teams,'attempts'),c.ShotZones.dispersion(S5(sT,'made'),S5(sT,'attempts'),kind==='teams'?sT:ok(M.rows('players','season'))));};
+const modelFor=(kind,period)=>{const teams=M.rows('teams',period).filter(x=>x.shotComplete);return c.ShotZones.model(S5(teams,'made'),S5(teams,'attempts'));};
 test('League FG% per zone is Σ made / Σ attempts of the period, not a mean of rates',()=>{
  for(const period of ['season','3','5']){const teams=M.rows('teams',period).filter(t=>t.shotComplete),mdl=modelFor('players',period);
-  for(let z=0;z<12;z++){const m=teams.reduce((n,t)=>n+t.made[z],0),a=teams.reduce((n,t)=>n+t.attempts[z],0);assert.equal(mdl[z].p0,m/a);assert.equal(mdl[z].leagueAttempts,a);}
-  const all=allEvents();if(period==='season')for(let z=0;z<12;z++)assert.equal(mdl[z].leagueAttempts,all.filter(e=>e.zone===z).length,'league sample = every shot');}
+  for(let z=0;z<12;z++){const m=teams.reduce((n,t)=>n+t.made[z],0),a=teams.reduce((n,t)=>n+t.attempts[z],0);assert.equal(mdl[z].p0,m/a);assert.equal(mdl[z].attempts,a);assert.equal(mdl[z].made,m);}
+  const all=allEvents();if(period==='season')for(let z=0;z<12;z++)assert.equal(mdl[z].attempts,all.filter(e=>e.zone===z).length,'league sample = every shot');}
 });
-test('Grading: spread from data, small samples shrink to the league, monotonic, no quotas, teams inverted',()=>{
- const flat=Array.from({length:30},()=>({made:Array(12).fill(5),att:Array(12).fill(10)}));
- const lm=Array(12).fill(150),la=Array(12).fill(300);
- const tauFlat=Z.dispersion(lm,la,flat);assert.ok(tauFlat.every(x=>x===0),'identical entities: no real spread');
- const mFlat=Z.model(lm,la,tauFlat);assert.equal(Z.grade(mFlat[7],10,10).level,2,'no real spread: everything is average');
- const spread=Array.from({length:40},(_,i)=>({made:Array(12).fill(i%2?280:120),att:Array(12).fill(400)}));
- const t2=Z.dispersion(Array(12).fill(40*200),Array(12).fill(40*400),spread),mdl=Z.model(Array(12).fill(40*200),Array(12).fill(40*400),t2);
- assert.ok(mdl[7].tau>.15&&Number.isFinite(mdl[7].k));
- const big=Z.grade(mdl[7],350,400),tiny=Z.grade(mdl[7],3,3);
- assert.ok(big.level===4,'large sample far above the league is very good');assert.ok(tiny.level<big.level&&Math.abs(tiny.shrunk-mdl[7].p0)<Math.abs(big.shrunk-mdl[7].p0),'3/3 is pulled to the league');
- let prev=-1;for(let m=0;m<=40;m++){const gr=Z.grade(mdl[7],m,40).level;assert.ok(gr>=prev);prev=gr;}
- assert.equal(Z.grade(mdl[7],0,0),null,'no attempts: no grade');
- assert.equal(Z.grade(mdl[7],0,400).level,0);assert.equal(Z.grade(mdl[7],200,400).level,2);
- /* every entity can be average: nothing forces a worst team */
- const same=Array.from({length:20},()=>({made:Array(12).fill(100),att:Array(12).fill(250)})),ms=Z.model(Array(12).fill(2000),Array(12).fill(5000),Z.dispersion(Array(12).fill(2000),Array(12).fill(5000),same));
- assert.ok(same.every(e=>Z.grade(ms[3],e.made[3],e.att[3]).level===2));
+test('Grading: fixed gap bands −10/−5/+5/+10 pp on the recorded FG%, exact boundaries, no shrinkage',()=>{
+ assert.equal(JSON.stringify(Array.from(Z.GAP_CUTS)),JSON.stringify([-10,-5,5,10]));
+ const lg=Z.model(Array(12).fill(40),Array(12).fill(100)),lv=(m,n)=>Z.grade(lg[7],m,n).level;
+ assert.equal(lv(29.9,100),0);assert.equal(lv(30,100),1,'−10 exactly → bad');assert.equal(lv(34.9,100),1);assert.equal(lv(35,100),2,'−5 exactly → average');
+ assert.equal(lv(40,100),2);assert.equal(lv(44.9,100),2);assert.equal(lv(45,100),3,'+5 exactly → good');assert.equal(lv(49.9,100),3);assert.equal(lv(50,100),4,'+10 exactly → very good');
+ /* exact arithmetic where floating point would drift: 23/60 − 1/3 = +5 pp */
+ assert.equal(Z.grade(Z.model(Array(12).fill(1),Array(12).fill(3))[0],23,60).level,3);
+ const gr=Z.grade(lg[0],3,3);assert.equal(gr.level,4);assert.ok(Math.abs(gr.gap-60)<1e-9,'recorded 3/3 is graded as recorded, no shrinkage');
+ assert.equal(Z.grade(lg[0],0,0),null,'no attempts: no grade');assert.equal(Z.grade(Z.model(Array(12).fill(0),Array(12).fill(0))[0],5,10),null,'no league sample: no grade');
+ let prev=-1;for(let m=0;m<=40;m++){const l=Z.grade(lg[3],m,40).level;assert.ok(l>=prev);prev=l;}
+ /* same FG% and same gap → same grade whatever the attempts or the league volume */
+ let tested=0;for(const kind of ['players','teams'])for(const period of ['season','3','5']){const mdl=modelFor(kind,period);for(const e of M.rows(kind,period).filter(x=>x.shotComplete))for(let z=0;z<12;z++){const n=e.attempts[z];if(!n||!mdl[z].attempts)continue;const a=Z.grade(mdl[z],e.made[z],n),b=Z.grade(mdl[z],4*e.made[z],4*n),big=Z.grade(Z.model(Array(12).fill(1000*mdl[z].made),Array(12).fill(1000*mdl[z].attempts))[z],e.made[z],n);assert.equal(a.level,b.level);assert.equal(a.level,big.level,'league volume does not move the bands');tested++;}}
+ assert.ok(tested>4000);
  assert.equal(Z.levelColor(0),Z.LEVEL_COLORS[0]);assert.equal(Z.levelColor(4),Z.LEVEL_COLORS[4]);assert.equal(Z.levelColor(2),Z.NEUTRAL);assert.equal(Z.levelColor(null),Z.NEUTRAL);assert.equal(Z.LEVEL_COLORS[4],'#38b27f');assert.ok(Z.LEVEL_COLORS[0].startsWith('#d'));
  /* teams: opponents shooting far above the league = very bad defence = green; far below = very good defence = red */
  assert.equal(Z.levelName(4,true),'very bad');assert.equal(Z.levelName(0,true),'very good');assert.equal(Z.levelName(4,false),'very good');assert.equal(Z.levelName(2,true),'average');
- for(const period of ['season','3','5']){const mp=modelFor('players',period);for(const p of M.rows('players',period).filter(p=>p.shotComplete))for(let z=0;z<12;z++){const gr=Z.grade(mp[z],p.made[z],p.attempts[z]);assert.equal(gr===null,p.attempts[z]===0);if(gr)assert.ok(gr.level>=0&&gr.level<=4);}}
+});
+
+test('Defensive zone ranks use raw FG%, exact ties, valid denominators, and all teams',()=>{
+ const entities=Array.from({length:20},(_,i)=>({shotComplete:true,made:Array(12).fill(10+i),attempts:Array(12).fill(100)}));
+ for(const [i,e] of entities.entries())for(const group of Object.values(Z.teamRanks(e.made,e.attempts,entities)))for(const r of group){assert.equal(r.rank,i+1);assert.equal(r.n,20);}
+ const ties=[{shotComplete:true,made:Array(12).fill(1),attempts:Array(12).fill(3)},{shotComplete:true,made:Array(12).fill(2),attempts:Array(12).fill(6)},{shotComplete:true,made:Array(12).fill(2),attempts:Array(12).fill(3)}];
+ assert.equal(Z.teamRanks(ties[1].made,ties[1].attempts,ties).zones[0].rank,1);
+ assert.equal(Z.teamRanks(ties[2].made,ties[2].attempts,ties).zones[0].rank,3);
+ const noShots={shotComplete:true,made:Array(12).fill(0),attempts:Array(12).fill(0)};
+ assert.equal(Z.teamRanks(noShots.made,noShots.attempts,[...ties,noShots]).zones[0],null);
+ assert.equal(Z.teamRanks(ties[0].made,ties[0].attempts,[...ties,noShots,{...ties[0],shotComplete:false}]).zones[0].n,3);
+});
+
+test('Teams show rank in all 12 zones and the 3 summary boxes; Players do not',()=>{
+ for(const period of ['season','3','5']){
+  const teams=M.rows('teams',period).filter(t=>t.shotComplete),t=teams[0],html=c.FantasyViz.shooting({...t,M1:t.OM1,A1:t.OA1,M2:t.OM2,A2:t.OA2,M3:t.OM3,A3:t.OA3},{team:true,model:modelFor('teams',period),cohort:teams});
+  assert.equal((html.match(/class="sz-area-rank"/g)||[]).length,3);
+  assert.equal((html.match(/class="sz-zone-rank"/g)||[]).length,24);
+  const rr=Z.teamRanks(t.made,t.attempts,teams);
+  for(const r of rr.zones)if(r)assert.ok(html.includes('#'+r.rank+' / '+r.n));
+  const p=M.rows('players',period).find(p=>p.shotComplete),ph=c.FantasyViz.shooting(p,{team:false,model:modelFor('players',period),cohort:teams});
+  assert.ok(!ph.includes('sz-zone-rank')&&!ph.includes('sz-area-rank'));
+ }
 });
 test('Rendered Shooting: three area boxes, 12 labels, zone-graded hexes, sums 12 → 6 → 3 agree',()=>{
  for(const kind of ['teams','players'])for(const period of ['season','3','5']){
