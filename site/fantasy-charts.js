@@ -29,11 +29,14 @@ function tone(sx,dx,sy,dy){const n=(sx!==0)+(sy!==0);if(!n)return NEUTRAL;const 
 function resolve(spec,defs){const a=typeof spec==='string'?{key:spec}:spec;return a.get?a:{...defs.find(d=>d.key===a.key),...a};}
 function nice(lo,hi,count){const raw=(hi-lo)/count,mag=Math.pow(10,Math.floor(Math.log10(raw))),step=+([1,2,2.5,5,10].map(m=>m*mag).find(s=>s>=raw-1e-12)||10*mag).toPrecision(6),out=[];for(let v=Math.ceil(lo/step-1e-9)*step;v<=hi+1e-9;v+=step)out.push(+v.toFixed(8));return {ticks:out,dec:(String(step).split('.')[1]||'').length};}
 
+/* Logo backdrop: light logos (mostly white marks) get a dark disc, the rest a light one. Measured once per logo from its opaque pixels. */
+const LIGHT={};
+function measure(url){if(url in LIGHT)return;LIGHT[url]=false;const img=new Image();img.onload=()=>{try{const cv=document.createElement('canvas'),n=cv.width=cv.height=24,cx=cv.getContext('2d');cx.drawImage(img,0,0,n,n);const px=cx.getImageData(0,0,n,n).data;let s=0,a=0;for(let i=0;i<px.length;i+=4){const al=px[i+3]/255;s+=al*(.2126*px[i]+.7152*px[i+1]+.0722*px[i+2])/255;a+=al;}if(a&&s/a>.72){LIGHT[url]=true;if(modal)paint();}}catch(e){/* tainted/blocked canvas: keep the light disc */}};img.src=url;}
 const RENDERERS={
  scatter:{
   prepare(chart,ctx){
    const defs=M.defs(ctx.kind,chart.view),xd=resolve(chart.x,defs),yd=resolve(chart.y,defs),q=String(ctx.query||'').toLowerCase();
-   const pts=ctx.rows.map(p=>({id:ctx.id(p),name:ctx.name(p),label:p.label||ctx.name(p),gp:p.Gm,x:xd.get(p),y:yd.get(p),dim:!!q&&!ctx.name(p).toLowerCase().includes(q)})).filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));
+   const pts=ctx.rows.map(p=>({id:ctx.id(p),name:ctx.name(p),label:p.label||ctx.name(p),logo:ctx.logo?.(p)||'',gp:p.Gm,x:xd.get(p),y:yd.get(p),dim:!!q&&!ctx.name(p).toLowerCase().includes(q)})).filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));
    return {xd,yd,pts,avgX:M.average(ctx.rows,xd),avgY:M.average(ctx.rows,yd),total:ctx.rows.length,period:ctx.period,noun:ctx.kind==='teams'?'ομάδες':'παίκτες'};
   },
   render(chart,d,o){
@@ -45,7 +48,10 @@ const RENDERERS={
    const quad=!hasAvg?'':[[-1,-1],[1,-1],[-1,1],[1,1]].map(([dx,dy])=>{const col=tone(sx,dx,sy,dy);if(col===NEUTRAL)return '';const xa=dx<0?m.l:ax,xb=dx<0?ax:m.l+pw,ya=dy>0?m.t:ay,yb=dy>0?ay:m.t+ph;return `<rect x="${xa}" y="${ya}" width="${xb-xa}" height="${yb-ya}" fill="${col}" fill-opacity=".07"/>`;}).join('');
    const grid=xt.ticks.map(v=>`<line class="fc-grid" x1="${X(v)}" x2="${X(v)}" y1="${m.t}" y2="${m.t+ph}"/><text class="fc-tick" x="${X(v)}" y="${m.t+ph+(c?12:16)}" text-anchor="middle">${tick(xt,v)}${d.xd.pct?'%':''}</text>`).join('')+yt.ticks.map(v=>`<line class="fc-grid" y1="${Y(v)}" y2="${Y(v)}" x1="${m.l}" x2="${m.l+pw}"/><text class="fc-tick" x="${m.l-6}" y="${Y(v)+3.5}" text-anchor="end">${tick(yt,v)}${d.yd.pct?'%':''}</text>`).join('');
    const avg=!hasAvg?'':`<line class="fc-avg" x1="${ax}" x2="${ax}" y1="${m.t}" y2="${m.t+ph}"/><line class="fc-avg" y1="${ay}" y2="${ay}" x1="${m.l}" x2="${m.l+pw}"/>${c||narrow?'':`<text class="fc-avg-l" x="${Math.min(ax+4,m.l+pw-60)}" y="${m.t+11}">AVG ${fmt(d.xd,d.avgX)}</text><text class="fc-avg-l" x="${m.l+pw-4}" y="${ay-5}" text-anchor="end">AVG ${fmt(d.yd,d.avgY)}</text>`}`;
-   const dots=d.pts.map((p,i)=>{const cx=X(p.x),cy=Y(p.y),late=cx>m.l+pw*.86;return `<g class="fc-pt${p.dim?' fc-dim':''}"><circle data-pt="${i}" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${c?4:6.5}" style="fill:${tone(sx,side(p.x,d.avgX),sy,side(p.y,d.avgY))}"${c?'':` tabindex="0" role="img" aria-label="${esc(p.name)}: ${esc(fmt(d.xd,p.x))}, ${esc(fmt(d.yd,p.y))}"`}/>${c||narrow?'':`<text class="fc-pl" x="${(cx+(late?-10:10)).toFixed(1)}" y="${(cy+3.5).toFixed(1)}" text-anchor="${late?'end':'start'}">${esc(p.label)}</text>`}</g>`;}).join('');
+   const R=15,dots=d.pts.map((p,i)=>{const cx=X(p.x),cy=Y(p.y),col=tone(sx,side(p.x,d.avgX),sy,side(p.y,d.avgY)),aria=`${esc(p.name)}: ${esc(fmt(d.xd,p.x))}, ${esc(fmt(d.yd,p.y))}`;
+    /* Full chart + logo: fixed-size logo centred on the exact point, ring = favourable / unfavourable / neutral. Previews keep dots. */
+    if(!c&&p.logo){measure(p.logo);return `<g class="fc-pt fc-logo${p.dim?' fc-dim':''}" style="--tone:${col};--disc:${LIGHT[p.logo]?'#243143':'#f3f6fa'}"><circle data-pt="${i}" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R}" tabindex="0" role="img" aria-label="${aria}"/><image href="${esc(p.logo)}" x="${(cx-R+4).toFixed(1)}" y="${(cy-R+4).toFixed(1)}" width="${2*R-8}" height="${2*R-8}" preserveAspectRatio="xMidYMid meet" pointer-events="none"/></g>`;}
+    const late=cx>m.l+pw*.86;return `<g class="fc-pt${p.dim?' fc-dim':''}"><circle data-pt="${i}" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${c?4:6.5}" style="fill:${col}"${c?'':` tabindex="0" role="img" aria-label="${aria}"`}/>${c||narrow?'':`<text class="fc-pl" x="${(cx+(late?-10:10)).toFixed(1)}" y="${(cy+3.5).toFixed(1)}" text-anchor="${late?'end':'start'}">${esc(p.label)}</text>`}</g>`;}).join('');
    return `<svg class="fc-svg${c?' fc-compact':''}" viewBox="0 0 ${W} ${H}" role="${c?'presentation':'group'}" aria-label="${esc(chart.title)}">${quad}${grid}<rect class="fc-frame" x="${m.l}" y="${m.t}" width="${pw}" height="${ph}"/>${avg}${dots}<text class="fc-ax" x="${m.l+pw/2}" y="${H-(c?3:8)}" text-anchor="middle">${esc(axisTitle(d.xd))}</text><text class="fc-ax" transform="translate(${c?10:14} ${m.t+ph/2}) rotate(-90)" text-anchor="middle">${esc(axisTitle(d.yd))}</text></svg>`;
   },
   tooltip(chart,d,i){
@@ -77,9 +83,9 @@ function wire(root,ctx){
 function closeModal(){if(!modal)return;const {dlg,opener,ro}=modal;ro?.disconnect();modal=null;dlg.close();dlg.remove();if(opener?.isConnected)opener.focus();}
 function openModal(index,opener){
  const dlg=document.createElement('dialog');dlg.className='fw-dialog fc-dialog';
- dlg.innerHTML='<button type="button" class="fw-close" data-fc-close aria-label="Κλείσιμο">×</button><header class="fc-mhead"><h2></h2><div class="fc-nav"><button type="button" data-fc-step="-1" aria-label="Προηγούμενο chart">‹</button><b></b><button type="button" data-fc-step="1" aria-label="Επόμενο chart">›</button></div></header><div class="fc-stage"></div><div class="fc-legend-wrap"></div><div class="fc-tip" role="tooltip" hidden></div>';
+ dlg.innerHTML='<button type="button" class="fw-close" data-fc-close aria-label="Κλείσιμο">×</button><header class="fc-mhead"><h2></h2><div class="fw-switch fc-period" role="group" aria-label="Χρονικό δείγμα">' + ['season','3','5'].map(k=>'<button type="button" data-fc-period="'+k+'">'+PERIOD(k)+'</button>').join('') + '</div><div class="fc-nav"><button type="button" data-fc-step="-1" aria-label="Προηγούμενο chart">‹</button><b></b><button type="button" data-fc-step="1" aria-label="Επόμενο chart">›</button></div></header><div class="fc-stage"></div><div class="fc-legend-wrap"></div><div class="fc-tip" role="tooltip" hidden></div>';
  document.body.append(dlg);modal={dlg,index,id:items[index].chart.id,opener,w:0};
- dlg.onclick=e=>{if(e.target===dlg||e.target.closest('[data-fc-close]'))closeModal();const s=e.target.closest('[data-fc-step]');if(s)step(Number(s.dataset.fcStep));const pt=e.target.closest('[data-pt]');if(pt)tip(pt);};
+ dlg.onclick=e=>{if(e.target===dlg||e.target.closest('[data-fc-close]'))closeModal();const s=e.target.closest('[data-fc-step]');if(s)step(Number(s.dataset.fcStep));const pe=e.target.closest('[data-fc-period]');if(pe&&ctxNow.setPeriod&&pe.dataset.fcPeriod!==ctxNow.period)ctxNow.setPeriod(pe.dataset.fcPeriod);const pt=e.target.closest('[data-pt]');if(pt)tip(pt);};
  dlg.oncancel=e=>{e.preventDefault();closeModal();};
  dlg.onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();step(e.key==='ArrowLeft'?-1:1);}};
  dlg.addEventListener('pointerover',e=>{const pt=e.target.closest?.('[data-pt]');if(pt)tip(pt);});dlg.addEventListener('focusin',e=>{const pt=e.target.closest?.('[data-pt]');if(pt)tip(pt);});
@@ -91,7 +97,7 @@ function step(by){if(!modal||items.length<2)return;modal.index=(modal.index+by+i
 /* Same chart definition and same prepared data as the preview; only the size differs. */
 function paint(){
  const {dlg,index}=modal,{chart,data}=items[index],R=RENDERERS[chart.type],stage=dlg.querySelector('.fc-stage'),W=Math.max(280,Math.min(960,stage.clientWidth||dlg.clientWidth-52)),H=W<520?Math.round(W*.95):Math.round(Math.max(300,Math.min(W*.62,innerHeight*.58)));
- modal.w=W;dlg.querySelector('h2').textContent=chart.title;dlg.querySelector('.fc-nav b').textContent=(index+1)+' / '+items.length;dlg.querySelectorAll('[data-fc-step]').forEach(b=>b.disabled=items.length<2);
+ modal.w=W;dlg.querySelector('h2').textContent=chart.title;dlg.querySelector('.fc-nav b').textContent=(index+1)+' / '+items.length;dlg.querySelectorAll('[data-fc-step]').forEach(b=>b.disabled=items.length<2);dlg.querySelectorAll('[data-fc-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fcPeriod===ctxNow.period)));
  stage.innerHTML=R.render(chart,data,{W,H,compact:false});dlg.querySelector('.fc-legend-wrap').innerHTML=R.legend(chart,data);hideTip();
 }
 function tip(el){

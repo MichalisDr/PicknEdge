@@ -44,3 +44,7 @@
 .fc-tip div b small{display:inline;margin:0}
 .fc-tip em{grid-column:1/-1;font-style:normal;font-size:11px;color:#94a6bc;text-align:right}
 @media(max-width:650px){.fc-mhead h2{font-size:18px}.fc-grid-gallery{gap:10px}}
+.fc-logo circle{fill:var(--disc,#f3f6fa);stroke:var(--tone);stroke-width:2.5;cursor:pointer}
+.fc-logo circle:hover,.fc-logo circle:focus-visible{stroke-width:4;outline:0}
+.fc-period{margin-left:auto}
+@media(max-width:650px){.fc-period{margin-left:0}}
