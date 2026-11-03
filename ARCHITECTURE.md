@@ -54,7 +54,7 @@ python3 -m http.server 8000
 | `fantasy-workbench.js`, `.css` | Η οθόνη Fantasy: Players / Teams, Profile / Shooting, Table / Charts, κάρτες | — |
 | `shot-zones.js`, `.css` | Ορισμός 12 ζωνών / 6 υποπεριοχών / 3 περιοχών, ταξινόμηση σουτ, σταθερό εξαγωνικό πλέγμα, γραμμές γηπέδου. Κοινός για υπολογισμό (`fantasy-shots.js`) και σχεδίαση | — |
 | `fantasy-viz.js` | Radar και shooting chart (Hex / Shots, Assisted / Unassisted, hover/πάτημα ζώνης) | — |
-| `fantasy-charts.js`, `.css` | Συγκριτικά charts του Charts mode: registry `CHARTS` (ένα αντικείμενο ανά chart, ανά entity/view) + `RENDERERS` ανά τύπο (`scatter`)· gallery και modal δεν αλλάζουν όταν προστίθεται chart. Τα radar μένουν στις καρτέλες | — |
+| `fantasy-charts.js`, `.css` | Συγκριτικά charts του Charts mode: registry `CHARTS` (ένα αντικείμενο ανά chart, ανά entity/view) + `RENDERERS` ανά τύπο (`scatter`, `venn`)· κοινό zone mapping (Rim/Paint/Mid+Baseline/Corner 3/Above-the-break 3) και benchmarks λίγκας από αθροίσματα· gallery και modal δεν αλλάζουν όταν προστίθεται chart. Τα radar μένουν στις καρτέλες | — |
 | `fantasy-stats.css`, `player-card.css`, `fantasy-orange.css` | Στυλ της περιοχής Fantasy | — |
 | `team-assets.js` | `PICKNEDGE_TEAMS`: αναγνωριστικό, όνομα, σήμα ομάδας | Στατικό (ταυτότητα) |
 | `fantasy-profiles*.html` | Ανακατεύθυνση στο `#fantasy` για παλιούς συνδέσμους | — |

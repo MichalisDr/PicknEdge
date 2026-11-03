@@ -48,3 +48,34 @@
 .fc-logo circle:hover,.fc-logo circle:focus-visible{stroke-width:4;outline:0}
 .fc-period{margin-left:auto}
 @media(max-width:650px){.fc-period{margin-left:0}}
+.fc-mhead h2 small{display:block;margin-top:2px;font-size:12px;font-weight:500;color:#94a6bc}
+.fc-controls{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:0 0 12px;padding:8px 10px;background:#182335;border:1px solid #2b3a4f;border-radius:8px;font-size:12px;color:#c4d0e0}
+.fc-controls[hidden]{display:none}
+.fc-controls label{display:inline-flex;align-items:center;gap:6px}
+.fc-controls input{width:62px;padding:4px 6px;background:#101925;color:#eef3f8;border:1px solid #3b4655;border-radius:5px;font:inherit}
+.fc-quad{font:10.5px 'Segoe UI',sans-serif;fill:#8da0b8;paint-order:stroke;stroke:#101925;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.fc-diag{stroke-dasharray:none;stroke-width:1.4}
+.fc-quads{list-style:none;margin:6px 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px 16px;font-size:11.5px;color:#acbace}
+.fc-quads b{color:#d9e3ef;margin-right:4px}
+.fc-vr{fill:transparent;cursor:pointer}
+.fc-vr:hover,.fc-vr:focus-visible{fill:#fff;fill-opacity:.09;outline:0}
+.fc-vr.on{fill:#fff;fill-opacity:.18}
+.fc-vn{font:700 22px 'Segoe UI',sans-serif;fill:#eef3f8;pointer-events:none}
+.fc-vn.sm{font-size:14px}
+.fc-vn.zero{fill:#7d8ca1;font-weight:500}
+.fc-vl{font:600 12.5px 'Segoe UI',sans-serif;pointer-events:none}
+.fc-vl.sub{font-weight:400;fill:#b7c4d8;font-size:11.5px}
+.fc-vl.sm{font-size:10px}
+.fc-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.fc-chip{padding:4px 10px;background:#182335;color:#d9e3ef;border:1px solid #2b3a4f;border-radius:14px;font:inherit;font-size:12px;cursor:pointer}
+.fc-chip b{margin-left:4px;color:#fff}
+.fc-chip:hover,.fc-chip.on{border-color:#ef3d25}
+.fc-detail{margin:12px 0 6px;padding:10px 12px;background:#182335;border:1px solid #2b3a4f;border-radius:8px}
+.fc-detail h3{margin:0 0 8px;font-size:14px}
+.fc-tbl{max-height:280px;overflow:auto}
+.fc-tbl table{width:100%;border-collapse:collapse;font-size:12px}
+.fc-tbl th,.fc-tbl td{padding:4px 8px;text-align:right;border-bottom:1px solid #243144;white-space:nowrap}
+.fc-tbl thead th{position:sticky;top:0;background:#182335;color:#94a6bc;font-weight:500}
+.fc-tbl th:first-child{text-align:left;font-weight:600}
+.fc-tbl th small{display:block;font-weight:400;color:#94a6bc}
+.fc-tbl tr.hit{background:#ef3d2522}
