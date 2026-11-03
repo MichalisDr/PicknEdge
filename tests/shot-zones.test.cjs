@@ -126,9 +126,101 @@ test('Rendered Shooting: three area boxes, 12 labels, zone-graded hexes, sums 12
    const roll=Z.rollup(r.made,r.attempts);
    for(const m of roll.mains){const subs=roll.subs.filter(s=>s.main===m.key);assert.equal(subs.reduce((n,s)=>n+s.att,0),m.att);assert.equal(subs.reduce((n,s)=>n+s.made,0),m.made);
     const zs=roll.zones.filter(zn=>m.ids.includes(zn.i));assert.equal(zs.reduce((n,s)=>n+s.att,0),m.att);
-    assert.ok(html.includes('<span>'+m.name+'</span><strong>'+(m.att?m.fg.toFixed(1)+'%':'—')+'</strong><small>'+m.made+'/'+m.att+'</small>'),m.name);}
+    assert.ok(html.includes('<span>'+m.name+'</span><strong data-m="fg">'+(m.att?m.fg.toFixed(1)+'%':'—')+'</strong>'),m.name);assert.ok(html.includes('<small data-m="fg">'+m.made+'/'+m.att+'</small>'),m.name);}
    assert.equal(html.split('class="sz-area"').length-1,3);assert.equal(html.split('class="sz-label"').length-1,24,'12 labels in each of the 2 views');
-   const bad=roll.zones.filter(zn=>!zn.att).length;assert.equal((html.match(/>—<\/text>/g)||[]).length,2*bad,'no attempts show a dash, not 0%');
+   const bad=roll.zones.filter(zn=>!zn.att).length;assert.equal((html.match(/data-m="fg" x="[^"]*" y="[^"]*" text-anchor="middle">—<\/text>/g)||[]).length,2*bad,'no attempts show a dash, not 0%');
    assert.ok(html.indexOf('sz-areas')<html.indexOf('<svg'),'boxes sit above the chart');
   }}
+});
+
+/* ---------- Assisted / Unassisted ---------- */
+const pbp10=JSON.parse(fs.readFileSync('tests/fixtures/game10-pbp.json','utf8')),pts10=JSON.parse(fs.readFileSync('tests/fixtures/game10-points.json','utf8')),box10=JSON.parse(fs.readFileSync('tests/fixtures/game10-box.json','utf8'));
+const rec10={home:'PAR',away:'MIL',sides:{PAR:{As:box10.Stats[0].totr.Assistances},MIL:{As:box10.Stats[1].totr.Assistances}}};
+test('Assist linkage: AS plays attach to made FGs through Points NUM_ANOT = play NUMBEROFPLAY; free-throw assists are not field-goal assists',()=>{
+ const r=c.FantasyShots.assistedShots(pbp10,pts10.Rows,rec10);
+ assert.ok(r.ok.has('PAR')&&r.ok.has('MIL'));
+ assert.equal(r.set.size,36,'38 AS in the feed, 2 follow a made free throw');
+ const makes=new Map(pts10.Rows.filter(x=>/FGM/.test(x.ID_ACTION)).map(x=>[x.NUM_ANOT,x]));
+ for(const n of r.set)assert.ok(makes.has(n),'every assisted play number is a made FG of the Points feed '+n);
+ assert.equal(makes.get(36).ID_PLAYER.trim(),'P011205','Hall 3FGM #36 is assisted by Wright AS #37');assert.ok(r.set.has(36));
+ const rows=pts10.Rows.map(x=>c.FantasyShots.compact(x,r)),made=rows.filter(x=>/^[23]FGM$/.test(x[2]));
+ assert.equal(made.filter(x=>x[9]===1).length,36);assert.equal(made.filter(x=>x[9]===0).length,made.length-36);assert.ok(rows.filter(x=>!/^[23]FGM$/.test(x[2])).every(x=>x[9]===0));
+});
+test('Assist linkage: an AS that cannot be placed, or a box-score mismatch, makes the team-game unknown (null), never unassisted',()=>{
+ const broken=JSON.parse(JSON.stringify(pbp10));const q=broken.FirstQuarter,as=q.find(e=>e.PLAYTYPE==='AS'&&e.CODETEAM.trim()==='MIL');as.MARKERTIME='00:01';q.forEach(e=>{if(e.NUMBEROFPLAY===as.NUMBEROFPLAY-1)e.PLAYTYPE='2FGA';});
+ const r=c.FantasyShots.assistedShots(broken,pts10.Rows,rec10);assert.ok(r===null||!r.ok.has('MIL'));
+ const short=c.FantasyShots.assistedShots(pbp10,pts10.Rows,{...rec10,sides:{...rec10.sides,MIL:{As:rec10.sides.MIL.As+1}}});assert.ok(!short.ok.has('MIL')&&short.ok.has('PAR'));
+ const rows=pts10.Rows.map(x=>c.FantasyShots.compact(x,short)).filter(x=>x[0]==='MIL'&&/^[23]FGM$/.test(x[2]));assert.ok(rows.length&&rows.every(x=>x[9]===null));
+ assert.equal(c.FantasyShots.compact(pts10.Rows[0],null)[9],/^[23]FGM$/.test(pts10.Rows[0].ID_ACTION.trim())?null:0);
+});
+test('Seed: every row has the assist field and all 160 team-games of the 80 games are linked (no unknown makes); assisted ≤ made',()=>{
+ let games=0,teamGames=0;
+ for(const code in S){const rows=S[code];assert.ok(rows.every(r=>r.length===10),'game '+code);
+  assert.ok(rows.every(r=>/^[23]FGM$/.test(r[2])?[0,1].includes(r[9]):r[9]===0),'no unknown makes in game '+code);
+  for(const team of new Set(rows.map(r=>r[0]))){const mk=rows.filter(r=>r[0]===team&&/^[23]FGM$/.test(r[2]));teamGames++;assert.ok(mk.filter(r=>r[9]===1).length<=mk.length);}
+  games++;}
+ assert.equal(games,80);assert.equal(teamGames,160);
+});
+/* Real failures of the first linkage (23/160 team-games): the feed lists plays in time order but the NUMBEROFPLAY of corrected FG/FT plays is out of order,
+   and many assists belong to a free-throw trip. Excerpts of the official games, plays in the order delivered. */
+const cases=JSON.parse(fs.readFileSync('tests/fixtures/assist-cases.json','utf8'));
+const caseOf=name=>{const k=cases.find(x=>x.name.includes(name)),count={};k.plays.filter(e=>e.PLAYTYPE.trim()==='AS').forEach(e=>{const t=e.CODETEAM.trim();count[t]=(count[t]||0)+1;});
+ const [h,a]=k.teams;return {k,pbp:{[k.quarter]:k.plays},points:k.points,rec:{home:h,away:a,sides:{[h]:{As:count[h]||0},[a]:{As:count[a]||0}}}};};
+const link=x=>c.FantasyShots.assistedShots(x.pbp,x.points,x.rec);
+test('Assist linkage (game 17): a renumbered FG (#78) sits between the rebound and its AS (#17) — the array order, not the play number, gives the link',()=>{
+ const x=caseOf('game 17'),r=link(x);assert.ok(r.ok.has('ULK')&&r.ok.has('MUN'));assert.deepEqual([...r.set].sort((a,b)=>a-b),[18,21,78]);
+ const sorted={[x.k.quarter]:[...x.k.plays].sort((a,b)=>a.NUMBEROFPLAY-b.NUMBEROFPLAY)};assert.ok(!link({...x,pbp:sorted}).set.has(78),'sorting by number loses the link: the order must not be sorted');
+});
+test('Assist linkage (games 1, 23, 44): assists of a free-throw trip count for the team but never mark a field goal',()=>{
+ for(const name of ['game 1)','game 23)','game 44)']){const x=caseOf(name),r=link(x);assert.ok(r.ok.has(x.k.plays.find(e=>e.PLAYTYPE.trim()==='AS').CODETEAM.trim()),name);assert.equal(r.set.size,0,name+': no FG is marked');}
+ const x=caseOf('game 23');x.k.plays.filter(e=>/^FT/.test(e.PLAYTYPE.trim())).forEach(e=>{e.MARKERTIME='00:00';});assert.ok(!link(x).ok.has('OLY'),'a different FT clock is not a free-throw trip: unresolved, team-game unknown');
+ const y=caseOf('game 44');y.k.plays.find(e=>e.PLAYTYPE.trim()==='AS').MARKERTIME='02:20';assert.ok(!link(y).ok.has('BAR'));
+});
+test('Assist linkage (game 53): an AS stamped 8 s after its FG still belongs to the FG right before it; each AS marks at most one FG and each FG has at most one AS',()=>{
+ const x=caseOf('game 53'),r=link(x);assert.ok(r.ok.has('ASV')&&r.ok.has('MAD'));assert.deepEqual([...r.set].sort((a,b)=>a-b),[164,167,169]);
+ const dup=caseOf('game 53'),i=dup.k.plays.findIndex(e=>e.PLAYTYPE.trim()==='AS');dup.k.plays.splice(i+1,0,{...dup.k.plays[i],NUMBEROFPLAY:999});dup.rec.sides.MAD.As++;
+ const d=link(dup);assert.ok(!d.ok.has('MAD'),'a second AS cannot reuse the same FG');
+});
+test('summary/shotTotals: assisted + unassisted + unknown = made per zone; a Season total sums its games',()=>{
+ for(const kind of ['players','teams'])for(const period of ['season','3','5']){
+  for(const r of M.rows(kind,period).filter(r=>r.shotComplete).slice(0,40)){
+   assert.equal(r.assisted.length,Z.COUNT);for(let i=0;i<Z.COUNT;i++)assert.equal(r.assisted[i]+r.unassisted[i]+r.unknown[i],r.made[i],kind+period+i);}}
+ const t=M.rows('players','season').filter(r=>r.shotComplete);assert.ok(t.some(r=>sum(r.assisted)>0)&&t.some(r=>sum(r.unassisted)>0));
+});
+const auRow=()=>({...M.rows('players','season').find(r=>r.shotComplete)});
+test('Assisted / Unassisted view: shares of the zone\'s makes, area boxes by sums, FG% restored, Hex hides the choice, every shot stays',()=>{
+ const p=auRow(),assisted=Array(Z.COUNT).fill(0),unassisted=Array(Z.COUNT).fill(0),unknown=Array(Z.COUNT).fill(0);
+ assisted[0]=12;unassisted[0]=8;assisted[1]=1;unassisted[1]=3;
+ const html=c.FantasyViz.shooting({...p,assisted,unassisted,unknown},{team:false}),zoneLab=i=>html.match(new RegExp('data-zone="'+i+'">.*?</g>'))[0];
+ assert.match(zoneLab(0),/data-m="a" x="[^"]*" y="[^"]*" text-anchor="middle">60\.0%/);assert.match(zoneLab(0),/data-m="u" x="[^"]*" y="[^"]*" text-anchor="middle">40\.0%/);
+ assert.match(zoneLab(5),/data-m="a" [^>]*>—</,'no makes: a dash');
+ const paint=html.match(/<span>Paint<\/span>.*?<\/div>/)[0];assert.ok(paint.includes('<strong data-m="a">54.2%</strong>')&&paint.includes('<strong data-m="u">45.8%</strong>'),'13/24 by sums, not (60 + 25) / 2');
+ assert.ok(paint.includes('<small data-m="a">13/24</small>'));assert.ok(paint.includes('<small data-m="fg">'),'FG% boxes stay');
+ /* The denominator is ALL makes: an unconfirmed make makes the share unavailable (never a share of the classified ones). */
+ const unk=[...unknown];unk[1]=2;const h2=c.FantasyViz.shooting({...p,assisted,unassisted,unknown:unk},{team:false}),lab=i=>h2.match(new RegExp('data-zone="'+i+'">.*?</g>'))[0],pa=h2.match(/<span>Paint<\/span>.*?<\/div>/)[0];
+ assert.match(lab(0),/data-m="a" [^>]*>60\.0%/,'a zone with all makes confirmed keeps its share');assert.match(lab(1),/data-m="a" [^>]*>—</);assert.ok(pa.includes('<strong data-m="a">—</strong>')&&pa.includes('<small data-m="a">13/26</small>'),'area: dash, real counts over all makes');
+ assert.ok(h2.includes('2 εύστοχα'),'the cause is stated');
+ assert.match(html,/class="sz-switch sz-au"[^>]*hidden/,'default Hex: Assisted/Unassisted hidden');assert.match(html,/data-hl="none"/);assert.ok(!/data-hl-btn="a" aria-pressed="true"/.test(html));
+ assert.ok(html.indexOf('data-shotview-btn')<html.indexOf('data-hl-btn'),'Hex|Shots on the left, A|U on the right');assert.ok(!html.includes('SHOT PROFILE'));
+ const ev=c.FantasyShots.eventsOf(p.shotKeys);assert.equal((html.match(/class="sz-made"|class="sz-miss"/g)||[]).length,ev.length,'every attempt is drawn once in Shots');
+ assert.equal((html.match(/class="sz-hl"/g)||[]).length,ev.filter(e=>e.made&&e.ast!==null).length);
+ assert.ok(ev.some(e=>e.made&&e.ast===1)&&ev.some(e=>e.made&&e.ast===0));
+});
+test('Zone card: normal facts (incl. team rank), A/U split without grade or rank, change against Season',()=>{
+ const V=c.FantasyViz,z={n:'Mid Center',m:3,a:8,fg:37.5,lg:41.2,gap:-3.7,lv:'average',sh:12.3,rk:'4 / 20',d:'↑ +7,0 ποσοστιαίες μονάδες έναντι Season',as:12,un:8,uk:1};
+ const norm=V.tipHtml(z,'none',true);for(const s of ['Mid Center','3 / 8 · 37,5%','League FG%','41,2%','−3,7 pp · average','12,3%','Θέση άμυνας','#4 / 20','↑ +7,0 ποσοστιαίες μονάδες έναντι Season','χειρότερη άμυνα'])assert.ok(norm.includes(s),s);
+ assert.ok(!V.tipHtml(z,'none',false).includes('Θέση άμυνας'),'ranks are Teams only');
+ const au=V.tipHtml({...z,uk:0},'a',true);assert.ok(au.includes('12 / 20 · 60,0%')&&au.includes('8 / 20 · 40,0%')&&au.includes('sz-pop-sel'));assert.ok(!/League|Θέση|average|έναντι Season/.test(au));
+ const un=V.tipHtml(z,'a',true);assert.ok(un.includes('12 / 21 · —')&&un.includes('8 / 21 · —')&&un.includes('Ποσοστό μη διαθέσιμο: 1 από 21 εύστοχα χωρίς επιβεβαιωμένη ασίστ (assisted 12, unassisted 8)'));
+ assert.equal(V.change(false,{made:3,att:8},{made:3,att:8}),null,'Season: no change');
+ assert.equal(V.change(true,{made:5,att:10},{made:3,att:10}),'↑ +20,0 ποσοστιαίες μονάδες έναντι Season');assert.equal(V.change(true,{made:1,att:4},{made:1,att:2}),'↓ −25,0 ποσοστιαίες μονάδες έναντι Season');
+ assert.equal(V.change(true,{made:0,att:0},{made:1,att:2}),'—');assert.equal(V.change(true,{made:1,att:2},{made:0,att:0}),'—');assert.equal(V.change(true,{made:1,att:2},null),'—');assert.equal(V.change(true,{made:1,att:2},{made:2,att:4}),'0,0 ποσοστιαίες μονάδες έναντι Season','no arrow when unchanged');
+});
+test('Zone card data: Last 3 / Last 5 compare with the same entity\'s Season; Season has no change',()=>{
+ const season=M.rows('players','season'),l3=M.rows('players','3'),id=r=>r.id||r.Cl+r.Nm||r.name;
+ const p=l3.find(r=>r.shotComplete&&season.find(s=>id(s)===id(r)&&s.shotComplete));
+ const base=season.find(s=>id(s)===id(p)),zones=h=>JSON.parse(h.match(/data-zones="([^"]*)"/)[1].replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<')).zones;
+ const z3=zones(c.FantasyViz.shooting(p,{team:false,period:'3',base})),zs=zones(c.FantasyViz.shooting(base,{team:false,period:'season',base:null}));
+ assert.ok(zs.every(z=>z.d===null),'Season: none');
+ z3.forEach((z,i)=>{const cur=p.attempts[i],b=base.attempts[i];if(!cur||!b)assert.equal(z.d,'—');else{const d=100*p.made[i]/cur-100*base.made[i]/b;assert.ok(Math.abs(d)<.05?z.d.startsWith('0,0'):z.d.startsWith(d>0?'↑':'↓'),i);}});
 });

@@ -49,11 +49,11 @@ python3 -m http.server 8000
 | Αρχείο | Ρόλος | Δεδομένα |
 |---|---|---|
 | `fantasy-live.js` | Χτίζει `FANTASY_DATA`, `FANTASY_PERIOD_DATA`, `FANTASY_HISTORY`, `FANTASY_MATCHUP`, `FANTASY_FIXTURES` από τους αγώνες του `EuroLeagueData`. Ξαναχτίζει σε κάθε ενημέρωση (`euroleague-data` → `fantasy-live`) | Live |
-| `fantasy-shots.js` | Σουτ ανά αγώνα από το επίσημο Points feed, με έλεγχο έναντι του box score· cache σε `localStorage` | Live |
+| `fantasy-shots.js` | Σουτ ανά αγώνα από το επίσημο Points feed και ασίστ από το PlayByPlay (`assistedShots`, 10ο πεδίο 1/0/null), με έλεγχο έναντι του box score· cache σε `localStorage` | Live |
 | `fantasy-metrics.js` | Ορισμοί δεικτών (πίνακες, καρτέλες, hover) και κατάταξη | — |
 | `fantasy-workbench.js`, `.css` | Η οθόνη Fantasy: Players / Teams, Profile / Shooting, Table / Charts, κάρτες | — |
 | `shot-zones.js`, `.css` | Ορισμός 12 ζωνών / 6 υποπεριοχών / 3 περιοχών, ταξινόμηση σουτ, σταθερό εξαγωνικό πλέγμα, γραμμές γηπέδου. Κοινός για υπολογισμό (`fantasy-shots.js`) και σχεδίαση | — |
-| `fantasy-viz.js` | Radar και shooting chart (Hex / Shots) | — |
+| `fantasy-viz.js` | Radar και shooting chart (Hex / Shots, Assisted / Unassisted, hover/πάτημα ζώνης) | — |
 | `fantasy-charts.js`, `.css` | Συγκριτικά charts του Charts mode: registry `CHARTS` (ένα αντικείμενο ανά chart, ανά entity/view) + `RENDERERS` ανά τύπο (`scatter`)· gallery και modal δεν αλλάζουν όταν προστίθεται chart. Τα radar μένουν στις καρτέλες | — |
 | `fantasy-stats.css`, `player-card.css`, `fantasy-orange.css` | Στυλ της περιοχής Fantasy | — |
 | `team-assets.js` | `PICKNEDGE_TEAMS`: αναγνωριστικό, όνομα, σήμα ομάδας | Στατικό (ταυτότητα) |
@@ -77,7 +77,7 @@ python3 -m http.server 8000
 |---|---|
 | `courtvision-betting-live-E2026-v3` | Αγώνες EuroLeague (σύνολα, παίκτες, κατοχές) |
 | `courtvision-betting-people-E2026-v1` | Ρόστερ ομάδων: θέση και ύψος παικτών (ανανέωση το πολύ ανά 12 ώρες) |
-| `picknedge-shots-E2026-v1` | Σουτ ανά αγώνα (συντεταγμένες, fast break, second chance, points off turnover) |
+| `picknedge-shots-E2026-v2` | Σουτ ανά αγώνα (συντεταγμένες, fast break, second chance, points off turnover, ασίστ 1/0/null· εγγραφές χωρίς ασίστ ξαναφορτώνονται) |
 | `picknedge-schedule-E2026-v1` | Τελευταίο έγκυρο πρόγραμμα EuroLeague |
 | `cv-fantasy-stars-v1` | Οι ★ παίκτες (δεν χρησιμοποιούνται πια από το Fantasy UI· δεν διαγράφονται) |
 | `courtvision-analyses-v1` | Οι αποθηκευμένες αναλύσεις Betting |
