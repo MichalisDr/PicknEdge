@@ -61,7 +61,7 @@ test('Dynamic scale is per chart: same count, same radius inside one chart; a lo
 });
 test('Rendered Shooting: Hex default, Shots on the same data and geometry',()=>{
  for(const period of ['season','3','5']){
-  const t=M.rows('teams',period)[0],q={...t,M1:t.OM1,A1:t.OA1,M2:t.OM2,A2:t.OA2,M3:t.OM3,A3:t.OA3},html=c.FantasyViz.shooting(q,{team:true,cohort:[]});
+  const t=M.rows('teams',period)[0],q={...t,M1:t.OM1,A1:t.OA1,M2:t.OM2,A2:t.OA2,M3:t.OM3,A3:t.OA3},html=c.FantasyViz.shooting(q,{team:true,model:null});
   const hexSvg=html.match(/<svg[^>]*data-shotview="hex"[\s\S]*?<\/svg>/)[0],shotSvg=html.match(/<svg[^>]*data-shotview="shots"[\s\S]*?<\/svg>/)[0],ev=c.FantasyShots.eventsOf(t.shotKeys);
   assert.ok(!/^<svg[^>]*hidden/.test(hexSvg)&&/^<svg[^>]*hidden/.test(shotSvg),'Hex is the default');
   assert.equal((hexSvg.match(/<polygon/g)||[]).length,Z.bin(ev).cells.length);
@@ -72,4 +72,44 @@ test('Rendered Shooting: Hex default, Shots on the same data and geometry',()=>{
   assert.ok(html.includes('aria-pressed="true">Hex<')&&html.includes('>Shots<'));
  }
  const bad=c.FantasyViz.shooting({made:Array(12).fill(0),attempts:Array(12).fill(0),shotKeys:[['nope','X']],Gm:1,M1:0,A1:0,M2:0,A2:0,M3:0,A3:0},{team:false});assert.ok(bad.includes('fw-empty'),'missing data is not drawn as zero');
+});const S5=(rows,k)=>Array.from({length:12},(_,i)=>rows.reduce((n,t)=>n+t[k][i],0));
+const modelFor=(kind,period)=>{const ok=r=>r.filter(x=>x.shotComplete),sT=ok(M.rows('teams','season')),teams=ok(M.rows('teams',period));return c.ShotZones.model(S5(teams,'made'),S5(teams,'attempts'),c.ShotZones.dispersion(S5(sT,'made'),S5(sT,'attempts'),kind==='teams'?sT:ok(M.rows('players','season'))));};
+test('League FG% per zone is Σ made / Σ attempts of the period, not a mean of rates',()=>{
+ for(const period of ['season','3','5']){const teams=M.rows('teams',period).filter(t=>t.shotComplete),mdl=modelFor('players',period);
+  for(let z=0;z<12;z++){const m=teams.reduce((n,t)=>n+t.made[z],0),a=teams.reduce((n,t)=>n+t.attempts[z],0);assert.equal(mdl[z].p0,m/a);assert.equal(mdl[z].leagueAttempts,a);}
+  const all=allEvents();if(period==='season')for(let z=0;z<12;z++)assert.equal(mdl[z].leagueAttempts,all.filter(e=>e.zone===z).length,'league sample = every shot');}
+});
+test('Grading: spread from data, small samples shrink to the league, monotonic, no quotas, teams inverted',()=>{
+ const flat=Array.from({length:30},()=>({made:Array(12).fill(5),att:Array(12).fill(10)}));
+ const lm=Array(12).fill(150),la=Array(12).fill(300);
+ const tauFlat=Z.dispersion(lm,la,flat);assert.ok(tauFlat.every(x=>x===0),'identical entities: no real spread');
+ const mFlat=Z.model(lm,la,tauFlat);assert.equal(Z.grade(mFlat[7],10,10).level,2,'no real spread: everything is average');
+ const spread=Array.from({length:40},(_,i)=>({made:Array(12).fill(i%2?280:120),att:Array(12).fill(400)}));
+ const t2=Z.dispersion(Array(12).fill(40*200),Array(12).fill(40*400),spread),mdl=Z.model(Array(12).fill(40*200),Array(12).fill(40*400),t2);
+ assert.ok(mdl[7].tau>.15&&Number.isFinite(mdl[7].k));
+ const big=Z.grade(mdl[7],350,400),tiny=Z.grade(mdl[7],3,3);
+ assert.ok(big.level===4,'large sample far above the league is very good');assert.ok(tiny.level<big.level&&Math.abs(tiny.shrunk-mdl[7].p0)<Math.abs(big.shrunk-mdl[7].p0),'3/3 is pulled to the league');
+ let prev=-1;for(let m=0;m<=40;m++){const gr=Z.grade(mdl[7],m,40).level;assert.ok(gr>=prev);prev=gr;}
+ assert.equal(Z.grade(mdl[7],0,0),null,'no attempts: no grade');
+ assert.equal(Z.grade(mdl[7],0,400).level,0);assert.equal(Z.grade(mdl[7],200,400).level,2);
+ /* every entity can be average: nothing forces a worst team */
+ const same=Array.from({length:20},()=>({made:Array(12).fill(100),att:Array(12).fill(250)})),ms=Z.model(Array(12).fill(2000),Array(12).fill(5000),Z.dispersion(Array(12).fill(2000),Array(12).fill(5000),same));
+ assert.ok(same.every(e=>Z.grade(ms[3],e.made[3],e.att[3]).level===2));
+ assert.equal(Z.levelColor(0),Z.LEVEL_COLORS[0]);assert.equal(Z.levelColor(4),Z.LEVEL_COLORS[4]);assert.equal(Z.levelColor(2),Z.NEUTRAL);assert.equal(Z.levelColor(null),Z.NEUTRAL);assert.equal(Z.LEVEL_COLORS[4],'#38b27f');assert.ok(Z.LEVEL_COLORS[0].startsWith('#d'));
+ /* teams: opponents shooting far above the league = very bad defence = green; far below = very good defence = red */
+ assert.equal(Z.levelName(4,true),'very bad');assert.equal(Z.levelName(0,true),'very good');assert.equal(Z.levelName(4,false),'very good');assert.equal(Z.levelName(2,true),'average');
+ for(const period of ['season','3','5']){const mp=modelFor('players',period);for(const p of M.rows('players',period).filter(p=>p.shotComplete))for(let z=0;z<12;z++){const gr=Z.grade(mp[z],p.made[z],p.attempts[z]);assert.equal(gr===null,p.attempts[z]===0);if(gr)assert.ok(gr.level>=0&&gr.level<=4);}}
+});
+test('Rendered Shooting: three area boxes, 12 labels, zone-graded hexes, sums 12 → 6 → 3 agree',()=>{
+ for(const kind of ['teams','players'])for(const period of ['season','3','5']){
+  const rows=M.rows(kind,period).filter(r=>r.shotComplete),mdl=modelFor(kind,period);
+  for(const r of rows.slice(0,8)){const q=kind==='teams'?{...r,M1:r.OM1,A1:r.OA1,M2:r.OM2,A2:r.OA2,M3:r.OM3,A3:r.OA3}:r,html=c.FantasyViz.shooting(q,{team:kind==='teams',model:mdl});
+   const roll=Z.rollup(r.made,r.attempts);
+   for(const m of roll.mains){const subs=roll.subs.filter(s=>s.main===m.key);assert.equal(subs.reduce((n,s)=>n+s.att,0),m.att);assert.equal(subs.reduce((n,s)=>n+s.made,0),m.made);
+    const zs=roll.zones.filter(zn=>m.ids.includes(zn.i));assert.equal(zs.reduce((n,s)=>n+s.att,0),m.att);
+    assert.ok(html.includes('<span>'+m.name+'</span><strong>'+(m.att?m.fg.toFixed(1)+'%':'—')+'</strong><small>'+m.made+'/'+m.att+'</small>'),m.name);}
+   assert.equal(html.split('class="sz-area"').length-1,3);assert.equal(html.split('class="sz-label"').length-1,24,'12 labels in each of the 2 views');
+   const bad=roll.zones.filter(zn=>!zn.att).length;assert.equal((html.match(/>—<\/text>/g)||[]).length,2*bad,'no attempts show a dash, not 0%');
+   assert.ok(html.indexOf('sz-areas')<html.indexOf('<svg'),'boxes sit above the chart');
+  }}
 });

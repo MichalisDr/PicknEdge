@@ -43,6 +43,40 @@ function classify(x,y,three){
  return {zones:ZONES.map((z,i)=>({...z,i,...mk([i])})),subs:SUBS.map(s=>({...s,...mk(s.ids)})),mains:MAINS.map(m=>({...m,...mk(m.ids)}))};
 }
 
+/* ---------- evaluation of a zone against the league ----------
+   League FG% of a zone = Σ made / Σ attempts of the league sample (all shots of the period), never an average of rates.
+   Real spread (tau): how far true shooting talent differs between entities (players, or teams' opponents) in that zone, estimated
+   from the data by the method of moments: E[n(p-p0)^2] = p0(1-p0) + n·tau², so tau² = (Σ n(p-p0)² − N·p0(1-p0)) / Σ n.
+   Small samples: beta-binomial shrinkage with prior strength k = p0(1-p0)/tau² − 1, shrunk rate = (made + k·p0) / (attempts + k).
+   A tiny sample therefore stays near the league; a large one moves freely. Grade = shrunk gap in units of tau, cut at ±0.5 and ±1.5 tau
+   (average within half a true-talent SD, very good/bad beyond one and a half). Nothing is a fixed quota: all numbers follow the league data. */
+const LEVEL_CUTS=[-1.5,-.5,.5,1.5],LEVEL_NAMES=['very bad','bad','average','good','very good'];
+/* True spread per sub-area (tau², rate scale). It is a property of the whole season's talent, so it is estimated from Season data
+   (entities: all players, or all teams as opponents' targets) and pooled over the zones of the sub-area for stability; Last 3 / Last 5 reuse it. */
+function dispersion(leagueMade,leagueAtt,entities){
+ return SUBS.map(s=>{let Q=0,NV=0,S=0;
+  for(const z of s.ids){const A=leagueAtt[z];if(!(A>0))continue;const p0=leagueMade[z]/A,v=p0*(1-p0);
+   for(const e of entities){const n=(e.attempts||e.att)[z];if(!n)continue;const p=e.made[z]/n;Q+=n*(p-p0)*(p-p0);NV+=v;S+=n;}}
+  return S>0?Math.max(0,(Q-NV)/S):0;});
+}
+/* One entry per zone for a period: league FG% of that period, true spread, prior strength k. */
+function model(leagueMade,leagueAtt,tau2){
+ return ZONES.map((zn,z)=>{
+  const A=leagueAtt[z],p0=A>0?leagueMade[z]/A:null,t2=tau2[SUBS.findIndex(s=>s.key===zn.sub)];
+  if(p0===null)return {p0:null,tau:0,k:Infinity,leagueMade:leagueMade[z],leagueAttempts:A};
+  const v=p0*(1-p0);return {p0,tau:Math.sqrt(t2),k:t2>0?Math.max(0,v/t2-1):Infinity,leagueMade:leagueMade[z],leagueAttempts:A};
+ });
+}function grade(mz,made,att){
+ if(!mz||mz.p0===null||!(att>0))return null;
+ const shrunk=Number.isFinite(mz.k)?(made+mz.k*mz.p0)/(att+mz.k):mz.p0,d=shrunk-mz.p0,z=mz.tau>0?d/mz.tau:0;
+ return {level:LEVEL_CUTS.filter(c=>z>=c).length,z,shrunk,gap:d};
+}
+const LEVEL_COLORS=['#d6455d','#e39a8f','#aeb8c6','#8fcdb0','#38b27f'],NEUTRAL='#aeb8c6';
+/* Players: very bad red … very good green. Teams (opponent shooting against them): very bad (opponents shoot well) green … very good red. */
+const levelColor=level=>level===null?NEUTRAL:LEVEL_COLORS[level];/* same colour index for teams: opponents shooting well = very bad defence = green; only the name flips */
+const levelName=(level,team)=>team?LEVEL_NAMES[4-level]:LEVEL_NAMES[level];
+/* Where each zone's FG% label sits (cm), inside the zone. */
+const LABELS=[[0,45],[0,290],[-400,330],[0,548],[400,330],[-480,-20],[480,-20],[-598,501],[0,780],[598,501],[-705,-8],[705,-8]];
 /* ---------- hex grid: fixed lattice in court coordinates (pointy-top, circumradius CELL) ---------- */
 const DOT_R=8,/* radius of a single shot marker (cm) */
  CELL=24,GAP=.92,MAX_R=CELL*GAP;/* the largest hexagon fits its cell with a small gap, so none can overlap */
@@ -80,5 +114,5 @@ function court(){
  const marks=`M${P(-SIDE,BASELINE)}V${Y(HALF)}H${X(SIDE)}V${Y(BASELINE)}Z M${P(-LANE,BASELINE)}V${Y(FT)}H${X(LANE)}V${Y(BASELINE)} M${P(-RIM_R,RIM_STRIP_Y)}V${Y(0)}A${R(RIM_R)} ${R(RIM_R)} 0 0 0 ${P(RIM_R,0)}V${Y(RIM_STRIP_Y)}Z M${P(-CORNER_X,BASELINE)}V${Y(CORNER_Y)}A${R(ARC)} ${R(ARC)} 0 0 0 ${P(CORNER_X,CORNER_Y)}V${Y(BASELINE)} M${P(-180,FT)}A${R(180)} ${R(180)} 0 0 1 ${P(180,FT)} M${P(-90,-37.5)}H${X(90)}`;
  return `<g class="sz-borders" fill="none" stroke="#4a5b72" stroke-width=".8" stroke-dasharray="3 3"><path d="${rays.join('')}"/></g><g class="sz-lines" fill="none" stroke="#7a8ba2" stroke-width="1"><path d="${marks}"/><circle cx="${X(0)}" cy="${Y(0)}" r="${R(22.5)}"/></g>`;
 }
-g.ShotZones={BASELINE,LANE,FT,RIM_R,RIM_STRIP_Y,ARC,CORNER_X,CORNER_Y,DIAG_DEG,B_DEG,ZONES,SUBS,MAINS,COUNT,CELL,MAX_R,DOT_R,VIEW,SC,classify,rollup,cellOf,cellCenter,hexPts,bin,court,X,Y};
+g.ShotZones={BASELINE,LANE,FT,RIM_R,RIM_STRIP_Y,ARC,CORNER_X,CORNER_Y,DIAG_DEG,B_DEG,ZONES,SUBS,MAINS,COUNT,CELL,MAX_R,DOT_R,LEVEL_CUTS,LEVEL_NAMES,LEVEL_COLORS,NEUTRAL,LABELS,dispersion,model,grade,levelColor,levelName,VIEW,SC,classify,rollup,cellOf,cellCenter,hexPts,bin,court,X,Y};
 })(globalThis);
