@@ -23,3 +23,15 @@
 .fw-pgrid .fw-m-sm{padding:9px 11px}
 .fw-pgrid .fw-m-sm strong{font-size:19px}
 @media(max-width:650px){.fw-pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.fw-pgrid .fw-m-lg strong{font-size:26px}.fw-pgrid .fw-m-sm strong{font-size:19px}.fw-cr{display:block;margin:2px 0 0}}
+.fw-band{fill:#8f9bad;fill-opacity:.16}.fw-gl{stroke:#2b394b;stroke-width:.6}.fw-ref{stroke:#b8c6d7;stroke-width:1.2;stroke-dasharray:5 4}
+.fw-leg{display:flex;flex-wrap:wrap;gap:4px 14px;margin:6px 0 0;font-size:11px;color:#a8b6c9}.fw-leg i{display:inline-block;vertical-align:middle;margin-right:5px}
+.fw-k-g{width:8px;height:8px;border-radius:50%;background:#ef3d25}.fw-k-r{width:16px;height:3px;border-radius:2px;background:#f2c14e}.fw-k-s{width:16px;border-top:2px dashed #b8c6d7}.fw-k-b{width:14px;height:9px;background:#8f9bad;opacity:.35}
+.fw-tooltip .fw-leg{font-size:10px;gap:3px 10px}
+.fw-iboxes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.fw-ibox{background:#1c2330;border:1px solid #2b394b;border-radius:10px;padding:12px;min-width:0}.fw-ibox span{display:block;font-size:11px;color:#a8b6c9}.fw-ibox strong{display:block;margin:4px 0 2px;font-size:17px;color:#e7edf5}.fw-ibox small{display:block;font-size:11px;color:#94a6bc}
+.fw-with{margin-top:18px}.fw-tbl{overflow-x:auto;margin-top:8px}.fw-with table{width:100%;border-collapse:collapse;font-size:13px}.fw-with th,.fw-with td{padding:7px 8px;text-align:right;border-top:1px solid #2b394b;white-space:nowrap}.fw-with thead th{color:#a8b6c9;font-weight:500;font-size:11px;border-top:0}
+.fw-with th:first-child,.fw-with td:first-child{text-align:left}.fw-with td small{display:block;font-size:10px;color:#94a6bc}.fw-with tbody th{font-weight:500}
+.fw-with th button{all:unset;cursor:pointer;color:#e7edf5;display:inline-flex;flex-direction:column;border-radius:4px}.fw-with th button:focus-visible{outline:2px solid #ef3d25}.fw-with th button small{font-size:10px;color:#94a6bc}.fw-with tr.on{background:#ef3d2518}
+.fw-small{font-style:normal;font-size:10px;color:#f2c14e;margin-left:8px}
+.fw-absent{margin-top:12px;padding:12px;border:1px solid #ffffff55;border-radius:10px}.fw-absent h4{margin:0 0 6px;font-size:13px;font-weight:500}.fw-absent ul{list-style:none;margin:0;padding:0}.fw-absent li{display:grid;grid-template-columns:44px 1fr auto;gap:8px;padding:4px 0;font-size:12px;color:#c9d5e4}.fw-absent b{color:#ff8a78}
+@media(max-width:560px){.fw-iboxes{grid-template-columns:1fr}}

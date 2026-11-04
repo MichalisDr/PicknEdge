@@ -44,7 +44,31 @@ function rows(kind,period){const d=dataset(period);return kind==='teams'?d.raw.m
 function history(kind,id,period){const all=g.FANTASY_HISTORY?.[kind]?.[id]||[];let selected=all;if(period!=='season'){if(kind==='teams')selected=all.slice(-Number(period));else{const p=g.FANTASY_DATA.players.find(p=>p.PID===id),games=new Set((g.FANTASY_HISTORY?.teams?.[p?.CID]||[]).slice(-Number(period)).map(r=>r.game));selected=all.filter(r=>games.has(r.game));}}return selected.filter(r=>kind==='teams'||r.played);}
 function series(kind,id,period,def){return history(kind,id,period).map(r=>({round:r.round,game:r.game,date:r.date,opponent:r.opponent,value:r.totals?def.get(r.totals):null}));}
 function average(list,def){const totals={};for(const p of list)for(const [k,v] of Object.entries(p)){if(typeof v==='number')totals[k]=totals[k]===null?null:(totals[k]||0)+v;else if(v===null)totals[k]=null;else if(Array.isArray(v)&&v.every(Number.isFinite))totals[k]=Array.isArray(totals[k])?totals[k].map((n,i)=>n+v[i]):v.slice();}return def.get(totals);}
+/* Direction of improvement: +1 higher is better, −1 lower is better, 0 no clear direction. Teams: better defence (rank order); players: goodHigher. */
+const NEUTRAL_PLAYER=new Set(['min','usg','ftr','cr']);
+function direction(kind,def){if(def.neutral)return 0;if(kind==='teams')return def.rankHigher===false?-1:1;if(NEUTRAL_PLAYER.has(def.key))return 0;return def.goodHigher===false?-1:1;}
+/* Whole-season curve: per-game value plus the rolling value of the last n appearances (from the n-th on), both from summed totals, independent of the selected sample. */
+function trend(kind,id,def,n=5){const h=history(kind,id,'season');return h.map((r,i)=>{const win=i+1>=n?h.slice(i+1-n,i+1):null,roll=win&&win.every(x=>x.totals)?average(win.map(x=>x.totals),def):null;return {round:r.round,game:r.game,date:r.date,opponent:r.opponent,value:r.totals?def.get(r.totals):null,roll:Number.isFinite(roll)?roll:null};});}
+function quantile(sorted,q){if(!sorted.length)return null;const x=(sorted.length-1)*q,lo=Math.floor(x),hi=Math.ceil(x);return sorted[lo]+(sorted[hi]-sorted[lo])*(x-lo);}
+/* League distribution of per-game values over a list of season rows (the pool the page filters leave). */
+function league(kind,def,list){const v=[];for(const p of list)for(const r of history(kind,p.PID||p.CID,'season'))if(r.totals){const x=def.get(r.totals);if(Number.isFinite(x))v.push(x);}v.sort((a,b)=>a-b);return {n:v.length,p2:quantile(v,.02),p25:quantile(v,.25),p75:quantile(v,.75),p98:quantile(v,.98)};}
+function spread(values){const v=values.filter(Number.isFinite),n=v.length;if(!n)return {n:0,min:null,max:null,sd:null};const m=v.reduce((a,b)=>a+b,0)/n;return {n,min:Math.min(...v),max:Math.max(...v),sd:n>1?Math.sqrt(v.reduce((a,b)=>a+(b-m)*(b-m),0)/(n-1)):null};}
+/* With / without each current teammate, whole season, same game IDs only: games the player played for his current team in which the teammate
+   either played (with) or was a recorded absence (without: a team game after his first appearance for the team in which he has no appearance).
+   Games before his first appearance for the team (outside the roster) or missing from his history are neither. Values from summed totals. */
+function withWithout(pid,def){
+ const D=g.FANTASY_DATA,H=g.FANTASY_HISTORY?.players||{},me=D?.players.find(p=>p.PID===pid);if(!me||!H[pid])return {games:0,mates:[]};
+ const cid=me.CID,mine=H[pid].filter(r=>r.cid===cid&&r.played&&r.totals),sum=list=>list.length?average(list.map(r=>r.totals),def):null,mates=[];
+ for(const t of D.players){if(t.CID!==cid||t.PID===pid||!H[t.PID])continue;
+  const rows=new Map(H[t.PID].filter(r=>r.cid===cid).map(r=>[r.game,r])),start=[...rows.values()].find(r=>r.played)?.round;if(start===undefined)continue;
+  const w=[],wo=[];for(const r of mine){const q=rows.get(r.game);if(!q)continue;if(q.played)w.push(r);else if(q.round>start)wo.push(r);}
+  if(!wo.length)continue;
+  const a=sum(w),b=sum(wo);
+  mates.push({pid:t.PID,name:[t.Fn,t.Sn].filter(Boolean).join(' '),pos:t.Pos,nWith:w.length,nWithout:wo.length,withValue:a,withoutValue:b,diff:Number.isFinite(a)&&Number.isFinite(b)?b-a:null,
+   games:wo.map(r=>({game:r.game,round:r.round,opponent:r.opponent,value:r.totals?def.get(r.totals):null}))});}
+ mates.sort((x,y)=>y.nWithout-x.nWithout||x.name.localeCompare(y.name));
+ return {games:mine.length,mates};}
 function rank(list,p,def){const value=def.get(p),valid=list.map(def.get).filter(Number.isFinite);if(!Number.isFinite(value)||!valid.length)return null;const position=1+valid.filter(v=>def.rankHigher===false?v<value-1e-9:v>value+1e-9).length;const goodness=1+valid.filter(v=>def.goodHigher===false?v<value-1e-9:v>value+1e-9).length;return {position,n:valid.length,color:def.neutral?'#bdc7d5':goodness<=Math.ceil(valid.length/3)?'#7fc6ac':goodness>Math.ceil(valid.length*2/3)?'#e7919b':'#b8c6d7'};}
 function format(value,digits=1){return Number.isFinite(value)?value.toFixed(digits):'—';}
-g.FantasyMetrics={defs,rows,dataset,history,series,average,rank,format,div,pir,net,sfp};
+g.FantasyMetrics={defs,rows,dataset,history,series,trend,league,spread,direction,withWithout,average,rank,format,div,pir,net,sfp};
 })(globalThis);
