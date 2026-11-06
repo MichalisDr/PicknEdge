@@ -225,3 +225,14 @@ test('Zone card data: Last 3 / Last 5 compare with the same entity\'s Season; Se
  z3.forEach((z,i)=>{const cur=p.attempts[i],b=base.attempts[i];if(!cur||!b)assert.equal(z.d,'—');else{const d=100*p.made[i]/cur-100*base.made[i]/b;assert.ok(Math.abs(d)<.05?z.d.startsWith('0,0'):z.d.startsWith(d>0?'↑':'↓'),i);}});
 });
 test('Shots consumer: a missing feed leaves the game waiting (no data stored, no error)',()=>{const before=c.FantasyShots.state.error;c.FantasyShots.accept('999',{},{Points:null,PlayByPlay:{}});c.FantasyShots.accept('999',{},{Points:{Rows:[]},PlayByPlay:null});assert.equal(c.FantasyShots.state.error,before);assert.ok(!('999' in S));});
+test('Second Chance: only made shots with the official SECOND_CHANCE=1 flag, at their own coordinates, for players and teams in every period',()=>{
+ let seen=0;
+ for(const period of ['season','3','5'])for(const [kind,list] of [['teams',M.rows('teams',period).slice(0,6).map(t=>({...t,M1:t.OM1,A1:t.OA1,M2:t.OM2,A2:t.OA2,M3:t.OM3,A3:t.OA3}))],['players',M.rows('players',period).filter(p=>p.shotComplete).slice(0,15)]])for(const p of list){
+  const ev=c.FantasyShots.eventsOf(p.shotKeys),html=c.FantasyViz.shooting(p,{team:kind==='teams',model:null}),shots=html.match(/<svg[^>]*data-shotview="shots"[\s\S]*?<\/svg>/)[0],want=ev.filter(e=>e.made&&e.sc);
+  assert.equal((shots.match(/<circle class="sz-made" data-sc="1"/g)||[]).length,want.length,kind+' '+period+': every second-chance make, nothing else');
+  assert.equal((shots.match(/<circle class="sz-hl" data-m="[au]" data-sc="1"/g)||[]).length,want.filter(e=>e.ast!==null).length,'A/U highlight stays inside the second-chance sample');
+  assert.ok(html.includes('data-sc-btn')&&html.indexOf('data-sc-btn')<html.indexOf('data-hl-btn="a"')&&html.includes('class="sz-sep"'),'button sits left of Assisted with a separator');
+  assert.match(html,/data-sc="0"/);seen+=want.length;
+ }
+ assert.ok(seen>0,'the seed has second-chance makes');
+});
