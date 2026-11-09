@@ -58,33 +58,36 @@
     });
 
     /* Custom window. spec = { last: N | Infinity, venue: 'all' | 'home' | 'away' }: each team's games are filtered by venue, then
-       its last N are taken; a player's sample is his appearances in those games of his current team. Same shape as view(). */
-    async function customView(kind, spec = {}) {
+       its last N are taken; a player's sample is his appearances in those games of his current team. */
+    const encode = res => res.value === null ? null : res.used === res.of ? res.value : [res.value, res.used, res.of];
+    const order = (a, b) => a.date_utc.localeCompare(b.date_utc) || a.game - b.game;
+    async function windowRows(kind, spec = {}) {
       const { last = Infinity, venue = 'all' } = spec;
       const [eng, teamRows] = await Promise.all([engine(), games('teams')]);
-      const joined = eng.withOpponent(teamRows);
       const ok = r => venue === 'all' || (venue === 'home') === (r.home === 1);
-      const order = (a, b) => a.date_utc.localeCompare(b.date_utc) || a.game - b.game;
-      const picked = {};                                              // team -> rows (joined) of its selected games, oldest first
-      for (const r of joined.filter(ok).sort(order)) (picked[r.team] ||= []).push(r);
+      const picked = {};                                              // team -> rows (opponent figures joined) of its selected games, oldest first
+      for (const r of eng.withOpponent(teamRows).filter(ok).sort(order)) (picked[r.team] ||= []).push(r);
       for (const t of Object.keys(picked)) picked[t] = picked[t].slice(-last);
-      const cell = res => res.value === null ? null : res.used === res.of ? res.value : [res.value, res.used, res.of];
-      if (kind === 'teams') {
-        const ms = eng.METRICS.filter(m => m.scope === 'team'), all = [], rows = {};
-        for (const [team, rs] of Object.entries(picked)) { all.push(...rs); rows[team] = { games: rs.length, v: ms.map(m => cell(eng.evaluate(m, rs))) }; }
-        return makeView('teams', 'custom', { metrics: ms.map(m => m.id), league: ms.map(m => cell(eng.evaluate(m, all))), rows });
-      }
-      const ms = eng.METRICS.filter(m => m.scope === 'player'), prow = await games('players'), roster = (await need('roster.json')).players;
-      const byPlayer = {};
-      for (const r of [...prow].sort(order)) (byPlayer[r.player_id] ||= []).push(r);
-      const all = [], rows = {};
+      if (kind === 'teams') return { eng, ms: eng.METRICS.filter(m => m.scope === 'team'), rows: picked, info: Object.fromEntries(Object.entries(picked).map(([t, rs]) => [t, { games: rs.length }])) };
+      const ms = eng.METRICS.filter(m => m.scope === 'player'), roster = (await need('roster.json')).players, byPlayer = {};
+      for (const r of [...(await games('players'))].sort(order)) (byPlayer[r.player_id] ||= []).push(r);
+      const rows = {}, info = {};
       for (const [pid, list] of Object.entries(byPlayer)) {
         const team = list.at(-1).team, set = new Set((picked[team] || []).map(r => r.game));
-        const rs = list.filter(r => r.team === team && set.has(r.game));
-        all.push(...rs);
-        rows[pid] = { team, name: roster[pid]?.name || pid, pos: roster[pid]?.pos || '', v: ms.map(m => cell(eng.evaluate(m, rs))) };
+        rows[pid] = list.filter(r => r.team === team && set.has(r.game));
+        info[pid] = { team, name: roster[pid]?.name || pid, pos: roster[pid]?.pos || '' };
       }
-      return makeView('players', 'custom', { metrics: ms.map(m => m.id), league: ms.map(m => cell(eng.evaluate(m, all))), rows });
+      return { eng, ms, rows, info };
+    }
+    async function customView(kind, spec = {}) {
+      const { eng, ms, rows, info } = await windowRows(kind, spec), out = {}, all = [];
+      for (const [key, rs] of Object.entries(rows)) { all.push(...rs); out[key] = { ...info[key], v: ms.map(m => encode(eng.evaluate(m, rs))) }; }
+      return makeView(kind, 'custom', { metrics: ms.map(m => m.id), league: ms.map(m => encode(eng.evaluate(m, all))), rows: out });
+    }
+    /* Value of every metric over a chosen set of rows of a window (e.g. the league average of the players left by the page filters). */
+    async function average(kind, spec, keys) {
+      const { eng, ms, rows } = await windowRows(kind, spec), all = keys.flatMap(k => rows[k] || []);
+      return makeView(kind, 'average', { metrics: ms.map(m => m.id), league: ms.map(m => encode(eng.evaluate(m, all))), rows: {} });
     }
 
     /* ---- small things ---- */
@@ -100,7 +103,7 @@
       return n;
     }
 
-    return { manifest, metrics, view, customView, games, shots, roster, schedule, engine, status, clearOldCaches, records, decode };
+    return { manifest, metrics, view, customView, average, games, shots, roster, schedule, engine, status, clearOldCaches, records, decode };
   }
   return { create, decode };
 });

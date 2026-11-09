@@ -105,3 +105,14 @@ test('every player who played is in every window view, built and custom; no one 
   assert.ok(absent.length > 0, 'players with no appearance in L3 are present with gp = 0');
   assert.ok(absent.every(id => l3.get(id, 'pts100').value === null));
 });
+
+test('average() over a chosen set of players equals the engine over exactly those players\' rows', async () => {
+  const { D } = loader(), season = await D.view('players', 'season');
+  const keys = season.keys.filter(k => season.row(k).pos === 'G');
+  const avg = await D.average('players', {}, keys), all = await D.average('players', {}, season.keys);
+  assert.ok(Math.abs(all.league('pts100').value - season.league('pts100').value) < 1e-5, 'all players = the league row');
+  assert.notEqual(avg.league('pts100').value, all.league('pts100').value);
+  const g = await D.games('players'), rows = g.filter(r => keys.includes(r.player_id));
+  const pts = rows.reduce((n, r) => n + r.m1 + 2 * r.m2 + 3 * r.m3, 0), poss = rows.reduce((n, r) => n + r.poss_off_on, 0);
+  assert.ok(Math.abs(avg.league('pts100').value - 100 * pts / poss) < 1e-5);
+});
