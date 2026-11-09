@@ -49,9 +49,9 @@ test('every registry entry is well formed', () => {
   for (const m of METRICS) {
     assert.ok(!ids.has(m.id), `duplicate id ${m.id}`); ids.add(m.id);
     for (const k of ['id', 'label', 'scope', 'kind', 'tags', 'description']) assert.ok(m[k], `${m.id}: missing ${k}`);
-    assert.ok(['player', 'team'].includes(m.scope) && ['per100', 'pct', 'perGame', 'perMin', 'ratio', 'count', 'custom'].includes(m.kind), `${m.id}: scope/kind`);
+    assert.ok(['player', 'team', 'position'].includes(m.scope) && ['per100', 'pct', 'perGame', 'perMin', 'ratio', 'count', 'custom'].includes(m.kind), `${m.id}: scope/kind`);
     assert.ok([-1, 0, 1].includes(m.direction), `${m.id}: direction`);
-    if (m.kind === 'custom') assert.ok(m.needs?.length && typeof m.fn === 'function', `${m.id}: custom needs needs + fn`);
+    if (m.kind === 'custom') { assert.ok(m.needs?.length && typeof m.fn === 'function', `${m.id}: custom needs needs + fn`); if (m.bench) assert.ok(m.bench.every(id => METRICS.some(x => x.id === id)), `${m.id}: bench ids exist`); }
     else { assert.ok(m.num, `${m.id}: num`); if (!['count', 'perMin'].includes(m.kind)) assert.ok(m.den, `${m.id}: den`); }
   }
 });

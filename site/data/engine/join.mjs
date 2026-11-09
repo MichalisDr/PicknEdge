@@ -2,7 +2,7 @@
 import { ZONES } from './zones.mjs';
 
 const OPP_COLUMNS = ['sec', 'pts', 'm1', 'a1', 'm2', 'a2', 'm3', 'a3', 'oreb', 'dreb', 'ast', 'stl', 'tov', 'blk', 'blk_against', 'pf', 'fd',
-  'poss', 'sa', 'pts_fastbreak', 'pts_second_chance', 'pts_off_turnover',
+  'poss', 'sa', 'oreb_players', 'dreb_players', 'pts_fastbreak', 'pts_second_chance', 'pts_off_turnover',
   ...ZONES.flatMap(z => [`z_${z.key}_a`, `z_${z.key}_m`])];
 
 export function withOpponent(teamRows) {

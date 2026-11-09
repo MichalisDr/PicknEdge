@@ -9,7 +9,7 @@
   "l5",
   "l10"
  ],
- "version": "4af71f4717",
+ "version": "70796aa3f2",
  "eligibility": {
   "note": "Display-only rule used by the site to decide which players to list. Nothing is stored: the site evaluates it at display time on the selected window's gp, min and pir. A player is eligible in a window when ALL of that window's thresholds are met. l3 and l5 follow the old Fantasy filter (GP3 >= 1, MIN3 >= 10, GP5 >= 3, PIR >= 5); season and l10 are placeholders to confirm.",
   "windows": {
@@ -38,7 +38,10 @@
  "files": [
   "engine/engine.mjs",
   "engine/join.mjs",
+  "engine/matchup.mjs",
   "engine/registry.mjs",
+  "engine/samples.mjs",
+  "engine/venn.mjs",
   "engine/zones.mjs",
   "games/players.json",
   "games/teams.json",
@@ -47,6 +50,10 @@
   "players-l3.json",
   "players-l5.json",
   "players-season.json",
+  "positions-l10.json",
+  "positions-l3.json",
+  "positions-l5.json",
+  "positions-season.json",
   "roster.json",
   "schedule.json",
   "shots/ASV.json",

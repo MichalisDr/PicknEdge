@@ -48,7 +48,7 @@ const TEAM = {
 
 test('every registry metric has a hand-checked case', () => {
   const covered = new Set([...Object.keys(PLAYER), ...Object.keys(PLAYER_APPROX), ...Object.keys(TEAM), ...Object.keys(TEAM_EXTRA)]);
-  assert.deepEqual(METRICS.map(m => m.id).filter(id => !covered.has(id) && !/^(t_|o_)?z[sm]?_/.test(id)), []);   // zone metrics: zones.test.mjs
+  assert.deepEqual(METRICS.map(m => m.id).filter(id => !covered.has(id) && !/^(t_|o_)?z[sm]?_/.test(id) && !/^(rt_|pm_|mu_|pos_fg|src_)|^o_exp_efg$|^poss_g$/.test(id)), []);   // zone metrics: zones.test.mjs; matchup family: matchup-metrics.test.mjs
   assert.deepEqual([...covered].filter(id => !METRICS.some(m => m.id === id)), []);
 });
 for (const [id, want] of Object.entries(PLAYER)) test(`player ${id}`, () => approx(evaluate(byId(id), [P]).value, want));

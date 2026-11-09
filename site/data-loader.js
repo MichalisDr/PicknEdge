@@ -38,7 +38,8 @@
         kind, window, metrics: data.metrics, keys: Object.keys(data.rows),
         row: key => data.rows[key] || null,
         get: (key, id) => { const r = data.rows[key]; return r && id in index ? decode(r.v[index[id]]) : null; },
-        league: id => (id in index ? decode(data.league[index[id]]) : null),
+        league: id => (id in index && data.league ? decode(data.league[index[id]]) : null),
+        leagueOf: (k, id) => (id in index && data.leagues?.[k] ? decode(data.leagues[k][index[id]]) : null),
       };
     }
     const view = (kind, window) => once(`view:${kind}:${window}`, async () => makeView(kind, window, await need(`${kind}-${window}.json`)));
@@ -54,7 +55,7 @@
     const engine = () => once('engine', async () => {
       await manifest();
       const [eng, reg, join, zones] = await Promise.all(['engine.mjs', 'registry.mjs', 'join.mjs', 'zones.mjs'].map(f => doImport(url('engine/' + f))));
-      return { evaluate: eng.evaluate, termValue: eng.termValue, byId: eng.byId, METRICS: reg.METRICS, DERIVED: reg.DERIVED, withOpponent: join.withOpponent, zones };
+      return { evaluate: eng.evaluate, evaluateAll: eng.evaluateAll, termValue: eng.termValue, byId: eng.byId, METRICS: reg.METRICS, DERIVED: reg.DERIVED, withOpponent: join.withOpponent, zones };
     });
 
     /* Custom window. spec = { last: N | Infinity, venue: 'all' | 'home' | 'away' }: each team's games are filtered by venue, then
@@ -81,8 +82,10 @@
     }
     async function customView(kind, spec = {}) {
       const { eng, ms, rows, info } = await windowRows(kind, spec), out = {}, all = [];
-      for (const [key, rs] of Object.entries(rows)) { all.push(...rs); out[key] = { ...info[key], v: ms.map(m => encode(eng.evaluate(m, rs))) }; }
-      return makeView(kind, 'custom', { metrics: ms.map(m => m.id), league: ms.map(m => encode(eng.evaluate(m, all))), rows: out });
+      for (const rs of Object.values(rows)) all.push(...rs);
+      for (const [key, rs] of Object.entries(rows)) { const res = eng.evaluateAll(ms, rs, all); out[key] = { ...info[key], v: ms.map(m => encode(res[m.id])) }; }
+      const lg = eng.evaluateAll(ms, all, all);                              // metrics compared with the league use the league of this window
+      return makeView(kind, 'custom', { metrics: ms.map(m => m.id), league: ms.map(m => encode(lg[m.id])), rows: out });
     }
     /* The games (codes) a team's window covers: venue filter first, then the last N. */
     async function windowGames(team, spec = {}) {
@@ -94,6 +97,9 @@
       const { eng, ms, rows } = await windowRows(kind, spec), all = keys.flatMap(k => rows[k] || []);
       return makeView(kind, 'average', { metrics: ms.map(m => m.id), league: ms.map(m => encode(eng.evaluate(m, all))), rows: {} });
     }
+
+    /* Analysis helpers served with the engine (matchup verdict, with/without selection, Venn): loaded on first use. */
+    const analysis = name => once('analysis:' + name, async () => { await manifest(); return doImport(url('engine/' + name + '.mjs')); });
 
     /* ---- small things ---- */
     const metrics = () => once('metrics', async () => { const list = await need('metrics.json'); return { list, byId: Object.fromEntries(list.map(m => [m.id, m])) }; });
@@ -108,7 +114,7 @@
       return n;
     }
 
-    return { manifest, metrics, view, customView, average, windowGames, games, shots, roster, schedule, engine, status, clearOldCaches, records, decode };
+    return { manifest, metrics, view, customView, average, windowGames, analysis, games, shots, roster, schedule, engine, status, clearOldCaches, records, decode };
   }
   return { create, decode };
 });

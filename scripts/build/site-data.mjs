@@ -16,7 +16,7 @@ const repo = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const out = join(repo, arg('out', 'site/data'));
 const read = f => parseCsv(readFileSync(join(repo, 'data', 'clean', f), 'utf8'));
 
-const players = read('player_games.csv'), teams = read('team_games.csv'), dim = read('players.csv'), shots = read('shots.csv');
+const positions = read('position_games.csv'), players = read('player_games.csv'), teams = read('team_games.csv'), dim = read('players.csv'), shots = read('shots.csv');
 const season = teams[0].season;
 const byGame = (a, b) => a.date_utc.localeCompare(b.date_utc) || a.game - b.game;
 
@@ -28,8 +28,8 @@ const put = (name, data) => { writeFileSync(join(out, name), typeof data === 'st
 const table = (columns, rows) => ({ columns, rows: rows.map(r => columns.map(c => r[c])) });
 
 // ---- views (Season / L3 / L5 / L10), with league rows ----
-const views = buildViews({ players, teams, dim });
-for (const [w, v] of Object.entries(views)) { put(`players-${w}.json`, v.players); put(`teams-${w}.json`, v.teams); }
+const views = buildViews({ players, teams, dim, positions });
+for (const [w, v] of Object.entries(views)) { put(`players-${w}.json`, v.players); put(`teams-${w}.json`, v.teams); put(`positions-${w}.json`, v.positions); }
 
 // ---- metric catalog ----
 put('metrics.json', catalog());
@@ -68,7 +68,7 @@ for (const [team, games] of Object.entries(gamesOfTeam)) {
 }
 
 // ---- engine: the modules the tests cover, served to the browser unchanged ----
-for (const f of ['registry.mjs', 'engine.mjs', 'zones.mjs', 'join.mjs']) { copyFileSync(join(repo, 'scripts', 'metrics', f), join(out, 'engine', f)); written.push('engine/' + f); }
+for (const f of ['registry.mjs', 'engine.mjs', 'zones.mjs', 'join.mjs', 'matchup.mjs', 'samples.mjs', 'venn.mjs']) { copyFileSync(join(repo, 'scripts', 'metrics', f), join(out, 'engine', f)); written.push('engine/' + f); }
 
 // ---- manifest (no timestamps: an unchanged data set produces identical files) ----
 const hash = createHash('sha1');

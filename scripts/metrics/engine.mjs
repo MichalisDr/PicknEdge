@@ -19,11 +19,21 @@ export function termValue(terms, row) {
 
 const denOf = m => m.kind === 'perMin' ? [[1, 'sec']] : m.den;
 
-/** A player row counts only if the player played; a team row always counts. */
+/** A player row counts only if the player played; team and position rows always count. */
 const considered = (m, rows) => m.scope === 'player' ? rows.filter(r => Number(r.played) === 1) : rows;
 
-/** {value, used, of}: value over the rows where every component exists; `used` of `of` games had the data. */
-export function evaluate(m, rows) {
+/** Evaluate every metric of a scope over a set of rows: plain metrics first, then the metrics that need the league benchmark (bench = the league's values of the plain ones). */
+export function evaluateAll(metrics, rows, benchRows = rows, benchOverride = null) {
+  const plain = metrics.filter(m => !m.bench), out = {};
+  const bench = benchOverride || Object.fromEntries(metrics.map(m => [m.id, evaluate(m, benchRows).value]).filter(([, v]) => v !== null));
+  for (const m of plain) out[m.id] = evaluate(m, rows);
+  for (const m of metrics.filter(m => m.bench)) out[m.id] = evaluate(m, rows, bench);
+  return out;
+}
+
+/** {value, used, of}: value over the rows where every component exists; `used` of `of` games had the data.
+ *  A metric with `bench: [metric ids]` (a custom metric compared with the league) needs `bench` = {metric id: league value}; without it the value is null. */
+export function evaluate(m, rows, bench = null) {
   const list = considered(m, rows);
   if (m.kind === 'custom') {
     const sums = Object.fromEntries(m.needs.map(n => [n, 0]));
@@ -34,7 +44,8 @@ export function evaluate(m, rows) {
       m.needs.forEach((n, i) => { sums[n] += vals[i]; });
       used++;
     }
-    return { value: used ? m.fn(sums) : null, used, of: list.length };
+    if (m.bench && !(bench && m.bench.every(id => Number.isFinite(bench[id])))) return { value: null, used, of: list.length };
+    return { value: used ? m.fn(sums, bench) : null, used, of: list.length };
   }
   let N = 0, D = 0, used = 0;
   for (const r of list) {

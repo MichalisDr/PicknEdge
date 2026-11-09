@@ -43,7 +43,7 @@ for (const p of ['', 'o_']) for (const q of ['a', 'm']) {
 
 const F = ['fantasy'], B = ['betting'], FB = ['fantasy', 'betting'];
 const S = n => [[1, n]];                              // single component
-const P = 'player', T = 'team';
+const P = 'player', T = 'team', POSN = 'position';
 const e = (id, label, scope, kind, num, den, tags, digits, description, extra = {}) => ({ id, label, scope, kind, num, den, tags, digits, description, ...extra });
 
 export const METRICS = [
@@ -207,6 +207,65 @@ for (const [key, name, terms, basis] of RADAR) {
       `Net contribution of ${name.toLowerCase()} per 100 team possessions on court (radar axis).`, basis === 'both' ? { mult: 200 } : {}),
   );
 }
+
+/* ---------- team radar: production of the OPPOSING players against the team, per 100 opponent possessions ----------
+   Rebounds use the opponents' player-assigned rebounds (o_oreb_players / o_dreb_players). Team totals also contain "team rebounds"
+   (credited to no player, e.g. rebounds off the buzzer or out of bounds), which are not production of any player; the radar measures
+   what players did, so they are left out. All other categories are identical in team totals and player lines. */
+const TEAM_RADAR = [
+  ['2p', 'Two-pointers', [[3, 'o_m2'], [-1, 'o_a2']]], ['3p', 'Three-pointers', [[4, 'o_m3'], [-1, 'o_a3']]], ['ft', 'Free throws', [[2, 'o_m1'], [-1, 'o_a1']]],
+  ['ast', 'Assists', [[1, 'o_ast']]], ['dreb', 'Defensive rebounds', [[1, 'o_dreb_players']]], ['oreb', 'Offensive rebounds', [[1, 'o_oreb_players']]],
+  ['blk', 'Blocks', [[1, 'o_blk']]], ['stl', 'Steals', [[1, 'o_stl']]],
+];
+for (const [key, name, terms] of TEAM_RADAR) {
+  METRICS.push(e(`rt_${key}_100`, `Opp net ${name.toLowerCase()} / 100 opp poss`, T, 'per100', terms, S('o_poss'), F, 1,
+    `Net contribution of ${name.toLowerCase()} by the opposing players per 100 opponent possessions (team radar axis; rebounds exclude team rebounds).`));
+}
+
+/* ---------- expected opponent eFG% (zone benchmark) ----------
+   Expected = Σ [opponent FGA in zone group x league FG% of the group x weight (2P 1, 3P 1.5)] / opponent FGA, with the league FG% of the
+   same window. Groups: rim, rest of paint, mid-range + baseline, corner 3, arc 3. An estimate from zones; it does not include defender pressure. */
+const EXP_GROUPS = [['o_zs_rim', 1], ['o_zs_paint', 1], ['o_zm_mid', 1], ['o_zs_corner', 1.5], ['o_zs_arc', 1.5]];
+METRICS.push({
+  id: 'o_exp_efg', label: 'Opp Expected eFG%', scope: T, kind: 'custom', tags: F, digits: 1, num: null, den: null,
+  description: 'Zone-based estimate of opponent eFG%: their attempts in each zone group x the league FG% of that group x the eFG weight, over their attempts. Does not include defender pressure.',
+  needs: EXP_GROUPS.map(([k]) => k + '_a'), bench: EXP_GROUPS.map(([k]) => k + '_pct'),
+  fn: (s, b) => {
+    let A = 0, S_ = 0;
+    for (const [k, w] of EXP_GROUPS) { const a = s[k + '_a']; A += a; if (a > 0) { const p = b[k + '_pct']; if (!(p > 0 || p === 0)) return null; S_ += a * (p / 100) * w; } }
+    return A > 0 ? 100 * S_ / A : null;
+  },
+});
+
+/* ---------- matchup: what a team allows to a position (rows of position_games) ----------
+   pm_<x>: a component per minute played by the position's opposing players. A factor compares the team's per-minute value with the
+   league's over the same window: > 1 = the team allows more of it than the league. */
+const PM = [['m2', 'm2', 'made twos'], ['a2', 'a2', 'two-point attempts'], ['a3', 'a3', 'three-point attempts'], ['a1', 'a1', 'free-throw attempts'], ['fd', 'fd', 'fouls drawn'],
+  ['dr', 'dreb', 'defensive rebounds'], ['or', 'oreb', 'offensive rebounds'], ['as', 'ast', 'assists'], ['tv', 'tov', 'turnovers']];
+for (const [key, col, name] of PM) {
+  METRICS.push(e(`pm_${key}`, `${name} / min`, POSN, 'perMin', S(col), null, F, 3, `${name} allowed per minute played by the position's opposing players.`));
+  METRICS.push({
+    id: `mu_${key}`, label: `Factor · ${name}`, scope: POSN, kind: 'custom', tags: F, digits: 2, num: null, den: null,
+    description: `Per-minute ${name} the team allows to the position divided by the league's, same window (× 1.00 = league level).`,
+    needs: [col, 'sec'], bench: [`pm_${key}`], fn: (s, b) => s.sec > 0 && b[`pm_${key}`] > 0 ? (s[col] / s.sec * 60) / b[`pm_${key}`] : null,
+  });
+}
+for (const [k, made, att] of [['2', 'm2', 'a2'], ['3', 'm3', 'a3']]) {
+  METRICS.push(e(`pos_fg${k}_pct`, `${k}FG% allowed`, POSN, 'pct', S(made), S(att), F, 1, `${k}-point field-goal percentage the team allows to the position.`));
+  METRICS.push({
+    id: `mu_p${k}`, label: `Factor · ${k}FG%`, scope: POSN, kind: 'custom', tags: F, digits: 2, num: null, den: null,
+    description: `${k}-point percentage allowed to the position divided by the league's (× 1.00 = league level).`,
+    needs: [made, att], bench: [`pos_fg${k}_pct`], fn: (s, b) => s[att] > 0 && b[`pos_fg${k}_pct`] > 0 ? (s[made] / s[att]) / (b[`pos_fg${k}_pct`] / 100) : null,
+  });
+}
+
+/* ---------- matchup: where a player's PIR comes from (per game; turnovers and fouls as negatives) ---------- */
+METRICS.push(
+  e('src_stlblk_g', 'Steals + blocks / game', P, 'perGame', [[1, 'stl'], [1, 'blk']], S('played'), F, 1, 'Steals plus blocks per game played.'),
+  e('src_tov_g', '−Turnovers / game', P, 'perGame', [[-1, 'tov']], S('played'), F, 1, 'Turnovers per game played, as a negative PIR source.'),
+  e('src_pf_g', '−(Fouls + blocks against) / game', P, 'perGame', [[-1, 'pf'], [-1, 'blk_against']], S('played'), F, 1, 'Personal fouls plus blocks against per game played, as a negative PIR source.'),
+  e('poss_g', 'Possessions / game', T, 'perGame', S('poss'), S('games'), F, 1, 'Own possessions per game.'),
+);
 
 /* ---------- direction: which way is better FOR THE ENTITY (+1 higher, -1 lower, 0 style / volume, no judgement) ----------
    Opponent figures (o_*) are better when low, except opponent turnovers (a defence wants them high). The Fantasy lens

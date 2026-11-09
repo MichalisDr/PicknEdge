@@ -133,3 +133,22 @@ test('shot rows carry the assisted flag only for made shots (null = unknown), an
   assert.ok(rows.filter(r => r.made === 0).every(r => r.assisted === 0));
   assert.ok(rows.some(r => r.zone === 'rim'));
 });
+
+test('positions views: what a team allowed to each position, with league rows per position', async () => {
+  const { D } = loader(), v = await D.view('positions', 'l5');
+  assert.equal(v.keys.length, 60);                                 // 20 teams x G / F / C
+  const f = v.get('RED|G', 'mu_m2'), pm = v.get('RED|G', 'pm_m2');
+  assert.ok(Number.isFinite(f.value) && Number.isFinite(pm.value));
+  assert.ok(Math.abs(pm.value / v.leagueOf('G', 'pm_m2').value - f.value) < 1e-5, 'a factor is the team per-minute value over the league one');
+  assert.ok(Number.isFinite(v.leagueOf('F', 'pos_fg2_pct').value));
+  const m = await D.analysis('matchup'), s = await D.analysis('samples'), n = await D.analysis('venn');
+  assert.ok(m.matchup && s.withWithout && n.venn);
+});
+
+test('opponent-production radar excludes team rebounds', async () => {
+  const { D } = loader(), t = await D.view('teams', 'season'), games = await D.games('teams');
+  const row = games.filter(r => r.team === 'RED'), opp = games.filter(r => r.opp === 'RED');
+  assert.ok(opp.reduce((n, r) => n + r.oreb_players, 0) < opp.reduce((n, r) => n + r.oreb, 0), 'player-assigned offensive rebounds are fewer than the team totals');
+  const poss = opp.reduce((n, r) => n + r.poss, 0), dreb = opp.reduce((n, r) => n + r.dreb_players, 0);
+  assert.ok(Math.abs(t.get('RED', 'rt_dreb_100').value - 100 * dreb / poss) < 1e-5);
+});

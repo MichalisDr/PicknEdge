@@ -98,6 +98,9 @@ Every metric is defined once in `scripts/metrics/registry.mjs`. Ratios are `Σ n
 | `rd_stlblk_100` | Net Steals + blocks − blocks against / 100 poss | per100 | 200 × Σ(stl + blk − blk_against) ÷ Σ(poss_off_on + poss_def_on) | higher | fantasy | Net contribution of steals + blocks − blocks against per 100 team possessions on court (radar axis). |
 | `rd_fd_g` | Net Fouls drawn − fouls / game | perGame | Σ(fd − pf) ÷ Σ(played) | higher | fantasy | Net contribution of fouls drawn − fouls per game played (radar axis). |
 | `rd_fd_100` | Net Fouls drawn − fouls / 100 poss | per100 | 200 × Σ(fd − pf) ÷ Σ(poss_off_on + poss_def_on) | higher | fantasy | Net contribution of fouls drawn − fouls per 100 team possessions on court (radar axis). |
+| `src_stlblk_g` | Steals + blocks / game | perGame | Σ(stl + blk) ÷ Σ(played) | higher | fantasy | Steals plus blocks per game played. |
+| `src_tov_g` | −Turnovers / game | perGame | Σ(−tov) ÷ Σ(played) | higher | fantasy | Turnovers per game played, as a negative PIR source. |
+| `src_pf_g` | −(Fouls + blocks against) / game | perGame | Σ(−pf − blk_against) ÷ Σ(played) | higher | fantasy | Personal fouls plus blocks against per game played, as a negative PIR source. |
 
 ## Teams
 
@@ -179,4 +182,14 @@ Every metric is defined once in `scripts/metrics/registry.mjs`. Ratios are `Σ n
 | `o_zm_mid_pct` | Opp Mid FG% | pct | 100 × Σ(o_zm_mid_m) ÷ Σ(o_zm_mid_a) | lower | fantasy, betting | Field-goal percentage in the area "Mid" (sum of its zones). |
 | `o_zm_paint_pct` | Opp Paint FG% | pct | 100 × Σ(o_zm_paint_m) ÷ Σ(o_zm_paint_a) | lower | fantasy, betting | Field-goal percentage in the area "Paint" (sum of its zones). |
 | `share` | Share | pct | 100 × Σ(n) ÷ Σ(of) | higher | fantasy, betting | A part as a percentage of its whole (counts supplied by the caller). |
+| `rt_2p_100` | Opp net two-pointers / 100 opp poss | per100 | 100 × Σ(3·o_m2 − o_a2) ÷ Σ(o_poss) | higher | fantasy | Net contribution of two-pointers by the opposing players per 100 opponent possessions (team radar axis; rebounds exclude team rebounds). |
+| `rt_3p_100` | Opp net three-pointers / 100 opp poss | per100 | 100 × Σ(4·o_m3 − o_a3) ÷ Σ(o_poss) | higher | fantasy | Net contribution of three-pointers by the opposing players per 100 opponent possessions (team radar axis; rebounds exclude team rebounds). |
+| `rt_ft_100` | Opp net free throws / 100 opp poss | per100 | 100 × Σ(2·o_m1 − o_a1) ÷ Σ(o_poss) | higher | fantasy | Net contribution of free throws by the opposing players per 100 opponent possessions (team radar axis; rebounds exclude team rebounds). |
+| `rt_ast_100` | Opp net assists / 100 opp poss | per100 | 100 × Σ(o_ast) ÷ Σ(o_poss) | higher | fantasy | Net contribution of assists by the opposing players per 100 opponent possessions (team radar axis; rebounds exclude team rebounds). |
+| `rt_dreb_100` | Opp net defensive rebounds / 100 opp poss | per100 | 100 × Σ(o_dreb_players) ÷ Σ(o_poss) | higher | fantasy | Net contribution of defensive rebounds by the opposing players per 100 opponent possessions (team radar axis; rebounds exclude team rebounds). |
+| `rt_oreb_100` | Opp net offensive rebounds / 100 opp poss | per100 | 100 × Σ(o_oreb_players) ÷ Σ(o_poss) | higher | fantasy | Net contribution of offensive rebounds by the opposing players per 100 opponent possessions (team radar axis; rebounds exclude team rebounds). |
+| `rt_blk_100` | Opp net blocks / 100 opp poss | per100 | 100 × Σ(o_blk) ÷ Σ(o_poss) | higher | fantasy | Net contribution of blocks by the opposing players per 100 opponent possessions (team radar axis; rebounds exclude team rebounds). |
+| `rt_stl_100` | Opp net steals / 100 opp poss | per100 | 100 × Σ(o_stl) ÷ Σ(o_poss) | higher | fantasy | Net contribution of steals by the opposing players per 100 opponent possessions (team radar axis; rebounds exclude team rebounds). |
+| `o_exp_efg` | Opp Expected eFG% | custom | custom function of the window's summed o_zs_rim_a, o_zs_paint_a, o_zm_mid_a, o_zs_corner_a, o_zs_arc_a | lower | fantasy | Zone-based estimate of opponent eFG%: their attempts in each zone group x the league FG% of that group x the eFG weight, over their attempts. Does not include defender pressure. |
+| `poss_g` | Possessions / game | perGame | Σ(poss) ÷ Σ(games) | higher | fantasy | Own possessions per game. |
 
