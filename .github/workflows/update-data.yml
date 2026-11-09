@@ -52,7 +52,7 @@ jobs:
 
       - name: "Tests (guard - nothing is committed if they fail)"
         if: ${{ !inputs.probe }}
-        run: node --test tests
+        run: node --test "tests/**/*.test.mjs" "tests/**/*.test.cjs"
 
       - name: Commit changed data
         id: commit
