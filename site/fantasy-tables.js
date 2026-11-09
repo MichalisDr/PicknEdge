@@ -75,6 +75,7 @@
       return;
     }
     host.innerHTML = html(model);
+    performance.mark('fantasy-table-ready');   // measured by the Phase 3 gate (time to table)
     wire();
   }
 
