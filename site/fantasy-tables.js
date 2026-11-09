@@ -4,7 +4,7 @@
    summed in the browser by the same engine the tests cover. Player and team cards and charts arrive in step 3.4. */
 (function (g) {
   'use strict';
-  const D = g.PicknEdgeData, Elig = g.PicknEdgeEligibility;
+  const D = g.PicknEdgeData, Elig = g.PicknEdgeEligibility, W = g.PicknEdgeWindows;
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   /* Which metrics each table shows (ids from metrics.json). */
@@ -18,25 +18,13 @@
       shooting: ['o_efg', 'o_fg2_pct', 'o_fg3_pct', 'o_zs_rim_pct', 'o_zs_paint_pct', 'o_zs_mid_pct', 'o_zs_base_pct', 'o_zs_arc_pct', 'o_zs_corner_pct'],
     },
   };
-  const WINDOWS = [['season', 'Season', {}], ['l10', 'Last 10', { last: 10 }], ['l5', 'Last 5', { last: 5 }], ['l3', 'Last 3', { last: 3 }]];
   const EVAL = { good: '#DFFBE9', avg: '#FBFFDF', bad: '#F6E0E3', neutral: '#bdc7d5' };   // good / average / bad evaluation palette (UI only)
   const EPS = 1e-9;
 
   const state = { entity: 'teams', view: 'profile', win: 'season', custom: { last: 7, venue: 'all' }, customOpen: false, position: 'ALL', query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: -1 };
   let host = null, drawId = 0;
-  const customCache = new Map();
 
-  const specOf = () => state.win === 'custom' ? { last: state.custom.last || Infinity, venue: state.custom.venue } : WINDOWS.find(w => w[0] === state.win)[2];
   const eligibilityWindow = () => state.win !== 'custom' ? state.win : state.custom.last <= 3 ? 'l3' : state.custom.last <= 5 ? 'l5' : state.custom.last <= 10 ? 'l10' : 'season';
-  const windowLabel = () => state.win !== 'custom' ? WINDOWS.find(w => w[0] === state.win)[1]
-    : `Custom · last ${state.custom.last || 'all'} ${state.custom.venue === 'home' ? 'home ' : state.custom.venue === 'away' ? 'away ' : ''}games`;
-
-  async function viewFor(kind) {
-    if (state.win !== 'custom') return D.view(kind, state.win);
-    const key = kind + JSON.stringify(specOf());
-    if (!customCache.has(key)) customCache.set(key, D.customView(kind, specOf()));
-    return customCache.get(key);
-  }
 
   const fmt = (c, m) => !Number.isFinite(c?.value) ? '—' : c.value.toFixed(m.format.digits) + m.format.suffix;
   const coverage = c => c && c.used !== null && c.used < c.of ? `<small class="fw-cov" title="${c.used} of ${c.of} games had the data">${c.used}/${c.of}</small>` : '';
@@ -61,7 +49,7 @@
     const mine = ++drawId, teams = state.entity === 'teams';
     let model;
     try {
-      const [view, { byId }, roster, manifest, status] = await Promise.all([viewFor(state.entity), D.metrics(), D.roster(), D.manifest(), D.status()]);
+      const [view, { byId }, roster, manifest, status] = await Promise.all([W.view(state.entity, state), D.metrics(), D.roster(), D.manifest(), D.status()]);
       if (mine !== drawId) return;
       const ids = COLUMNS[state.entity][state.view], defs = ids.map(id => byId[id]);
       const rows = view.keys.map(id => {
@@ -88,12 +76,6 @@
 
   function html({ view, defs, roster, status, shown, avg, sortId }) {
     const teams = state.entity === 'teams', title = teams ? 'Teams' : 'Players';
-    const windowButtons = [...WINDOWS.map(w => [w[0], w[1]]), ['custom', 'Custom']]
-      .map(([k, label]) => `<button data-window="${k}" aria-pressed="${state.win === k}">${label}</button>`).join('');
-    const custom = state.win === 'custom' || state.customOpen ? `<div class="fw-filters fw-custom" role="group" aria-label="Custom window">
-      <label>Last <input data-custom="last" type="number" min="1" max="60" value="${state.custom.last || ''}" placeholder="all"> games</label>
-      <label>Venue <select data-custom="venue">${[['all', 'All games'], ['home', 'Home only'], ['away', 'Away only']].map(([v, l]) => `<option value="${v}" ${state.custom.venue === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
-      <button type="button" class="fw-filter-btn" data-apply>Apply</button></div>` : '';
     const header = defs.map(m => `<th aria-sort="${sortId === m.id ? (state.dir > 0 ? 'ascending' : 'descending') : 'none'}"><button data-sort="${m.id}" title="${esc(m.description)}">${esc(m.label)}</button></th>`).join('');
     const cells = (key, avgRow) => defs.map(m => {
       const c = avgRow ? avg[m.id] : view.get(key, m.id), r = teams && !avgRow ? rankOf(view, m.id, c.value, m.direction) : null;
@@ -107,7 +89,7 @@
       <label class="fw-check"><input data-filter="showAll" type="checkbox" ${state.showAll ? 'checked' : ''}> Show players below the form thresholds</label></div>` : '';
     return `<section class="fantasy-stats fw-workbench">
       <div class="fw-heading"><div><div class="eyebrow">FANTASY / ${teams ? 'TEAMS' : 'PLAYERS'}</div><h1>${title}</h1></div><span role="status">${esc(status)}</span></div>
-      <div class="fw-periods"><div class="fw-switch" role="group" aria-label="Sample window">${windowButtons}</div></div>${custom}
+      <div class="fw-periods"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(state)}</div></div>${W.customForm(state)}
       <div class="fw-toolbar">
         <div class="fw-switch" role="tablist">${['profile', 'shooting'].map(v => `<button data-view="${v}" role="tab" aria-selected="${state.view === v}">${v === 'profile' ? 'Profile' : 'Shooting'}</button>`).join('')}</div>
         ${teams ? '' : `<div class="fw-switch" aria-label="Player position">${['ALL', 'G', 'F', 'C'].map(v => `<button data-position="${v}" aria-pressed="${v === state.position}">${v === 'ALL' ? 'All' : v}</button>`).join('')}</div>`}
@@ -115,8 +97,8 @@
         ${filters}
       </div>
       <div class="fw-table-wrap"><table><thead><tr><th>${teams ? 'Team' : 'Player'}</th><th class="fw-gp">GP</th>${header}</tr></thead>
-        <tbody>${body}<tr class="fw-average"><th>League average<small>all players in the window</small></th><td class="fw-gp">—</td>${cells(null, true)}</tr></tbody></table></div>
-      <div class="fw-foot"><span>${shown.length} ${teams ? 'teams' : 'players'} · ${esc(windowLabel())}</span>${teams
+        <tbody>${body}<tr class="fw-average"><th>League average<small>full league${teams ? '' : ' · all players who played'} · ignores filters</small></th><td class="fw-gp">—</td>${cells(null, true)}</tr></tbody></table></div>
+      <div class="fw-foot"><span>${shown.length} ${teams ? 'teams' : 'players'} · ${esc(W.label(state))}</span>${teams
         ? '<span>#1 = best defence: lowest value (DRtg, Opp eFG%, Opp AST, Opp FTr, opponent second-chance / fast-break / points-off-turnover, opponent shooting), highest for Opp TOV and DREB%. Pace: highest = #1. Green = favourable for the opposing player.</span>'
         : '<span>Players below the form thresholds of the selected window are hidden unless you change this in Filters. n/m = games with the data out of games played.</span>'}</div>
       <details class="fw-method"><summary>Sample &amp; calculations</summary><p>Last 3 / 5 / 10 are the team's most recent games, counting only the games the player actually played. Every ratio is a sum divided by a sum, never an average of game percentages. PIR has no Fantasy bonuses. USG%, TOV% and every "per 100" value use possessions counted from the play-by-play while the player is on court. Custom windows sum any selection of games (last N, home or away) in your browser with the same definitions. Full list: docs/METRICS.md.</p></details>
@@ -125,7 +107,7 @@
 
   function wire() {
     const on = (sel, ev, fn) => host.querySelectorAll(sel).forEach(el => { el[ev] = () => fn(el); });
-    on('[data-window]', 'onclick', b => { state.win = b.dataset.window; state.customOpen = state.win === 'custom'; state.sort = ''; draw(); });
+    W.wire(host, state, () => { state.sort = ''; draw(); });
     on('[data-view]', 'onclick', b => { state.view = b.dataset.view; state.sort = ''; draw(); });
     on('[data-position]', 'onclick', b => { state.position = b.dataset.position; draw(); });
     on('[data-sort]', 'onclick', b => { state.dir = state.sort === b.dataset.sort ? -state.dir : -1; state.sort = b.dataset.sort; draw(); });
@@ -136,12 +118,6 @@
       state[k] = k === 'team' ? el.value : k === 'showAll' ? el.checked : Math.max(0, Number(el.value) || 0);
       draw();
     });
-    const apply = host.querySelector('[data-apply]');
-    if (apply) apply.onclick = () => {
-      const last = host.querySelector('[data-custom=last]').value;
-      state.custom = { last: last ? Math.max(1, Math.min(60, Number(last) | 0)) : 0, venue: host.querySelector('[data-custom=venue]').value };
-      state.win = 'custom'; state.sort = ''; draw();
-    };
     const search = host.querySelector('input[type=search]');
     search.oninput = e => { state.query = e.target.value; draw().then(() => { const i = host.querySelector('input[type=search]'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }); };
   }
