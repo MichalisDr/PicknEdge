@@ -5,7 +5,7 @@
 (function(g){
 'use strict';
 const M=g.FantasyMetrics,E=g.EuroLeagueData.metrics,Z=g.ShotZones,esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const GOOD='#7fc6ac',BAD='#e7919b',NEUTRAL='#b8c6d7';/* same palette as the table ranks */
+const {good:GOOD,bad:BAD,avg:NEUTRAL}=M.EVAL;/* same palette as the table ranks */
 const POS={G:'#4cc3d9',F:'#f2c14e',C:'#c58af9'},POS_NAME={G:'Guard',F:'Forward',C:'Center'},SET_COL=['#5aa9e6','#f2a65a','#a58bf2'];
 const PERIOD=p=>p==='season'?'Season':'Last '+p;
 

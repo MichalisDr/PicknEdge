@@ -35,7 +35,7 @@
 | `net_pir_usg` | NET PIR / χρήση | (PTS − (A1−M1) − (A2−M2) − (A3−M3) − Tv) ÷ (FGA + 0,44·FTA + Tv) | ανά χρήση | Προς κλείδωμα: ορισμός «χρήσης» |
 | `fd` | FD | FR × 100 / OfPo στο γήπεδο | ανά 100 | Σε χρήση (31/10)· μονάδα ίδια με PTS και AST, προς επιβεβαίωση |
 | `net_sfp` | Non-scoring PIR (πρώην NET SFP) | (OR + DR + As + St + BF + FR − FC − BA − Tv) / Gm | ανά αγώνα | Σε χρήση· ζητήθηκε και ανά λεπτό |
-| `cr` | CR | Τιμή του παίκτη στη Dunkest | credits | Συμφωνημένο, χωρίς πηγή ακόμη |
+| `cr` | CR | Τιμή του παίκτη στην επίσημη EuroLeague Fantasy (πεδίο `quotation`) | credits | Σε υλοποίηση (5/11): `tools/fetch-fantasy-credits.cjs` + workflow `fantasy-credits.yml` ανά 3 ώρες γράφουν το `site/fantasy-credits.json`, το `fantasy-live.js` το διαβάζει κάθε 30′. Χρειάζονται τα secrets `FANTASY_API_URL`, `FANTASY_API_TOKEN` |
 | `value_g` | Value / αγώνα | [Σ PIR(W) ÷ συμμετοχές(W)] ÷ CR | — | Συμφωνημένο |
 | `value_min` | Value / λεπτό | [Σ PIR(W) ÷ Σ λεπτά(W)] ÷ CR | — | Συμφωνημένο |
 

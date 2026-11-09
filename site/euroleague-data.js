@@ -14,7 +14,7 @@
 (function(g){
 'use strict';
 const SEASON='E2026',API='https://live.euroleague.net/api/',FEED='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/games';
-const SCHEDULE_KEY='picknedge-schedule-'+SEASON+'-v1',KEY='courtvision-betting-live-'+SEASON+'-v3',VERSION=3,CALC=3,FIXED=new Set([75]),PEOPLE_KEY='courtvision-betting-people-'+SEASON+'-v1',CLUBS='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/clubs/',PEOPLE_RETRY=12*60*60*1000,PARALLEL=2,MAX_ROUND=38,MAX_CODE=400,BLOCK=10,RECHECK_DAYS=2,RECHECK_AFTER=60*60*1000;
+const SCHEDULE_KEY='picknedge-schedule-'+SEASON+'-v1',KEY='courtvision-betting-live-'+SEASON+'-v3',VERSION=3,CALC=3,FIXED=new Set([75]),PEOPLE_KEY='courtvision-betting-people-'+SEASON+'-v1',CLUBS='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/clubs/',PEOPLE_RETRY=12*60*60*1000,PARALLEL=2,MAX_ROUND=38,MAX_CODE=400,BLOCK=10,RECHECK_DAYS=2,RECHECK_AFTER=60*60*1000,RECHECK_NO_ON=5*60*1000;
 const CID={IST:'anadolu-efes-istanbul',ASV:'asvel-lyon-villeurbanne',BAR:'barcelona',BAS:'baskonia',MUN:'bayern-munich',BES:'besiktas',DUB:'dubai',ULK:'fenerbahce-ulker',HTA:'hapoel-tel-aviv',RED:'kk-crvena-zvezda',TEL:'maccabi-tel-aviv',MIL:'milano',OLY:'olympiacos',PAN:'panathinaikos',PRS:'paris-basketball',PAR:'partizan',MAD:'real-madrid',PAM:'valencia',VIR:'virtus-bologna',ZAL:'zalgiris-kaunas'};
 const FIELDS=['M1','A1','M2','A2','M3','A3','OR','DR','As','St','Tv','Bl','FC'];
 /* Γραμμή παίκτη σε κάθε αγώνα: [κωδικός παίκτη, ...PFIELDS]. BA = κοψίματα που δέχτηκε (χρειάζεται για το PIR). */
@@ -171,7 +171,8 @@ async function scan(){
   if(!any)break;}
  return out;}
 async function pool(items,fn){let i=0;await Promise.all(Array.from({length:Math.min(PARALLEL,items.length)},async()=>{while(i<items.length)await fn(items[i++]);}));}
-function recheck(r){return Date.now()-r.at>RECHECK_AFTER&&Date.now()-Date.parse(r.date)<RECHECK_DAYS*864e5;}
+/* Αγώνας χωρίς πεντάδες (το play-by-play δεν ήταν έτοιμο ή ελλιπές) ξαναζητείται πιο συχνά: χωρίς αυτές λείπουν USG και οι δείκτες ανά κατοχή. */
+function recheck(r){const age=Date.now()-r.at;return age>(r.on?RECHECK_AFTER:RECHECK_NO_ON)&&Date.now()-Date.parse(r.date)<RECHECK_DAYS*864e5;}
 
 /* ---------- κοινοί ορισμοί δεικτών (METRICS.md) ----------
    Πεδία γραμμής παίκτη: M1,A1,M2,A2,M3,A3,OR,DR,As,St,Tv,BF (κοψίματα υπέρ),FR (φάουλ που κέρδισε),FC (φάουλ),BA (κοψίματα που δέχτηκε). */

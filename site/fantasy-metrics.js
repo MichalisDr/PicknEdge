@@ -68,7 +68,8 @@ function withWithout(pid,def){
    games:wo.map(r=>({game:r.game,round:r.round,opponent:r.opponent,value:r.totals?def.get(r.totals):null}))});}
  mates.sort((x,y)=>y.nWithout-x.nWithout||x.name.localeCompare(y.name));
  return {games:mine.length,mates};}
-function rank(list,p,def){const value=def.get(p),valid=list.map(def.get).filter(Number.isFinite);if(!Number.isFinite(value)||!valid.length)return null;const position=1+valid.filter(v=>def.rankHigher===false?v<value-1e-9:v>value+1e-9).length;const goodness=1+valid.filter(v=>def.goodHigher===false?v<value-1e-9:v>value+1e-9).length;return {position,n:valid.length,color:def.neutral?'#bdc7d5':goodness<=Math.ceil(valid.length/3)?'#7fc6ac':goodness>Math.ceil(valid.length*2/3)?'#e7919b':'#b8c6d7'};}
+const EVAL={good:'#DFFBE9',avg:'#FBFFDF',bad:'#F6E0E3'};/* shared good / average / bad evaluation palette */
+function rank(list,p,def){const value=def.get(p),valid=list.map(def.get).filter(Number.isFinite);if(!Number.isFinite(value)||!valid.length)return null;const position=1+valid.filter(v=>def.rankHigher===false?v<value-1e-9:v>value+1e-9).length;const goodness=1+valid.filter(v=>def.goodHigher===false?v<value-1e-9:v>value+1e-9).length;return {position,n:valid.length,color:def.neutral?'#bdc7d5':goodness<=Math.ceil(valid.length/3)?EVAL.good:goodness>Math.ceil(valid.length*2/3)?EVAL.bad:EVAL.avg};}
 function format(value,digits=1){return Number.isFinite(value)?value.toFixed(digits):'—';}
-g.FantasyMetrics={defs,rows,dataset,history,series,trend,league,spread,direction,withWithout,average,rank,format,div,pir,net,sfp};
+g.FantasyMetrics={EVAL,defs,rows,dataset,history,series,trend,league,spread,direction,withWithout,average,rank,format,div,pir,net,sfp};
 })(globalThis);
