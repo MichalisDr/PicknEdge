@@ -24,6 +24,7 @@ export const DERIVED = {
   misses: [[1, 'a1'], [-1, 'm1'], [1, 'a2'], [-1, 'm2'], [1, 'a3'], [-1, 'm3']],
   reb: [[1, 'oreb'], [1, 'dreb']],
   fga: [[1, 'a2'], [1, 'a3']],
+  fgm: [[1, 'm2'], [1, 'm3']],
   o_fga: [[1, 'o_a2'], [1, 'o_a3']],
   used: [[1, 'sa'], [1, 'tov']],                       // possessions used by the player: shot attempts, free-throw trips, turnovers
   team_used_on: [[1, 'team_sa_on'], [1, 'team_tov_on']],
@@ -31,6 +32,14 @@ export const DERIVED = {
   nonscoring: [[1, 'oreb'], [1, 'dreb'], [1, 'ast'], [1, 'stl'], [1, 'blk'], [1, 'fd'], [-1, 'pf'], [-1, 'blk_against'], [-1, 'tov']],
   pir: [[1, 'net'], [1, 'nonscoring'], [1, 'tov']],    // net + (credits - fouls - blocks against), turnovers counted once in net
 };
+
+import { ZONES, SUBS, MAINS, zonesOfSub, zonesOfMain } from './zones.mjs';
+
+// Zone sums (sub-areas and areas) for own figures and the opponent's (o_ prefix); zones themselves are build-time columns z_<zone>_a / _m.
+for (const p of ['', 'o_']) for (const q of ['a', 'm']) {
+  for (const sub of SUBS) DERIVED[`${p}zs_${sub.key}_${q}`] = zonesOfSub(sub.key).map(z => [1, `${p}z_${z}_${q}`]);
+  for (const main of MAINS) DERIVED[`${p}zm_${main.key}_${q}`] = zonesOfMain(main.key).map(z => [1, `${p}z_${z}_${q}`]);
+}
 
 const F = ['fantasy'], B = ['betting'], FB = ['fantasy', 'betting'];
 const S = n => [[1, n]];                              // single component
@@ -68,12 +77,26 @@ export const METRICS = [
   e('oreb_pct', 'OREB%', P, 'pct', S('oreb'), [[1, 'team_oreb_on'], [1, 'opp_dreb_on']], FB, 1, 'Share of the offensive rebounds available while on court (own team OREB + opponent DREB) that the player took.'),
   e('dreb_pct', 'DREB%', P, 'pct', S('dreb'), [[1, 'team_dreb_on'], [1, 'opp_oreb_on']], FB, 1, 'Share of the defensive rebounds available while on court (own team DREB + opponent OREB) that the player took.'),
 
+  e('gs', 'GS', P, 'count', S('starter'), null, B, 0, 'Games started.'),
+  e('oreb_g', 'OREB / game', P, 'perGame', S('oreb'), S('played'), B, 1, 'Offensive rebounds per game played.'),
+  e('dreb_g', 'DREB / game', P, 'perGame', S('dreb'), S('played'), B, 1, 'Defensive rebounds per game played.'),
+  e('m3_g', '3PM / game', P, 'perGame', S('m3'), S('played'), B, 1, 'Three-pointers made per game played.'),
+  e('a3_g', '3PA / game', P, 'perGame', S('a3'), S('played'), B, 1, 'Three-point attempts per game played.'),
+  e('a1_g', 'FTA / game', P, 'perGame', S('a1'), S('played'), B, 1, 'Free-throw attempts per game played.'),
+  e('m3_100', '3PM / 100 poss', P, 'per100', S('m3'), S('poss_off_on'), B, 1, 'Three-pointers made per 100 team offensive possessions while on court.'),
+  e('a3_100', '3PA / 100 poss', P, 'per100', S('a3'), S('poss_off_on'), B, 1, 'Three-point attempts per 100 team offensive possessions while on court.'),
+  e('a1_100', 'FTA / 100 poss', P, 'per100', S('a1'), S('poss_off_on'), B, 1, 'Free-throw attempts per 100 team offensive possessions while on court.'),
+  e('pf100', 'PF / 100 poss', P, 'per100', S('pf'), S('poss_def_on'), B, 1, 'Personal fouls per 100 team defensive possessions while on court.'),
+  e('ast_pct', 'AST%', P, 'pct', S('ast'), [[1, 'team_fgm_on'], [-1, 'fgm']], B, 1, 'Share of team field goals made while on court (excluding his own) that the player assisted.'),
+  e('blk_pct', 'BLK%', P, 'pct', S('blk'), S('opp_a2_on'), B, 1, 'Blocks as a share of opponent two-point attempts while on court.'),
+
   // ---------- players: shooting ----------
   e('efg', 'eFG%', P, 'pct', [[1, 'm2'], [1.5, 'm3']], S('fga'), FB, 1, 'Effective field-goal percentage: (2P made + 1.5 x 3P made) / field-goal attempts.'),
   e('fg2_pct', '2FG%', P, 'pct', S('m2'), S('a2'), FB, 1, 'Two-point field-goal percentage.'),
   e('fg3_pct', '3FG%', P, 'pct', S('m3'), S('a3'), FB, 1, 'Three-point field-goal percentage.'),
   e('ft_pct', 'FT%', P, 'pct', S('m1'), S('a1'), FB, 1, 'Free-throw percentage.'),
   e('ftr', 'FTr', P, 'pct', S('a1'), S('fga'), FB, 1, 'Free-throw rate: free-throw attempts per field-goal attempt, x100.'),
+  e('a3_rate', '3PA / FGA', P, 'pct', S('a3'), S('fga'), B, 1, 'Share of field-goal attempts that are three-pointers.'),
   e('ts_pct', 'TS%', P, 'pct', S('pts'), [[2, 'a2'], [2, 'a3'], [0.88, 'a1']], B, 1, 'True shooting: points / (2 x (FGA + 0.44 x FTA)).'),
 
   // ---------- players: PIR family ----------
@@ -151,3 +174,11 @@ function offensiveLoad(s) {
   const k = 100 / s.poss_off_on, v = (s.ast * k - 0.38 * bc) * 0.75 + s.sa * k + bc + s.tov * k;   // SA from play-by-play replaces FGA + 0.44 x FTA
   return Number.isFinite(v) ? v : null;
 }
+
+/* ---------- shot-zone FG% (from the build's zone classification of every shot) ---------- */
+const zoneEntries = (scope, p, idp, labelp, tags) => [
+  ...ZONES.map(z => e(`${idp}z_${z.key}_pct`, `${labelp}${z.name} FG%`, scope, 'pct', S(`${p}z_${z.key}_m`), S(`${p}z_${z.key}_a`), tags, 1, `Field-goal percentage in the zone "${z.name}".`)),
+  ...SUBS.map(z => e(`${idp}zs_${z.key}_pct`, `${labelp}${z.name} FG%`, scope, 'pct', S(`${p}zs_${z.key}_m`), S(`${p}zs_${z.key}_a`), tags, 1, `Field-goal percentage in the sub-area "${z.name}" (sum of its zones).`)),
+  ...MAINS.map(z => e(`${idp}zm_${z.key}_pct`, `${labelp}${z.name} FG%`, scope, 'pct', S(`${p}zm_${z.key}_m`), S(`${p}zm_${z.key}_a`), tags, 1, `Field-goal percentage in the area "${z.name}" (sum of its zones).`)),
+];
+METRICS.push(...zoneEntries(P, '', '', '', FB), ...zoneEntries(T, '', 't_', '', B), ...zoneEntries(T, 'o_', 'o_', 'Opp ', FB));
