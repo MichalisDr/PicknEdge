@@ -6,6 +6,9 @@ name: Update data
 #  - probe = true: re-fetch 5 stored games into a runner temp folder, compare byte-for-byte with data/raw,
 #    print MATCH/MISMATCH, commit nothing.
 on:
+  # TEMPORARY (job test): run on push to this branch. Removed right after the run.
+  push:
+    branches: [rebuild/data-pipeline]
   workflow_dispatch:
     inputs:
       probe:
