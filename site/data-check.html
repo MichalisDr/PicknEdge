@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data check</title>
+<style>
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 24px auto; max-width: 860px; padding: 0 16px; color: #1c2430; }
+  h1 { font-size: 20px; } h2 { font-size: 15px; margin-top: 28px; }
+  table { border-collapse: collapse; width: 100%; } th, td { text-align: left; padding: 4px 10px; border-bottom: 1px solid #e3e7ee; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .ok { color: #137333; font-weight: 600; } .bad { color: #b3261e; font-weight: 600; }
+  select, button { font: inherit; padding: 4px 8px; }
+</style>
+</head>
+<body>
+<h1>Data check <small style="font-weight:400;color:#667">(development page for the new data layer)</small></h1>
+<p id="status">Loading…</p>
+
+<h2>What was loaded to show this page</h2>
+<table><thead><tr><th>File</th><th class="n">Transferred</th></tr></thead><tbody id="files"></tbody></table>
+<p id="origins"></p>
+
+<h2>Custom window</h2>
+<p>
+  <label>Last <select id="last"><option value="0">all</option><option value="3">3</option><option value="5">5</option><option value="7" selected>7</option><option value="10">10</option></select> games</label>
+  <label>Venue <select id="venue"><option value="all">all</option><option value="home">home</option><option value="away">away</option></select></label>
+  <button id="run">Calculate</button> <span id="timing"></span>
+</p>
+<table><thead><tr><th>Player</th><th>Team</th><th class="n">GP</th><th class="n">MIN</th><th class="n">PTS / 100</th><th class="n">USG%</th><th class="n">DREB%</th></tr></thead><tbody id="players"></tbody></table>
+<p id="note"></p>
+
+<script src="data-loader.js"></script>
+<script>
+(async function () {
+  const D = PicknEdgeData, $ = id => document.getElementById(id);
+  D.clearOldCaches();
+  $('status').textContent = await D.status();
+  const [metrics, roster] = await Promise.all([D.metrics(), D.roster(), D.schedule(), D.view('players', 'season'), D.view('teams', 'season')]);
+
+  function listFiles() {
+    const base = new URL('data/', location.href).href;
+    const res = performance.getEntriesByType('resource').filter(e => e.name.startsWith(base));
+    $('files').innerHTML = res.map(e => `<tr><td>${e.name.slice(base.length).replace(/\?v=.*/, '')}</td><td class="n">${((e.transferSize || e.encodedBodySize || 0) / 1024).toFixed(1)} KB</td></tr>`).join('');
+    const all = performance.getEntriesByType('resource').map(e => new URL(e.name).origin);
+    const foreign = [...new Set(all)].filter(o => o !== location.origin);
+    $('origins').innerHTML = foreign.length ? `<span class="bad">Requests to other hosts: ${foreign.join(', ')}</span>` : '<span class="ok">All requests went to this site only (no EuroLeague / incrowd calls).</span>';
+  }
+  listFiles();
+
+  async function run() {
+    const t0 = performance.now(), last = Number($('last').value) || Infinity, venue = $('venue').value;
+    const v = await D.customView('players', { last, venue });
+    const rows = v.keys.map(k => ({ k, r: v.row(k), gp: v.get(k, 'gp').value, min: v.get(k, 'min').value, p: v.get(k, 'pts100').value, u: v.get(k, 'usg').value, d: v.get(k, 'dreb_pct').value }))
+      .filter(x => x.gp >= 3 && x.min >= 20).sort((a, b) => b.p - a.p).slice(0, 10);
+    const f = (x, d = 1) => Number.isFinite(x) ? x.toFixed(d) : '—';
+    $('players').innerHTML = rows.map(x => `<tr><td>${x.r.name}</td><td>${x.r.team}</td><td class="n">${x.gp}</td><td class="n">${f(x.min)}</td><td class="n">${f(x.p)}</td><td class="n">${f(x.u)}</td><td class="n">${f(x.d)}</td></tr>`).join('');
+    $('timing').textContent = `${(performance.now() - t0).toFixed(0)} ms for ${v.keys.length} players × ${v.metrics.length} metrics`;
+    $('note').textContent = `Top 10 by PTS / 100 among players with at least 3 games and 20 min. League PTS / 100 in this window: ${f(v.league('pts100').value)}.`;
+    listFiles();
+  }
+  $('run').onclick = run; run();
+})().catch(e => { document.getElementById('status').innerHTML = '<span class="bad">' + e.message + '</span>'; });
+</script>
+</body>
+</html>
