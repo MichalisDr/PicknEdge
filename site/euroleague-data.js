@@ -14,7 +14,7 @@
 (function(g){
 'use strict';
 const SEASON='E2026',API='https://live.euroleague.net/api/',FEED='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/games';
-const SCHEDULE_KEY='picknedge-schedule-'+SEASON+'-v1',KEY='courtvision-betting-live-'+SEASON+'-v3',VERSION=3,CALC=3,FIXED=new Set([75]),PEOPLE_KEY='courtvision-betting-people-'+SEASON+'-v1',CLUBS='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/clubs/',PEOPLE_RETRY=12*60*60*1000,PARALLEL=2,MAX_ROUND=38,MAX_CODE=400,BLOCK=10,RECHECK_DAYS=2,RECHECK_AFTER=60*60*1000;
+const SCHEDULE_KEY='picknedge-schedule-'+SEASON+'-v1',KEY='courtvision-betting-live-'+SEASON+'-v3',VERSION=3,CALC=3,FIXED=new Set([75]),PEOPLE_KEY='courtvision-betting-people-'+SEASON+'-v1',CLUBS='https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/'+SEASON+'/clubs/',PEOPLE_RETRY=12*60*60*1000,GAME_MS=150*60*1000,PARALLEL=2,MAX_ROUND=38,MAX_CODE=400,BLOCK=10,RECHECK_DAYS=2,RECHECK_AFTER=60*60*1000;
 const CID={IST:'anadolu-efes-istanbul',ASV:'asvel-lyon-villeurbanne',BAR:'barcelona',BAS:'baskonia',MUN:'bayern-munich',BES:'besiktas',DUB:'dubai',ULK:'fenerbahce-ulker',HTA:'hapoel-tel-aviv',RED:'kk-crvena-zvezda',TEL:'maccabi-tel-aviv',MIL:'milano',OLY:'olympiacos',PAN:'panathinaikos',PRS:'paris-basketball',PAR:'partizan',MAD:'real-madrid',PAM:'valencia',VIR:'virtus-bologna',ZAL:'zalgiris-kaunas'};
 const FIELDS=['M1','A1','M2','A2','M3','A3','OR','DR','As','St','Tv','Bl','FC'];
 /* Γραμμή παίκτη σε κάθε αγώνα: [κωδικός παίκτη, ...PFIELDS]. BA = κοψίματα που δέχτηκε (χρειάζεται για το PIR). */
@@ -23,7 +23,8 @@ const POS={Guard:'G',Forward:'F',Center:'C'};
 const QUARTERS=['FirstQuarter','SecondQuarter','ThirdQuarter','ForthQuarter','ExtraTime'];
 const OWN=new Set(['2FGA','2FGM','3FGA','3FGM','FTA','FTM','TO','O','D','ST','AS']),SHOTS=new Set(['2FGA','2FGM','3FGA','3FGM']),TECH=new Set(['CMT1','CMT2','C','B']);
 const state={status:'snapshot',games:0,round:null,date:null,updated:null,estimated:0,missing:[],live:[],error:null,progress:null};/* μόνο μεταδεδομένα φόρτωσης· κανένα στατιστικό */
-let records={},schedule=[],running=null,blocked=false,seedAt={},people={},pauseUntil=0;
+/* meta: πότε ολοκληρώθηκε η τελευταία ενημέρωση και αν ήταν πλήρης. Αποθηκεύεται μαζί με τους αγώνες· παλιά cache χωρίς αυτό = ημιτελής (μία φορά συνεχίζεται). */
+let meta={updated:0,complete:false},records={},schedule=[],running=null,blocked=false,seedAt={},people={},pauseUntil=0;
 /* Μητρώο παικτών: κωδικός → {name, team, pos, dorsal, height}. Ρόστερ: ομάδα → κωδικοί ενεργών παικτών. */
 const info={},rosters={};
 
@@ -36,9 +37,9 @@ function seed(){const s=g.BETTING_GAMES_SEED,ps=g.BETTING_PLAYERS_SEED,out={};if
   const lines=pl&&pl.games[code];if(lines)out[code].players={[home]:lines[0].map(r=>[id(r[0]),...r.slice(1)]),[away]:lines[1].map(r=>[id(r[0]),...r.slice(1)])};
   seedAt[code]=at;}
  return out;}
-function read(){try{localStorage.removeItem('courtvision-betting-live-'+SEASON+'-v2');}catch{}try{const c=JSON.parse(localStorage.getItem(KEY)||'null');return c&&c.v===VERSION&&c.games?c.games:{};}catch{return {};}}
+function read(){try{localStorage.removeItem('courtvision-betting-live-'+SEASON+'-v2');}catch{}try{const c=JSON.parse(localStorage.getItem(KEY)||'null');if(c&&c.v===VERSION&&c.games){meta={updated:Number(c.updated)||0,complete:c.complete===true};return c.games;}return {};}catch{return {};}}
 /* Αποθηκεύονται μόνο οι αγώνες που δεν υπάρχουν στο seed (ή ξαναδιαβάστηκαν μετά από αυτό). */
-function write(){try{const games=Object.fromEntries(Object.entries(records).filter(([c,r])=>!(c in seedAt)||r.at>seedAt[c]));localStorage.setItem(KEY,JSON.stringify({v:VERSION,saved:Date.now(),games}));}catch{}}
+function write(){try{const games=Object.fromEntries(Object.entries(records).filter(([c,r])=>!(c in seedAt)||r.at>seedAt[c]));localStorage.setItem(KEY,JSON.stringify({v:VERSION,saved:Date.now(),updated:meta.updated,complete:meta.complete,games}));}catch{}}
 /* Ρόστερ που κατέβηκαν από το feed: ομάδα → {at, list:[[κωδικός, όνομα, θέση, νούμερο, ύψος, ενεργός]]} */
 function usePeople(team,list){rosters[team]=[];for(const [pid,name,pos,dorsal,height,active] of list){const old=info[pid];
   if(active||!old||!old.pos)info[pid]={name:old?.name||name,team:active?team:(old?.team||team),pos:pos||old?.pos||'',dorsal,height:height||old?.height||0};
@@ -223,7 +224,7 @@ async function refresh(){
    try{await fillPeople();}catch{}
    state.missing=failed.filter(x=>!records[x.code]).map(x=>`R${x.round} ${x.home}–${x.away}`);
    if(blocked)state.error='Η EuroLeague περιόρισε προσωρινά τα αιτήματα. '+(state.missing.length?'Λείπουν: '+state.missing.join(', ')+'. ':'')+'Ξαναδοκίμασε σε λίγα λεπτά.';
-   state.status=state.missing.length?'partial':'live';state.updated=Date.now();
+   state.status=state.missing.length?'partial':'live';state.updated=meta.updated=Date.now();meta.complete=!blocked&&!state.missing.length;write();
   }catch(e){
    state.error='Δεν ήταν δυνατή η ενημέρωση από την EuroLeague ('+String(e.message||e)+').';
    state.status=state.games?'cached':'snapshot';
@@ -231,14 +232,19 @@ async function refresh(){
  })();
  return running;}
 
+/* Χωρίς δίκτυο: αγώνες που έχουν τελειώσει από την τελευταία ενημέρωση και δεν έχουν αποθηκευτεί (από το αποθηκευμένο πρόγραμμα: τελικό χωρίς εγγραφή, ή ώρα έναρξης + 2,5 ώρες μετά την τελευταία ενημέρωση). Μόνο ένδειξη, δεν κατεβάζει τίποτα. */
+function pending(){const now=Date.now();return schedule.filter(x=>x.code&&!records[x.code]&&(x.status==='result'||(()=>{const end=Date.parse(x.date)+GAME_MS;return end>meta.updated&&end<now;})())).length;}
+/* Αυτόματη λήψη στο άνοιγμα μόνο όταν δεν υπάρχει τίποτα αποθηκευμένο ή η προηγούμενη λήψη δεν ολοκληρώθηκε. Αλλιώς το άνοιγμα και το refresh της σελίδας δεν κάνουν αιτήματα· η ενημέρωση γίνεται με το κουμπί. */
+const autoLoad=()=>!Object.keys(records).length||!meta.complete;
 function reset(){records=seed();try{localStorage.removeItem(KEY);}catch{}return refresh();}
 
 /* Άμεση εμφάνιση από seed + προσωρινή μνήμη του browser, μετά ενημέρωση στο παρασκήνιο. */
 records=Object.assign(seed(),read());readPeople();schedule=readSchedule();
 try{if(apply())state.status='cached';}catch(e){records={};state.error=String(e.message||e);}
+state.updated=meta.updated||null;
 
 /* Καταναλωτές των feeds ενός αγώνα: {feeds:['Points'|'PlayByPlay'], needs(code,rec), accept(code,rec,{PlayByPlay,Points})}. */
 const consumers=[];
-g.EuroLeagueData={state,refresh,reset,register:c=>{consumers.push(c);},records:()=>records,schedule:()=>schedule,possessions,parse,tracker,season:SEASON,cid:CID,info,rosters,PFIELDS,FIELDS,TOL,CALC,needs,metrics:M};
-if(typeof fetch==='function'&&!g.EUROLEAGUE_DATA_DISABLED&&!g.BETTING_LIVE_DISABLED&&typeof setTimeout==='function')setTimeout(refresh,0);/* μετά τη φόρτωση όλων των scripts, ώστε να προλάβουν να ακούσουν το event */
+g.EuroLeagueData={state,refresh,reset,register:c=>{consumers.push(c);},records:()=>records,schedule:()=>schedule,possessions,parse,tracker,season:SEASON,cid:CID,info,rosters,PFIELDS,FIELDS,TOL,CALC,needs,pending,autoLoad,metrics:M};
+if(typeof fetch==='function'&&!g.EUROLEAGUE_DATA_DISABLED&&!g.BETTING_LIVE_DISABLED&&typeof setTimeout==='function'&&autoLoad())setTimeout(refresh,0);/* μετά τη φόρτωση όλων των scripts, ώστε να προλάβουν να ακούσουν το event */
 })(globalThis);

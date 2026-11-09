@@ -63,7 +63,7 @@ function draw(){
  const intro=`<div class="hero"><div class="intro"><div class="eyebrow">BETTING / DISCOVER</div><h1>Από το matchup στην υπόθεση.</h1><p>Για κάθε αγώνα της αγωνιστικής: πού η μία ομάδα είναι δυνατή εκεί που η άλλη είναι αδύνατη, με κατάταξη σεζόν και τελευταίων 3 αγώνων. Δεν είναι προβλέψεις· είναι σημεία προς έλεγχο στην αγορά.</p></div><span class="pill">${L&&L.round?'ΔΕΔΟΜΕΝΑ ΕΩΣ ROUND '+L.round:'ΦΟΡΤΩΣΗ'}</span></div>`;
  if(!S||!S.ranks||!(g.BETTING_TEAMS||[]).length){host.innerHTML=intro+'<div class="empty"><h2>Φόρτωση στατιστικών…</h2></div>';return;}
  const nx=nextRound(list);
- if(!nx){host.innerHTML=intro+`<div class="empty"><h2>${L&&L.status==='loading'?'Φόρτωση προγράμματος από την EuroLeague…':'Το πρόγραμμα δεν είναι διαθέσιμο αυτή τη στιγμή.'}</h2><p>Το πρόγραμμα διαβάζεται μαζί με τα στατιστικά. ${L&&L.error?esc(L.error):''}</p>${L&&L.status!=='loading'?'<button type="button" class="btn" data-live-refresh>Ανανέωση</button>':''} <a class="btn" href="#data">Στατιστικά Betting</a></div>`;bindLive();return;}
+ if(!nx){host.innerHTML=intro+`<div class="empty"><h2>${L&&L.status==='loading'?'Φόρτωση προγράμματος από την EuroLeague…':'Το πρόγραμμα δεν είναι διαθέσιμο αυτή τη στιγμή.'}</h2><p>Το πρόγραμμα διαβάζεται μαζί με τα στατιστικά. ${L&&L.error?esc(L.error):''}</p>${L&&L.status!=='loading'?'<button type="button" class="btn" data-live-refresh>Ενημέρωση live stats</button>':''} <a class="btn" href="#data">Στατιστικά Betting</a></div>`;bindLive();return;}
  const R=ranksAll(),names={},hyps=[];let total=0;
  const cards=nx.games.map(x=>{const H=cidOf(x.home),A=cidOf(x.away);names[H]=byId[H]?.Cl||x.homeName||x.home;names[A]=byId[A]?.Cl||x.awayName||x.away;
   if(!H||!A||!byId[H]||!byId[A])return `<article class="card game-card"><h2>${esc(x.homeName||x.home)} – ${esc(x.awayName||x.away)}</h2><p class="muted">Δεν βρέθηκαν στατιστικά για μία από τις ομάδες.</p></article>`;
@@ -83,7 +83,7 @@ function draw(){
  host.querySelectorAll('[data-hyp]').forEach(b=>b.onclick=()=>{try{sessionStorage.setItem('cv-hypothesis',hyps[Number(b.dataset.hyp)]);}catch{}location.hash='manual';});
  bindLive();}
 function statusNote(L){if(g.BETTING_STATIC)return `<p class="live-status" data-live="live"><span>${esc(g.BETTING_STATIC.label)}</span></p>`;if(!L)return '';if(L.status==='loading')return '<p class="live-status" data-live="loading"><span>Ενημέρωση από EuroLeague…</span></p>';
- return `<p class="live-status" data-live="${esc(L.status)}"><span>Κατάταξη από ${esc(L.games)} αγώνες${L.error?' · '+esc(L.error):''}</span><button type="button" class="live-refresh" data-live-refresh>Ανανέωση</button></p>`;}
+ return `<p class="live-status" data-live="${esc(L.status)}"><span>Κατάταξη από ${esc(L.games)} αγώνες${L.error?' · '+esc(L.error):''}</span><button type="button" class="live-refresh" data-live-refresh>Ενημέρωση live stats</button></p>`;}
 function bindLive(){host?.querySelectorAll('[data-live-refresh]').forEach(b=>b.onclick=()=>g.BettingLive?.refresh());}
 function mount(target){host=target;draw();}
 if(typeof window!=='undefined')window.addEventListener('betting-live',()=>{if(host&&host.isConnected&&host.querySelector('.game-grid,.empty,.hero'))draw();});

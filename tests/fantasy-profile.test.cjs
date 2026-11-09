@@ -61,3 +61,20 @@ test('Offensive Load / cTOV% are card-only and — on seed data without lineups;
  const k=100/p.OfPo,bc=m.boxCreation(p),load=d.load.get(p);assert.ok(Math.abs(load-((p.As*k-0.38*bc)*0.75+p.USA*k+bc+p.Tv*k))<1e-9);assert.ok(load>20&&load<90,'load '+load);assert.ok(Math.abs(d.ctov.get(p)-100*(p.Tv*k)/load)<1e-9);
  /* per-game history uses the same definition, and the 3-game sample is the sum of the 3 games */
  const h=b.FantasyMetrics.history('players',p.PID,'season');assert.equal(h.length,3);for(const r of h)assert.ok(Math.abs(d.load.get(r.totals)-load)<1e-9);});
+
+/* ---- Χειροκίνητη ενημέρωση: χωρίς αυτόματη λήψη στο άνοιγμα όταν υπάρχει πλήρης cache ---- */
+function engineWith(store){const c2=vm.createContext({console,Event,CustomEvent:Event,setTimeout:()=>{},addEventListener(){},dispatchEvent(){},localStorage:{getItem:k=>k==='courtvision-betting-live-E2026-v3'?store:k==='picknedge-schedule-E2026-v1'?(engineWith.schedule||null):null,setItem(){},removeItem(){}},EUROLEAGUE_DATA_DISABLED:true});c2.window=c2;for(const f of ['site/team-assets.js','site/euroleague-data.js'])vm.runInContext(fs.readFileSync(f,'utf8'),c2,{filename:f});return c2.EuroLeagueData;}
+test('Page open downloads only with an empty or interrupted cache; a complete cache means no automatic request',()=>{const {rec}=game75(),games={75:{...rec,calc:3}};
+ assert.equal(engineWith(null).autoLoad(),true,'first visit');
+ assert.equal(engineWith(JSON.stringify({v:3,saved:1,games})).autoLoad(),true,'old cache without the complete flag: continues once');
+ assert.equal(engineWith(JSON.stringify({v:3,saved:1,updated:5,complete:false,games})).autoLoad(),true,'interrupted download continues');
+ const E=engineWith(JSON.stringify({v:3,saved:1,updated:5,complete:true,games}));assert.equal(E.autoLoad(),false,'complete cache: no request on open or refresh');assert.equal(E.state.updated,5,'last update time survives the reload');});
+test('Pending games come from the stored schedule only: finished without a record, or ended after the last update',()=>{const {rec}=game75(),now=Date.now(),h=3600e3,iso=t=>new Date(t).toISOString();
+ engineWith.schedule=JSON.stringify({saved:1,list:[
+  {code:75,status:'result',date:iso(now-9*h)},/* stored */
+  {code:200,status:'result',date:iso(now-5*h)},/* final, not stored: counts */
+  {code:201,status:'scheduled',date:iso(now-4*h)},/* should be over since the last update: counts */
+  {code:202,status:'scheduled',date:iso(now-1*h)},/* still running: no */
+  {code:203,status:'scheduled',date:iso(now+24*h)},/* tomorrow: no */
+  {code:204,status:'scheduled',date:iso(now-30*h)}]});/* ended before the last update (e.g. postponed): no */
+ try{const E=engineWith(JSON.stringify({v:3,saved:1,updated:now-10*h,complete:true,games:{75:{...rec,calc:3}}}));assert.equal(E.pending(),2,'only 200 and 201; 202 still runs, 203 is tomorrow, 204 ended before the last update');}finally{engineWith.schedule=null;}});
