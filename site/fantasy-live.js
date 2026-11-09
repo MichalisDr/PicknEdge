@@ -134,7 +134,7 @@ function build(){
  const histPlayers={},histTeams={},missingByPlayer={},missingByTeam={};
  for(const [pid,P] of Object.entries(lines)){if(!elig[pid].eligible)continue;const cid=currentTeam(pid),own=new Map(P.rows.map(r=>[r.gm.code+'|'+r.gm.cid,r]));
   const gamesOf=[...new Set([...P.rows.map(r=>r.gm),...(byTeam[cid]||[])])].sort((a,b)=>a.round-b.round||String(a.date).localeCompare(String(b.date)));
-  histPlayers[pid]=gamesOf.map(gm=>{const r=own.get(gm.code+'|'+gm.cid),played=Boolean(r&&r.x.Sec>0);const base={game:gm.code,cid:gm.cid,round:gm.round,date:gm.date,opponent:teamName(gm.ocid),home:gm.home,source:'EuroLeague',url:url(gm.code)};
+  histPlayers[pid]=gamesOf.map(gm=>{const r=own.get(gm.code+'|'+gm.cid),played=Boolean(r&&r.x.Sec>0);const base={game:gm.code,cid:gm.cid,round:gm.round,date:gm.date,opponent:teamName(gm.ocid),home:gm.home,ts:M.pts(gm.s),os:M.pts(gm.o),source:'EuroLeague',url:url(gm.code)};
    if(!played)return {...base,M1:0,A1:0,M2:0,A2:0,M3:0,A3:0,OR:0,DR:0,As:0,St:0,Tv:0,BF:0,BA:0,FC:0,FR:0,minutes:null,points:0,pir:0,rebounds:0,assists:0,netSfp:0,ftr:null,efg:null,two:null,three:null,ft:null,played:false};
    return {...base,...statRow(r.x),totals:playerTotals([r]),minutes:r.x.Sec/60,starter:Boolean(r.x.GS),played:true};});
   missingByPlayer[pid]=[];}
