@@ -8,6 +8,7 @@ import { gzipSync } from 'node:zlib';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fetchSchedule, get, ENDPOINTS, ShapeError, checkScore } from './api.mjs';
+import { fetchRoster } from './roster.mjs';
 
 const arg = (n, d) => { const i = process.argv.indexOf('--' + n); return i > 0 ? process.argv[i + 1] : d; };
 const season = arg('season', 'E2026');
@@ -64,5 +65,7 @@ async function main() {
   }
   if (failed.length) { console.error(`\n${failed.length} game(s) failed (retried next run): ${failed.join(', ')}`); process.exit(1); }
   console.log(`done: ${done} fetched`);
+  const r = await fetchRoster(season, root);   // once per run, after the games are safely stored
+  console.log(`roster: ${r.clubs} clubs, ${r.changed ? 'updated' : 'unchanged'}`);
 }
 main().catch(e => { console.error('FATAL:', e.message); process.exit(1); });
