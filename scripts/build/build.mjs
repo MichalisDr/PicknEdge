@@ -76,5 +76,7 @@ for (const t of teams) {
   if (miss.length) inv.bad.push(`g${t.game} ${t.team}: ${miss.map(([k, w]) => `${k} ${s(k)} vs ${w}`).join(', ')}`);
 }
 console.log(`on-court sums = 5 x team figures (possessions, SA, OREB, DREB, TOV, seconds): ${inv.rows - inv.bad.length} of ${inv.rows} team-games` + (inv.bad.length ? `; first failures: ${inv.bad.slice(0, 5).join(' | ')}` : ''));
+const linked = teams.filter(t => t.assists_linked).length, made = shots.filter(s => /^[23]FGM$/.test(s.action));
+console.log(`assist attribution linked: ${linked} of ${teams.length} team-games; made FGs assisted ${made.filter(s => s.assisted === 1).length}, unassisted ${made.filter(s => s.assisted === 0).length}, unknown ${made.filter(s => s.assisted === null).length}`);
 const audit = auditPir(players);
 console.log(`PIR vs official valuation (played rows): ${audit.match} of ${audit.total} match` + (audit.bad.length ? `; mismatches: ${audit.bad.slice(0, 10).map(b => `g${b.game} ${b.player_id} ours ${b.ours} official ${b.official}`).join('; ')}${audit.bad.length > 10 ? ' …' : ''}` : ''));

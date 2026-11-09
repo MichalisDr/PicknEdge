@@ -451,6 +451,10 @@
    "src": "shots feed agrees with box score"
   },
   {
+   "name": "assists_linked",
+   "src": "assist attribution resolved for this team-game (assists.mjs)"
+  },
+  {
    "name": "z_rim_a",
    "src": "shots: field-goal attempts in zone rim"
   },
@@ -611,6 +615,10 @@
   {
    "name": "num",
    "src": "shots NUM_ANOT (= play-by-play NUMBEROFPLAY)"
+  },
+  {
+   "name": "assisted",
+   "src": "made FG: 1 assisted, 0 unassisted, empty if the team-game could not be linked (never read as unassisted); 0 for other rows"
   },
   {
    "name": "zone",
