@@ -32,13 +32,6 @@ const title=s=>String(s||'').toLowerCase().replace(/(^|[\s\-'’.])([a-zà-ÿ])/
 function splitName(name){const [last,first]=String(name||'').split(',').map(x=>x.trim());return first?{Fn:title(first),Sn:title(last)}:{Fn:'',Sn:title(last)};}
 function identity(){return {map:{...KNOWN_IDS}};}
 
-/* ---------- τιμές Fantasy (CR) από το fantasy-credits.json ---------- */
-const CREDITS_URL='fantasy-credits.json',CREDITS_EVERY=30*60*1000;
-let credits=null;
-function indexCredits(j){const byName=new Map(),bySurname=new Map();for(const r of j?.players||[]){if(!Number.isFinite(r.cr))continue;const parts=String(r.name).includes(',')?String(r.name).split(',').map(x=>x.trim()).reverse():String(r.name).trim().split(/\s+/);const full=slug(parts.join(' ')),last=slug(String(r.name).includes(',')?parts[1]:parts.slice(1).join(' ')||parts[0]);byName.set(full,r.cr);(bySurname.get(last)||bySurname.set(last,[]).get(last)).push(r.cr);}return {byName,bySurname,updated:j?.updated||null};}
-function creditFor(Fn,Sn){if(!credits)return null;const v=credits.byName.get(slug(Fn+' '+Sn));if(v!==undefined)return v;const s=credits.bySurname.get(slug(Sn));return s?.length===1?s[0]:null;}
-async function loadCredits(){try{const r=await fetch(CREDITS_URL+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();if(j?.updated&&j.updated===credits?.updated)return;credits=indexCredits(j);rebuild();}catch{}}
-
 /* ---------- επιλεξιμότητα παικτών ----------
    Ίδιοι ορισμοί με τα Last 3 / Last 5 του συστήματος: δείγμα = οι τελευταίοι N ολοκληρωμένοι αγώνες της ομάδας του παίκτη,
    GP = αγώνες με χρόνο > 0, MIN/game = Σ λεπτά ÷ GP, PIR/game = Σ PIR ÷ GP (τα γραμμικά PIR αθροίζονται ανά αγώνα).
@@ -131,7 +124,7 @@ function build(){
   const players=[];
   for(const [pid,P] of Object.entries(lines)){if(!elig[pid].eligible)continue;const rows=P.rows.filter(r=>!n||codes[currentTeam(pid)]?.has(r.gm.code));const t=playerTotals(rows);if(!t.Gm)continue;
    const cid=currentTeam(pid),nm=splitName(info[P.id]?.name),pos=info[P.id]?.pos||'';
-   const p={PID:pid,code:P.id,Fn:nm.Fn,Sn:nm.Sn,He:info[P.id]?.height?info[P.id].height/100:null,Pos:pos,CID:cid,Cl:clName(cid),label:nm.Sn,CR:creditFor(nm.Fn,nm.Sn),...t,noSample:false};
+   const p={PID:pid,code:P.id,Fn:nm.Fn,Sn:nm.Sn,He:info[P.id]?.height?info[P.id].height/100:null,Pos:pos,CID:cid,Cl:clName(cid),label:nm.Sn,...t,noSample:false};
    const sh=shotTotals(rows.map(r=>r.gm),rows.map(r=>r.x.id),false);Object.assign(p,sh);p.estimatedPossessions=!p.onCourtExact;players.push(p);}
   const raw=Object.entries(byTeam).map(([cid,gs])=>({CID:cid,Cl:clName(cid),...teamTotals(gs.filter(inWin)),...teamExtras(gs.filter(inWin))}));
   const teams=teamsSnap.map(t=>{const rw=raw.find(r=>r.CID===t.id);return {...t,...shotTotals(gsFor(byTeam,t.id,n),null,true),games:rw?.Gm||0,pace:rw?M.pace(rw.OfPo,rw.DePo,rw.Sec):null};});
@@ -175,6 +168,5 @@ function rebuild(){try{if(!build())return;}catch(e){state.error=String(e.message
  try{g.dispatchEvent(new CustomEvent('fantasy-live',{detail:state}));}catch{}}
 g.FantasyLive={state,rebuild,build,eligibility};
 rebuild();
-try{if(typeof fetch==='function'&&!g.EUROLEAGUE_DATA_DISABLED){loadCredits();setInterval(loadCredits,CREDITS_EVERY);}}catch{}
 try{g.addEventListener('euroleague-data',e=>{if(e.detail?.status==='loading')return;rebuild();});}catch{}
 })(globalThis);
