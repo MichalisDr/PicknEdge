@@ -14,7 +14,7 @@ const require = createRequire(import.meta.url);
 const repo = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const read = f => parseCsv(readFileSync(join(repo, 'data', 'clean', f), 'utf8'));
 const { feed } = require('./harness.cjs');
-const lines = f => readFileSync(join(repo, f), 'utf8').split('\n');
+const lines = f => readFileSync(join(process.env.OLD_SITE || repo, f), 'utf8').split('\n');   // old site files: see harness.cjs
 
 // ---- new numbers ----
 const clean = { players: read('player_games.csv'), teams: read('team_games.csv'), dim: read('players.csv') };

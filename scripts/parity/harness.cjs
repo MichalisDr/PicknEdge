@@ -1,14 +1,17 @@
-// Boots the CURRENT site code (browser globals) in a vm, feeds it the 100 raw games through its own parser,
-// and returns the context. Used only by the parity gate; the site files are read, never modified.
+// Boots the OLD site code (browser globals) in a vm, feeds it the raw games through its own parser, and returns the context.
+// Used only by the parity gate. The old scripts are no longer in the working tree: check them out with
+//   git worktree add ../old-site parity-reference      (the last commit that still has them)
+// and run the parity scripts with OLD_SITE=../old-site. The site files are read, never modified.
 const fs = require('node:fs'), vm = require('node:vm'), zlib = require('node:zlib'), path = require('node:path');
 const repo = path.join(__dirname, '..', '..');
+const oldSite = path.resolve(process.env.OLD_SITE || repo);   // folder that contains the old site/ directory
 const readGz = f => JSON.parse(zlib.gunzipSync(fs.readFileSync(f)));
 
 function boot() {
   const c = vm.createContext({ console, Event, CustomEvent: Event, setTimeout: () => {}, addEventListener() {}, dispatchEvent() {},
     localStorage: { getItem: () => null, setItem() {}, removeItem() {} }, EUROLEAGUE_DATA_DISABLED: true, FANTASY_SHOTS_DISABLED: true });
   c.window = c;
-  const load = f => vm.runInContext(fs.readFileSync(path.join(repo, f), 'utf8'), c, { filename: f });
+  const load = f => vm.runInContext(fs.readFileSync(path.join(oldSite, f), 'utf8'), c, { filename: f });
   load('site/team-assets.js'); load('site/euroleague-data.js');
   const consumers = [], orig = c.EuroLeagueData.register;
   c.EuroLeagueData.register = x => { consumers.push(x); return orig(x); };
