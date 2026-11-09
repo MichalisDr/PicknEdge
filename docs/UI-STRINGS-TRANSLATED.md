@@ -79,10 +79,10 @@ League-average label (Fantasy and Betting): "League average" + small text "Full 
 | Shot chart · popover | Εύστοχα / προσπάθειες · Διαφορά · Μερίδιο προσπαθειών · Θέση άμυνας · Αύξηση αντίπαλου FG% = χειρότερη άμυνα. · ποσοστιαίες μονάδες έναντι Season · Ποσοστό μη διαθέσιμο … | Made / attempts · Gap · Share of attempts · Defence rank · A higher opponent FG% means a worse defence. · percentage points vs Season · Percentage unavailable … |
 | Shot chart · footer | Θέση άμυνας: #1 = χαμηλότερο αντίπαλο FG%. | Defence rank: #1 = lowest opponent FG%. |
 | Charts mode | Δεν υπάρχουν ακόμη συγκριτικά charts για αυτή την καρτέλα. … MIN/αγώνα ≥ | No comparative charts for this view yet. … (the GP/MIN pool controls are the table's own filters) |
-| Charts · notes | Ευστοχία που επιτρέπεται και έλεγχος αμυντικού ριμπάουντ· … / Αφορά μόνο τα σουτ «At the rim» … / Μερίδια προσπαθειών ανά ζώνη … / Φορτίο και αποτελεσματικότητα … | Shooting allowed and defensive-rebound control; … / Only shots at the rim, not the whole paint. / Shares of attempts by zone; … / Load and scoring efficiency against the league average; … |
+| Charts · notes | Ευστοχία που επιτρέπεται και έλεγχος αμυντικού ριμπάουντ· … / Αφορά μόνο τα σουτ «At the rim» … | Shooting allowed and defensive-rebound control; … / Only shots at the rim, not the whole paint. |
 | Charts · quadrant labels | e.g. Υψηλή επιτρεπόμενη ευστοχία · χαμηλό DREB% | removed (colour of the points shows favourable / unfavourable; dashed lines show league values) |
 
-## Step 3.4b · team radar, radar compare and net/gross, Expected eFG, Efficient Scorers, nsPIR
+## Step 3.4b · team radar, radar compare and net/gross, Expected eFG, nsPIR
 
 (with/without teammate and Matchup were built and then removed by decision; their strings are gone.)
 
@@ -91,7 +91,10 @@ League-average label (Fantasy and Betting): "League average" + small text "Full 
 | Team radar | Net PIR / 100 κατοχές αντιπάλων · Υπολογισμός radar + text (incl. «χωρίς τα team rebounds») | Net PIR / 100 opponent possessions · How the radar is calculated + text explaining team rebounds |
 | Radar compare | Σύγκριση / Compare | Compare with |
 | Charts · Expected vs Actual eFG% | Εκτίμηση βάσει ζωνών — δεν περιλαμβάνει πίεση αμυντικού. · Το residual (πραγματικό − αναμενόμενο) δεν αποδίδεται αυτόματα σε contest ή τύχη. | Zone-based estimate: it does not include defender pressure. · The residual (actual − expected) is not attributed automatically to contest quality or luck. |
-| Charts · Efficient Scorers | μόνο · χωρίς · παίκτες · Δεν υπάρχουν παίκτες με διαθέσιμα USG%, TOV% και TS% … · GP ≥ / MIN/αγώνα ≥ | only · without · players · No players with USG%, TOV% and TS% in this window and filters. · (pool controls are the table filters) |
 | nsPIR (inside PIR only) | Non-scoring PIR (στήλη) / NET SFP | Non Scoring PIR, abbreviation nsPIR, shown in the PIR tooltip and PIR box as "nsPIR … /100 poss" |
 | Radar | (net only) | Net / Gross switch; "Net PIR / game" becomes "Gross PIR / game" in the gross view |
 | Trend insight boxes | (none) | small sample (marker when fewer than 3 games) |
+
+## Step 3.5 · hidden page
+
+The "From the schedule" page and its overview card are hidden until the Betting redesign. Overview text changed: "Start from this round's games or from a point you want to examine. Both routes end in the same analysis card." → "Start from a point you want to examine and record it on an analysis card."

@@ -98,9 +98,6 @@
       return makeView(kind, 'average', { metrics: ms.map(m => m.id), league: ms.map(m => encode(eng.evaluate(m, all))), rows: {} });
     }
 
-    /* Analysis helpers served with the engine (the Venn): loaded on first use. */
-    const analysis = name => once('analysis:' + name, async () => { await manifest(); return doImport(url('engine/' + name + '.mjs')); });
-
     /* ---- small things ---- */
     const metrics = () => once('metrics', async () => { const list = await need('metrics.json'); return { list, byId: Object.fromEntries(list.map(m => [m.id, m])) }; });
     const roster = () => need('roster.json');
@@ -114,7 +111,7 @@
       return n;
     }
 
-    return { manifest, metrics, view, customView, average, windowGames, analysis, games, shots, roster, schedule, engine, status, clearOldCaches, records, decode };
+    return { manifest, metrics, view, customView, average, windowGames, games, shots, roster, schedule, engine, status, clearOldCaches, records, decode };
   }
   return { create, decode };
 });

@@ -134,11 +134,6 @@ test('shot rows carry the assisted flag only for made shots (null = unknown), an
   assert.ok(rows.some(r => r.zone === 'rim'));
 });
 
-test('the Venn module is served with the engine', async () => {
-  const { D } = loader(), n = await D.analysis('venn');
-  assert.ok(typeof n.venn === 'function');
-});
-
 test('opponent-production radar excludes team rebounds', async () => {
   const { D } = loader(), t = await D.view('teams', 'season'), games = await D.games('teams');
   const row = games.filter(r => r.team === 'RED'), opp = games.filter(r => r.opp === 'RED');

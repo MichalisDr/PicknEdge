@@ -143,7 +143,6 @@ Every metric is defined once in `scripts/metrics/registry.mjs`. Ratios are `Σ n
 | `t_blk_pct` | BLK% | pct | 100 × Σ(blk) ÷ Σ(o_a2) | higher | betting | Own blocks as a share of opponent two-point attempts. |
 | `o_blk_pct` | Opp BLK% | pct | 100 × Σ(o_blk) ÷ Σ(a2) | lower | betting | Opponent blocks as a share of own two-point attempts. |
 | `o_rim_rate` | Opp At the rim FGA share | pct | 100 × Σ(o_zs_rim_a) ÷ Σ(o_fga) | lower | fantasy, betting | Share of opponent field-goal attempts taken at the rim. |
-| `o_corner3_rate` | Opp Corner 3PA share | pct | 100 × Σ(o_zs_corner_a) ÷ Σ(o_fga) | lower | fantasy, betting | Share of opponent field-goal attempts that are corner threes. |
 | `t_fb100` | Fast break PTS / 100 poss | per100 | 100 × Σ(pts_fastbreak) ÷ Σ(poss) | higher | betting | Own fast-break points per 100 own possessions. |
 | `o_fb100` | Opp Fast break PTS / 100 poss | per100 | 100 × Σ(o_pts_fastbreak) ÷ Σ(o_poss) | lower | fantasy, betting | Opponent fast-break points per 100 opponent possessions. |
 | `t_sc100` | Second chance PTS / 100 poss | per100 | 100 × Σ(pts_second_chance) ÷ Σ(poss) | higher | betting | Own second-chance points per 100 own possessions. |

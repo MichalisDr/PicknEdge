@@ -68,7 +68,7 @@ for (const [team, games] of Object.entries(gamesOfTeam)) {
 }
 
 // ---- engine: the modules the tests cover, served to the browser unchanged ----
-for (const f of ['registry.mjs', 'engine.mjs', 'zones.mjs', 'join.mjs', 'venn.mjs']) { copyFileSync(join(repo, 'scripts', 'metrics', f), join(out, 'engine', f)); written.push('engine/' + f); }
+for (const f of ['registry.mjs', 'engine.mjs', 'zones.mjs', 'join.mjs']) { copyFileSync(join(repo, 'scripts', 'metrics', f), join(out, 'engine', f)); written.push('engine/' + f); }
 
 // ---- manifest (no timestamps: an unchanged data set produces identical files) ----
 const hash = createHash('sha1');

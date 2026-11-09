@@ -150,7 +150,6 @@ export const METRICS = [
 
   // ---------- teams: where opponents shoot from (Charts) ----------
   e('o_rim_rate', 'Opp At the rim FGA share', T, 'pct', S('o_zs_rim_a'), S('o_fga'), FB, 1, 'Share of opponent field-goal attempts taken at the rim.'),
-  e('o_corner3_rate', 'Opp Corner 3PA share', T, 'pct', S('o_zs_corner_a'), S('o_fga'), FB, 1, 'Share of opponent field-goal attempts that are corner threes.'),
 
   // ---------- teams: tagged points (official shot feed) ----------
   e('t_fb100', 'Fast break PTS / 100 poss', T, 'per100', S('pts_fastbreak'), S('poss'), B, 1, 'Own fast-break points per 100 own possessions.'),

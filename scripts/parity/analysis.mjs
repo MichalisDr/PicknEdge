@@ -1,4 +1,4 @@
-// Parity for the card features: player radar axes (net and gross), team opponent-production radar, expected eFG and the Efficient Scorers Venn.
+// Parity for the card features: player radar axes (net and gross), team opponent-production radar, and expected eFG.
 // The OLD code is run in Node: fantasy-metrics.js through the harness, pieces of fantasy-workbench.js / fantasy-charts.js by evaluating their source text.
 import { createRequire } from 'node:module';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -8,7 +8,6 @@ import vm from 'node:vm';
 import { parseCsv } from '../build/csv.mjs';
 import { buildViews } from '../build/views.mjs';
 import { METRICS } from '../metrics/registry.mjs';
-import { venn } from '../metrics/venn.mjs';
 import { evaluate, byId } from '../metrics/engine.mjs';
 
 const require = createRequire(import.meta.url);
@@ -62,20 +61,6 @@ const add = (feature, key, label, oldV, newV) => results.push({ feature, key, la
   for (const period of ['season', '3', '5']) {
     const rows = M.rows('teams', period), bench = fns.bench(rows);
     for (const t of rows.filter(t => t.shotComplete)) add('expected eFG', `${period} ${codeOf[t.CID]}`, 'o_exp_efg', fns.expectedEfg(t, bench), cell(W[period], 'teams', codeOf[t.CID], 'o_exp_efg'));
-  }
-}
-
-// 4) Efficient Scorers Venn (old metric definitions for the values; the old cut-off / region rule is the one ported)
-{
-  const defs = M.defs('players'), d = k => defs.find(x => x.key === k), E_ = c.EuroLeagueData.metrics;
-  const TS = p => M.div(E_.pts(p), 2 * E_.sa(p), 100);
-  for (const period of ['season', '3', '5']) {
-    const rows = M.rows('players', period).filter(p => p.Gm >= 1);
-    const oldItems = rows.map(p => ({ id: 'P' + p.code, values: [d('usg').get(p), d('tov').get(p), TS(p)] }));
-    const newItems = rows.map(p => ({ id: 'P' + p.code, values: [cell(W[period], 'players', 'P' + p.code, 'usg'), cell(W[period], 'players', 'P' + p.code, 'tov_pct'), cell(W[period], 'players', 'P' + p.code, 'ts_pct')] }));
-    const sets = [{ dir: 'high', pct: 30 }, { dir: 'low', pct: 30 }, { dir: 'high', pct: 30 }], o = venn(oldItems, sets), n = venn(newItems, sets);
-    o.cuts.forEach((v, k) => add('venn', period, 'cut ' + k, v, n.cuts[k]));
-    for (const [key, r] of Object.entries(o.regions)) add('venn', period, 'region ' + key, [...r.ids].sort().join(','), [...n.regions[key].ids].sort().join(','));
   }
 }
 

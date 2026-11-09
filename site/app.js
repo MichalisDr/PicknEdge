@@ -11,38 +11,16 @@
   const intro = (kicker, title, text, badge = 'WORKSPACE / V1') => `<div class="hero"><div class="intro"><div class="eyebrow">${kicker}</div><h1>${title}</h1><p>${text}</p></div><span class="pill">${badge}</span></div>`;
   const footer = '<div class="footer">Pick n Edge · EuroLeague research workspace. Statistics are built from the official EuroLeague box scores and play-by-play and refreshed by a scheduled job. There is no connection to betting odds.</div>';
 
-  /* TEMPORARY (until step 3.4 / 3b): the matchup page still uses the old scripts; they are loaded only when it opens. */
-  const LEGACY = [
-    "euroleague-data.js?v=20261109-sync1",
-    "betting-live-data.js?v=20261101-engine1",
-    "team-history.js?v=20261031-euroleague1",
-    "betting-stats.js?v=20261109-manual1",
-    "betting-schedule.js?v=20261109-manual1",
-    "betting-players.js?v=20261101-engine1",
-    "shot-zones.js?v=20261101-zones9",
-    "fantasy-live.js?v=20261109-sync2",
-    "fantasy-shots.js?v=20261106-sc1",
-    "fantasy-metrics.js?v=20261109-sync1",
-    "fantasy-viz.js?v=20261109-sync1",
-    "fantasy-charts.js?v=20261109-sync1",
-    "fantasy-workbench.js?v=20261109-sync1"
-  ];
-  let legacyLoading = null;
-  function loadLegacy() {
-    if (!legacyLoading) legacyLoading = LEGACY.reduce((p, src) => p.then(() => new Promise((ok, fail) => {
-      const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => fail(new Error('Could not load ' + src)); document.head.appendChild(s);
-    })), Promise.resolve());
-    return legacyLoading;
-  }
-
-  const ROUTES = ['fantasy', 'fantasy/players', 'data', 'betting', 'schedule', 'manual', 'saved'];
+  /* 'schedule' (From the schedule) is hidden until the Betting redesign: the old route falls back to the overview. */
+  const ROUTES = ['fantasy', 'fantasy/players', 'data', 'betting', 'manual', 'saved'];
   const LINKS = {
     fantasy: [['fantasy/players', 'Players'], ['fantasy', 'Teams']],
-    betting: [['betting', 'Overview'], ['schedule', 'From the schedule'], ['manual', 'Manual analysis'], ['saved', 'Saved analyses'], ['data', 'Betting statistics']],
+    betting: [['betting', 'Overview'], ['manual', 'Manual analysis'], ['saved', 'Saved analyses'], ['data', 'Betting statistics']],
   };
 
   function render() {
     current = location.hash.slice(1) || 'fantasy';
+    if (current === 'schedule') current = 'betting';
     if (!ROUTES.includes(current)) current = 'fantasy';
     const area = current.startsWith('fantasy') ? 'fantasy' : 'betting';
     document.body.dataset.area = area;
@@ -51,22 +29,15 @@
       + (area === 'fantasy' ? '' : '<div class="aside-note">One database.<br>Two ways to analyse.<br><br>From observation to evidence.</div>');
     if (current.startsWith('fantasy')) return FantasyTables.mount(content, current === 'fantasy/players' ? 'players' : 'teams');
     if (current === 'data') return BettingTables.mount(content);
-    if (current === 'schedule') return schedulePage();
     if (current === 'betting') return overview();
     if (current === 'manual') return manual();
     return saved();
   }
 
-  function schedulePage() {
-    if (window.BettingSchedule) return BettingSchedule.mount(content);
-    content.innerHTML = '<p class="empty">Loading…</p>';
-    loadLegacy().then(() => { if (current === 'schedule') BettingSchedule.mount(content); }).catch(e => { content.innerHTML = `<p class="empty">${esc(e.message)}</p>`; });
-  }
-
   function overview() {
-    content.innerHTML = intro('BETTING / RESEARCH', 'Every idea starts with a hypothesis.', "Start from this round's games or from a point you want to examine. Both routes end in the same analysis card.")
-      + `<div class="grid"><section class="card action"><span class="number">01 / DISCOVER</span><h2>From the schedule</h2><p>Game → team weakness → likely beneficiary player → hypothesis to examine.</p><a href="#schedule">Explore matchups ↗</a></section>
-      <section class="card action"><span class="number">02 / INVESTIGATE</span><h2>Already have a point?</h2><p>Set player, market, line and odds. Record the evidence and what still needs checking.</p><a href="#manual">New manual analysis ↗</a></section></div>
+    content.innerHTML = intro('BETTING / RESEARCH', 'Every idea starts with a hypothesis.', 'Start from a point you want to examine and record it on an analysis card.')
+      + `<div class="grid">
+      <section class="card action"><span class="number">INVESTIGATE</span><h2>Already have a point?</h2><p>Set player, market, line and odds. Record the evidence and what still needs checking.</p><a href="#manual">New manual analysis ↗</a></section></div>
       <div class="section-head"><h2>Your research archive</h2><a class="btn" href="#saved">${records.length} saved →</a></div>
       <div class="notice">Hypotheses are not predictions. Automated opportunity detection and odds reading are a later phase.</div>` + footer;
   }
