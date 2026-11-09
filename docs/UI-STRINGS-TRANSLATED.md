@@ -61,3 +61,23 @@ League-average label (Fantasy and Betting): "League average" + small text "Full 
 | Players · trend | L3 vs ΣΕΖΟΝ · ΔMIN · ΔUSG · δεν έπαιξε στους N τελευταίους | L3 vs Season · USG · did not play in the last 3 team games |
 | Players · empty | (none) | No players match the filters. |
 | Column names and tooltips | 12 team columns and 13+ player columns with Greek tooltips (e.g. «Κατοχές ανά 40 λεπτά …») | one label and one English description per metric from metrics.json |
+
+## Step 3.4 · Fantasy cards, charts, shot charts (`fantasy-cards.js`, `fantasy-shotchart.js`, `fantasy-gallery.js`)
+
+| Where | Before (Greek) | After (English) |
+|---|---|---|
+| Card · close button | Κλείσιμο καρτέλας | Close card |
+| Card · empty states | Δεν υπάρχουν διαθέσιμα στοιχεία. / Δεν υπάρχουν συμμετοχές σε αυτό το δείγμα. | No data available. / No appearances in this sample. |
+| Card · default visual (team) | (radar) | Select a metric to see its trend over the season. (the team radar is not ported yet) |
+| Trend chart | Δεν υπάρχουν επαρκή δεδομένα για αυτόν τον δείκτη. · Ανά αγώνα · Κυλιόμενο 5 · Σεζόν · Λίγκα P25–P75 | Not enough data for this metric. · Per game · Rolling 5 · Season · League P25–P75 |
+| Trend insight | Επίπεδο σεζόν · Εύρος εμφανίσεων · Διακύμανση · τυπική απόκλιση · αγώνας/αγώνες · μικρό δείγμα | Season level · Range of appearances · Variation · standard deviation · game/games · (small-sample tag not shown) |
+| Trend diff tooltip | Δεν υπάρχουν επαρκή δεδομένα · ποσοστιαίες μονάδες | Not enough data · percentage points · sample minus Season |
+| Radar | Καθαρή συνεισφορά PIR ανά κατηγορία · Υπολογισμός radar + long text | Net contribution by category · How the radar is calculated + English text |
+| Box scores | Αγώνας · Αντίπαλος · Αποτέλεσμα · αγώνες | Game · Opponent · Result · games |
+| Shot chart · notice | Σουτ EuroLeague: N/M αγώνες διαθέσιμοι. Η ενημέρωση συνεχίζεται. | removed (all games are in the data) · No shots in this sample. |
+| Shot chart · modes | ποσοστό επί όλων των εύστοχων κάθε ζώνης και περιοχής · «—» όπου η ασίστ δεν είναι επιβεβαιωμένη · (αντίπαλα καλάθια) | share of all made shots of each zone and area · "—" where the assist is not confirmed · (opponent baskets) |
+| Shot chart · popover | Εύστοχα / προσπάθειες · Διαφορά · Μερίδιο προσπαθειών · Θέση άμυνας · Αύξηση αντίπαλου FG% = χειρότερη άμυνα. · ποσοστιαίες μονάδες έναντι Season · Ποσοστό μη διαθέσιμο … | Made / attempts · Gap · Share of attempts · Defence rank · A higher opponent FG% means a worse defence. · percentage points vs Season · Percentage unavailable … |
+| Shot chart · footer | Θέση άμυνας: #1 = χαμηλότερο αντίπαλο FG%. | Defence rank: #1 = lowest opponent FG%. |
+| Charts mode | Δεν υπάρχουν ακόμη συγκριτικά charts για αυτή την καρτέλα. … MIN/αγώνα ≥ | No comparative charts for this view yet. … (the GP/MIN pool controls are the table's own filters) |
+| Charts · notes | Ευστοχία που επιτρέπεται και έλεγχος αμυντικού ριμπάουντ· … / Αφορά μόνο τα σουτ «At the rim» … / Μερίδια προσπαθειών ανά ζώνη … / Φορτίο και αποτελεσματικότητα … | Shooting allowed and defensive-rebound control; … / Only shots at the rim, not the whole paint. / Shares of attempts by zone; … / Load and scoring efficiency against the league average; … |
+| Charts · quadrant labels | e.g. Υψηλή επιτρεπόμενη ευστοχία · χαμηλό DREB% | removed (colour of the points shows favourable / unfavourable; dashed lines show league values) |

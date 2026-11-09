@@ -21,7 +21,7 @@
   const EVAL = { good: '#DFFBE9', avg: '#FBFFDF', bad: '#F6E0E3', neutral: '#bdc7d5' };   // good / average / bad evaluation palette (UI only)
   const EPS = 1e-9;
 
-  const state = { entity: 'teams', view: 'profile', win: 'season', custom: { last: 7, venue: 'all' }, customOpen: false, position: 'ALL', query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: -1 };
+  const state = { entity: 'teams', view: 'profile', win: 'season', custom: { last: 7, venue: 'all' }, customOpen: false, position: 'ALL', query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: -1, mode: 'table' };
   let host = null, drawId = 0;
 
   const eligibilityWindow = () => state.win !== 'custom' ? state.win : state.custom.last <= 3 ? 'l3' : state.custom.last <= 5 ? 'l5' : state.custom.last <= 10 ? 'l10' : 'season';
@@ -65,7 +65,9 @@
       const sortId = ids.includes(state.sort) ? state.sort : ids[0];
       shown.sort((a, b) => { const x = view.get(a.id, sortId).value, y = view.get(b.id, sortId).value;
         return !Number.isFinite(x) ? (Number.isFinite(y) ? 1 : 0) : !Number.isFinite(y) ? -1 : (x - y) * state.dir; });
-      model = { view, defs, roster, status, shown, avg: leagueCells(view, ids), sortId };
+      const gallery = state.mode === 'charts' ? await g.FantasyGallery.html(state.entity, state.view, state, pool.map(r => r.id)) : '';
+      if (mine !== drawId) return;
+      model = { view, defs, roster, status, shown, avg: leagueCells(view, ids), sortId, gallery };
     } catch (e) {
       host.innerHTML = `<section class="fantasy-stats fw-workbench"><div class="fw-heading"><div><div class="eyebrow">FANTASY</div><h1>${teams ? 'Teams' : 'Players'}</h1></div></div><p class="fw-empty" role="status">Could not load the data: ${esc(e.message)}</p></section>`;
       return;
@@ -74,14 +76,14 @@
     wire();
   }
 
-  function html({ view, defs, roster, status, shown, avg, sortId }) {
+  function html({ view, defs, roster, status, shown, avg, sortId, gallery }) {
     const teams = state.entity === 'teams', title = teams ? 'Teams' : 'Players';
     const header = defs.map(m => `<th aria-sort="${sortId === m.id ? (state.dir > 0 ? 'ascending' : 'descending') : 'none'}"><button data-sort="${m.id}" title="${esc(m.description)}">${esc(m.label)}</button></th>`).join('');
     const cells = (key, avgRow) => defs.map(m => {
       const c = avgRow ? avg[m.id] : view.get(key, m.id), r = teams && !avgRow ? rankOf(view, m.id, c.value, m.direction) : null;
-      return `<td><span class="fw-cell" title="${esc(m.label + ': ' + m.description)}" style="${r ? 'color:' + r.color : ''}">${fmt(c, m)}${coverage(c)}${r ? `<small>#${r.position}</small>` : ''}</span></td>`;
+      return `<td><span class="fw-cell" ${avgRow ? '' : `data-id="${esc(key)}" data-metric="${m.id}" tabindex="0"`} title="${esc(m.label + ': ' + m.description)}" style="${r ? 'color:' + r.color : ''}">${fmt(c, m)}${coverage(c)}${r ? `<small>#${r.position}</small>` : ''}</span></td>`;
     }).join('');
-    const body = shown.map(r => `<tr><th><span class="fw-name">${esc(r.name)}</span>${teams ? '' : `<small>${esc(roster.teams[r.team] || r.team)} · ${esc(r.pos || '—')}</small>`}</th><td class="fw-gp">${r.gp}</td>${cells(r.id, false)}</tr>`).join('');
+    const body = shown.map(r => `<tr><th><button class="fw-name" data-open="${esc(r.id)}">${esc(r.name)}</button>${teams ? '' : `<small>${esc(roster.teams[r.team] || r.team)} · ${esc(r.pos || '—')}</small>`}</th><td class="fw-gp">${r.gp}</td>${cells(r.id, false)}</tr>`).join('');
     const filters = !teams && state.filters ? `<div class="fw-filters" role="dialog" aria-label="Filters">
       <label>Team<select data-filter="team"><option value="">All</option>${Object.entries(roster.teams).sort((a, b) => a[1].localeCompare(b[1])).map(([c, n]) => `<option value="${c}" ${c === state.team ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
       <label>MIN ≥<input data-filter="minMin" type="number" min="0" value="${state.minMin}"></label>
@@ -93,12 +95,12 @@
       <div class="fw-toolbar">
         <div class="fw-switch" role="tablist">${['profile', 'shooting'].map(v => `<button data-view="${v}" role="tab" aria-selected="${state.view === v}">${v === 'profile' ? 'Profile' : 'Shooting'}</button>`).join('')}</div>
         ${teams ? '' : `<div class="fw-switch" aria-label="Player position">${['ALL', 'G', 'F', 'C'].map(v => `<button data-position="${v}" aria-pressed="${v === state.position}">${v === 'ALL' ? 'All' : v}</button>`).join('')}</div>`}
-        <div class="fw-right">${teams ? '' : `<button class="fw-filter-btn" data-filters aria-expanded="${state.filters}">Filters</button>`}<input type="search" aria-label="Search Fantasy" placeholder="Search…" value="${esc(state.query)}"></div>
+        <div class="fw-right"><div class="fw-switch" role="tablist">${['table', 'charts'].map(v => `<button data-fwmode="${v}" role="tab" aria-selected="${state.mode === v}">${v === 'table' ? 'Table' : 'Charts'}</button>`).join('')}</div>${teams ? '' : `<button class="fw-filter-btn" data-filters aria-expanded="${state.filters}">Filters</button>`}<input type="search" aria-label="Search Fantasy" placeholder="Search…" value="${esc(state.query)}"></div>
         ${filters}
       </div>
-      <div class="fw-table-wrap"><table><thead><tr><th>${teams ? 'Team' : 'Player'}</th><th class="fw-gp">GP</th>${header}</tr></thead>
+      ${gallery}<div class="fw-tooltip" role="tooltip" hidden></div><div class="fw-table-wrap" ${state.mode === 'charts' ? 'hidden' : ''}><table><thead><tr><th>${teams ? 'Team' : 'Player'}</th><th class="fw-gp">GP</th>${header}</tr></thead>
         <tbody>${body}<tr class="fw-average"><th>League average<small>full league${teams ? '' : ' · all players who played'} · ignores filters</small></th><td class="fw-gp">—</td>${cells(null, true)}</tr></tbody></table></div>
-      <div class="fw-foot"><span>${shown.length} ${teams ? 'teams' : 'players'} · ${esc(W.label(state))}</span>${teams
+      <div class="fw-foot" ${state.mode === 'charts' ? 'hidden' : ''}><span>${shown.length} ${teams ? 'teams' : 'players'} · ${esc(W.label(state))}</span>${teams
         ? '<span>#1 = best defence: lowest value (DRtg, Opp eFG%, Opp AST, Opp FTr, opponent second-chance / fast-break / points-off-turnover, opponent shooting), highest for Opp TOV and DREB%. Pace: highest = #1. Green = favourable for the opposing player.</span>'
         : '<span>Players below the form thresholds of the selected window are hidden unless you change this in Filters. n/m = games with the data out of games played.</span>'}</div>
       <details class="fw-method"><summary>Sample &amp; calculations</summary><p>Last 3 / 5 / 10 are the team's most recent games, counting only the games the player actually played. Every ratio is a sum divided by a sum, never an average of game percentages. PIR has no Fantasy bonuses. USG%, TOV% and every "per 100" value use possessions counted from the play-by-play while the player is on court. Custom windows sum any selection of games (last N, home or away) in your browser with the same definitions. Full list: docs/METRICS.md.</p></details>
@@ -108,6 +110,8 @@
   function wire() {
     const on = (sel, ev, fn) => host.querySelectorAll(sel).forEach(el => { el[ev] = () => fn(el); });
     W.wire(host, state, () => { state.sort = ''; draw(); });
+    on('[data-fwmode]', 'onclick', b => { state.mode = b.dataset.fwmode; draw(); });
+    host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => g.FantasyCards.open(state.entity, p.dataset.open, { win: state.win, custom: { ...state.custom }, mode: state.view }); });
     on('[data-view]', 'onclick', b => { state.view = b.dataset.view; state.sort = ''; draw(); });
     on('[data-position]', 'onclick', b => { state.position = b.dataset.position; draw(); });
     on('[data-sort]', 'onclick', b => { state.dir = state.sort === b.dataset.sort ? -state.dir : -1; state.sort = b.dataset.sort; draw(); });
@@ -118,8 +122,42 @@
       state[k] = k === 'team' ? el.value : k === 'showAll' ? el.checked : Math.max(0, Number(el.value) || 0);
       draw();
     });
+    on('[data-open]', 'onclick', b => g.FantasyCards.open(state.entity, b.dataset.open, { win: state.win, custom: { ...state.custom }, mode: state.view }));
+    hoverCurves();
     const search = host.querySelector('input[type=search]');
     search.oninput = e => { state.query = e.target.value; draw().then(() => { const i = host.querySelector('input[type=search]'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }); };
+  }
+
+  /* Hover / focus on a value: that entity's per-game curve for the metric (loads the per-game rows on first use). */
+  function hoverCurves() {
+    const tip = host.querySelector('.fw-tooltip');
+    if (!tip) return;
+    let pinned = null, token = 0;
+    const hide = () => { token++; tip.hidden = true; };
+    host.querySelectorAll('.fw-cell[data-id]').forEach(b => {
+      const show = async () => {
+        const mine = ++token, id = b.dataset.id, metric = b.dataset.metric;
+        const [{ byId }, view, season] = await Promise.all([D.metrics(), W.view(state.entity, state), D.view(state.entity, 'season')]);
+        const m = byId[metric], c = view.get(id, metric);
+        const name = state.entity === 'teams' ? (await D.roster()).teams[id] : (await D.roster()).players[id]?.name;
+        const spec = state.win === 'season' ? null : W.spec(state);
+        const curve = await g.FantasyCards.curveHtml(state.entity, id, metric, { spec, small: true, views: { season, cur: view, winName: state.win } });
+        if (mine !== token) return;
+        tip.innerHTML = `<strong>${esc(name)} · ${esc(m.label)}</strong><p>${fmt(c, m)}</p>${curve}<small>${esc(m.description)}</small>`;
+        tip.hidden = false;
+        const r = b.getBoundingClientRect();
+        tip.style.left = Math.max(8, Math.min(innerWidth - tip.offsetWidth - 8, r.left)) + 'px';
+        tip.style.top = Math.max(8, Math.min(innerHeight - tip.offsetHeight - 8, r.bottom + 8)) + 'px';
+      };
+      b.onmouseenter = () => { if (!pinned) show(); };
+      b.onmouseleave = () => { if (!pinned) hide(); };
+      b.onfocus = show;
+      b.onblur = () => { pinned = null; hide(); };
+      b.onclick = () => { if (pinned === b) { pinned = null; hide(); } else { pinned = b; show(); } };
+    });
+    host.onkeydown = e => { if (e.key === 'Escape') { pinned = null; hide(); } };
+    const wrap = host.querySelector('.fw-table-wrap');
+    if (wrap) wrap.onscroll = () => { pinned = null; hide(); };
   }
 
   function mount(target, entity = 'teams') {
@@ -131,5 +169,5 @@
   }
   document.addEventListener('click', e => { if (state.filters && host?.isConnected && !e.target.closest('.fw-filters,[data-filters]')) { state.filters = false; draw(); } });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.filters && host?.isConnected) { state.filters = false; draw(); } });
-  g.FantasyTables = { mount, state };
+  g.FantasyTables = { mount, state, rankOf, COLUMNS };
 })(globalThis);
