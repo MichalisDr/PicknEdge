@@ -182,3 +182,12 @@ const zoneEntries = (scope, p, idp, labelp, tags) => [
   ...MAINS.map(z => e(`${idp}zm_${z.key}_pct`, `${labelp}${z.name} FG%`, scope, 'pct', S(`${p}zm_${z.key}_m`), S(`${p}zm_${z.key}_a`), tags, 1, `Field-goal percentage in the area "${z.name}" (sum of its zones).`)),
 ];
 METRICS.push(...zoneEntries(P, '', '', '', FB), ...zoneEntries(T, '', 't_', '', B), ...zoneEntries(T, 'o_', 'o_', 'Opp ', FB));
+
+/* ---------- direction: which way is better FOR THE ENTITY (+1 higher, -1 lower, 0 style / volume, no judgement) ----------
+   Opponent figures (o_*) are better when low, except opponent turnovers (a defence wants them high). The Fantasy lens
+   (green = good for the opposing player) is the UI's inversion of this. */
+const NEUTRAL = new Set(['gp', 'gs', 'min', 'usg', 'ftr', 'load', 'bc', 'a3_rate', 'a3_g', 'a1_g', 'a3_100', 'a1_100', 'pace', 't_a3_rate']);
+const LOWER = new Set(['pf_g', 'pf100', 'tov_g', 'tov100', 'tov_pct', 'ctov', 'drtg', 't_tov100']);
+for (const m of METRICS) {
+  m.direction = NEUTRAL.has(m.id) ? 0 : LOWER.has(m.id) || (m.scope === 'team' && m.id.startsWith('o_') && m.id !== 'o_tov100') ? -1 : 1;
+}
