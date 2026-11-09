@@ -7,7 +7,7 @@ import { withOpponent } from '../metrics/join.mjs';
 
 
 export const WINDOWS = { season: Infinity, l3: 3, l5: 5, l10: 10 };
-const PLAYER_METRICS = METRICS.filter(m => m.scope === 'player'), TEAM_METRICS = METRICS.filter(m => m.scope === 'team');
+const PLAYER_METRICS = METRICS.filter(m => m.scope === 'player' && !m.internal), TEAM_METRICS = METRICS.filter(m => m.scope === 'team' && !m.internal);   // internal metrics are for the site's engine calls only
 const byGame = (a, b) => a.date_utc.localeCompare(b.date_utc) || a.game - b.game;
 const roundedCell = r => r.value === null ? null : r.used === r.of ? +r.value.toFixed(6) : [+r.value.toFixed(6), r.used, r.of];   // [value, used, of] when coverage is partial
 

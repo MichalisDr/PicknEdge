@@ -150,6 +150,10 @@ export const METRICS = [
   e('t_blk_pct', 'BLK%', T, 'pct', S('blk'), S('o_a2'), B, 1, 'Own blocks as a share of opponent two-point attempts.'),
   e('o_blk_pct', 'Opp BLK%', T, 'pct', S('o_blk'), S('a2'), B, 1, 'Opponent blocks as a share of own two-point attempts.'),
 
+  // ---------- teams: where opponents shoot from (Charts) ----------
+  e('o_rim_rate', 'Opp At the rim FGA share', T, 'pct', S('o_zs_rim_a'), S('o_fga'), FB, 1, 'Share of opponent field-goal attempts taken at the rim.'),
+  e('o_corner3_rate', 'Opp Corner 3PA share', T, 'pct', S('o_zs_corner_a'), S('o_fga'), FB, 1, 'Share of opponent field-goal attempts that are corner threes.'),
+
   // ---------- teams: tagged points (official shot feed) ----------
   e('t_fb100', 'Fast break PTS / 100 poss', T, 'per100', S('pts_fastbreak'), S('poss'), B, 1, 'Own fast-break points per 100 own possessions.'),
   e('o_fb100', 'Opp Fast break PTS / 100 poss', T, 'per100', S('o_pts_fastbreak'), S('o_poss'), FB, 1, 'Opponent fast-break points per 100 opponent possessions.'),
@@ -182,6 +186,27 @@ const zoneEntries = (scope, p, idp, labelp, tags) => [
   ...MAINS.map(z => e(`${idp}zm_${z.key}_pct`, `${labelp}${z.name} FG%`, scope, 'pct', S(`${p}zm_${z.key}_m`), S(`${p}zm_${z.key}_a`), tags, 1, `Field-goal percentage in the area "${z.name}" (sum of its zones).`)),
 ];
 METRICS.push(...zoneEntries(P, '', '', '', FB), ...zoneEntries(T, '', 't_', '', B), ...zoneEntries(T, 'o_', 'o_', 'Opp ', FB));
+
+/* Generic share of a whole: the site passes counts ({ n, of }) for splits that are not columns of the clean tables
+   (shot-chart zone shares, assisted / unassisted splits), so even these ratios are defined here. */
+METRICS.push(e('share', 'Share', T, 'pct', S('n'), S('of'), FB, 1, 'A part as a percentage of its whole (counts supplied by the caller).', { internal: true }));
+
+/* ---------- player radar: net contributions per category, per game and per 100 possessions ----------
+   Shooting categories count points minus misses (FT = made - missed, 2P = 2 x made - missed ...); AST is net of turnovers, FD of fouls,
+   STL+BLK of blocks against. Offensive categories use team offensive possessions on court, DREB the defensive ones, the two mixed
+   categories the average of both (x200 / (off + def)). */
+const RADAR = [
+  ['ft', 'Free throws', [[2, 'm1'], [-1, 'a1']], 'off'], ['2p', 'Two-pointers', [[3, 'm2'], [-1, 'a2']], 'off'], ['3p', 'Three-pointers', [[4, 'm3'], [-1, 'a3']], 'off'],
+  ['ast', 'Assists − turnovers', [[1, 'ast'], [-1, 'tov']], 'off'], ['dreb', 'Defensive rebounds', [[1, 'dreb']], 'def'], ['oreb', 'Offensive rebounds', [[1, 'oreb']], 'off'],
+  ['stlblk', 'Steals + blocks − blocks against', [[1, 'stl'], [1, 'blk'], [-1, 'blk_against']], 'both'], ['fd', 'Fouls drawn − fouls', [[1, 'fd'], [-1, 'pf']], 'both'],
+];
+for (const [key, name, terms, basis] of RADAR) {
+  METRICS.push(
+    e(`rd_${key}_g`, `Net ${name} / game`, P, 'perGame', terms, S('played'), F, 1, `Net contribution of ${name.toLowerCase()} per game played (radar axis).`),
+    e(`rd_${key}_100`, `Net ${name} / 100 poss`, P, 'per100', terms, basis === 'off' ? S('poss_off_on') : basis === 'def' ? S('poss_def_on') : [[1, 'poss_off_on'], [1, 'poss_def_on']], F, 1,
+      `Net contribution of ${name.toLowerCase()} per 100 team possessions on court (radar axis).`, basis === 'both' ? { mult: 200 } : {}),
+  );
+}
 
 /* ---------- direction: which way is better FOR THE ENTITY (+1 higher, -1 lower, 0 style / volume, no judgement) ----------
    Opponent figures (o_*) are better when low, except opponent turnovers (a defence wants them high). The Fantasy lens

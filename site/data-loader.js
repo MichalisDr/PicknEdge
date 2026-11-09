@@ -53,8 +53,8 @@
     /* ---- engine (the tested modules) ---- */
     const engine = () => once('engine', async () => {
       await manifest();
-      const [eng, reg, join] = await Promise.all(['engine.mjs', 'registry.mjs', 'join.mjs'].map(f => doImport(url('engine/' + f))));
-      return { evaluate: eng.evaluate, METRICS: reg.METRICS, withOpponent: join.withOpponent };
+      const [eng, reg, join, zones] = await Promise.all(['engine.mjs', 'registry.mjs', 'join.mjs', 'zones.mjs'].map(f => doImport(url('engine/' + f))));
+      return { evaluate: eng.evaluate, termValue: eng.termValue, byId: eng.byId, METRICS: reg.METRICS, DERIVED: reg.DERIVED, withOpponent: join.withOpponent, zones };
     });
 
     /* Custom window. spec = { last: N | Infinity, venue: 'all' | 'home' | 'away' }: each team's games are filtered by venue, then
@@ -68,8 +68,8 @@
       const picked = {};                                              // team -> rows (opponent figures joined) of its selected games, oldest first
       for (const r of eng.withOpponent(teamRows).filter(ok).sort(order)) (picked[r.team] ||= []).push(r);
       for (const t of Object.keys(picked)) picked[t] = picked[t].slice(-last);
-      if (kind === 'teams') return { eng, ms: eng.METRICS.filter(m => m.scope === 'team'), rows: picked, info: Object.fromEntries(Object.entries(picked).map(([t, rs]) => [t, { games: rs.length }])) };
-      const ms = eng.METRICS.filter(m => m.scope === 'player'), roster = (await need('roster.json')).players, byPlayer = {};
+      if (kind === 'teams') return { eng, ms: eng.METRICS.filter(m => m.scope === 'team' && !m.internal), rows: picked, info: Object.fromEntries(Object.entries(picked).map(([t, rs]) => [t, { games: rs.length }])) };
+      const ms = eng.METRICS.filter(m => m.scope === 'player' && !m.internal), roster = (await need('roster.json')).players, byPlayer = {};
       for (const r of [...(await games('players'))].sort(order)) (byPlayer[r.player_id] ||= []).push(r);
       const rows = {}, info = {};
       for (const [pid, list] of Object.entries(byPlayer)) {
@@ -83,6 +83,11 @@
       const { eng, ms, rows, info } = await windowRows(kind, spec), out = {}, all = [];
       for (const [key, rs] of Object.entries(rows)) { all.push(...rs); out[key] = { ...info[key], v: ms.map(m => encode(eng.evaluate(m, rs))) }; }
       return makeView(kind, 'custom', { metrics: ms.map(m => m.id), league: ms.map(m => encode(eng.evaluate(m, all))), rows: out });
+    }
+    /* The games (codes) a team's window covers: venue filter first, then the last N. */
+    async function windowGames(team, spec = {}) {
+      const { last = Infinity, venue = 'all' } = spec, rows = (await games('teams')).filter(r => r.team === team && (venue === 'all' || (venue === 'home') === (r.home === 1))).sort(order);
+      return new Set(rows.slice(-last).map(r => r.game));
     }
     /* Value of every metric over a chosen set of rows of a window (e.g. the league average of the players left by the page filters). */
     async function average(kind, spec, keys) {
@@ -103,7 +108,7 @@
       return n;
     }
 
-    return { manifest, metrics, view, customView, average, games, shots, roster, schedule, engine, status, clearOldCaches, records, decode };
+    return { manifest, metrics, view, customView, average, windowGames, games, shots, roster, schedule, engine, status, clearOldCaches, records, decode };
   }
   return { create, decode };
 });

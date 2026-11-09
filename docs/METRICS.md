@@ -82,6 +82,22 @@ Every metric is defined once in `scripts/metrics/registry.mjs`. Ratios are `Σ n
 | `zm_3p_pct` | 3P FG% | pct | 100 × Σ(zm_3p_m) ÷ Σ(zm_3p_a) | higher | fantasy, betting | Field-goal percentage in the area "3P" (sum of its zones). |
 | `zm_mid_pct` | Mid FG% | pct | 100 × Σ(zm_mid_m) ÷ Σ(zm_mid_a) | higher | fantasy, betting | Field-goal percentage in the area "Mid" (sum of its zones). |
 | `zm_paint_pct` | Paint FG% | pct | 100 × Σ(zm_paint_m) ÷ Σ(zm_paint_a) | higher | fantasy, betting | Field-goal percentage in the area "Paint" (sum of its zones). |
+| `rd_ft_g` | Net Free throws / game | perGame | Σ(2·m1 − a1) ÷ Σ(played) | higher | fantasy | Net contribution of free throws per game played (radar axis). |
+| `rd_ft_100` | Net Free throws / 100 poss | per100 | 100 × Σ(2·m1 − a1) ÷ Σ(poss_off_on) | higher | fantasy | Net contribution of free throws per 100 team possessions on court (radar axis). |
+| `rd_2p_g` | Net Two-pointers / game | perGame | Σ(3·m2 − a2) ÷ Σ(played) | higher | fantasy | Net contribution of two-pointers per game played (radar axis). |
+| `rd_2p_100` | Net Two-pointers / 100 poss | per100 | 100 × Σ(3·m2 − a2) ÷ Σ(poss_off_on) | higher | fantasy | Net contribution of two-pointers per 100 team possessions on court (radar axis). |
+| `rd_3p_g` | Net Three-pointers / game | perGame | Σ(4·m3 − a3) ÷ Σ(played) | higher | fantasy | Net contribution of three-pointers per game played (radar axis). |
+| `rd_3p_100` | Net Three-pointers / 100 poss | per100 | 100 × Σ(4·m3 − a3) ÷ Σ(poss_off_on) | higher | fantasy | Net contribution of three-pointers per 100 team possessions on court (radar axis). |
+| `rd_ast_g` | Net Assists − turnovers / game | perGame | Σ(ast − tov) ÷ Σ(played) | higher | fantasy | Net contribution of assists − turnovers per game played (radar axis). |
+| `rd_ast_100` | Net Assists − turnovers / 100 poss | per100 | 100 × Σ(ast − tov) ÷ Σ(poss_off_on) | higher | fantasy | Net contribution of assists − turnovers per 100 team possessions on court (radar axis). |
+| `rd_dreb_g` | Net Defensive rebounds / game | perGame | Σ(dreb) ÷ Σ(played) | higher | fantasy | Net contribution of defensive rebounds per game played (radar axis). |
+| `rd_dreb_100` | Net Defensive rebounds / 100 poss | per100 | 100 × Σ(dreb) ÷ Σ(poss_def_on) | higher | fantasy | Net contribution of defensive rebounds per 100 team possessions on court (radar axis). |
+| `rd_oreb_g` | Net Offensive rebounds / game | perGame | Σ(oreb) ÷ Σ(played) | higher | fantasy | Net contribution of offensive rebounds per game played (radar axis). |
+| `rd_oreb_100` | Net Offensive rebounds / 100 poss | per100 | 100 × Σ(oreb) ÷ Σ(poss_off_on) | higher | fantasy | Net contribution of offensive rebounds per 100 team possessions on court (radar axis). |
+| `rd_stlblk_g` | Net Steals + blocks − blocks against / game | perGame | Σ(stl + blk − blk_against) ÷ Σ(played) | higher | fantasy | Net contribution of steals + blocks − blocks against per game played (radar axis). |
+| `rd_stlblk_100` | Net Steals + blocks − blocks against / 100 poss | per100 | 200 × Σ(stl + blk − blk_against) ÷ Σ(poss_off_on + poss_def_on) | higher | fantasy | Net contribution of steals + blocks − blocks against per 100 team possessions on court (radar axis). |
+| `rd_fd_g` | Net Fouls drawn − fouls / game | perGame | Σ(fd − pf) ÷ Σ(played) | higher | fantasy | Net contribution of fouls drawn − fouls per game played (radar axis). |
+| `rd_fd_100` | Net Fouls drawn − fouls / 100 poss | per100 | 200 × Σ(fd − pf) ÷ Σ(poss_off_on + poss_def_on) | higher | fantasy | Net contribution of fouls drawn − fouls per 100 team possessions on court (radar axis). |
 
 ## Teams
 
@@ -112,6 +128,8 @@ Every metric is defined once in `scripts/metrics/registry.mjs`. Ratios are `Σ n
 | `o_stl100` | Opp STL / 100 poss | per100 | 100 × Σ(o_stl) ÷ Σ(poss) | lower | betting | Opponent steals per 100 of their defensive (= own) possessions. |
 | `t_blk_pct` | BLK% | pct | 100 × Σ(blk) ÷ Σ(o_a2) | higher | betting | Own blocks as a share of opponent two-point attempts. |
 | `o_blk_pct` | Opp BLK% | pct | 100 × Σ(o_blk) ÷ Σ(a2) | lower | betting | Opponent blocks as a share of own two-point attempts. |
+| `o_rim_rate` | Opp At the rim FGA share | pct | 100 × Σ(o_zs_rim_a) ÷ Σ(o_fga) | lower | fantasy, betting | Share of opponent field-goal attempts taken at the rim. |
+| `o_corner3_rate` | Opp Corner 3PA share | pct | 100 × Σ(o_zs_corner_a) ÷ Σ(o_fga) | lower | fantasy, betting | Share of opponent field-goal attempts that are corner threes. |
 | `t_fb100` | Fast break PTS / 100 poss | per100 | 100 × Σ(pts_fastbreak) ÷ Σ(poss) | higher | betting | Own fast-break points per 100 own possessions. |
 | `o_fb100` | Opp Fast break PTS / 100 poss | per100 | 100 × Σ(o_pts_fastbreak) ÷ Σ(o_poss) | lower | fantasy, betting | Opponent fast-break points per 100 opponent possessions. |
 | `t_sc100` | Second chance PTS / 100 poss | per100 | 100 × Σ(pts_second_chance) ÷ Σ(poss) | higher | betting | Own second-chance points per 100 own possessions. |
@@ -160,4 +178,5 @@ Every metric is defined once in `scripts/metrics/registry.mjs`. Ratios are `Σ n
 | `o_zm_3p_pct` | Opp 3P FG% | pct | 100 × Σ(o_zm_3p_m) ÷ Σ(o_zm_3p_a) | lower | fantasy, betting | Field-goal percentage in the area "3P" (sum of its zones). |
 | `o_zm_mid_pct` | Opp Mid FG% | pct | 100 × Σ(o_zm_mid_m) ÷ Σ(o_zm_mid_a) | lower | fantasy, betting | Field-goal percentage in the area "Mid" (sum of its zones). |
 | `o_zm_paint_pct` | Opp Paint FG% | pct | 100 × Σ(o_zm_paint_m) ÷ Σ(o_zm_paint_a) | lower | fantasy, betting | Field-goal percentage in the area "Paint" (sum of its zones). |
+| `share` | Share | pct | 100 × Σ(n) ÷ Σ(of) | higher | fantasy, betting | A part as a percentage of its whole (counts supplied by the caller). |
 

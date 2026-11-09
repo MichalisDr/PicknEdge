@@ -23,12 +23,18 @@ const PLAYER = {
 // Box Creation by hand: k = 2; AST = 6; PTS+TOV = 42; proficiency = (2/(1+e^-10) - 1) x 0.4 = 0.39996;
 // BC = 0.1843x6 + 0.0969x42 - 2.3021x0.39996 + 0.0582x6x42x0.39996 - 1.1942 = 8.9267
 // Load = (6 - 0.38x8.9267) x 0.75 + 16x2 + 8.9267 + 2x2 = 46.8824;  cTOV% = 100 x (2x100/50) / 46.8824 = 8.532
+const RADAR_NET = { ft: 2 * 3 - 4, '2p': 3 * 5 - 9, '3p': 4 * 2 - 5, ast: 3 - 2, dreb: 4, oreb: 1, stlblk: 2 + 1 - 1, fd: 5 - 3 };
+for (const [k, v] of Object.entries(RADAR_NET)) {
+  PLAYER['rd_' + k + '_g'] = v;
+  PLAYER['rd_' + k + '_100'] = k === 'dreb' ? v / 48 * 100 : k === 'stlblk' || k === 'fd' ? v * 200 / (50 + 48) : v / 50 * 100;
+}
 const PLAYER_APPROX = { bc: [8.9267, 1e-3], load: [46.8824, 1e-3], ctov: [8.532, 5e-3] };
 
 // One team-game: 76 pts (12/16 FT, 20/40 two, 8/25 three), 70 possessions; opponent 73 pts, 68 possessions.
 const T = { games: 1, sec: 2400, poss: 70, o_poss: 68, m1: 12, a1: 16, m2: 20, a2: 40, m3: 8, a3: 25, oreb: 9, dreb: 24, ast: 15, stl: 7, tov: 12, blk: 3,
   o_m1: 10, o_a1: 14, o_m2: 18, o_a2: 35, o_m3: 9, o_a3: 28, o_oreb: 11, o_dreb: 22, o_ast: 17, o_stl: 8, o_tov: 14, o_blk: 4,
-  pts_fastbreak: 10, pts_second_chance: 12, pts_off_turnover: 14, o_pts_fastbreak: 8, o_pts_second_chance: 9, o_pts_off_turnover: 16 };
+  o_z_rim_a: 20, o_z_cornerL_a: 5, o_z_cornerR_a: 3, pts_fastbreak: 10, pts_second_chance: 12, pts_off_turnover: 14, o_pts_fastbreak: 8, o_pts_second_chance: 9, o_pts_off_turnover: 16 };
+const TEAM_EXTRA = { share: 100 * 3 / 8 };
 const TEAM = {
   pace: (70 + 68) * 1200 / 2400, ortg: 76 / 70 * 100, drtg: 73 / 68 * 100, t_pts_g: 76, o_pts_g: 73,
   t_efg: (20 + 12) / 65 * 100, o_efg: (18 + 13.5) / 63 * 100, t_fg2_pct: 20 / 40 * 100, o_fg2_pct: 18 / 35 * 100, t_fg3_pct: 8 / 25 * 100, o_fg3_pct: 9 / 28 * 100,
@@ -36,17 +42,19 @@ const TEAM = {
   t_oreb_pct: 9 / (9 + 22) * 100, t_dreb_pct: 24 / (24 + 11) * 100,
   t_tov100: 12 / 70 * 100, o_tov100: 14 / 68 * 100, t_ast100: 15 / 70 * 100, o_ast100: 17 / 68 * 100,
   t_stl100: 7 / 68 * 100, o_stl100: 8 / 70 * 100, t_blk_pct: 3 / 35 * 100, o_blk_pct: 4 / 40 * 100,
+  o_rim_rate: 20 / 63 * 100, o_corner3_rate: (5 + 3) / 63 * 100,
   t_fb100: 10 / 70 * 100, o_fb100: 8 / 68 * 100, t_sc100: 12 / 70 * 100, o_sc100: 9 / 68 * 100, t_pot100: 14 / 70 * 100, o_pot100: 16 / 68 * 100,
 };
 
 test('every registry metric has a hand-checked case', () => {
-  const covered = new Set([...Object.keys(PLAYER), ...Object.keys(PLAYER_APPROX), ...Object.keys(TEAM)]);
+  const covered = new Set([...Object.keys(PLAYER), ...Object.keys(PLAYER_APPROX), ...Object.keys(TEAM), ...Object.keys(TEAM_EXTRA)]);
   assert.deepEqual(METRICS.map(m => m.id).filter(id => !covered.has(id) && !/^(t_|o_)?z[sm]?_/.test(id)), []);   // zone metrics: zones.test.mjs
   assert.deepEqual([...covered].filter(id => !METRICS.some(m => m.id === id)), []);
 });
 for (const [id, want] of Object.entries(PLAYER)) test(`player ${id}`, () => approx(evaluate(byId(id), [P]).value, want));
 for (const [id, [want, tol]] of Object.entries(PLAYER_APPROX)) test(`player ${id} (custom, from summed components)`, () => approx(evaluate(byId(id), [P]).value, want, tol));
 for (const [id, want] of Object.entries(TEAM)) test(`team ${id}`, () => approx(evaluate(byId(id), [T]).value, want));
+test('share = n / of x 100', () => approx(evaluate(byId('share'), [{ n: 3, of: 8 }]).value, TEAM_EXTRA.share));
 
 test('custom metrics use window sums, not per-game results', () => {
   const b = { ...P, ast: 9, m3: 0, a3: 4, sa: 10, tov: 1, poss_off_on: 40 };

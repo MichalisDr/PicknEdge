@@ -85,7 +85,7 @@ test('clearOldCaches removes only the old data keys', () => {
 test('shots and per-game rows are loaded on demand', async () => {
   const { D, requested } = loader();
   const rows = await D.shots('ZAL');
-  assert.ok(rows.length > 100 && rows.every(r => 'x' in r && 'zone' in r));
+  assert.ok(rows.length > 100 && rows.every(r => 'x' in r && typeof r.zone === 'string' && r.zone.length > 0), 'every field-goal shot has a zone');
   assert.ok(rows.some(r => r.team === 'ZAL') && rows.some(r => r.team !== 'ZAL'), 'shots for and against');
   assert.ok(requested.some(u => u.includes('shots/ZAL.json')));
 });
@@ -115,4 +115,21 @@ test('average() over a chosen set of players equals the engine over exactly thos
   const g = await D.games('players'), rows = g.filter(r => keys.includes(r.player_id));
   const pts = rows.reduce((n, r) => n + r.m1 + 2 * r.m2 + 3 * r.m3, 0), poss = rows.reduce((n, r) => n + r.poss_off_on, 0);
   assert.ok(Math.abs(avg.league('pts100').value - 100 * pts / poss) < 1e-5);
+});
+
+test('windowGames returns the team\'s last N games after the venue filter; the engine exposes what the cards need', async () => {
+  const { D } = loader(), eng = await D.engine();
+  for (const k of ['evaluate', 'termValue', 'byId', 'METRICS', 'DERIVED', 'withOpponent', 'zones']) assert.ok(eng[k], k);
+  const all = await D.windowGames('ZAL', {}), l3 = await D.windowGames('ZAL', { last: 3 }), home = await D.windowGames('ZAL', { venue: 'home' }), h2 = await D.windowGames('ZAL', { last: 2, venue: 'home' });
+  assert.equal(all.size, 10); assert.equal(l3.size, 3); assert.ok([...l3].every(g => all.has(g)));
+  assert.ok(h2.size === Math.min(2, home.size) && [...h2].every(g => home.has(g)));
+  const roster = await D.roster();
+  assert.equal(Object.keys(roster.logoIds).length, 20);
+});
+
+test('shot rows carry the assisted flag only for made shots (null = unknown), and rim shots exist', async () => {
+  const { D } = loader(), rows = await D.shots('BAR');
+  assert.ok(rows.some(r => r.made === 1 && r.assisted === 1) && rows.some(r => r.made === 1 && r.assisted === 0));
+  assert.ok(rows.filter(r => r.made === 0).every(r => r.assisted === 0));
+  assert.ok(rows.some(r => r.zone === 'rim'));
 });

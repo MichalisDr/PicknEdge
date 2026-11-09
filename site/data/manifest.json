@@ -9,7 +9,7 @@
   "l5",
   "l10"
  ],
- "version": "9196f71c97",
+ "version": "4af71f4717",
  "eligibility": {
   "note": "Display-only rule used by the site to decide which players to list. Nothing is stored: the site evaluates it at display time on the selected window's gp, min and pir. A player is eligible in a window when ALL of that window's thresholds are met. l3 and l5 follow the old Fantasy filter (GP3 >= 1, MIN3 >= 10, GP5 >= 3, PIR >= 5); season and l10 are placeholders to confirm.",
   "windows": {

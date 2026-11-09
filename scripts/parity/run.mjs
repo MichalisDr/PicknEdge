@@ -16,7 +16,7 @@ const { feed } = require('./harness.cjs');
 // ---- new numbers (full precision) ----
 const clean = { players: read('player_games.csv'), teams: read('team_games.csv'), dim: read('players.csv') };
 const views = buildViews(clean, { precise: true });
-const ids = scope => METRICS.filter(m => m.scope === scope).map(m => m.id);
+const ids = scope => METRICS.filter(m => m.scope === scope && !m.internal).map(m => m.id);
 const newVal = (scope, w, key, id) => { const v = views[w][scope === 'player' ? 'players' : 'teams'].rows[key]; return v ? v.v[ids(scope).indexOf(id)] : undefined; };
 
 // ---- old numbers ----

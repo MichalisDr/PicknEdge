@@ -1,0 +1,4 @@
+{
+  "note": "EuroLeague team code -> id used by site/team-assets.js for the club logo.",
+  "ids": { "IST": "anadolu-efes-istanbul", "ASV": "asvel-lyon-villeurbanne", "BAR": "barcelona", "BAS": "baskonia", "MUN": "bayern-munich", "BES": "besiktas", "DUB": "dubai", "ULK": "fenerbahce-ulker", "HTA": "hapoel-tel-aviv", "RED": "kk-crvena-zvezda", "TEL": "maccabi-tel-aviv", "MIL": "milano", "OLY": "olympiacos", "PAN": "panathinaikos", "PRS": "paris-basketball", "PAR": "partizan", "MAD": "real-madrid", "PAM": "valencia", "VIR": "virtus-bologna", "ZAL": "zalgiris-kaunas" }
+}
