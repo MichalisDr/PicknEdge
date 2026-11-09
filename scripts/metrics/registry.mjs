@@ -28,9 +28,8 @@ export const DERIVED = {
   o_fga: [[1, 'o_a2'], [1, 'o_a3']],
   used: [[1, 'sa'], [1, 'tov']],                       // possessions used by the player: shot attempts, free-throw trips, turnovers
   team_used_on: [[1, 'team_sa_on'], [1, 'team_tov_on']],
-  net: [[1, 'pts'], [-1, 'misses'], [-1, 'tov']],      // scoring-only contribution
   nonscoring: [[1, 'oreb'], [1, 'dreb'], [1, 'ast'], [1, 'stl'], [1, 'blk'], [1, 'fd'], [-1, 'pf'], [-1, 'blk_against'], [-1, 'tov']],
-  pir: [[1, 'net'], [1, 'nonscoring'], [1, 'tov']],    // net + (credits - fouls - blocks against), turnovers counted once in net
+  pir: [[1, 'pts'], [-1, 'misses'], [1, 'nonscoring']],  // PIR = (points - missed shots) + non scoring PIR
 };
 
 import { ZONES, SUBS, MAINS, zonesOfSub, zonesOfMain } from './zones.mjs';
@@ -43,7 +42,7 @@ for (const p of ['', 'o_']) for (const q of ['a', 'm']) {
 
 const F = ['fantasy'], B = ['betting'], FB = ['fantasy', 'betting'];
 const S = n => [[1, n]];                              // single component
-const P = 'player', T = 'team', POSN = 'position';
+const P = 'player', T = 'team';
 const e = (id, label, scope, kind, num, den, tags, digits, description, extra = {}) => ({ id, label, scope, kind, num, den, tags, digits, description, ...extra });
 
 export const METRICS = [
@@ -102,9 +101,8 @@ export const METRICS = [
   // ---------- players: PIR family ----------
   e('pir', 'PIR / game', P, 'perGame', S('pir'), S('played'), FB, 1, 'Performance Index Rating per game: points, rebounds, assists, steals, blocks and fouls drawn minus misses, turnovers, fouls and blocks against.'),
   e('pir_min', 'PIR / min', P, 'perMin', S('pir'), null, F, 3, 'PIR per minute played (total PIR / total minutes).'),
-  e('nspir', 'Non-scoring PIR / game', P, 'perGame', S('nonscoring'), S('played'), F, 1, 'Everything that is not scoring: rebounds, assists, steals, blocks, fouls drawn minus fouls, blocks against and turnovers, per game.'),
-  e('nspir_min', 'Non-scoring PIR / min', P, 'perMin', S('nonscoring'), null, F, 3, 'Non-scoring PIR per minute played.'),
-  e('net_pir_usg', 'NET PIR / USG', P, 'ratio', S('net'), S('used'), F, 3, 'Scoring-only contribution (points - misses - turnovers) per possession used (shot attempts + free-throw trips + turnovers).', { mult: 1 }),
+  e('nspir100', 'nsPIR / 100 poss', P, 'per100', S('nonscoring'), [[1, 'poss_off_on'], [1, 'poss_def_on']], F, 1,
+    'Non Scoring PIR (nsPIR) per 100 possessions: PIR minus its scoring part (points minus missed field goals and free throws), that is rebounds + assists + steals + blocks + fouls drawn - personal fouls - blocks against - turnovers. Per 100 uses x200 / (offensive + defensive possessions on court), like total REB / 100, because PIR combines offense and defense. Shown inside PIR, not as a column.', { mult: 200 }),
 
   // ---------- players: Ben Taylor family (custom, from the window's summed components) ----------
   e('bc', 'Box Creation', P, 'custom', null, null, F, 1,
@@ -195,12 +193,17 @@ METRICS.push(e('share', 'Share', T, 'pct', S('n'), S('of'), FB, 1, 'A part as a 
    Shooting categories count points minus misses (FT = made - missed, 2P = 2 x made - missed ...); AST is net of turnovers, FD of fouls,
    STL+BLK of blocks against. Offensive categories use team offensive possessions on court, DREB the defensive ones, the two mixed
    categories the average of both (x200 / (off + def)). */
-const RADAR = [
-  ['ft', 'Free throws', [[2, 'm1'], [-1, 'a1']], 'off'], ['2p', 'Two-pointers', [[3, 'm2'], [-1, 'a2']], 'off'], ['3p', 'Three-pointers', [[4, 'm3'], [-1, 'a3']], 'off'],
-  ['ast', 'Assists − turnovers', [[1, 'ast'], [-1, 'tov']], 'off'], ['dreb', 'Defensive rebounds', [[1, 'dreb']], 'def'], ['oreb', 'Offensive rebounds', [[1, 'oreb']], 'off'],
-  ['stlblk', 'Steals + blocks − blocks against', [[1, 'stl'], [1, 'blk'], [-1, 'blk_against']], 'both'], ['fd', 'Fouls drawn − fouls', [[1, 'fd'], [-1, 'pf']], 'both'],
+const RADAR = [   // key, name, net terms, gross terms (positive contributions only), basis
+  ['ft', 'Free throws', [[2, 'm1'], [-1, 'a1']], [[1, 'm1']], 'off'], ['2p', 'Two-pointers', [[3, 'm2'], [-1, 'a2']], [[2, 'm2']], 'off'], ['3p', 'Three-pointers', [[4, 'm3'], [-1, 'a3']], [[3, 'm3']], 'off'],
+  ['ast', 'Assists − turnovers', [[1, 'ast'], [-1, 'tov']], [[1, 'ast']], 'off'], ['dreb', 'Defensive rebounds', [[1, 'dreb']], [[1, 'dreb']], 'def'], ['oreb', 'Offensive rebounds', [[1, 'oreb']], [[1, 'oreb']], 'off'],
+  ['stlblk', 'Steals + blocks − blocks against', [[1, 'stl'], [1, 'blk'], [-1, 'blk_against']], [[1, 'stl'], [1, 'blk']], 'both'], ['fd', 'Fouls drawn − fouls', [[1, 'fd'], [-1, 'pf']], [[1, 'fd']], 'both'],
 ];
-for (const [key, name, terms, basis] of RADAR) {
+for (const [key, name, terms, gross, basis] of RADAR) {
+  const den = basis === 'off' ? S('poss_off_on') : basis === 'def' ? S('poss_def_on') : [[1, 'poss_off_on'], [1, 'poss_def_on']];
+  METRICS.push(
+    e(`rg_${key}_g`, `Gross ${name} / game`, P, 'perGame', gross, S('played'), F, 1, `Positive contributions only (no misses, turnovers or fouls) of ${name.toLowerCase()} per game played (radar gross view).`),
+    e(`rg_${key}_100`, `Gross ${name} / 100 poss`, P, 'per100', gross, den, F, 1, `Positive contributions only of ${name.toLowerCase()} per 100 team possessions on court (radar gross view).`, basis === 'both' ? { mult: 200 } : {}),
+  );
   METRICS.push(
     e(`rd_${key}_g`, `Net ${name} / game`, P, 'perGame', terms, S('played'), F, 1, `Net contribution of ${name.toLowerCase()} per game played (radar axis).`),
     e(`rd_${key}_100`, `Net ${name} / 100 poss`, P, 'per100', terms, basis === 'off' ? S('poss_off_on') : basis === 'def' ? S('poss_def_on') : [[1, 'poss_off_on'], [1, 'poss_def_on']], F, 1,
@@ -236,36 +239,6 @@ METRICS.push({
     return A > 0 ? 100 * S_ / A : null;
   },
 });
-
-/* ---------- matchup: what a team allows to a position (rows of position_games) ----------
-   pm_<x>: a component per minute played by the position's opposing players. A factor compares the team's per-minute value with the
-   league's over the same window: > 1 = the team allows more of it than the league. */
-const PM = [['m2', 'm2', 'made twos'], ['a2', 'a2', 'two-point attempts'], ['a3', 'a3', 'three-point attempts'], ['a1', 'a1', 'free-throw attempts'], ['fd', 'fd', 'fouls drawn'],
-  ['dr', 'dreb', 'defensive rebounds'], ['or', 'oreb', 'offensive rebounds'], ['as', 'ast', 'assists'], ['tv', 'tov', 'turnovers']];
-for (const [key, col, name] of PM) {
-  METRICS.push(e(`pm_${key}`, `${name} / min`, POSN, 'perMin', S(col), null, F, 3, `${name} allowed per minute played by the position's opposing players.`));
-  METRICS.push({
-    id: `mu_${key}`, label: `Factor · ${name}`, scope: POSN, kind: 'custom', tags: F, digits: 2, num: null, den: null,
-    description: `Per-minute ${name} the team allows to the position divided by the league's, same window (× 1.00 = league level).`,
-    needs: [col, 'sec'], bench: [`pm_${key}`], fn: (s, b) => s.sec > 0 && b[`pm_${key}`] > 0 ? (s[col] / s.sec * 60) / b[`pm_${key}`] : null,
-  });
-}
-for (const [k, made, att] of [['2', 'm2', 'a2'], ['3', 'm3', 'a3']]) {
-  METRICS.push(e(`pos_fg${k}_pct`, `${k}FG% allowed`, POSN, 'pct', S(made), S(att), F, 1, `${k}-point field-goal percentage the team allows to the position.`));
-  METRICS.push({
-    id: `mu_p${k}`, label: `Factor · ${k}FG%`, scope: POSN, kind: 'custom', tags: F, digits: 2, num: null, den: null,
-    description: `${k}-point percentage allowed to the position divided by the league's (× 1.00 = league level).`,
-    needs: [made, att], bench: [`pos_fg${k}_pct`], fn: (s, b) => s[att] > 0 && b[`pos_fg${k}_pct`] > 0 ? (s[made] / s[att]) / (b[`pos_fg${k}_pct`] / 100) : null,
-  });
-}
-
-/* ---------- matchup: where a player's PIR comes from (per game; turnovers and fouls as negatives) ---------- */
-METRICS.push(
-  e('src_stlblk_g', 'Steals + blocks / game', P, 'perGame', [[1, 'stl'], [1, 'blk']], S('played'), F, 1, 'Steals plus blocks per game played.'),
-  e('src_tov_g', '−Turnovers / game', P, 'perGame', [[-1, 'tov']], S('played'), F, 1, 'Turnovers per game played, as a negative PIR source.'),
-  e('src_pf_g', '−(Fouls + blocks against) / game', P, 'perGame', [[-1, 'pf'], [-1, 'blk_against']], S('played'), F, 1, 'Personal fouls plus blocks against per game played, as a negative PIR source.'),
-  e('poss_g', 'Possessions / game', T, 'perGame', S('poss'), S('games'), F, 1, 'Own possessions per game.'),
-);
 
 /* ---------- direction: which way is better FOR THE ENTITY (+1 higher, -1 lower, 0 style / volume, no judgement) ----------
    Opponent figures (o_*) are better when low, except opponent turnovers (a defence wants them high). The Fantasy lens

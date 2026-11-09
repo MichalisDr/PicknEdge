@@ -7,7 +7,7 @@ import { METRICS } from '../../scripts/metrics/registry.mjs';
 // One player-game: 30 min; 19 pts (3 FT, 5 two, 2 three); 16 shot attempts (SA); on court for 50 own / 48 opponent possessions.
 const P = { played: 1, sec: 1800, m1: 3, a1: 4, m2: 5, a2: 9, m3: 2, a3: 5, oreb: 1, dreb: 4, ast: 3, stl: 2, blk: 1, tov: 2, blk_against: 1, pf: 3, fd: 5,
   starter: 1, team_fgm_on: 15, opp_a2_on: 30, sa: 16, team_sa_on: 40, team_tov_on: 10, poss_off_on: 50, poss_def_on: 48, team_oreb_on: 8, team_dreb_on: 20, opp_oreb_on: 10, opp_dreb_on: 25 };
-// PTS = 3 + 10 + 6 = 19; misses = 1 + 4 + 3 = 8; PIR = 19 - 8 + (1+4+3+2+1+5) - 2 - 3 - 1 = 21; non-scoring = 16 - 3 - 1 - 2 = 10.
+// PTS = 3 + 10 + 6 = 19; misses = 1 + 4 + 3 = 8; non scoring PIR = (1+4+3+2+1+5) - 3 - 1 - 2 = 10; PIR = 19 - 8 + 10 = 21.
 const approx = (a, b, tol = 1e-9) => assert.ok(Math.abs(a - b) <= tol, `${a} != ${b}`);
 
 const PLAYER = {
@@ -18,12 +18,17 @@ const PLAYER = {
   stl100: 2 / 48 * 100, blk100: 1 / 48 * 100, dreb100: 4 / 48 * 100, reb100: 5 * 200 / (50 + 48),
   usg: (16 + 2) / (40 + 10) * 100, tov_pct: 2 / (16 + 2) * 100, oreb_pct: 1 / (8 + 25) * 100, dreb_pct: 4 / (20 + 10) * 100,
   efg: (5 + 1.5 * 2) / 14 * 100, fg2_pct: 5 / 9 * 100, fg3_pct: 2 / 5 * 100, ft_pct: 3 / 4 * 100, ftr: 4 / 14 * 100, ts_pct: 19 / (2 * (14 + 0.44 * 4)) * 100,
-  pir: 21, pir_min: 21 / 30, nspir: 10, nspir_min: 10 / 30, net_pir_usg: (19 - 8 - 2) / (16 + 2),
+  pir: 21, pir_min: 21 / 30, nspir100: 10 * 200 / (50 + 48),   // nsPIR = 10 (see above): x200 / (offensive + defensive possessions on court)
 };
 // Box Creation by hand: k = 2; AST = 6; PTS+TOV = 42; proficiency = (2/(1+e^-10) - 1) x 0.4 = 0.39996;
 // BC = 0.1843x6 + 0.0969x42 - 2.3021x0.39996 + 0.0582x6x42x0.39996 - 1.1942 = 8.9267
 // Load = (6 - 0.38x8.9267) x 0.75 + 16x2 + 8.9267 + 2x2 = 46.8824;  cTOV% = 100 x (2x100/50) / 46.8824 = 8.532
 const RADAR_NET = { ft: 2 * 3 - 4, '2p': 3 * 5 - 9, '3p': 4 * 2 - 5, ast: 3 - 2, dreb: 4, oreb: 1, stlblk: 2 + 1 - 1, fd: 5 - 3 };
+const RADAR_GROSS = { ft: 3, '2p': 10, '3p': 6, ast: 3, dreb: 4, oreb: 1, stlblk: 2 + 1, fd: 5 };   // positive contributions only
+for (const [k, v] of Object.entries(RADAR_GROSS)) {
+  PLAYER['rg_' + k + '_g'] = v;
+  PLAYER['rg_' + k + '_100'] = k === 'dreb' ? v / 48 * 100 : k === 'stlblk' || k === 'fd' ? v * 200 / (50 + 48) : v / 50 * 100;
+}
 for (const [k, v] of Object.entries(RADAR_NET)) {
   PLAYER['rd_' + k + '_g'] = v;
   PLAYER['rd_' + k + '_100'] = k === 'dreb' ? v / 48 * 100 : k === 'stlblk' || k === 'fd' ? v * 200 / (50 + 48) : v / 50 * 100;
@@ -48,7 +53,7 @@ const TEAM = {
 
 test('every registry metric has a hand-checked case', () => {
   const covered = new Set([...Object.keys(PLAYER), ...Object.keys(PLAYER_APPROX), ...Object.keys(TEAM), ...Object.keys(TEAM_EXTRA)]);
-  assert.deepEqual(METRICS.map(m => m.id).filter(id => !covered.has(id) && !/^(t_|o_)?z[sm]?_/.test(id) && !/^(rt_|pm_|mu_|pos_fg|src_)|^o_exp_efg$|^poss_g$/.test(id)), []);   // zone metrics: zones.test.mjs; matchup family: matchup-metrics.test.mjs
+  assert.deepEqual(METRICS.map(m => m.id).filter(id => !covered.has(id) && !/^(t_|o_)?z[sm]?_/.test(id) && !/^rt_|^o_exp_efg$/.test(id)), []);   // zone metrics: zones.test.mjs; team radar and expected eFG: radar-expected.test.mjs
   assert.deepEqual([...covered].filter(id => !METRICS.some(m => m.id === id)), []);
 });
 for (const [id, want] of Object.entries(PLAYER)) test(`player ${id}`, () => approx(evaluate(byId(id), [P]).value, want));

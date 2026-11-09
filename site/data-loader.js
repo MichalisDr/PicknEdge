@@ -98,7 +98,7 @@
       return makeView(kind, 'average', { metrics: ms.map(m => m.id), league: ms.map(m => encode(eng.evaluate(m, all))), rows: {} });
     }
 
-    /* Analysis helpers served with the engine (matchup verdict, with/without selection, Venn): loaded on first use. */
+    /* Analysis helpers served with the engine (the Venn): loaded on first use. */
     const analysis = name => once('analysis:' + name, async () => { await manifest(); return doImport(url('engine/' + name + '.mjs')); });
 
     /* ---- small things ---- */

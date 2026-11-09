@@ -82,19 +82,16 @@ League-average label (Fantasy and Betting): "League average" + small text "Full 
 | Charts · notes | Ευστοχία που επιτρέπεται και έλεγχος αμυντικού ριμπάουντ· … / Αφορά μόνο τα σουτ «At the rim» … / Μερίδια προσπαθειών ανά ζώνη … / Φορτίο και αποτελεσματικότητα … | Shooting allowed and defensive-rebound control; … / Only shots at the rim, not the whole paint. / Shares of attempts by zone; … / Load and scoring efficiency against the league average; … |
 | Charts · quadrant labels | e.g. Υψηλή επιτρεπόμενη ευστοχία · χαμηλό DREB% | removed (colour of the points shows favourable / unfavourable; dashed lines show league values) |
 
-## Step 3.4b · team radar, radar compare, with/without, matchup, Expected eFG, Efficient Scorers
+## Step 3.4b · team radar, radar compare and net/gross, Expected eFG, Efficient Scorers, nsPIR
 
-The Matchup text was taken from the removed Matchup tab of the old `player-card.js` (git history), translated.
+(with/without teammate and Matchup were built and then removed by decision; their strings are gone.)
 
 | Where | Before (Greek) | After (English) |
 |---|---|---|
 | Team radar | Net PIR / 100 κατοχές αντιπάλων · Υπολογισμός radar + text (incl. «χωρίς τα team rebounds») | Net PIR / 100 opponent possessions · How the radar is calculated + text explaining team rebounds |
 | Radar compare | Σύγκριση / Compare | Compare with |
-| With / without | Με / χωρίς συμπαίκτη · Συμπαίκτης · Με · Χωρίς · Διαφορά · μικρό δείγμα · Χωρίς X · N αγώνες · Δεν υπάρχουν συμπαίκτες με καταγεγραμμένους αγώνες απουσίας. · διαφορά = χωρίς − με | With / without a teammate · Teammate · With · Without · Difference · small sample · Without X · N games · No teammates with recorded absences. · difference = without − with |
-| Matchup · tab and controls | Matchup · Αντίπαλος · Επόμενοι αγώνες · Όλες οι ομάδες · εντός / εκτός · Παίκτης: τελ. 3 / τελ. 5 | Matchup · Opponent · Next games · All teams · home / away · Player: last 3 / last 5 |
-| Matchup · verdicts | ΔΙΝΕΙ / ΟΥΔΕΤΕΡΟ / ΚΟΒΕΙ · ΘΕΤΙΚΟ / ΟΥΔΕΤΕΡΟ / ΑΡΝΗΤΙΚΟ | GIVES / NEUTRAL / CUTS · POSITIVE / NEUTRAL / NEGATIVE |
-| Matchup · sources | Δίποντα · Τρίποντα · Βολές · Κερδισμένα φάουλ · Αμυντικά ριμπάουντ · Επιθετικά ριμπάουντ · Ασίστ · Κλεψίματα + μπλοκ · Λάθη · Φάουλ + μπλοκ που δέχτηκε | Two-pointers · Three-pointers · Free throws · Fouls drawn · Defensive rebounds · Offensive rebounds · Assists · Steals + blocks · Turnovers · Fouls + blocks against |
-| Matchup · notes | το ποσοστό του αντιπάλου στο τρίποντο έχει πολύ θόρυβο· μετράει ο όγκος · σταθερή πηγή / κύρια πηγή · σταθερή πηγή, δίνει πάτωμα | the opponent three-point percentage is very noisy; volume counts · stable source / main source · stable source, gives a floor |
-| Matchup · headings and footnote | ΑΠΟ ΠΟΥ ΕΡΧΕΤΑΙ ΤΟ PIR ΤΟΥ · ΤΙ ΚΑΝΕΙ Ο ΑΝΤΙΠΑΛΟΣ ΣΕ ΑΥΤΟ · Ρυθμός (κατοχές/αγ.) · Λεπτά · Παίκτης: μέσος όρος ανά αγώνα … | WHERE HIS PIR COMES FROM · WHAT THE OPPONENT DOES ABOUT IT · Pace (possessions / game) · Minutes · Player: average per game … (full text in fantasy-cards.js) |
 | Charts · Expected vs Actual eFG% | Εκτίμηση βάσει ζωνών — δεν περιλαμβάνει πίεση αμυντικού. · Το residual (πραγματικό − αναμενόμενο) δεν αποδίδεται αυτόματα σε contest ή τύχη. | Zone-based estimate: it does not include defender pressure. · The residual (actual − expected) is not attributed automatically to contest quality or luck. |
 | Charts · Efficient Scorers | μόνο · χωρίς · παίκτες · Δεν υπάρχουν παίκτες με διαθέσιμα USG%, TOV% και TS% … · GP ≥ / MIN/αγώνα ≥ | only · without · players · No players with USG%, TOV% and TS% in this window and filters. · (pool controls are the table filters) |
+| nsPIR (inside PIR only) | Non-scoring PIR (στήλη) / NET SFP | Non Scoring PIR, abbreviation nsPIR, shown in the PIR tooltip and PIR box as "nsPIR … /100 poss" |
+| Radar | (net only) | Net / Gross switch; "Net PIR / game" becomes "Gross PIR / game" in the gross view |
+| Trend insight boxes | (none) | small sample (marker when fewer than 3 games) |

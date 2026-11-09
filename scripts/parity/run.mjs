@@ -27,7 +27,7 @@ const bl = c.BettingLive.build(), BS = c.BettingStats;
 
 // old definition key -> new metric ids (primary value, then secondary value)
 const PLAYER_MAP = { min: ['min'], usg: ['usg'], pts: ['pts100', 'pts_g'], ast: ['ast100', 'ast_g'], tov: ['tov_pct', 'tov_g'], reb: ['reb100', 'reb_g'], ftr: ['ftr'], fd: ['fd100', 'fd_g'],
-  pir: ['pir', 'pir_min'], sfp: ['nspir', 'nspir_min'], netUsage: ['net_pir_usg'], load: ['load', 'bc'], ctov: ['ctov', 'tov100'] };
+  pir: ['pir', 'pir_min'], load: ['load', 'bc'], ctov: ['ctov', 'tov100'] };
 const PLAYER_SHOOT = { efg: ['efg'], shot2: ['fg2_pct'], shot3: ['fg3_pct'], shot1: ['ft_pct'] };
 const TEAM_MAP = { pace: ['pace'], drtg: ['drtg', 'o_pts_g'], efg: ['o_efg'], tov: ['o_tov100'], ast: ['o_ast100'], dreb: ['t_dreb_pct'], ftr: ['o_ftr'], sc: ['o_sc100'], fb: ['o_fb100'], pot: ['o_pot100'] };
 const TEAM_SHOOT = { efg: ['o_efg'], shot2: ['o_fg2_pct'], shot3: ['o_fg3_pct'] };
@@ -64,6 +64,18 @@ for (const [period, n] of [['season', Infinity], ['l3', 3], ['l5', 5], ['l10', 1
   for (const [side, map] of [['offense', BET_OFF], ['defense', BET_DEF]]) BS.metrics(t, side).forEach((ov, i) => add('betting-team-' + side, period, team, map[i], ov, newVal('team', period, team, map[i])));
 }
 
+// nsPIR: the old "Non-scoring PIR" (per game and per minute, a table column) is now nsPIR per 100 possessions inside PIR. The numerator (PIR minus its
+// scoring part) must be unchanged: old per game x games = new per 100 x (OfPo + DePo) / 200 with the old on-court possessions.
+for (const period of ['season', '3', '5']) {
+  const sfp = M.defs('players').find(d => d.key === 'sfp');
+  for (const p of M.rows('players', period)) {
+    const key = 'P' + p.code, n = newVal('player', W[period], key, 'nspir100');
+    if (!n || !Number.isFinite(n.value) || !Number.isFinite(sfp.get(p)) || !(p.OfPo + p.DePo > 0)) continue;
+    results.push({ entity: 'player-nspir', window: W[period], key, id: 'nspir100', old: sfp.get(p), new: n.value, cov: '' });
+    results.push({ entity: 'player-nspir-numerator', window: W[period], key, id: 'nspir100', old: sfp.get(p) * p.Gm, new: n.value * (p.OfPo + p.DePo) / 200, cov: '' });
+  }
+}
+
 // Shot zones. Old numbers come from the old pipeline's own per-game shot summaries (FantasyShots.summary), summed over the window.
 const SZ = c.ShotZones, ratio = (made, att) => (att > 0 ? 100 * made / att : null);
 const zoneGroups = [...SZ.ZONES.map((z, i) => ['z_' + z.key + '_pct', [i]]), ...SZ.SUBS.map(z => ['zs_' + z.key + '_pct', z.ids]), ...SZ.MAINS.map(z => ['zm_' + z.key + '_pct', z.ids])];
@@ -89,7 +101,9 @@ for (const period of ['season', '3', '5']) {
 // ---- classification ----
 const same = (a, b) => (a === null && b === null) || (Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b)));
 // Named decisions that make a difference intentional. A difference not matched by any rule stays (c).
-const RULES = [];
+const RULES = [
+  { decision: 'nsPIR is shown per 100 possessions (x200 / (OfPo + DePo), like REB / 100) inside PIR instead of per game / per minute as a column; the numerator is unchanged (see the numerator rows)', when: r => r.entity === 'player-nspir' },
+];
 for (const r of results) {
   if (same(r.old, r.new)) { r.cls = 'a'; continue; }
   const rule = RULES.find(x => x.when(r));

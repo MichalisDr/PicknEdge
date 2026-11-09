@@ -10,7 +10,7 @@
   /* Which metrics each table shows (ids from metrics.json). */
   const COLUMNS = {
     players: {
-      profile: ['min', 'usg', 'pts100', 'ast100', 'tov_pct', 'reb100', 'ftr', 'fd100', 'pir', 'nspir', 'net_pir_usg'],
+      profile: ['min', 'usg', 'pts100', 'ast100', 'tov_pct', 'reb100', 'ftr', 'fd100', 'pir'],
       shooting: ['efg', 'fg2_pct', 'fg3_pct', 'ft_pct'],
     },
     teams: {
@@ -18,6 +18,8 @@
       shooting: ['o_efg', 'o_fg2_pct', 'o_fg3_pct', 'o_zs_rim_pct', 'o_zs_paint_pct', 'o_zs_mid_pct', 'o_zs_base_pct', 'o_zs_arc_pct', 'o_zs_corner_pct'],
     },
   };
+  /* Extras of a metric, shown in its tooltip only (never as a column): PIR carries Non Scoring PIR (nsPIR) per 100 possessions. */
+  const EXTRAS = { pir: { id: 'nspir100', label: 'nsPIR' } };
   const EVAL = { good: '#DFFBE9', avg: '#FBFFDF', bad: '#F6E0E3', neutral: '#bdc7d5' };   // good / average / bad evaluation palette (UI only)
   const EPS = 1e-9;
 
@@ -67,7 +69,7 @@
         return !Number.isFinite(x) ? (Number.isFinite(y) ? 1 : 0) : !Number.isFinite(y) ? -1 : (x - y) * state.dir; });
       const gallery = state.mode === 'charts' ? await g.FantasyGallery.html(state.entity, state.view, state, pool.map(r => r.id)) : '';
       if (mine !== drawId) return;
-      model = { view, defs, roster, status, shown, avg: leagueCells(view, ids), sortId, gallery };
+      model = { view, defs, roster, status, shown, avg: leagueCells(view, ids), sortId, gallery, byId };
     } catch (e) {
       host.innerHTML = `<section class="fantasy-stats fw-workbench"><div class="fw-heading"><div><div class="eyebrow">FANTASY</div><h1>${teams ? 'Teams' : 'Players'}</h1></div></div><p class="fw-empty" role="status">Could not load the data: ${esc(e.message)}</p></section>`;
       return;
@@ -76,12 +78,12 @@
     wire();
   }
 
-  function html({ view, defs, roster, status, shown, avg, sortId, gallery }) {
+  function html({ view, defs, roster, status, shown, avg, sortId, gallery, byId: byIdAll }) {
     const teams = state.entity === 'teams', title = teams ? 'Teams' : 'Players';
     const header = defs.map(m => `<th aria-sort="${sortId === m.id ? (state.dir > 0 ? 'ascending' : 'descending') : 'none'}"><button data-sort="${m.id}" title="${esc(m.description)}">${esc(m.label)}</button></th>`).join('');
     const cells = (key, avgRow) => defs.map(m => {
       const c = avgRow ? avg[m.id] : view.get(key, m.id), r = teams && !avgRow ? rankOf(view, m.id, c.value, m.direction) : null;
-      return `<td><span class="fw-cell" ${avgRow ? '' : `data-id="${esc(key)}" data-metric="${m.id}" tabindex="0"`} title="${esc(m.label + ': ' + m.description)}" style="${r ? 'color:' + r.color : ''}">${fmt(c, m)}${coverage(c)}${r ? `<small>#${r.position}</small>` : ''}</span></td>`;
+      return `<td><span class="fw-cell" ${avgRow ? '' : `data-id="${esc(key)}" data-metric="${m.id}" tabindex="0"`} title="${esc(m.label + ': ' + m.description + (!avgRow && EXTRAS[m.id] ? ' · ' + EXTRAS[m.id].label + ' ' + fmt(view.get(key, EXTRAS[m.id].id), byIdAll[EXTRAS[m.id].id]) + ' / 100 poss' : ''))}" style="${r ? 'color:' + r.color : ''}">${fmt(c, m)}${coverage(c)}${r ? `<small>#${r.position}</small>` : ''}</span></td>`;
     }).join('');
     const body = shown.map(r => `<tr><th><button class="fw-name" data-open="${esc(r.id)}">${esc(r.name)}</button>${teams ? '' : `<small>${esc(roster.teams[r.team] || r.team)} · ${esc(r.pos || '—')}</small>`}</th><td class="fw-gp">${r.gp}</td>${cells(r.id, false)}</tr>`).join('');
     const filters = !teams && state.filters ? `<div class="fw-filters" role="dialog" aria-label="Filters">
@@ -144,7 +146,7 @@
         const spec = state.win === 'season' ? null : W.spec(state);
         const curve = await g.FantasyCards.curveHtml(state.entity, id, metric, { spec, small: true, views: { season, cur: view, winName: state.win } });
         if (mine !== token) return;
-        tip.innerHTML = `<strong>${esc(name)} · ${esc(m.label)}</strong><p>${fmt(c, m)}</p>${curve}<small>${esc(m.description)}</small>`;
+        tip.innerHTML = `<strong>${esc(name)} · ${esc(m.label)}</strong><p>${fmt(c, m)}</p>${EXTRAS[metric] ? `<p>${EXTRAS[metric].label}: ${fmt(view.get(id, EXTRAS[metric].id), byId[EXTRAS[metric].id])} / 100 poss</p>` : ''}${curve}<small>${esc(m.description)}</small>`;
         tip.hidden = false;
         const r = b.getBoundingClientRect();
         tip.style.left = Math.max(8, Math.min(innerWidth - tip.offsetWidth - 8, r.left)) + 'px';
