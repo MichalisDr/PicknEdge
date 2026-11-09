@@ -64,6 +64,28 @@ for (const [period, n] of [['season', Infinity], ['l3', 3], ['l5', 5], ['l10', 1
   for (const [side, map] of [['offense', BET_OFF], ['defense', BET_DEF]]) BS.metrics(t, side).forEach((ov, i) => add('betting-team-' + side, period, team, map[i], ov, newVal('team', period, team, map[i])));
 }
 
+// Shot zones. Old numbers come from the old pipeline's own per-game shot summaries (FantasyShots.summary), summed over the window.
+const SZ = c.ShotZones, ratio = (made, att) => (att > 0 ? 100 * made / att : null);
+const zoneGroups = [...SZ.ZONES.map((z, i) => ['z_' + z.key + '_pct', [i]]), ...SZ.SUBS.map(z => ['zs_' + z.key + '_pct', z.ids]), ...SZ.MAINS.map(z => ['zm_' + z.key + '_pct', z.ids])];
+const teamGames = {};                                                        // team code -> game codes, oldest first (same order as the views)
+for (const r of [...clean.teams].sort((a, b) => a.date_utc.localeCompare(b.date_utc) || a.game - b.game)) (teamGames[r.team] ||= []).push(r.game);
+const sumArr = (list, k) => list.reduce((acc, x) => acc.map((v, i) => v + x[k][i]), Array(SZ.COUNT).fill(0));
+for (const period of ['season', '3', '5']) {
+  for (const t of M.rows('teams', period)) {                                 // opponent shots against the team
+    if (!t.made) continue;
+    const key = codeOf[t.CID] || t.CID;
+    for (const [id, idx] of zoneGroups) add('team-zone', W[period], key, 'o_' + id, ratio(idx.reduce((n, i) => n + t.made[i], 0), idx.reduce((n, i) => n + t.attempts[i], 0)), newVal('team', W[period], key, 'o_' + id));
+  }
+  for (const p of M.rows('players', period)) {                               // the player's own shots
+    const key = 'P' + p.code, team = clean.players.find(r => r.player_id === key && r.team).team;
+    const n = period === 'season' ? Infinity : Number(period), codes = teamGames[team].slice(-n);
+    const sums = codes.map(code => c.FantasyShots.summary(code, team, p.code)).filter(Boolean);
+    if (sums.length !== codes.length) continue;                              // old shot data incomplete for this window
+    const made = sumArr(sums, 'made'), att = sumArr(sums, 'attempts');
+    for (const [id, idx] of zoneGroups) add('player-zone', W[period], key, id, ratio(idx.reduce((n2, i) => n2 + made[i], 0), idx.reduce((n2, i) => n2 + att[i], 0)), newVal('player', W[period], key, id));
+  }
+}
+
 // ---- classification ----
 const same = (a, b) => (a === null && b === null) || (Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b)));
 // Named decisions that make a difference intentional. A difference not matched by any rule stays (c).

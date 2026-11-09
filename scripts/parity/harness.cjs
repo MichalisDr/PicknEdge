@@ -13,7 +13,7 @@ function boot() {
   const consumers = [], orig = c.EuroLeagueData.register;
   c.EuroLeagueData.register = x => { consumers.push(x); return orig(x); };
   c.FANTASY_SHOTS_DISABLED = false;
-  for (const f of ['site/betting-live-data.js', 'site/shot-zones.js', 'site/fantasy-live.js', 'site/fantasy-shots.js', 'site/fantasy-metrics.js', 'site/betting-stats.js']) { try { load(f); } catch (e) { console.error('load', f, e.message); } }
+  for (const f of ['site/betting-live-data.js', 'site/shot-zones.js', 'site/fantasy-live.js', 'site/fantasy-shots.js', 'site/fantasy-metrics.js', 'site/betting-stats.js', 'site/betting-players.js']) { try { load(f); } catch (e) { console.error('load', f, e.message); } }
   return { c, consumers };
 }
 
