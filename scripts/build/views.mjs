@@ -24,9 +24,9 @@ export function buildViews({ players, teams, dim }, { precise = false } = {}) {
   for (const [w, n] of Object.entries(WINDOWS)) {
     const prows = {}, pAll = [], tAll = [];
     for (const [pid, list] of Object.entries(byPlayer)) {
+      if (!list.some(r => r.played)) continue;                        // never played this season (a window with no appearance keeps the player, with gp = 0)
       const team = list.at(-1).team, set = lastN(team, n);
       const rows = list.filter(r => r.team === team && set.has(r.game));
-      if (!rows.some(r => r.played)) continue;                        // no appearance in the window
       pAll.push(...rows);
       prows[pid] = { team, name: list.at(-1).player, pos: info[pid]?.position || '', v: PLAYER_METRICS.map(m => cell(evaluate(m, rows))) };
     }

@@ -32,7 +32,7 @@ test('views contain every player who played and no eligibility flag', () => {
   const read = f => parseCsv(readFileSync(new URL('../../data/clean/' + f, import.meta.url), 'utf8'));
   const players = read('player_games.csv'), views = buildViews({ players, teams: read('team_games.csv'), dim: read('players.csv') });
   const played = new Set(players.filter(r => r.played).map(r => r.player_id));
-  assert.deepEqual([...played].filter(id => !views.season.players.rows[id]), []);
+  for (const w of Object.keys(views)) assert.deepEqual([...played].filter(id => !views[w].players.rows[id]), [], `missing from ${w}`);
   assert.ok(!METRICS.some(m => /elig/i.test(m.id)));
   assert.ok(!/elig/i.test(readFileSync(new URL('../../data/clean/player_games.csv', import.meta.url), 'utf8').split('\n')[0]));
   // with real data the same player can be eligible in one window and not in another

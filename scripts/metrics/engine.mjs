@@ -42,7 +42,7 @@ export function evaluate(m, rows) {
     if (n === null || d === null) continue;
     N += n; D += d; used++;
   }
-  const value = m.kind === 'count' ? (used ? N : null) : D > 0 ? (m.mult ?? MULT[m.kind]) * N / D : null;
+  const value = m.kind === 'count' ? N : D > 0 ? (m.mult ?? MULT[m.kind]) * N / D : null;
   return { value, used, of: list.length };
 }
 

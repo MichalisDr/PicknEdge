@@ -81,7 +81,6 @@
       for (const [pid, list] of Object.entries(byPlayer)) {
         const team = list.at(-1).team, set = new Set((picked[team] || []).map(r => r.game));
         const rs = list.filter(r => r.team === team && set.has(r.game));
-        if (!rs.length) continue;
         all.push(...rs);
         rows[pid] = { team, name: roster[pid]?.name || pid, pos: roster[pid]?.pos || '', v: ms.map(m => cell(eng.evaluate(m, rs))) };
       }
@@ -92,7 +91,7 @@
     const metrics = () => once('metrics', async () => { const list = await need('metrics.json'); return { list, byId: Object.fromEntries(list.map(m => [m.id, m])) }; });
     const roster = () => need('roster.json');
     const schedule = () => need('schedule.json');
-    const status = async () => { const m = await manifest(); return `Data through game ${m.lastGame} · ${String(m.lastDate).slice(0, 10)}`; };
+    const status = async () => { const m = await manifest(); return `${m.games} games · latest ${String(m.lastDate).slice(0, 10)}`; };
     /* The old site cached EuroLeague data in localStorage; drop those keys once. */
     function clearOldCaches(store = storage || (typeof localStorage !== 'undefined' ? localStorage : null)) {
       if (!store) return 0;

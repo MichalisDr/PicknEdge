@@ -33,7 +33,8 @@ test('opening loads only manifest, metrics, roster, schedule and the Season view
 
 test('status line comes from the manifest', async () => {
   const { D } = loader(), m = await D.manifest();
-  assert.equal(await D.status(), `Data through game ${m.lastGame} · ${m.lastDate.slice(0, 10)}`);
+  assert.equal(await D.status(), `${m.games} games · latest ${m.lastDate.slice(0, 10)}`);
+  assert.match(await D.status(), /^[0-9]+ games · latest [0-9]{4}-[0-9]{2}-[0-9]{2}$/);
 });
 
 test('a custom window with no filter equals the precomputed Season view', async () => {
@@ -87,4 +88,20 @@ test('shots and per-game rows are loaded on demand', async () => {
   assert.ok(rows.length > 100 && rows.every(r => 'x' in r && 'zone' in r));
   assert.ok(rows.some(r => r.team === 'ZAL') && rows.some(r => r.team !== 'ZAL'), 'shots for and against');
   assert.ok(requested.some(u => u.includes('shots/ZAL.json')));
+});
+
+test('every player who played is in every window view, built and custom; no one is dropped for lacking games in a window', async () => {
+  const { D } = loader(), played = new Set((await D.games('players')).map(r => r.player_id));
+  assert.ok(played.size > 250);
+  for (const w of ['season', 'l10', 'l5', 'l3']) {
+    const v = await D.view('players', w);
+    assert.deepEqual([...played].filter(id => !v.row(id)), [], `missing from ${w}`);
+  }
+  for (const spec of [{}, { last: 3 }, { last: 7 }, { last: 3, venue: 'home' }, { venue: 'away' }]) {
+    const v = await D.customView('players', spec);
+    assert.deepEqual([...played].filter(id => !v.row(id)), [], `missing from custom ${JSON.stringify(spec)}`);
+  }
+  const l3 = await D.view('players', 'l3'), absent = l3.keys.filter(id => l3.get(id, 'gp').value === 0);
+  assert.ok(absent.length > 0, 'players with no appearance in L3 are present with gp = 0');
+  assert.ok(absent.every(id => l3.get(id, 'pts100').value === null));
 });
