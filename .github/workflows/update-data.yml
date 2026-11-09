@@ -50,7 +50,7 @@ jobs:
         if: ${{ !inputs.probe }}
         run: node scripts/build/site-data.mjs
 
-      - name: Tests (guard: nothing is committed if they fail)
+      - name: "Tests (guard - nothing is committed if they fail)"
         if: ${{ !inputs.probe }}
         run: node --test tests
 
