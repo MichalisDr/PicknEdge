@@ -110,6 +110,7 @@
   function wire() {
     const on = (sel, ev, fn) => host.querySelectorAll(sel).forEach(el => { el[ev] = () => fn(el); });
     W.wire(host, state, () => { state.sort = ''; draw(); });
+    if (state.mode === 'charts') g.FantasyGallery.wire(host, () => draw());
     on('[data-fwmode]', 'onclick', b => { state.mode = b.dataset.fwmode; draw(); });
     host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => g.FantasyCards.open(state.entity, p.dataset.open, { win: state.win, custom: { ...state.custom }, mode: state.view }); });
     on('[data-view]', 'onclick', b => { state.view = b.dataset.view; state.sort = ''; draw(); });
