@@ -28,6 +28,7 @@ test('possessions, shot attempts, turnovers and rebounds of a mini game', () => 
 test('on-court components of the two players', () => {
   const { A1, B1 } = analyze(pbp, ['AAA', 'BBB'], box).players;
   assert.deepEqual([A1.sa, A1.team_sa_on, A1.team_tov_on, A1.poss_off_on, A1.poss_def_on, A1.team_dreb_on, A1.opp_dreb_on], [1, 1, 1, 3, 2, 1, 1]);
+  assert.deepEqual([A1.team_fgm_on, A1.opp_a2_on, B1.team_fgm_on, B1.opp_a2_on], [0, 1, 1, 1]);   // B made 1; B attempted one two (A1 on court), A attempted one (B1 on court)
   assert.deepEqual([B1.sa, B1.team_sa_on, B1.poss_off_on, B1.poss_def_on, B1.team_dreb_on, B1.opp_dreb_on], [2, 2, 2, 3, 1, 1]);
 });
 

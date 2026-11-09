@@ -51,7 +51,7 @@ export function analyze(pbp, [a, b], box) {
   const T = { [a]: { poss: 0, sa: 0, fga: 0, tov: 0, oreb: 0, dreb: 0 }, [b]: { poss: 0, sa: 0, fga: 0, tov: 0, oreb: 0, dreb: 0 } };
   const lineup = { [a]: new Set(), [b]: new Set() };
   const P = {};                                          // per player: own sa, tracked seconds, on-court counters
-  const row = id => P[id] ||= { sa: 0, sec: 0, team_sa_on: 0, team_tov_on: 0, poss_off_on: 0, poss_def_on: 0, team_oreb_on: 0, team_dreb_on: 0, opp_oreb_on: 0, opp_dreb_on: 0 };
+  const row = id => P[id] ||= { sa: 0, sec: 0, team_sa_on: 0, team_tov_on: 0, poss_off_on: 0, poss_def_on: 0, team_oreb_on: 0, team_dreb_on: 0, opp_oreb_on: 0, opp_dreb_on: 0, team_fgm_on: 0, opp_a2_on: 0 };
   for (const t of [a, b]) for (const p of box[t] || []) if (p.starter) lineup[t].add(p.id);
   const each = (t, fn) => { for (const id of lineup[t]) fn(row(id)); };
 
@@ -83,7 +83,8 @@ export function analyze(pbp, [a, b], box) {
       const key = `${team}|${pid}|${per.start}|${time}`;
       if (SHOTS.has(type)) {
         T[team].fga++; T[team].sa++; if (pid) row(pid).sa++; each(team, r => { r.team_sa_on++; });
-        if (type.endsWith('M')) lastFGM = key;
+        if (type.endsWith('M')) { lastFGM = key; each(team, r => { r.team_fgm_on++; }); }
+        if (type[0] === '2') each(other[team], r => { r.opp_a2_on++; });   // opponent two-point attempts (for BLK%)
       }
       if (type === 'TO') { T[team].tov++; each(team, r => { r.team_tov_on++; }); }
       if (type === 'O' || type === 'D') {                // team rebounds included: they are rebounds available/taken

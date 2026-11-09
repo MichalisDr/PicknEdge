@@ -1,5 +1,6 @@
 // Raw game files -> clean rows (components only, no ratios). Pure functions; I/O lives in build.mjs.
 import { analyze, oliver } from './pbp.mjs';
+import { ZONES, classify } from '../metrics/zones.mjs';
 
 const trim = v => String(v ?? '').trim();
 const num = v => Number(v) || 0;
@@ -17,7 +18,9 @@ const COUNTS = [
   ['ast', 'Assistances'], ['stl', 'Steals'], ['tov', 'Turnovers'], ['blk', 'BlocksFavour'], ['blk_against', 'BlocksAgainst'],
   ['pf', 'FoulsCommited'], ['fd', 'FoulsReceived'],
 ];
-const ON = ['team_sa_on', 'team_tov_on', 'poss_off_on', 'poss_def_on', 'team_oreb_on', 'team_dreb_on', 'opp_oreb_on', 'opp_dreb_on'];
+const ON = ['team_sa_on', 'team_tov_on', 'poss_off_on', 'poss_def_on', 'team_oreb_on', 'team_dreb_on', 'opp_oreb_on', 'opp_dreb_on', 'team_fgm_on', 'opp_a2_on'];
+
+const ZONE_COLS = ZONES.flatMap(z => [C(`z_${z.key}_a`, `shots: field-goal attempts in zone ${z.key}`), C(`z_${z.key}_m`, `shots: field goals made in zone ${z.key}`)]);
 
 export const PLAYER_COLUMNS = [
   ...CTX([C('player_id', 'boxscore Stats[].PlayersStats[].Player_ID (trimmed)'), C('player', 'boxscore Player'), C('dorsal', 'boxscore Dorsal'),
@@ -27,6 +30,7 @@ export const PLAYER_COLUMNS = [
   C('sa', 'playbyplay: own shot attempts + free-throw trips'),
   C('on_ok', 'playbyplay: lineup verified vs box minutes (+ possession checks)'), C('on_sec', 'playbyplay: tracked seconds on court (audit)'),
   ...ON.map(n => C(n, 'playbyplay: counted while the player is on court (empty if on_ok = 0)')),
+  ...ZONE_COLS,
 ];
 export const TEAM_COLUMNS = [
   ...CTX([C('team_name', 'game.home/away.name'), C('ot_periods', 'game.home.quarters ot1..ot5 not null'), C('sec', '2400 + 300 * ot_periods')]),
@@ -37,12 +41,14 @@ export const TEAM_COLUMNS = [
   C('poss_src', '"pbp" | "oliver"'), C('sa', 'playbyplay: team shot attempts'), C('pbp_events', 'playbyplay: events used'),
   C('pts_fastbreak', 'shots: POINTS where FASTBREAK=1'), C('pts_second_chance', 'shots: POINTS where SECOND_CHANCE=1'),
   C('pts_off_turnover', 'shots: POINTS where POINTS_OFF_TURNOVER=1'), C('shots_ok', 'shots feed agrees with box score'),
+  ...ZONE_COLS,
 ];
 export const SHOT_COLUMNS = [
   C('season', 'folder name'), C('game', 'folder name'), C('team', 'shots TEAM'), C('player_id', 'shots ID_PLAYER'), C('action', 'shots ID_ACTION'),
   C('made', 'ID_ACTION ends with M'), C('points', 'shots POINTS'), C('x', 'shots COORD_X'), C('y', 'shots COORD_Y'), C('zone_feed', 'shots ZONE'),
   C('fastbreak', 'shots FASTBREAK'), C('second_chance', 'shots SECOND_CHANCE'), C('points_off_turnover', 'shots POINTS_OFF_TURNOVER'),
   C('minute', 'shots MINUTE'), C('clock', 'shots CONSOLE'), C('num', 'shots NUM_ANOT (= play-by-play NUMBEROFPLAY)'),
+  C('zone', 'classified from x, y and the 2/3-point event type (scripts/metrics/zones.mjs); empty for free throws'),
 ];
 
 /** Box-score team entries keyed by team code. */
@@ -91,6 +97,13 @@ export function buildGame(season, code, raw) {
   });
   const tagged = (c, flag) => rows.filter(r => trim(r.TEAM) === c && trim(r[flag]) === '1').reduce((n, r) => n + num(r.POINTS), 0);
 
+  const isFg = r => /^[23]FG[AM]$/.test(trim(r.ID_ACTION));
+  const zoneOf = r => isFg(r) ? classify(Number(r.COORD_X), Number(r.COORD_Y), trim(r.ID_ACTION)[0] === '3') : '';
+  const zoneCounts = pred => {
+    const z = Object.fromEntries(ZONES.flatMap(q => [[`z_${q.key}_a`, 0], [`z_${q.key}_m`, 0]]));
+    for (const r of rows) if (isFg(r) && pred(r)) { const k = zoneOf(r); if (!k) throw new Error(`game ${code}: unusable shot coordinates (num ${r.NUM_ANOT})`); z[`z_${k}_a`]++; if (trim(r.ID_ACTION).endsWith('M')) z[`z_${k}_m`]++; }
+    return z;
+  };
   const teams = codes.map(team => {
     const poss = possOk ? pbp.teams[team].poss : Math.round(oliver(tot[team], tot[opp[team]]) * 10) / 10;
     return {
@@ -99,7 +112,7 @@ export function buildGame(season, code, raw) {
       ...tot[team], poss_pbp: pbp.teams[team].poss, poss_ok: possOk ? 1 : 0, poss, poss_src: possOk ? 'pbp' : 'oliver',
       sa: pbp.teams[team].sa, pbp_events: pbp.events,
       pts_fastbreak: tagged(team, 'FASTBREAK'), pts_second_chance: tagged(team, 'SECOND_CHANCE'), pts_off_turnover: tagged(team, 'POINTS_OFF_TURNOVER'),
-      shots_ok: shotsOk ? 1 : 0,
+      shots_ok: shotsOk ? 1 : 0, ...zoneCounts(r => trim(r.TEAM) === team),
     };
   });
 
@@ -111,6 +124,7 @@ export function buildGame(season, code, raw) {
       plus_minus: num(l.p.Plusminus), pir_official: num(l.p.Valuation),
       sa: l.played ? (t?.sa ?? 0) : 0, on_ok: on ? 1 : 0, on_sec: l.played ? Math.round(t?.sec ?? 0) : 0,
       ...Object.fromEntries(ON.map(n => [n, on ? t[n] : null])),
+      ...zoneCounts(r => trim(r.TEAM) === team && trim(r.ID_PLAYER) === l.id),
     };
   }));
 
@@ -118,7 +132,7 @@ export function buildGame(season, code, raw) {
     season, game: code, team: trim(r.TEAM), player_id: trim(r.ID_PLAYER), action: trim(r.ID_ACTION), made: trim(r.ID_ACTION).endsWith('M') ? 1 : 0,
     points: num(r.POINTS), x: Number(r.COORD_X), y: Number(r.COORD_Y), zone_feed: trim(r.ZONE), fastbreak: trim(r.FASTBREAK) === '1' ? 1 : 0,
     second_chance: trim(r.SECOND_CHANCE) === '1' ? 1 : 0, points_off_turnover: trim(r.POINTS_OFF_TURNOVER) === '1' ? 1 : 0,
-    minute: num(r.MINUTE), clock: trim(r.CONSOLE), num: num(r.NUM_ANOT),
+    minute: num(r.MINUTE), clock: trim(r.CONSOLE), num: num(r.NUM_ANOT), zone: zoneOf(r),
   }));
 
   return { players, teams, shots: shotRows, checks: { game: code, possOk, fgaOk, countOk, onOk: pbp.onOk, shotsOk, onBad: pbp.onBad, events: pbp.events, ot, pbpPoss: Object.fromEntries(codes.map(c => [c, pbp.teams[c].poss])), pbpReb: Object.fromEntries(codes.map(c => [c, [pbp.teams[c].oreb, pbp.teams[c].dreb]])), boxReb: Object.fromEntries(codes.map(c => [c, [tot[c].oreb, tot[c].dreb]])) } };

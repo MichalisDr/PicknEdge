@@ -163,6 +163,110 @@
   {
    "name": "opp_dreb_on",
    "src": "playbyplay: counted while the player is on court (empty if on_ok = 0)"
+  },
+  {
+   "name": "team_fgm_on",
+   "src": "playbyplay: counted while the player is on court (empty if on_ok = 0)"
+  },
+  {
+   "name": "opp_a2_on",
+   "src": "playbyplay: counted while the player is on court (empty if on_ok = 0)"
+  },
+  {
+   "name": "z_rim_a",
+   "src": "shots: field-goal attempts in zone rim"
+  },
+  {
+   "name": "z_rim_m",
+   "src": "shots: field goals made in zone rim"
+  },
+  {
+   "name": "z_paint_a",
+   "src": "shots: field-goal attempts in zone paint"
+  },
+  {
+   "name": "z_paint_m",
+   "src": "shots: field goals made in zone paint"
+  },
+  {
+   "name": "z_midL_a",
+   "src": "shots: field-goal attempts in zone midL"
+  },
+  {
+   "name": "z_midL_m",
+   "src": "shots: field goals made in zone midL"
+  },
+  {
+   "name": "z_midC_a",
+   "src": "shots: field-goal attempts in zone midC"
+  },
+  {
+   "name": "z_midC_m",
+   "src": "shots: field goals made in zone midC"
+  },
+  {
+   "name": "z_midR_a",
+   "src": "shots: field-goal attempts in zone midR"
+  },
+  {
+   "name": "z_midR_m",
+   "src": "shots: field goals made in zone midR"
+  },
+  {
+   "name": "z_baseL_a",
+   "src": "shots: field-goal attempts in zone baseL"
+  },
+  {
+   "name": "z_baseL_m",
+   "src": "shots: field goals made in zone baseL"
+  },
+  {
+   "name": "z_baseR_a",
+   "src": "shots: field-goal attempts in zone baseR"
+  },
+  {
+   "name": "z_baseR_m",
+   "src": "shots: field goals made in zone baseR"
+  },
+  {
+   "name": "z_arcL_a",
+   "src": "shots: field-goal attempts in zone arcL"
+  },
+  {
+   "name": "z_arcL_m",
+   "src": "shots: field goals made in zone arcL"
+  },
+  {
+   "name": "z_arcC_a",
+   "src": "shots: field-goal attempts in zone arcC"
+  },
+  {
+   "name": "z_arcC_m",
+   "src": "shots: field goals made in zone arcC"
+  },
+  {
+   "name": "z_arcR_a",
+   "src": "shots: field-goal attempts in zone arcR"
+  },
+  {
+   "name": "z_arcR_m",
+   "src": "shots: field goals made in zone arcR"
+  },
+  {
+   "name": "z_cornerL_a",
+   "src": "shots: field-goal attempts in zone cornerL"
+  },
+  {
+   "name": "z_cornerL_m",
+   "src": "shots: field goals made in zone cornerL"
+  },
+  {
+   "name": "z_cornerR_a",
+   "src": "shots: field-goal attempts in zone cornerR"
+  },
+  {
+   "name": "z_cornerR_m",
+   "src": "shots: field goals made in zone cornerR"
   }
  ],
  "team_games": [
@@ -345,6 +449,102 @@
   {
    "name": "shots_ok",
    "src": "shots feed agrees with box score"
+  },
+  {
+   "name": "z_rim_a",
+   "src": "shots: field-goal attempts in zone rim"
+  },
+  {
+   "name": "z_rim_m",
+   "src": "shots: field goals made in zone rim"
+  },
+  {
+   "name": "z_paint_a",
+   "src": "shots: field-goal attempts in zone paint"
+  },
+  {
+   "name": "z_paint_m",
+   "src": "shots: field goals made in zone paint"
+  },
+  {
+   "name": "z_midL_a",
+   "src": "shots: field-goal attempts in zone midL"
+  },
+  {
+   "name": "z_midL_m",
+   "src": "shots: field goals made in zone midL"
+  },
+  {
+   "name": "z_midC_a",
+   "src": "shots: field-goal attempts in zone midC"
+  },
+  {
+   "name": "z_midC_m",
+   "src": "shots: field goals made in zone midC"
+  },
+  {
+   "name": "z_midR_a",
+   "src": "shots: field-goal attempts in zone midR"
+  },
+  {
+   "name": "z_midR_m",
+   "src": "shots: field goals made in zone midR"
+  },
+  {
+   "name": "z_baseL_a",
+   "src": "shots: field-goal attempts in zone baseL"
+  },
+  {
+   "name": "z_baseL_m",
+   "src": "shots: field goals made in zone baseL"
+  },
+  {
+   "name": "z_baseR_a",
+   "src": "shots: field-goal attempts in zone baseR"
+  },
+  {
+   "name": "z_baseR_m",
+   "src": "shots: field goals made in zone baseR"
+  },
+  {
+   "name": "z_arcL_a",
+   "src": "shots: field-goal attempts in zone arcL"
+  },
+  {
+   "name": "z_arcL_m",
+   "src": "shots: field goals made in zone arcL"
+  },
+  {
+   "name": "z_arcC_a",
+   "src": "shots: field-goal attempts in zone arcC"
+  },
+  {
+   "name": "z_arcC_m",
+   "src": "shots: field goals made in zone arcC"
+  },
+  {
+   "name": "z_arcR_a",
+   "src": "shots: field-goal attempts in zone arcR"
+  },
+  {
+   "name": "z_arcR_m",
+   "src": "shots: field goals made in zone arcR"
+  },
+  {
+   "name": "z_cornerL_a",
+   "src": "shots: field-goal attempts in zone cornerL"
+  },
+  {
+   "name": "z_cornerL_m",
+   "src": "shots: field goals made in zone cornerL"
+  },
+  {
+   "name": "z_cornerR_a",
+   "src": "shots: field-goal attempts in zone cornerR"
+  },
+  {
+   "name": "z_cornerR_m",
+   "src": "shots: field goals made in zone cornerR"
   }
  ],
  "shots": [
@@ -411,6 +611,10 @@
   {
    "name": "num",
    "src": "shots NUM_ANOT (= play-by-play NUMBEROFPLAY)"
+  },
+  {
+   "name": "zone",
+   "src": "classified from x, y and the 2/3-point event type (scripts/metrics/zones.mjs); empty for free throws"
   }
  ],
  "players": [

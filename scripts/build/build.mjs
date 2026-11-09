@@ -71,7 +71,7 @@ for (const t of teams) {
   if (!ps.length) continue;
   inv.rows++;
   const s = k => ps.reduce((n, p) => n + p[k], 0);
-  const miss = [['poss_off_on', 5 * t.poss_pbp], ['team_sa_on', 5 * t.sa], ['team_oreb_on', 5 * t.oreb], ['team_dreb_on', 5 * t.dreb], ['team_tov_on', 5 * t.tov], ['on_sec', 5 * t.sec]]
+  const miss = [['poss_off_on', 5 * t.poss_pbp], ['team_sa_on', 5 * t.sa], ['team_oreb_on', 5 * t.oreb], ['team_dreb_on', 5 * t.dreb], ['team_tov_on', 5 * t.tov], ['team_fgm_on', 5 * (t.m2 + t.m3)], ['on_sec', 5 * t.sec]]
     .filter(([k, want]) => Math.abs(s(k) - want) > (k === 'on_sec' ? 5 * 75 : 0));
   if (miss.length) inv.bad.push(`g${t.game} ${t.team}: ${miss.map(([k, w]) => `${k} ${s(k)} vs ${w}`).join(', ')}`);
 }
