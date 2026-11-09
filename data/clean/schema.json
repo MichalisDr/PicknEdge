@@ -1,0 +1,454 @@
+{
+ "player_games": [
+  {
+   "name": "season",
+   "src": "folder name"
+  },
+  {
+   "name": "game",
+   "src": "folder name"
+  },
+  {
+   "name": "round",
+   "src": "game.round.round"
+  },
+  {
+   "name": "date_utc",
+   "src": "game.date"
+  },
+  {
+   "name": "team",
+   "src": "game.home/away.code"
+  },
+  {
+   "name": "opp",
+   "src": "game.home/away.code"
+  },
+  {
+   "name": "home",
+   "src": "game.home.code == team"
+  },
+  {
+   "name": "player_id",
+   "src": "boxscore Stats[].PlayersStats[].Player_ID (trimmed)"
+  },
+  {
+   "name": "player",
+   "src": "boxscore Player"
+  },
+  {
+   "name": "dorsal",
+   "src": "boxscore Dorsal"
+  },
+  {
+   "name": "starter",
+   "src": "boxscore IsStarter"
+  },
+  {
+   "name": "played",
+   "src": "boxscore Minutes != \"DNP\""
+  },
+  {
+   "name": "sec",
+   "src": "boxscore Minutes (mm:ss -> seconds)"
+  },
+  {
+   "name": "m1",
+   "src": "boxscore FreeThrowsMade"
+  },
+  {
+   "name": "a1",
+   "src": "boxscore FreeThrowsAttempted"
+  },
+  {
+   "name": "m2",
+   "src": "boxscore FieldGoalsMade2"
+  },
+  {
+   "name": "a2",
+   "src": "boxscore FieldGoalsAttempted2"
+  },
+  {
+   "name": "m3",
+   "src": "boxscore FieldGoalsMade3"
+  },
+  {
+   "name": "a3",
+   "src": "boxscore FieldGoalsAttempted3"
+  },
+  {
+   "name": "oreb",
+   "src": "boxscore OffensiveRebounds"
+  },
+  {
+   "name": "dreb",
+   "src": "boxscore DefensiveRebounds"
+  },
+  {
+   "name": "ast",
+   "src": "boxscore Assistances"
+  },
+  {
+   "name": "stl",
+   "src": "boxscore Steals"
+  },
+  {
+   "name": "tov",
+   "src": "boxscore Turnovers"
+  },
+  {
+   "name": "blk",
+   "src": "boxscore BlocksFavour"
+  },
+  {
+   "name": "blk_against",
+   "src": "boxscore BlocksAgainst"
+  },
+  {
+   "name": "pf",
+   "src": "boxscore FoulsCommited"
+  },
+  {
+   "name": "fd",
+   "src": "boxscore FoulsReceived"
+  },
+  {
+   "name": "plus_minus",
+   "src": "boxscore Plusminus"
+  },
+  {
+   "name": "pir_official",
+   "src": "boxscore Valuation (audit only)"
+  },
+  {
+   "name": "sa",
+   "src": "playbyplay: own shot attempts + free-throw trips"
+  },
+  {
+   "name": "on_ok",
+   "src": "playbyplay: lineup verified vs box minutes (+ possession checks)"
+  },
+  {
+   "name": "on_sec",
+   "src": "playbyplay: tracked seconds on court (audit)"
+  },
+  {
+   "name": "team_sa_on",
+   "src": "playbyplay: counted while the player is on court (empty if on_ok = 0)"
+  },
+  {
+   "name": "team_tov_on",
+   "src": "playbyplay: counted while the player is on court (empty if on_ok = 0)"
+  },
+  {
+   "name": "poss_off_on",
+   "src": "playbyplay: counted while the player is on court (empty if on_ok = 0)"
+  },
+  {
+   "name": "poss_def_on",
+   "src": "playbyplay: counted while the player is on court (empty if on_ok = 0)"
+  },
+  {
+   "name": "team_oreb_on",
+   "src": "playbyplay: counted while the player is on court (empty if on_ok = 0)"
+  },
+  {
+   "name": "team_dreb_on",
+   "src": "playbyplay: counted while the player is on court (empty if on_ok = 0)"
+  },
+  {
+   "name": "opp_oreb_on",
+   "src": "playbyplay: counted while the player is on court (empty if on_ok = 0)"
+  },
+  {
+   "name": "opp_dreb_on",
+   "src": "playbyplay: counted while the player is on court (empty if on_ok = 0)"
+  }
+ ],
+ "team_games": [
+  {
+   "name": "season",
+   "src": "folder name"
+  },
+  {
+   "name": "game",
+   "src": "folder name"
+  },
+  {
+   "name": "round",
+   "src": "game.round.round"
+  },
+  {
+   "name": "date_utc",
+   "src": "game.date"
+  },
+  {
+   "name": "team",
+   "src": "game.home/away.code"
+  },
+  {
+   "name": "opp",
+   "src": "game.home/away.code"
+  },
+  {
+   "name": "home",
+   "src": "game.home.code == team"
+  },
+  {
+   "name": "team_name",
+   "src": "game.home/away.name"
+  },
+  {
+   "name": "ot_periods",
+   "src": "game.home.quarters ot1..ot5 not null"
+  },
+  {
+   "name": "sec",
+   "src": "2400 + 300 * ot_periods"
+  },
+  {
+   "name": "pts_q1",
+   "src": "game.<side>.quarters.q1"
+  },
+  {
+   "name": "pts_q2",
+   "src": "game.<side>.quarters.q2"
+  },
+  {
+   "name": "pts_q3",
+   "src": "game.<side>.quarters.q3"
+  },
+  {
+   "name": "pts_q4",
+   "src": "game.<side>.quarters.q4"
+  },
+  {
+   "name": "pts_ot1",
+   "src": "game.<side>.quarters.ot1"
+  },
+  {
+   "name": "pts_ot2",
+   "src": "game.<side>.quarters.ot2"
+  },
+  {
+   "name": "pts_ot3",
+   "src": "game.<side>.quarters.ot3"
+  },
+  {
+   "name": "pts_ot4",
+   "src": "game.<side>.quarters.ot4"
+  },
+  {
+   "name": "pts_ot5",
+   "src": "game.<side>.quarters.ot5"
+  },
+  {
+   "name": "pts",
+   "src": "boxscore Stats[].totr.Points"
+  },
+  {
+   "name": "m1",
+   "src": "boxscore totr.FreeThrowsMade"
+  },
+  {
+   "name": "a1",
+   "src": "boxscore totr.FreeThrowsAttempted"
+  },
+  {
+   "name": "m2",
+   "src": "boxscore totr.FieldGoalsMade2"
+  },
+  {
+   "name": "a2",
+   "src": "boxscore totr.FieldGoalsAttempted2"
+  },
+  {
+   "name": "m3",
+   "src": "boxscore totr.FieldGoalsMade3"
+  },
+  {
+   "name": "a3",
+   "src": "boxscore totr.FieldGoalsAttempted3"
+  },
+  {
+   "name": "oreb",
+   "src": "boxscore totr.OffensiveRebounds"
+  },
+  {
+   "name": "dreb",
+   "src": "boxscore totr.DefensiveRebounds"
+  },
+  {
+   "name": "ast",
+   "src": "boxscore totr.Assistances"
+  },
+  {
+   "name": "stl",
+   "src": "boxscore totr.Steals"
+  },
+  {
+   "name": "tov",
+   "src": "boxscore totr.Turnovers"
+  },
+  {
+   "name": "blk",
+   "src": "boxscore totr.BlocksFavour"
+  },
+  {
+   "name": "blk_against",
+   "src": "boxscore totr.BlocksAgainst"
+  },
+  {
+   "name": "pf",
+   "src": "boxscore totr.FoulsCommited"
+  },
+  {
+   "name": "fd",
+   "src": "boxscore totr.FoulsReceived"
+  },
+  {
+   "name": "poss_pbp",
+   "src": "playbyplay: counted possessions"
+  },
+  {
+   "name": "poss_ok",
+   "src": "playbyplay count passed its checks"
+  },
+  {
+   "name": "poss",
+   "src": "poss_pbp if poss_ok, else Oliver estimate"
+  },
+  {
+   "name": "poss_src",
+   "src": "\"pbp\" | \"oliver\""
+  },
+  {
+   "name": "sa",
+   "src": "playbyplay: team shot attempts"
+  },
+  {
+   "name": "pbp_events",
+   "src": "playbyplay: events used"
+  },
+  {
+   "name": "pts_fastbreak",
+   "src": "shots: POINTS where FASTBREAK=1"
+  },
+  {
+   "name": "pts_second_chance",
+   "src": "shots: POINTS where SECOND_CHANCE=1"
+  },
+  {
+   "name": "pts_off_turnover",
+   "src": "shots: POINTS where POINTS_OFF_TURNOVER=1"
+  },
+  {
+   "name": "shots_ok",
+   "src": "shots feed agrees with box score"
+  }
+ ],
+ "shots": [
+  {
+   "name": "season",
+   "src": "folder name"
+  },
+  {
+   "name": "game",
+   "src": "folder name"
+  },
+  {
+   "name": "team",
+   "src": "shots TEAM"
+  },
+  {
+   "name": "player_id",
+   "src": "shots ID_PLAYER"
+  },
+  {
+   "name": "action",
+   "src": "shots ID_ACTION"
+  },
+  {
+   "name": "made",
+   "src": "ID_ACTION ends with M"
+  },
+  {
+   "name": "points",
+   "src": "shots POINTS"
+  },
+  {
+   "name": "x",
+   "src": "shots COORD_X"
+  },
+  {
+   "name": "y",
+   "src": "shots COORD_Y"
+  },
+  {
+   "name": "zone_feed",
+   "src": "shots ZONE"
+  },
+  {
+   "name": "fastbreak",
+   "src": "shots FASTBREAK"
+  },
+  {
+   "name": "second_chance",
+   "src": "shots SECOND_CHANCE"
+  },
+  {
+   "name": "points_off_turnover",
+   "src": "shots POINTS_OFF_TURNOVER"
+  },
+  {
+   "name": "minute",
+   "src": "shots MINUTE"
+  },
+  {
+   "name": "clock",
+   "src": "shots CONSOLE"
+  },
+  {
+   "name": "num",
+   "src": "shots NUM_ANOT (= play-by-play NUMBEROFPLAY)"
+  }
+ ],
+ "players": [
+  {
+   "name": "player_id",
+   "src": "roster (feeds API) + data/manual/fantasy-position-overrides.json"
+  },
+  {
+   "name": "player",
+   "src": "roster (feeds API) + data/manual/fantasy-position-overrides.json"
+  },
+  {
+   "name": "team",
+   "src": "roster (feeds API) + data/manual/fantasy-position-overrides.json"
+  },
+  {
+   "name": "position_feed",
+   "src": "roster (feeds API) + data/manual/fantasy-position-overrides.json"
+  },
+  {
+   "name": "position_override",
+   "src": "roster (feeds API) + data/manual/fantasy-position-overrides.json"
+  },
+  {
+   "name": "position",
+   "src": "roster (feeds API) + data/manual/fantasy-position-overrides.json"
+  },
+  {
+   "name": "dorsal",
+   "src": "roster (feeds API) + data/manual/fantasy-position-overrides.json"
+  },
+  {
+   "name": "height",
+   "src": "roster (feeds API) + data/manual/fantasy-position-overrides.json"
+  },
+  {
+   "name": "active",
+   "src": "roster (feeds API) + data/manual/fantasy-position-overrides.json"
+  }
+ ]
+}
