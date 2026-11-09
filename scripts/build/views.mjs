@@ -83,7 +83,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   for (const [w, v] of Object.entries(views)) { put(`players-${w}.json`, v.players); put(`teams-${w}.json`, v.teams); }
   put('metrics.json', catalog());
   const teams = read('team_games.csv'), last = [...teams].sort(byGame).at(-1);
-  writeFileSync(join(out, 'manifest.json'), JSON.stringify({ season: teams[0].season, games: new Set(teams.map(t => t.game)).size, lastGame: last.game, lastDate: last.date_utc, windows: Object.keys(WINDOWS), files }, null, 1) + '\n');
+  writeFileSync(join(out, 'manifest.json'), JSON.stringify({ season: teams[0].season, games: new Set(teams.map(t => t.game)).size, lastGame: last.game, lastDate: last.date_utc, windows: Object.keys(WINDOWS), files,
+    eligibility: JSON.parse(readFileSync(join(repo, 'data', 'manual', 'eligibility.json'), 'utf8')) }, null, 1) + '\n');
   mkdirSync(join(repo, 'docs'), { recursive: true });
   writeFileSync(join(repo, 'docs', 'METRICS.md'), docsMarkdown() + '\n');
   console.log(`views: ${Object.keys(views).length} windows, ${PLAYER_METRICS.length} player + ${TEAM_METRICS.length} team metrics -> ${out}`);
