@@ -65,20 +65,17 @@ function games(L){
 function teamTotals(gs){
  const t={Sec:0,Gm:gs.length,OfPo:0,DePo:0};for(const f of TEAM_FIELDS){t['T'+f]=0;t['O'+f]=0;}
  for(const x of gs){t.Sec+=x.sec;t.OfPo+=x.s.Po;t.DePo+=x.o.Po;for(const f of TEAM_FIELDS){t['T'+f]+=x.s[f]||0;t['O'+f]+=x.o[f]||0;}}
- t.TSA=r2(M.sa({A1:t.TA1,A2:t.TA2,A3:t.TA3}));t.OSA=r2(M.sa({A1:t.OA1,A2:t.OA2,A3:t.OA3}));
- for(const k of ['OfPo','DePo'])t[k]=r2(t[k]);return t;}
+  for(const k of ['OfPo','DePo'])t[k]=r2(t[k]);return t;}
 function playerTotals(rows){
- const p={Gm:0,Sec:0,M1:0,A1:0,M2:0,A2:0,M3:0,A3:0,OR:0,DR:0,As:0,St:0,Tv:0,BF:0,BA:0,FC:0,FR:0,GS:0,OfPo:0,DePo:0,TSA:0,TTv:0,USA:0,TUSA:0,OnG:0,OfPoR:0,DePoR:0};
+ const p={Gm:0,Sec:0,M1:0,A1:0,M2:0,A2:0,M3:0,A3:0,OR:0,DR:0,As:0,St:0,Tv:0,BF:0,BA:0,FC:0,FR:0,GS:0,OfPo:0,DePo:0,USA:0,TUSA:0,OnG:0,OfPoR:0,DePoR:0};
  for(const f of TEAM_FIELDS){p['T'+f]=0;p['O'+f]=0;}
  for(const {x,gm} of rows){if(!(x.Sec>0))continue;p.Gm++;p.GS+=x.GS?1:0;
   for(const k of ['Sec','M1','A1','M2','A2','M3','A3','OR','DR','As','St','Tv','BF','BA','FC','FR'])p[k]+=x[k]||0;
   const o=gm.on?.[x.id];if(o){p.OnG++;p.USA+=o[0];p.TUSA+=o[1]+o[2];p.OfPoR+=o[3];p.DePoR+=o[4];}
    const share=x.Sec/gm.sec;p.OfPo+=share*gm.s.Po;p.DePo+=share*gm.o.Po;
-  p.TSA+=share*M.sa(gm.s);p.TTv+=share*gm.s.Tv;
   for(const f of TEAM_FIELDS){p['T'+f]+=share*(gm.s[f]||0);p['O'+f]+=share*(gm.o[f]||0);}}
- p.SA=r2(M.sa(p));
  /* Κατοχές στο γήπεδο και USG: πραγματική καταμέτρηση από play-by-play/πεντάδες. Αν λείπει έστω ένας αγώνας του δείγματος: null (εμφανίζεται «—»). */
- for(const k of ['OfPo','DePo','TSA','TTv',...TEAM_FIELDS.flatMap(f=>['T'+f,'O'+f])])p[k]=r2(p[k]);
+ for(const k of ['OfPo','DePo',...TEAM_FIELDS.flatMap(f=>['T'+f,'O'+f])])p[k]=r2(p[k]);
  p.onCourtExact=p.Gm>0&&p.OnG===p.Gm;
  if(p.onCourtExact){p.OfPo=p.OfPoR;p.DePo=p.DePoR;}else{p.OfPo=null;p.DePo=null;p.USA=null;p.TUSA=null;}
  return p;}

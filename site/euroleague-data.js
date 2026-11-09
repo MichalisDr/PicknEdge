@@ -179,15 +179,20 @@ const M={
  r2:v=>Math.round(v*100)/100,
  div:(n,d,k=1)=>Number.isFinite(n)&&Number.isFinite(d)&&d>0?k*n/d:null,
  pts:p=>p.M1+2*p.M2+3*p.M3,
- /* Σουτ/χρήσεις: FGA + 0,44·FTA. Με Tv προστίθενται τα λάθη (παρονομαστής USG% και TOV%). */
+ /* FGA + 0,44·FTA: εκτίμηση σουτ για TS% (και για το Betting, προς το παρόν). ΔΕΝ χρησιμοποιείται για usage/load στο Fantasy: εκεί SA είναι η πραγματική καταμέτρηση από το play-by-play (p.USA, tracker). */
  saOf:(fga,fta)=>fga+0.44*fta,
  sa:p=>M.saOf(p.A2+p.A3,p.A1),
- usage:p=>M.sa(p)+p.Tv,
  net:p=>M.pts(p)-(p.A1-p.M1)-(p.A2-p.M2)-(p.A3-p.M3)-p.Tv,
  other:p=>p.OR+p.DR+p.As+p.St+p.BF+p.FR-p.FC-p.BA,
  pir:p=>M.net(p)+M.other(p),
  sfp:p=>M.other(p)-p.Tv,
- pace:(po,dpo,sec)=>M.div(po+dpo,sec,1200)
+ pace:(po,dpo,sec)=>M.div(po+dpo,sec,1200),
+ /* Ben Taylor: Box Creation, Offensive Load, cTOV%. Όλα τα inputs ανά 100 επιθετικές κατοχές του παίκτη στο γήπεδο (p.OfPo, πραγματική καταμέτρηση, από αθροίσματα του δείγματος).
+    Αλλαγή μόνο στο Offensive Load: το «FGA + 0,44·FTA» αντικαθίσταται από το SA του play-by-play (p.USA). Χωρίς πλήρη κάλυψη (OfPo/USA null) ή χωρίς κατοχές: null.
+    3pt proficiency = (2/(1+EXP(−3PA))−1)·3P% (3PA ανά 100, 3P% κλάσμα· χωρίς 3PA = 0). */
+ boxCreation:p=>{const o=p.OfPo;if(!(o>0))return null;const k=100/o,ast=p.As*k,pt=(M.pts(p)+p.Tv)*k,prof=(2/(1+Math.exp(-p.A3*k))-1)*(p.A3>0?p.M3/p.A3:0),v=0.1843*ast+0.0969*pt-2.3021*prof+0.0582*ast*pt*prof-1.1942;return Number.isFinite(v)?v:null;},
+ offLoad:p=>{const bc=M.boxCreation(p),o=p.OfPo;if(bc===null||!Number.isFinite(p.USA))return null;const k=100/o,v=(p.As*k-0.38*bc)*0.75+p.USA*k+bc+p.Tv*k;return Number.isFinite(v)?v:null;},
+ ctov:p=>{const l=M.offLoad(p);return l>0?100*(p.Tv*100/p.OfPo)/l:null;}
 };
 
 /* ---------- σύνοψη ---------- */

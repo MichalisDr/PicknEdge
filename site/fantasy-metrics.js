@@ -1,20 +1,24 @@
 /* One definition per metric: tables, cards and history use these same functions. */
 (function(g){
-const {div,pts,net,pir,sfp,pace}=g.EuroLeagueData.metrics;/* ορισμοί κοινοί με το Betting (euroleague-data.js) */
+const {div,pts,net,pir,sfp,pace,boxCreation,offLoad,ctov}=g.EuroLeagueData.metrics;/* ορισμοί κοινοί με το Betting (euroleague-data.js) */
 const metric=(key,label,unit,get,options={})=>({key,label,unit,get,...options});
 const pg=(p,n)=>div(n,p.Gm),per=(p,n)=>div(n,p.OfPo,100);
+/* Χρήσεις παίκτη = SA του play-by-play + TOV (ο ίδιος παρονομαστής με το USG%). Χωρίς επαληθευμένες πεντάδες σε όλο το δείγμα: null, όχι εκτίμηση. */
+const used=p=>Number.isFinite(p.USA)?p.USA+p.Tv:null;
 const players=[
  metric('min','MIN','/game',p=>div(p.Sec,60*p.Gm),{description:'Συνολικά λεπτά / πραγματικές συμμετοχές.'}),
  metric('usg','USG%','',p=>div(p.USA+p.Tv,p.TUSA,100),{pct:true,description:'100 × (SA + TOV παίκτη) / (SA + TOV ομάδας όσο παίζει). SA = σουτ ή σειρά βολών (and-one = 1, χωρίς AST και βολές τεχνικής). Πεντάδες/αλλαγές από play-by-play, επαληθευμένες έναντι των λεπτών του box score. Χωρίς πλήρη κάλυψη: —.'}),
  metric('pts','PTS','/100 poss',p=>per(p,pts(p)),{secondary:p=>pg(p,pts(p)),secondaryUnit:'/game'}),
  metric('ast','AST','/100 poss',p=>per(p,p.As),{secondary:p=>pg(p,p.As),secondaryUnit:'/game'}),
- metric('tov','TOV%','',p=>div(p.Tv,p.SA+p.Tv,100),{pct:true,goodHigher:false,description:'TOV / (FGA + 0,44 × FTA + TOV). Τύπος εκτίμησης χρήσεων, ίδιος με την τρέχουσα υλοποίηση.',secondary:p=>pg(p,p.Tv),secondaryUnit:'/game'}),
+ metric('tov','TOV%','',p=>div(p.Tv,used(p),100),{pct:true,goodHigher:false,description:'100 × TOV / (SA + TOV παίκτη). SA από το play-by-play, ίδιο με το USG%. Χωρίς πλήρη κάλυψη πεντάδων: —.',secondary:p=>pg(p,p.Tv),secondaryUnit:'/game'}),
  metric('reb','REB','/100 poss',p=>div(p.OR+p.DR,p.OfPo+p.DePo,200),{secondary:p=>pg(p,p.OR+p.DR),secondaryUnit:'/game',detail:p=>'OREB / GAME '+format(pg(p,p.OR))+' · DREB / GAME '+format(pg(p,p.DR)),description:'Σ ριμπάουντ / μέσο επιθετικών και αμυντικών κατοχών όσο παίζει × 100 (πραγματική καταμέτρηση).'}),
  metric('ftr','FTr','FTA/FGA',p=>div(p.A1,p.A2+p.A3,100),{pct:true}),
  metric('fd','FD','/100 poss',p=>per(p,p.FR),{secondary:p=>pg(p,p.FR),secondaryUnit:'/game',description:'Φάουλ που κέρδισε. Ίδια βάση με τα PTS και AST (πραγματικές κατοχές στο γήπεδο).'}),
  metric('pir','PIR','/game',p=>pg(p,pir(p)),{section:'fantasy',secondary:p=>div(pir(p),p.Sec/60),secondaryUnit:'/ MIN',secondaryDigits:3,description:'Το δευτερεύον PIR / MIN = Σ PIR ÷ Σ λεπτά.'}),
  metric('sfp','Non-scoring PIR','/game',p=>pg(p,sfp(p)),{section:'fantasy',secondary:p=>div(sfp(p),p.Sec/60),secondaryUnit:'/ MIN',secondaryDigits:3,description:'Ό,τι δεν είναι σκοράρισμα: REB + AST + STL + BLK + FD − PF − BA − TOV, ανά συμμετοχή (πρώην NET SFP).'}),
- metric('netUsage','NET PIR / USG','scoring only',p=>div(net(p),p.SA+p.Tv),{section:'fantasy',digits:3,description:'Καθαρή συνεισφορά σκοραρίσματος (πόντοι − άστοχα − λάθη) / εκτιμώμενη χρήση (FGA + 0,44 × FTA + TOV). Δεν είναι συνολικό PIR / USG%. Ο ορισμός και το όνομα δεν έχουν κλειδώσει.'}),
+ metric('netUsage','NET PIR / USG','scoring only',p=>div(net(p),used(p)),{section:'fantasy',digits:3,description:'Καθαρή συνεισφορά σκοραρίσματος (πόντοι − άστοχα − λάθη) / (SA + TOV), με SA από το play-by-play όπως στο USG%. Δεν είναι συνολικό PIR / USG%. Ο ορισμός και το όνομα δεν έχουν κλειδώσει.'}),
+ metric('load','Offensive Load','',offLoad,{pct:true,cardOnly:true,secondary:boxCreation,secondaryUnit:'Box Creation',description:'Ben Taylor: ((AST − 0,38 × BC) × 0,75) + SA + BC + TOV, όλα ανά 100 επιθετικές κατοχές στο γήπεδο. Αλλαγή μόνο: SA από το play-by-play αντί FGA + 0,44 × FTA. BC = Box Creation (Taylor). Χωρίς πλήρη κάλυψη πεντάδων: —.'}),
+ metric('ctov','cTOV%','',ctov,{pct:true,goodHigher:false,cardOnly:true,secondary:p=>per(p,p.Tv),secondaryUnit:'TOV/100',description:'Ben Taylor: TOV ανά 100 κατοχές ÷ Offensive Load (SA από το play-by-play). Χωρίς πλήρη κάλυψη πεντάδων: —.'}),
  metric('cr','CR','credits',p=>Number.isFinite(p.CR)?p.CR:null,{section:'fantasy',description:'Τιμή Fantasy. Δεν υπάρχει ακόμη πηγή τιμών· εμφανίζεται — μέχρι να συνδεθεί.'}),
  metric('value','Value','PIR/G ÷ CR',p=>div(pg(p,pir(p)),p.CR),{section:'fantasy',digits:2,secondary:p=>div(div(pir(p),p.Sec/60),p.CR),secondaryUnit:'/ MIN',secondaryDigits:3,description:'PIR ανά αγώνα ÷ CR. Χωρίς CR εμφανίζεται —.'})
 ];
@@ -45,7 +49,7 @@ function history(kind,id,period){const all=g.FANTASY_HISTORY?.[kind]?.[id]||[];l
 function series(kind,id,period,def){return history(kind,id,period).map(r=>({round:r.round,game:r.game,date:r.date,opponent:r.opponent,value:r.totals?def.get(r.totals):null}));}
 function average(list,def){const totals={};for(const p of list)for(const [k,v] of Object.entries(p)){if(typeof v==='number')totals[k]=totals[k]===null?null:(totals[k]||0)+v;else if(v===null)totals[k]=null;else if(Array.isArray(v)&&v.every(Number.isFinite))totals[k]=Array.isArray(totals[k])?totals[k].map((n,i)=>n+v[i]):v.slice();}return def.get(totals);}
 /* Direction of improvement: +1 higher is better, −1 lower is better, 0 no clear direction. Teams: better defence (rank order); players: goodHigher. */
-const NEUTRAL_PLAYER=new Set(['min','usg','ftr','cr']);
+const NEUTRAL_PLAYER=new Set(['min','usg','load','ftr','cr']);
 function direction(kind,def){if(def.neutral)return 0;if(kind==='teams')return def.rankHigher===false?-1:1;if(NEUTRAL_PLAYER.has(def.key))return 0;return def.goodHigher===false?-1:1;}
 /* Whole-season curve: per-game value plus the rolling value of the last n appearances (from the n-th on), both from summed totals, independent of the selected sample. */
 function trend(kind,id,def,n=5){const h=history(kind,id,'season');return h.map((r,i)=>{const win=i+1>=n?h.slice(i+1-n,i+1):null,roll=win&&win.every(x=>x.totals)?average(win.map(x=>x.totals),def):null;return {round:r.round,game:r.game,date:r.date,opponent:r.opponent,value:r.totals?def.get(r.totals):null,roll:Number.isFinite(roll)?roll:null};});}

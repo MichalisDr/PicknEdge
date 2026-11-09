@@ -22,6 +22,7 @@
 .fw-pgrid .fw-m-lg strong{font-size:28px}
 .fw-pgrid .fw-m-sm{padding:9px 11px}
 .fw-pgrid .fw-m-sm strong{font-size:19px}
+.fw-pgrid .fw-m-wide{grid-column:span 2}
 @media(max-width:650px){.fw-pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.fw-pgrid .fw-m-lg strong{font-size:26px}.fw-pgrid .fw-m-sm strong{font-size:19px}.fw-cr{display:block;margin:2px 0 0}}
 .fw-band{fill:#8f9bad;fill-opacity:.16}.fw-gl{stroke:#2b394b;stroke-width:.6}.fw-ref{stroke:#b8c6d7;stroke-width:1.2;stroke-dasharray:5 4}
 .fw-leg{display:flex;flex-wrap:wrap;gap:4px 14px;margin:6px 0 0;font-size:11px;color:#a8b6c9}.fw-leg i{display:inline-block;vertical-align:middle;margin-right:5px}
