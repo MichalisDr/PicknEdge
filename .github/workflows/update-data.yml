@@ -68,7 +68,8 @@ jobs:
           fi
 
       - name: Start the Pages deploy
-        if: ${{ !inputs.probe && steps.commit.outputs.changed == 'true' }}
+        # Only on the default branch: a run on any other branch must never deploy that branch to the live site.
+        if: ${{ !inputs.probe && steps.commit.outputs.changed == 'true' && github.ref_name == github.event.repository.default_branch }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run pages.yml --ref "${{ github.ref_name }}"
