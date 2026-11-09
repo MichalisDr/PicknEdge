@@ -9,155 +9,155 @@ Every metric is defined once in `scripts/metrics/registry.mjs`. Ratios are `Σ n
 
 ## Players
 
-| id | Metric | Kind | Formula | Used in | Description |
-|---|---|---|---|---|---|
-| `gp` | GP | count | Σ played | fantasy, betting | Games played (minutes > 0). |
-| `min` | MIN / game | perGame | Σ(0.016666666666666666·sec) ÷ Σ(played) | fantasy, betting | Minutes per game played. |
-| `pts_g` | PTS / game | perGame | Σ(pts) ÷ Σ(played) | fantasy, betting | Points per game played. |
-| `reb_g` | REB / game | perGame | Σ(reb) ÷ Σ(played) | fantasy, betting | Rebounds per game played. |
-| `ast_g` | AST / game | perGame | Σ(ast) ÷ Σ(played) | fantasy, betting | Assists per game played. |
-| `stl_g` | STL / game | perGame | Σ(stl) ÷ Σ(played) | fantasy, betting | Steals per game played. |
-| `blk_g` | BLK / game | perGame | Σ(blk) ÷ Σ(played) | fantasy, betting | Blocks per game played. |
-| `tov_g` | TOV / game | perGame | Σ(tov) ÷ Σ(played) | fantasy, betting | Turnovers per game played. |
-| `fd_g` | FD / game | perGame | Σ(fd) ÷ Σ(played) | fantasy, betting | Fouls drawn per game played. |
-| `pf_g` | PF / game | perGame | Σ(pf) ÷ Σ(played) | fantasy, betting | Personal fouls per game played. |
-| `pts100` | PTS / 100 poss | per100 | 100 × Σ(pts) ÷ Σ(poss_off_on) | fantasy, betting | Points per 100 team offensive possessions while the player is on court. |
-| `ast100` | AST / 100 poss | per100 | 100 × Σ(ast) ÷ Σ(poss_off_on) | fantasy, betting | Assists per 100 team offensive possessions while on court. |
-| `tov100` | TOV / 100 poss | per100 | 100 × Σ(tov) ÷ Σ(poss_off_on) | fantasy, betting | Turnovers per 100 team offensive possessions while on court. |
-| `oreb100` | OREB / 100 poss | per100 | 100 × Σ(oreb) ÷ Σ(poss_off_on) | fantasy, betting | Offensive rebounds per 100 team offensive possessions while on court. |
-| `fd100` | FD / 100 poss | per100 | 100 × Σ(fd) ÷ Σ(poss_off_on) | fantasy, betting | Fouls drawn per 100 team offensive possessions while on court. |
-| `stl100` | STL / 100 poss | per100 | 100 × Σ(stl) ÷ Σ(poss_def_on) | fantasy, betting | Steals per 100 team defensive possessions while on court. |
-| `blk100` | BLK / 100 poss | per100 | 100 × Σ(blk) ÷ Σ(poss_def_on) | fantasy, betting | Blocks per 100 team defensive possessions while on court. |
-| `dreb100` | DREB / 100 poss | per100 | 100 × Σ(dreb) ÷ Σ(poss_def_on) | fantasy, betting | Defensive rebounds per 100 team defensive possessions while on court. |
-| `reb100` | REB / 100 poss | per100 | 200 × Σ(reb) ÷ Σ(poss_off_on + poss_def_on) | fantasy, betting | Total rebounds x200 / (offensive + defensive possessions on court): combines both phases, so it uses the average of the two. |
-| `usg` | USG% | pct | 100 × Σ(used) ÷ Σ(team_used_on) | fantasy, betting | Share of the team's shot attempts and turnovers, while on court, that the player used. |
-| `tov_pct` | TOV% | pct | 100 × Σ(tov) ÷ Σ(used) | fantasy, betting | Turnovers as a share of the player's own possessions used (shot attempts + free-throw trips + turnovers). |
-| `oreb_pct` | OREB% | pct | 100 × Σ(oreb) ÷ Σ(team_oreb_on + opp_dreb_on) | fantasy, betting | Share of the offensive rebounds available while on court (own team OREB + opponent DREB) that the player took. |
-| `dreb_pct` | DREB% | pct | 100 × Σ(dreb) ÷ Σ(team_dreb_on + opp_oreb_on) | fantasy, betting | Share of the defensive rebounds available while on court (own team DREB + opponent OREB) that the player took. |
-| `gs` | GS | count | Σ starter | betting | Games started. |
-| `oreb_g` | OREB / game | perGame | Σ(oreb) ÷ Σ(played) | betting | Offensive rebounds per game played. |
-| `dreb_g` | DREB / game | perGame | Σ(dreb) ÷ Σ(played) | betting | Defensive rebounds per game played. |
-| `m3_g` | 3PM / game | perGame | Σ(m3) ÷ Σ(played) | betting | Three-pointers made per game played. |
-| `a3_g` | 3PA / game | perGame | Σ(a3) ÷ Σ(played) | betting | Three-point attempts per game played. |
-| `a1_g` | FTA / game | perGame | Σ(a1) ÷ Σ(played) | betting | Free-throw attempts per game played. |
-| `m3_100` | 3PM / 100 poss | per100 | 100 × Σ(m3) ÷ Σ(poss_off_on) | betting | Three-pointers made per 100 team offensive possessions while on court. |
-| `a3_100` | 3PA / 100 poss | per100 | 100 × Σ(a3) ÷ Σ(poss_off_on) | betting | Three-point attempts per 100 team offensive possessions while on court. |
-| `a1_100` | FTA / 100 poss | per100 | 100 × Σ(a1) ÷ Σ(poss_off_on) | betting | Free-throw attempts per 100 team offensive possessions while on court. |
-| `pf100` | PF / 100 poss | per100 | 100 × Σ(pf) ÷ Σ(poss_def_on) | betting | Personal fouls per 100 team defensive possessions while on court. |
-| `ast_pct` | AST% | pct | 100 × Σ(ast) ÷ Σ(team_fgm_on − fgm) | betting | Share of team field goals made while on court (excluding his own) that the player assisted. |
-| `blk_pct` | BLK% | pct | 100 × Σ(blk) ÷ Σ(opp_a2_on) | betting | Blocks as a share of opponent two-point attempts while on court. |
-| `efg` | eFG% | pct | 100 × Σ(m2 + 1.5·m3) ÷ Σ(fga) | fantasy, betting | Effective field-goal percentage: (2P made + 1.5 x 3P made) / field-goal attempts. |
-| `fg2_pct` | 2FG% | pct | 100 × Σ(m2) ÷ Σ(a2) | fantasy, betting | Two-point field-goal percentage. |
-| `fg3_pct` | 3FG% | pct | 100 × Σ(m3) ÷ Σ(a3) | fantasy, betting | Three-point field-goal percentage. |
-| `ft_pct` | FT% | pct | 100 × Σ(m1) ÷ Σ(a1) | fantasy, betting | Free-throw percentage. |
-| `ftr` | FTr | pct | 100 × Σ(a1) ÷ Σ(fga) | fantasy, betting | Free-throw rate: free-throw attempts per field-goal attempt, x100. |
-| `a3_rate` | 3PA / FGA | pct | 100 × Σ(a3) ÷ Σ(fga) | betting | Share of field-goal attempts that are three-pointers. |
-| `ts_pct` | TS% | pct | 100 × Σ(pts) ÷ Σ(2·a2 + 2·a3 + 0.88·a1) | betting | True shooting: points / (2 x (FGA + 0.44 x FTA)). |
-| `pir` | PIR / game | perGame | Σ(pir) ÷ Σ(played) | fantasy, betting | Performance Index Rating per game: points, rebounds, assists, steals, blocks and fouls drawn minus misses, turnovers, fouls and blocks against. |
-| `pir_min` | PIR / min | perMin | 60 × Σ(pir) ÷ Σ(sec) | fantasy | PIR per minute played (total PIR / total minutes). |
-| `nspir` | Non-scoring PIR / game | perGame | Σ(nonscoring) ÷ Σ(played) | fantasy | Everything that is not scoring: rebounds, assists, steals, blocks, fouls drawn minus fouls, blocks against and turnovers, per game. |
-| `nspir_min` | Non-scoring PIR / min | perMin | 60 × Σ(nonscoring) ÷ Σ(sec) | fantasy | Non-scoring PIR per minute played. |
-| `net_pir_usg` | NET PIR / USG | ratio | Σ(net) ÷ Σ(used) | fantasy | Scoring-only contribution (points - misses - turnovers) per possession used (shot attempts + free-throw trips + turnovers). |
-| `bc` | Box Creation | custom | custom function of the window's summed ast, pts, tov, m3, a3, poss_off_on | fantasy | Ben Taylor's Box Creation per 100 offensive possessions on court (AST, PTS+TOV and 3-point proficiency from window totals). |
-| `load` | Offensive Load | custom | custom function of the window's summed ast, pts, tov, m3, a3, poss_off_on, sa | fantasy | Ben Taylor's Offensive Load per 100 offensive possessions on court; uses the play-by-play shot attempts instead of FGA + 0.44 x FTA. |
-| `ctov` | cTOV% | custom | custom function of the window's summed ast, pts, tov, m3, a3, poss_off_on, sa | fantasy | Ben Taylor's creation-adjusted turnover rate: turnovers per 100 possessions divided by Offensive Load, x100. |
-| `z_rim_pct` | At the rim FG% | pct | 100 × Σ(z_rim_m) ÷ Σ(z_rim_a) | fantasy, betting | Field-goal percentage in the zone "At the rim". |
-| `z_paint_pct` | Rest of paint FG% | pct | 100 × Σ(z_paint_m) ÷ Σ(z_paint_a) | fantasy, betting | Field-goal percentage in the zone "Rest of paint". |
-| `z_midL_pct` | Mid left FG% | pct | 100 × Σ(z_midL_m) ÷ Σ(z_midL_a) | fantasy, betting | Field-goal percentage in the zone "Mid left". |
-| `z_midC_pct` | Mid center FG% | pct | 100 × Σ(z_midC_m) ÷ Σ(z_midC_a) | fantasy, betting | Field-goal percentage in the zone "Mid center". |
-| `z_midR_pct` | Mid right FG% | pct | 100 × Σ(z_midR_m) ÷ Σ(z_midR_a) | fantasy, betting | Field-goal percentage in the zone "Mid right". |
-| `z_baseL_pct` | Baseline left FG% | pct | 100 × Σ(z_baseL_m) ÷ Σ(z_baseL_a) | fantasy, betting | Field-goal percentage in the zone "Baseline left". |
-| `z_baseR_pct` | Baseline right FG% | pct | 100 × Σ(z_baseR_m) ÷ Σ(z_baseR_a) | fantasy, betting | Field-goal percentage in the zone "Baseline right". |
-| `z_arcL_pct` | Arc left FG% | pct | 100 × Σ(z_arcL_m) ÷ Σ(z_arcL_a) | fantasy, betting | Field-goal percentage in the zone "Arc left". |
-| `z_arcC_pct` | Arc center FG% | pct | 100 × Σ(z_arcC_m) ÷ Σ(z_arcC_a) | fantasy, betting | Field-goal percentage in the zone "Arc center". |
-| `z_arcR_pct` | Arc right FG% | pct | 100 × Σ(z_arcR_m) ÷ Σ(z_arcR_a) | fantasy, betting | Field-goal percentage in the zone "Arc right". |
-| `z_cornerL_pct` | Corner left FG% | pct | 100 × Σ(z_cornerL_m) ÷ Σ(z_cornerL_a) | fantasy, betting | Field-goal percentage in the zone "Corner left". |
-| `z_cornerR_pct` | Corner right FG% | pct | 100 × Σ(z_cornerR_m) ÷ Σ(z_cornerR_a) | fantasy, betting | Field-goal percentage in the zone "Corner right". |
-| `zs_rim_pct` | At the rim FG% | pct | 100 × Σ(zs_rim_m) ÷ Σ(zs_rim_a) | fantasy, betting | Field-goal percentage in the sub-area "At the rim" (sum of its zones). |
-| `zs_paint_pct` | Rest of paint FG% | pct | 100 × Σ(zs_paint_m) ÷ Σ(zs_paint_a) | fantasy, betting | Field-goal percentage in the sub-area "Rest of paint" (sum of its zones). |
-| `zs_mid_pct` | Mid-range FG% | pct | 100 × Σ(zs_mid_m) ÷ Σ(zs_mid_a) | fantasy, betting | Field-goal percentage in the sub-area "Mid-range" (sum of its zones). |
-| `zs_base_pct` | Baseline FG% | pct | 100 × Σ(zs_base_m) ÷ Σ(zs_base_a) | fantasy, betting | Field-goal percentage in the sub-area "Baseline" (sum of its zones). |
-| `zs_arc_pct` | Arc 3 FG% | pct | 100 × Σ(zs_arc_m) ÷ Σ(zs_arc_a) | fantasy, betting | Field-goal percentage in the sub-area "Arc 3" (sum of its zones). |
-| `zs_corner_pct` | Corner 3 FG% | pct | 100 × Σ(zs_corner_m) ÷ Σ(zs_corner_a) | fantasy, betting | Field-goal percentage in the sub-area "Corner 3" (sum of its zones). |
-| `zm_3p_pct` | 3P FG% | pct | 100 × Σ(zm_3p_m) ÷ Σ(zm_3p_a) | fantasy, betting | Field-goal percentage in the area "3P" (sum of its zones). |
-| `zm_mid_pct` | Mid FG% | pct | 100 × Σ(zm_mid_m) ÷ Σ(zm_mid_a) | fantasy, betting | Field-goal percentage in the area "Mid" (sum of its zones). |
-| `zm_paint_pct` | Paint FG% | pct | 100 × Σ(zm_paint_m) ÷ Σ(zm_paint_a) | fantasy, betting | Field-goal percentage in the area "Paint" (sum of its zones). |
+| id | Metric | Kind | Formula | Better | Used in | Description |
+|---|---|---|---|---|---|---|
+| `gp` | GP | count | Σ played | — | fantasy, betting | Games played (minutes > 0). |
+| `min` | MIN / game | perGame | Σ(0.016666666666666666·sec) ÷ Σ(played) | — | fantasy, betting | Minutes per game played. |
+| `pts_g` | PTS / game | perGame | Σ(pts) ÷ Σ(played) | higher | fantasy, betting | Points per game played. |
+| `reb_g` | REB / game | perGame | Σ(reb) ÷ Σ(played) | higher | fantasy, betting | Rebounds per game played. |
+| `ast_g` | AST / game | perGame | Σ(ast) ÷ Σ(played) | higher | fantasy, betting | Assists per game played. |
+| `stl_g` | STL / game | perGame | Σ(stl) ÷ Σ(played) | higher | fantasy, betting | Steals per game played. |
+| `blk_g` | BLK / game | perGame | Σ(blk) ÷ Σ(played) | higher | fantasy, betting | Blocks per game played. |
+| `tov_g` | TOV / game | perGame | Σ(tov) ÷ Σ(played) | lower | fantasy, betting | Turnovers per game played. |
+| `fd_g` | FD / game | perGame | Σ(fd) ÷ Σ(played) | higher | fantasy, betting | Fouls drawn per game played. |
+| `pf_g` | PF / game | perGame | Σ(pf) ÷ Σ(played) | lower | fantasy, betting | Personal fouls per game played. |
+| `pts100` | PTS / 100 poss | per100 | 100 × Σ(pts) ÷ Σ(poss_off_on) | higher | fantasy, betting | Points per 100 team offensive possessions while the player is on court. |
+| `ast100` | AST / 100 poss | per100 | 100 × Σ(ast) ÷ Σ(poss_off_on) | higher | fantasy, betting | Assists per 100 team offensive possessions while on court. |
+| `tov100` | TOV / 100 poss | per100 | 100 × Σ(tov) ÷ Σ(poss_off_on) | lower | fantasy, betting | Turnovers per 100 team offensive possessions while on court. |
+| `oreb100` | OREB / 100 poss | per100 | 100 × Σ(oreb) ÷ Σ(poss_off_on) | higher | fantasy, betting | Offensive rebounds per 100 team offensive possessions while on court. |
+| `fd100` | FD / 100 poss | per100 | 100 × Σ(fd) ÷ Σ(poss_off_on) | higher | fantasy, betting | Fouls drawn per 100 team offensive possessions while on court. |
+| `stl100` | STL / 100 poss | per100 | 100 × Σ(stl) ÷ Σ(poss_def_on) | higher | fantasy, betting | Steals per 100 team defensive possessions while on court. |
+| `blk100` | BLK / 100 poss | per100 | 100 × Σ(blk) ÷ Σ(poss_def_on) | higher | fantasy, betting | Blocks per 100 team defensive possessions while on court. |
+| `dreb100` | DREB / 100 poss | per100 | 100 × Σ(dreb) ÷ Σ(poss_def_on) | higher | fantasy, betting | Defensive rebounds per 100 team defensive possessions while on court. |
+| `reb100` | REB / 100 poss | per100 | 200 × Σ(reb) ÷ Σ(poss_off_on + poss_def_on) | higher | fantasy, betting | Total rebounds x200 / (offensive + defensive possessions on court): combines both phases, so it uses the average of the two. |
+| `usg` | USG% | pct | 100 × Σ(used) ÷ Σ(team_used_on) | — | fantasy, betting | Share of the team's shot attempts and turnovers, while on court, that the player used. |
+| `tov_pct` | TOV% | pct | 100 × Σ(tov) ÷ Σ(used) | lower | fantasy, betting | Turnovers as a share of the player's own possessions used (shot attempts + free-throw trips + turnovers). |
+| `oreb_pct` | OREB% | pct | 100 × Σ(oreb) ÷ Σ(team_oreb_on + opp_dreb_on) | higher | fantasy, betting | Share of the offensive rebounds available while on court (own team OREB + opponent DREB) that the player took. |
+| `dreb_pct` | DREB% | pct | 100 × Σ(dreb) ÷ Σ(team_dreb_on + opp_oreb_on) | higher | fantasy, betting | Share of the defensive rebounds available while on court (own team DREB + opponent OREB) that the player took. |
+| `gs` | GS | count | Σ starter | — | betting | Games started. |
+| `oreb_g` | OREB / game | perGame | Σ(oreb) ÷ Σ(played) | higher | betting | Offensive rebounds per game played. |
+| `dreb_g` | DREB / game | perGame | Σ(dreb) ÷ Σ(played) | higher | betting | Defensive rebounds per game played. |
+| `m3_g` | 3PM / game | perGame | Σ(m3) ÷ Σ(played) | higher | betting | Three-pointers made per game played. |
+| `a3_g` | 3PA / game | perGame | Σ(a3) ÷ Σ(played) | — | betting | Three-point attempts per game played. |
+| `a1_g` | FTA / game | perGame | Σ(a1) ÷ Σ(played) | — | betting | Free-throw attempts per game played. |
+| `m3_100` | 3PM / 100 poss | per100 | 100 × Σ(m3) ÷ Σ(poss_off_on) | higher | betting | Three-pointers made per 100 team offensive possessions while on court. |
+| `a3_100` | 3PA / 100 poss | per100 | 100 × Σ(a3) ÷ Σ(poss_off_on) | — | betting | Three-point attempts per 100 team offensive possessions while on court. |
+| `a1_100` | FTA / 100 poss | per100 | 100 × Σ(a1) ÷ Σ(poss_off_on) | — | betting | Free-throw attempts per 100 team offensive possessions while on court. |
+| `pf100` | PF / 100 poss | per100 | 100 × Σ(pf) ÷ Σ(poss_def_on) | lower | betting | Personal fouls per 100 team defensive possessions while on court. |
+| `ast_pct` | AST% | pct | 100 × Σ(ast) ÷ Σ(team_fgm_on − fgm) | higher | betting | Share of team field goals made while on court (excluding his own) that the player assisted. |
+| `blk_pct` | BLK% | pct | 100 × Σ(blk) ÷ Σ(opp_a2_on) | higher | betting | Blocks as a share of opponent two-point attempts while on court. |
+| `efg` | eFG% | pct | 100 × Σ(m2 + 1.5·m3) ÷ Σ(fga) | higher | fantasy, betting | Effective field-goal percentage: (2P made + 1.5 x 3P made) / field-goal attempts. |
+| `fg2_pct` | 2FG% | pct | 100 × Σ(m2) ÷ Σ(a2) | higher | fantasy, betting | Two-point field-goal percentage. |
+| `fg3_pct` | 3FG% | pct | 100 × Σ(m3) ÷ Σ(a3) | higher | fantasy, betting | Three-point field-goal percentage. |
+| `ft_pct` | FT% | pct | 100 × Σ(m1) ÷ Σ(a1) | higher | fantasy, betting | Free-throw percentage. |
+| `ftr` | FTr | pct | 100 × Σ(a1) ÷ Σ(fga) | — | fantasy, betting | Free-throw rate: free-throw attempts per field-goal attempt, x100. |
+| `a3_rate` | 3PA / FGA | pct | 100 × Σ(a3) ÷ Σ(fga) | — | betting | Share of field-goal attempts that are three-pointers. |
+| `ts_pct` | TS% | pct | 100 × Σ(pts) ÷ Σ(2·a2 + 2·a3 + 0.88·a1) | higher | betting | True shooting: points / (2 x (FGA + 0.44 x FTA)). |
+| `pir` | PIR / game | perGame | Σ(pir) ÷ Σ(played) | higher | fantasy, betting | Performance Index Rating per game: points, rebounds, assists, steals, blocks and fouls drawn minus misses, turnovers, fouls and blocks against. |
+| `pir_min` | PIR / min | perMin | 60 × Σ(pir) ÷ Σ(sec) | higher | fantasy | PIR per minute played (total PIR / total minutes). |
+| `nspir` | Non-scoring PIR / game | perGame | Σ(nonscoring) ÷ Σ(played) | higher | fantasy | Everything that is not scoring: rebounds, assists, steals, blocks, fouls drawn minus fouls, blocks against and turnovers, per game. |
+| `nspir_min` | Non-scoring PIR / min | perMin | 60 × Σ(nonscoring) ÷ Σ(sec) | higher | fantasy | Non-scoring PIR per minute played. |
+| `net_pir_usg` | NET PIR / USG | ratio | Σ(net) ÷ Σ(used) | higher | fantasy | Scoring-only contribution (points - misses - turnovers) per possession used (shot attempts + free-throw trips + turnovers). |
+| `bc` | Box Creation | custom | custom function of the window's summed ast, pts, tov, m3, a3, poss_off_on | — | fantasy | Ben Taylor's Box Creation per 100 offensive possessions on court (AST, PTS+TOV and 3-point proficiency from window totals). |
+| `load` | Offensive Load | custom | custom function of the window's summed ast, pts, tov, m3, a3, poss_off_on, sa | — | fantasy | Ben Taylor's Offensive Load per 100 offensive possessions on court; uses the play-by-play shot attempts instead of FGA + 0.44 x FTA. |
+| `ctov` | cTOV% | custom | custom function of the window's summed ast, pts, tov, m3, a3, poss_off_on, sa | lower | fantasy | Ben Taylor's creation-adjusted turnover rate: turnovers per 100 possessions divided by Offensive Load, x100. |
+| `z_rim_pct` | At the rim FG% | pct | 100 × Σ(z_rim_m) ÷ Σ(z_rim_a) | higher | fantasy, betting | Field-goal percentage in the zone "At the rim". |
+| `z_paint_pct` | Rest of paint FG% | pct | 100 × Σ(z_paint_m) ÷ Σ(z_paint_a) | higher | fantasy, betting | Field-goal percentage in the zone "Rest of paint". |
+| `z_midL_pct` | Mid left FG% | pct | 100 × Σ(z_midL_m) ÷ Σ(z_midL_a) | higher | fantasy, betting | Field-goal percentage in the zone "Mid left". |
+| `z_midC_pct` | Mid center FG% | pct | 100 × Σ(z_midC_m) ÷ Σ(z_midC_a) | higher | fantasy, betting | Field-goal percentage in the zone "Mid center". |
+| `z_midR_pct` | Mid right FG% | pct | 100 × Σ(z_midR_m) ÷ Σ(z_midR_a) | higher | fantasy, betting | Field-goal percentage in the zone "Mid right". |
+| `z_baseL_pct` | Baseline left FG% | pct | 100 × Σ(z_baseL_m) ÷ Σ(z_baseL_a) | higher | fantasy, betting | Field-goal percentage in the zone "Baseline left". |
+| `z_baseR_pct` | Baseline right FG% | pct | 100 × Σ(z_baseR_m) ÷ Σ(z_baseR_a) | higher | fantasy, betting | Field-goal percentage in the zone "Baseline right". |
+| `z_arcL_pct` | Arc left FG% | pct | 100 × Σ(z_arcL_m) ÷ Σ(z_arcL_a) | higher | fantasy, betting | Field-goal percentage in the zone "Arc left". |
+| `z_arcC_pct` | Arc center FG% | pct | 100 × Σ(z_arcC_m) ÷ Σ(z_arcC_a) | higher | fantasy, betting | Field-goal percentage in the zone "Arc center". |
+| `z_arcR_pct` | Arc right FG% | pct | 100 × Σ(z_arcR_m) ÷ Σ(z_arcR_a) | higher | fantasy, betting | Field-goal percentage in the zone "Arc right". |
+| `z_cornerL_pct` | Corner left FG% | pct | 100 × Σ(z_cornerL_m) ÷ Σ(z_cornerL_a) | higher | fantasy, betting | Field-goal percentage in the zone "Corner left". |
+| `z_cornerR_pct` | Corner right FG% | pct | 100 × Σ(z_cornerR_m) ÷ Σ(z_cornerR_a) | higher | fantasy, betting | Field-goal percentage in the zone "Corner right". |
+| `zs_rim_pct` | At the rim FG% | pct | 100 × Σ(zs_rim_m) ÷ Σ(zs_rim_a) | higher | fantasy, betting | Field-goal percentage in the sub-area "At the rim" (sum of its zones). |
+| `zs_paint_pct` | Rest of paint FG% | pct | 100 × Σ(zs_paint_m) ÷ Σ(zs_paint_a) | higher | fantasy, betting | Field-goal percentage in the sub-area "Rest of paint" (sum of its zones). |
+| `zs_mid_pct` | Mid-range FG% | pct | 100 × Σ(zs_mid_m) ÷ Σ(zs_mid_a) | higher | fantasy, betting | Field-goal percentage in the sub-area "Mid-range" (sum of its zones). |
+| `zs_base_pct` | Baseline FG% | pct | 100 × Σ(zs_base_m) ÷ Σ(zs_base_a) | higher | fantasy, betting | Field-goal percentage in the sub-area "Baseline" (sum of its zones). |
+| `zs_arc_pct` | Arc 3 FG% | pct | 100 × Σ(zs_arc_m) ÷ Σ(zs_arc_a) | higher | fantasy, betting | Field-goal percentage in the sub-area "Arc 3" (sum of its zones). |
+| `zs_corner_pct` | Corner 3 FG% | pct | 100 × Σ(zs_corner_m) ÷ Σ(zs_corner_a) | higher | fantasy, betting | Field-goal percentage in the sub-area "Corner 3" (sum of its zones). |
+| `zm_3p_pct` | 3P FG% | pct | 100 × Σ(zm_3p_m) ÷ Σ(zm_3p_a) | higher | fantasy, betting | Field-goal percentage in the area "3P" (sum of its zones). |
+| `zm_mid_pct` | Mid FG% | pct | 100 × Σ(zm_mid_m) ÷ Σ(zm_mid_a) | higher | fantasy, betting | Field-goal percentage in the area "Mid" (sum of its zones). |
+| `zm_paint_pct` | Paint FG% | pct | 100 × Σ(zm_paint_m) ÷ Σ(zm_paint_a) | higher | fantasy, betting | Field-goal percentage in the area "Paint" (sum of its zones). |
 
 ## Teams
 
-| id | Metric | Kind | Formula | Used in | Description |
-|---|---|---|---|---|---|
-| `pace` | Pace (poss / 40 min) | ratio | 1200 × Σ(poss + o_poss) ÷ Σ(sec) | fantasy, betting | Possessions per 40 minutes (average of both teams' possessions). |
-| `ortg` | ORtg | per100 | 100 × Σ(pts) ÷ Σ(poss) | betting | Points scored per 100 own possessions. |
-| `drtg` | DRtg | per100 | 100 × Σ(o_pts) ÷ Σ(o_poss) | fantasy, betting | Points allowed per 100 opponent possessions. |
-| `t_pts_g` | PTS / game | perGame | Σ(pts) ÷ Σ(games) | betting | Points scored per game. |
-| `o_pts_g` | Opp PTS / game | perGame | Σ(o_pts) ÷ Σ(games) | fantasy, betting | Points allowed per game. |
-| `t_efg` | eFG% | pct | 100 × Σ(m2 + 1.5·m3) ÷ Σ(fga) | betting | Effective field-goal percentage. |
-| `o_efg` | Opp eFG% | pct | 100 × Σ(o_m2 + 1.5·o_m3) ÷ Σ(o_fga) | fantasy, betting | Opponent effective field-goal percentage. |
-| `t_fg2_pct` | 2FG% | pct | 100 × Σ(m2) ÷ Σ(a2) | betting | Two-point field-goal percentage. |
-| `o_fg2_pct` | Opp 2FG% | pct | 100 × Σ(o_m2) ÷ Σ(o_a2) | fantasy, betting | Opponent two-point field-goal percentage. |
-| `t_fg3_pct` | 3FG% | pct | 100 × Σ(m3) ÷ Σ(a3) | betting | Three-point field-goal percentage. |
-| `o_fg3_pct` | Opp 3FG% | pct | 100 × Σ(o_m3) ÷ Σ(o_a3) | fantasy, betting | Opponent three-point field-goal percentage. |
-| `t_ftr` | FTr | pct | 100 × Σ(a1) ÷ Σ(fga) | betting | Free-throw attempts per field-goal attempt, x100. |
-| `o_ftr` | Opp FTr | pct | 100 × Σ(o_a1) ÷ Σ(o_fga) | fantasy, betting | Opponent free-throw attempts per field-goal attempt, x100. |
-| `t_a3_rate` | 3PA / FGA | pct | 100 × Σ(a3) ÷ Σ(fga) | betting | Share of field-goal attempts that are three-pointers. |
-| `o_a3_rate` | Opp 3PA / FGA | pct | 100 × Σ(o_a3) ÷ Σ(o_fga) | betting | Share of opponent field-goal attempts that are three-pointers. |
-| `t_oreb_pct` | OREB% | pct | 100 × Σ(oreb) ÷ Σ(oreb + o_dreb) | betting | Offensive rebounds taken / offensive rebounds available (own OREB + opponent DREB). |
-| `t_dreb_pct` | DREB% | pct | 100 × Σ(dreb) ÷ Σ(dreb + o_oreb) | fantasy, betting | Defensive rebounds taken / defensive rebounds available (own DREB + opponent OREB). |
-| `t_tov100` | TOV / 100 poss | per100 | 100 × Σ(tov) ÷ Σ(poss) | betting | Own turnovers per 100 own possessions. |
-| `o_tov100` | Opp TOV / 100 poss | per100 | 100 × Σ(o_tov) ÷ Σ(o_poss) | fantasy, betting | Opponent turnovers per 100 opponent possessions. |
-| `t_ast100` | AST / 100 poss | per100 | 100 × Σ(ast) ÷ Σ(poss) | betting | Own assists per 100 own possessions. |
-| `o_ast100` | Opp AST / 100 poss | per100 | 100 × Σ(o_ast) ÷ Σ(o_poss) | fantasy, betting | Opponent assists per 100 opponent possessions. |
-| `t_stl100` | STL / 100 poss | per100 | 100 × Σ(stl) ÷ Σ(o_poss) | betting | Own steals per 100 defensive (= opponent) possessions. |
-| `o_stl100` | Opp STL / 100 poss | per100 | 100 × Σ(o_stl) ÷ Σ(poss) | betting | Opponent steals per 100 of their defensive (= own) possessions. |
-| `t_blk_pct` | BLK% | pct | 100 × Σ(blk) ÷ Σ(o_a2) | betting | Own blocks as a share of opponent two-point attempts. |
-| `o_blk_pct` | Opp BLK% | pct | 100 × Σ(o_blk) ÷ Σ(a2) | betting | Opponent blocks as a share of own two-point attempts. |
-| `t_fb100` | Fast break PTS / 100 poss | per100 | 100 × Σ(pts_fastbreak) ÷ Σ(poss) | betting | Own fast-break points per 100 own possessions. |
-| `o_fb100` | Opp Fast break PTS / 100 poss | per100 | 100 × Σ(o_pts_fastbreak) ÷ Σ(o_poss) | fantasy, betting | Opponent fast-break points per 100 opponent possessions. |
-| `t_sc100` | Second chance PTS / 100 poss | per100 | 100 × Σ(pts_second_chance) ÷ Σ(poss) | betting | Own second-chance points per 100 own possessions. |
-| `o_sc100` | Opp Second chance PTS / 100 poss | per100 | 100 × Σ(o_pts_second_chance) ÷ Σ(o_poss) | fantasy, betting | Opponent second-chance points per 100 opponent possessions (categories overlap; do not add them up). |
-| `t_pot100` | PTS off TO / 100 poss | per100 | 100 × Σ(pts_off_turnover) ÷ Σ(poss) | betting | Own points off turnovers per 100 own possessions. |
-| `o_pot100` | Opp PTS off TO / 100 poss | per100 | 100 × Σ(o_pts_off_turnover) ÷ Σ(o_poss) | fantasy, betting | Opponent points off turnovers per 100 opponent possessions. |
-| `t_z_rim_pct` | At the rim FG% | pct | 100 × Σ(z_rim_m) ÷ Σ(z_rim_a) | betting | Field-goal percentage in the zone "At the rim". |
-| `t_z_paint_pct` | Rest of paint FG% | pct | 100 × Σ(z_paint_m) ÷ Σ(z_paint_a) | betting | Field-goal percentage in the zone "Rest of paint". |
-| `t_z_midL_pct` | Mid left FG% | pct | 100 × Σ(z_midL_m) ÷ Σ(z_midL_a) | betting | Field-goal percentage in the zone "Mid left". |
-| `t_z_midC_pct` | Mid center FG% | pct | 100 × Σ(z_midC_m) ÷ Σ(z_midC_a) | betting | Field-goal percentage in the zone "Mid center". |
-| `t_z_midR_pct` | Mid right FG% | pct | 100 × Σ(z_midR_m) ÷ Σ(z_midR_a) | betting | Field-goal percentage in the zone "Mid right". |
-| `t_z_baseL_pct` | Baseline left FG% | pct | 100 × Σ(z_baseL_m) ÷ Σ(z_baseL_a) | betting | Field-goal percentage in the zone "Baseline left". |
-| `t_z_baseR_pct` | Baseline right FG% | pct | 100 × Σ(z_baseR_m) ÷ Σ(z_baseR_a) | betting | Field-goal percentage in the zone "Baseline right". |
-| `t_z_arcL_pct` | Arc left FG% | pct | 100 × Σ(z_arcL_m) ÷ Σ(z_arcL_a) | betting | Field-goal percentage in the zone "Arc left". |
-| `t_z_arcC_pct` | Arc center FG% | pct | 100 × Σ(z_arcC_m) ÷ Σ(z_arcC_a) | betting | Field-goal percentage in the zone "Arc center". |
-| `t_z_arcR_pct` | Arc right FG% | pct | 100 × Σ(z_arcR_m) ÷ Σ(z_arcR_a) | betting | Field-goal percentage in the zone "Arc right". |
-| `t_z_cornerL_pct` | Corner left FG% | pct | 100 × Σ(z_cornerL_m) ÷ Σ(z_cornerL_a) | betting | Field-goal percentage in the zone "Corner left". |
-| `t_z_cornerR_pct` | Corner right FG% | pct | 100 × Σ(z_cornerR_m) ÷ Σ(z_cornerR_a) | betting | Field-goal percentage in the zone "Corner right". |
-| `t_zs_rim_pct` | At the rim FG% | pct | 100 × Σ(zs_rim_m) ÷ Σ(zs_rim_a) | betting | Field-goal percentage in the sub-area "At the rim" (sum of its zones). |
-| `t_zs_paint_pct` | Rest of paint FG% | pct | 100 × Σ(zs_paint_m) ÷ Σ(zs_paint_a) | betting | Field-goal percentage in the sub-area "Rest of paint" (sum of its zones). |
-| `t_zs_mid_pct` | Mid-range FG% | pct | 100 × Σ(zs_mid_m) ÷ Σ(zs_mid_a) | betting | Field-goal percentage in the sub-area "Mid-range" (sum of its zones). |
-| `t_zs_base_pct` | Baseline FG% | pct | 100 × Σ(zs_base_m) ÷ Σ(zs_base_a) | betting | Field-goal percentage in the sub-area "Baseline" (sum of its zones). |
-| `t_zs_arc_pct` | Arc 3 FG% | pct | 100 × Σ(zs_arc_m) ÷ Σ(zs_arc_a) | betting | Field-goal percentage in the sub-area "Arc 3" (sum of its zones). |
-| `t_zs_corner_pct` | Corner 3 FG% | pct | 100 × Σ(zs_corner_m) ÷ Σ(zs_corner_a) | betting | Field-goal percentage in the sub-area "Corner 3" (sum of its zones). |
-| `t_zm_3p_pct` | 3P FG% | pct | 100 × Σ(zm_3p_m) ÷ Σ(zm_3p_a) | betting | Field-goal percentage in the area "3P" (sum of its zones). |
-| `t_zm_mid_pct` | Mid FG% | pct | 100 × Σ(zm_mid_m) ÷ Σ(zm_mid_a) | betting | Field-goal percentage in the area "Mid" (sum of its zones). |
-| `t_zm_paint_pct` | Paint FG% | pct | 100 × Σ(zm_paint_m) ÷ Σ(zm_paint_a) | betting | Field-goal percentage in the area "Paint" (sum of its zones). |
-| `o_z_rim_pct` | Opp At the rim FG% | pct | 100 × Σ(o_z_rim_m) ÷ Σ(o_z_rim_a) | fantasy, betting | Field-goal percentage in the zone "At the rim". |
-| `o_z_paint_pct` | Opp Rest of paint FG% | pct | 100 × Σ(o_z_paint_m) ÷ Σ(o_z_paint_a) | fantasy, betting | Field-goal percentage in the zone "Rest of paint". |
-| `o_z_midL_pct` | Opp Mid left FG% | pct | 100 × Σ(o_z_midL_m) ÷ Σ(o_z_midL_a) | fantasy, betting | Field-goal percentage in the zone "Mid left". |
-| `o_z_midC_pct` | Opp Mid center FG% | pct | 100 × Σ(o_z_midC_m) ÷ Σ(o_z_midC_a) | fantasy, betting | Field-goal percentage in the zone "Mid center". |
-| `o_z_midR_pct` | Opp Mid right FG% | pct | 100 × Σ(o_z_midR_m) ÷ Σ(o_z_midR_a) | fantasy, betting | Field-goal percentage in the zone "Mid right". |
-| `o_z_baseL_pct` | Opp Baseline left FG% | pct | 100 × Σ(o_z_baseL_m) ÷ Σ(o_z_baseL_a) | fantasy, betting | Field-goal percentage in the zone "Baseline left". |
-| `o_z_baseR_pct` | Opp Baseline right FG% | pct | 100 × Σ(o_z_baseR_m) ÷ Σ(o_z_baseR_a) | fantasy, betting | Field-goal percentage in the zone "Baseline right". |
-| `o_z_arcL_pct` | Opp Arc left FG% | pct | 100 × Σ(o_z_arcL_m) ÷ Σ(o_z_arcL_a) | fantasy, betting | Field-goal percentage in the zone "Arc left". |
-| `o_z_arcC_pct` | Opp Arc center FG% | pct | 100 × Σ(o_z_arcC_m) ÷ Σ(o_z_arcC_a) | fantasy, betting | Field-goal percentage in the zone "Arc center". |
-| `o_z_arcR_pct` | Opp Arc right FG% | pct | 100 × Σ(o_z_arcR_m) ÷ Σ(o_z_arcR_a) | fantasy, betting | Field-goal percentage in the zone "Arc right". |
-| `o_z_cornerL_pct` | Opp Corner left FG% | pct | 100 × Σ(o_z_cornerL_m) ÷ Σ(o_z_cornerL_a) | fantasy, betting | Field-goal percentage in the zone "Corner left". |
-| `o_z_cornerR_pct` | Opp Corner right FG% | pct | 100 × Σ(o_z_cornerR_m) ÷ Σ(o_z_cornerR_a) | fantasy, betting | Field-goal percentage in the zone "Corner right". |
-| `o_zs_rim_pct` | Opp At the rim FG% | pct | 100 × Σ(o_zs_rim_m) ÷ Σ(o_zs_rim_a) | fantasy, betting | Field-goal percentage in the sub-area "At the rim" (sum of its zones). |
-| `o_zs_paint_pct` | Opp Rest of paint FG% | pct | 100 × Σ(o_zs_paint_m) ÷ Σ(o_zs_paint_a) | fantasy, betting | Field-goal percentage in the sub-area "Rest of paint" (sum of its zones). |
-| `o_zs_mid_pct` | Opp Mid-range FG% | pct | 100 × Σ(o_zs_mid_m) ÷ Σ(o_zs_mid_a) | fantasy, betting | Field-goal percentage in the sub-area "Mid-range" (sum of its zones). |
-| `o_zs_base_pct` | Opp Baseline FG% | pct | 100 × Σ(o_zs_base_m) ÷ Σ(o_zs_base_a) | fantasy, betting | Field-goal percentage in the sub-area "Baseline" (sum of its zones). |
-| `o_zs_arc_pct` | Opp Arc 3 FG% | pct | 100 × Σ(o_zs_arc_m) ÷ Σ(o_zs_arc_a) | fantasy, betting | Field-goal percentage in the sub-area "Arc 3" (sum of its zones). |
-| `o_zs_corner_pct` | Opp Corner 3 FG% | pct | 100 × Σ(o_zs_corner_m) ÷ Σ(o_zs_corner_a) | fantasy, betting | Field-goal percentage in the sub-area "Corner 3" (sum of its zones). |
-| `o_zm_3p_pct` | Opp 3P FG% | pct | 100 × Σ(o_zm_3p_m) ÷ Σ(o_zm_3p_a) | fantasy, betting | Field-goal percentage in the area "3P" (sum of its zones). |
-| `o_zm_mid_pct` | Opp Mid FG% | pct | 100 × Σ(o_zm_mid_m) ÷ Σ(o_zm_mid_a) | fantasy, betting | Field-goal percentage in the area "Mid" (sum of its zones). |
-| `o_zm_paint_pct` | Opp Paint FG% | pct | 100 × Σ(o_zm_paint_m) ÷ Σ(o_zm_paint_a) | fantasy, betting | Field-goal percentage in the area "Paint" (sum of its zones). |
+| id | Metric | Kind | Formula | Better | Used in | Description |
+|---|---|---|---|---|---|---|
+| `pace` | Pace (poss / 40 min) | ratio | 1200 × Σ(poss + o_poss) ÷ Σ(sec) | — | fantasy, betting | Possessions per 40 minutes (average of both teams' possessions). |
+| `ortg` | ORtg | per100 | 100 × Σ(pts) ÷ Σ(poss) | higher | betting | Points scored per 100 own possessions. |
+| `drtg` | DRtg | per100 | 100 × Σ(o_pts) ÷ Σ(o_poss) | lower | fantasy, betting | Points allowed per 100 opponent possessions. |
+| `t_pts_g` | PTS / game | perGame | Σ(pts) ÷ Σ(games) | higher | betting | Points scored per game. |
+| `o_pts_g` | Opp PTS / game | perGame | Σ(o_pts) ÷ Σ(games) | lower | fantasy, betting | Points allowed per game. |
+| `t_efg` | eFG% | pct | 100 × Σ(m2 + 1.5·m3) ÷ Σ(fga) | higher | betting | Effective field-goal percentage. |
+| `o_efg` | Opp eFG% | pct | 100 × Σ(o_m2 + 1.5·o_m3) ÷ Σ(o_fga) | lower | fantasy, betting | Opponent effective field-goal percentage. |
+| `t_fg2_pct` | 2FG% | pct | 100 × Σ(m2) ÷ Σ(a2) | higher | betting | Two-point field-goal percentage. |
+| `o_fg2_pct` | Opp 2FG% | pct | 100 × Σ(o_m2) ÷ Σ(o_a2) | lower | fantasy, betting | Opponent two-point field-goal percentage. |
+| `t_fg3_pct` | 3FG% | pct | 100 × Σ(m3) ÷ Σ(a3) | higher | betting | Three-point field-goal percentage. |
+| `o_fg3_pct` | Opp 3FG% | pct | 100 × Σ(o_m3) ÷ Σ(o_a3) | lower | fantasy, betting | Opponent three-point field-goal percentage. |
+| `t_ftr` | FTr | pct | 100 × Σ(a1) ÷ Σ(fga) | higher | betting | Free-throw attempts per field-goal attempt, x100. |
+| `o_ftr` | Opp FTr | pct | 100 × Σ(o_a1) ÷ Σ(o_fga) | lower | fantasy, betting | Opponent free-throw attempts per field-goal attempt, x100. |
+| `t_a3_rate` | 3PA / FGA | pct | 100 × Σ(a3) ÷ Σ(fga) | — | betting | Share of field-goal attempts that are three-pointers. |
+| `o_a3_rate` | Opp 3PA / FGA | pct | 100 × Σ(o_a3) ÷ Σ(o_fga) | lower | betting | Share of opponent field-goal attempts that are three-pointers. |
+| `t_oreb_pct` | OREB% | pct | 100 × Σ(oreb) ÷ Σ(oreb + o_dreb) | higher | betting | Offensive rebounds taken / offensive rebounds available (own OREB + opponent DREB). |
+| `t_dreb_pct` | DREB% | pct | 100 × Σ(dreb) ÷ Σ(dreb + o_oreb) | higher | fantasy, betting | Defensive rebounds taken / defensive rebounds available (own DREB + opponent OREB). |
+| `t_tov100` | TOV / 100 poss | per100 | 100 × Σ(tov) ÷ Σ(poss) | lower | betting | Own turnovers per 100 own possessions. |
+| `o_tov100` | Opp TOV / 100 poss | per100 | 100 × Σ(o_tov) ÷ Σ(o_poss) | higher | fantasy, betting | Opponent turnovers per 100 opponent possessions. |
+| `t_ast100` | AST / 100 poss | per100 | 100 × Σ(ast) ÷ Σ(poss) | higher | betting | Own assists per 100 own possessions. |
+| `o_ast100` | Opp AST / 100 poss | per100 | 100 × Σ(o_ast) ÷ Σ(o_poss) | lower | fantasy, betting | Opponent assists per 100 opponent possessions. |
+| `t_stl100` | STL / 100 poss | per100 | 100 × Σ(stl) ÷ Σ(o_poss) | higher | betting | Own steals per 100 defensive (= opponent) possessions. |
+| `o_stl100` | Opp STL / 100 poss | per100 | 100 × Σ(o_stl) ÷ Σ(poss) | lower | betting | Opponent steals per 100 of their defensive (= own) possessions. |
+| `t_blk_pct` | BLK% | pct | 100 × Σ(blk) ÷ Σ(o_a2) | higher | betting | Own blocks as a share of opponent two-point attempts. |
+| `o_blk_pct` | Opp BLK% | pct | 100 × Σ(o_blk) ÷ Σ(a2) | lower | betting | Opponent blocks as a share of own two-point attempts. |
+| `t_fb100` | Fast break PTS / 100 poss | per100 | 100 × Σ(pts_fastbreak) ÷ Σ(poss) | higher | betting | Own fast-break points per 100 own possessions. |
+| `o_fb100` | Opp Fast break PTS / 100 poss | per100 | 100 × Σ(o_pts_fastbreak) ÷ Σ(o_poss) | lower | fantasy, betting | Opponent fast-break points per 100 opponent possessions. |
+| `t_sc100` | Second chance PTS / 100 poss | per100 | 100 × Σ(pts_second_chance) ÷ Σ(poss) | higher | betting | Own second-chance points per 100 own possessions. |
+| `o_sc100` | Opp Second chance PTS / 100 poss | per100 | 100 × Σ(o_pts_second_chance) ÷ Σ(o_poss) | lower | fantasy, betting | Opponent second-chance points per 100 opponent possessions (categories overlap; do not add them up). |
+| `t_pot100` | PTS off TO / 100 poss | per100 | 100 × Σ(pts_off_turnover) ÷ Σ(poss) | higher | betting | Own points off turnovers per 100 own possessions. |
+| `o_pot100` | Opp PTS off TO / 100 poss | per100 | 100 × Σ(o_pts_off_turnover) ÷ Σ(o_poss) | lower | fantasy, betting | Opponent points off turnovers per 100 opponent possessions. |
+| `t_z_rim_pct` | At the rim FG% | pct | 100 × Σ(z_rim_m) ÷ Σ(z_rim_a) | higher | betting | Field-goal percentage in the zone "At the rim". |
+| `t_z_paint_pct` | Rest of paint FG% | pct | 100 × Σ(z_paint_m) ÷ Σ(z_paint_a) | higher | betting | Field-goal percentage in the zone "Rest of paint". |
+| `t_z_midL_pct` | Mid left FG% | pct | 100 × Σ(z_midL_m) ÷ Σ(z_midL_a) | higher | betting | Field-goal percentage in the zone "Mid left". |
+| `t_z_midC_pct` | Mid center FG% | pct | 100 × Σ(z_midC_m) ÷ Σ(z_midC_a) | higher | betting | Field-goal percentage in the zone "Mid center". |
+| `t_z_midR_pct` | Mid right FG% | pct | 100 × Σ(z_midR_m) ÷ Σ(z_midR_a) | higher | betting | Field-goal percentage in the zone "Mid right". |
+| `t_z_baseL_pct` | Baseline left FG% | pct | 100 × Σ(z_baseL_m) ÷ Σ(z_baseL_a) | higher | betting | Field-goal percentage in the zone "Baseline left". |
+| `t_z_baseR_pct` | Baseline right FG% | pct | 100 × Σ(z_baseR_m) ÷ Σ(z_baseR_a) | higher | betting | Field-goal percentage in the zone "Baseline right". |
+| `t_z_arcL_pct` | Arc left FG% | pct | 100 × Σ(z_arcL_m) ÷ Σ(z_arcL_a) | higher | betting | Field-goal percentage in the zone "Arc left". |
+| `t_z_arcC_pct` | Arc center FG% | pct | 100 × Σ(z_arcC_m) ÷ Σ(z_arcC_a) | higher | betting | Field-goal percentage in the zone "Arc center". |
+| `t_z_arcR_pct` | Arc right FG% | pct | 100 × Σ(z_arcR_m) ÷ Σ(z_arcR_a) | higher | betting | Field-goal percentage in the zone "Arc right". |
+| `t_z_cornerL_pct` | Corner left FG% | pct | 100 × Σ(z_cornerL_m) ÷ Σ(z_cornerL_a) | higher | betting | Field-goal percentage in the zone "Corner left". |
+| `t_z_cornerR_pct` | Corner right FG% | pct | 100 × Σ(z_cornerR_m) ÷ Σ(z_cornerR_a) | higher | betting | Field-goal percentage in the zone "Corner right". |
+| `t_zs_rim_pct` | At the rim FG% | pct | 100 × Σ(zs_rim_m) ÷ Σ(zs_rim_a) | higher | betting | Field-goal percentage in the sub-area "At the rim" (sum of its zones). |
+| `t_zs_paint_pct` | Rest of paint FG% | pct | 100 × Σ(zs_paint_m) ÷ Σ(zs_paint_a) | higher | betting | Field-goal percentage in the sub-area "Rest of paint" (sum of its zones). |
+| `t_zs_mid_pct` | Mid-range FG% | pct | 100 × Σ(zs_mid_m) ÷ Σ(zs_mid_a) | higher | betting | Field-goal percentage in the sub-area "Mid-range" (sum of its zones). |
+| `t_zs_base_pct` | Baseline FG% | pct | 100 × Σ(zs_base_m) ÷ Σ(zs_base_a) | higher | betting | Field-goal percentage in the sub-area "Baseline" (sum of its zones). |
+| `t_zs_arc_pct` | Arc 3 FG% | pct | 100 × Σ(zs_arc_m) ÷ Σ(zs_arc_a) | higher | betting | Field-goal percentage in the sub-area "Arc 3" (sum of its zones). |
+| `t_zs_corner_pct` | Corner 3 FG% | pct | 100 × Σ(zs_corner_m) ÷ Σ(zs_corner_a) | higher | betting | Field-goal percentage in the sub-area "Corner 3" (sum of its zones). |
+| `t_zm_3p_pct` | 3P FG% | pct | 100 × Σ(zm_3p_m) ÷ Σ(zm_3p_a) | higher | betting | Field-goal percentage in the area "3P" (sum of its zones). |
+| `t_zm_mid_pct` | Mid FG% | pct | 100 × Σ(zm_mid_m) ÷ Σ(zm_mid_a) | higher | betting | Field-goal percentage in the area "Mid" (sum of its zones). |
+| `t_zm_paint_pct` | Paint FG% | pct | 100 × Σ(zm_paint_m) ÷ Σ(zm_paint_a) | higher | betting | Field-goal percentage in the area "Paint" (sum of its zones). |
+| `o_z_rim_pct` | Opp At the rim FG% | pct | 100 × Σ(o_z_rim_m) ÷ Σ(o_z_rim_a) | lower | fantasy, betting | Field-goal percentage in the zone "At the rim". |
+| `o_z_paint_pct` | Opp Rest of paint FG% | pct | 100 × Σ(o_z_paint_m) ÷ Σ(o_z_paint_a) | lower | fantasy, betting | Field-goal percentage in the zone "Rest of paint". |
+| `o_z_midL_pct` | Opp Mid left FG% | pct | 100 × Σ(o_z_midL_m) ÷ Σ(o_z_midL_a) | lower | fantasy, betting | Field-goal percentage in the zone "Mid left". |
+| `o_z_midC_pct` | Opp Mid center FG% | pct | 100 × Σ(o_z_midC_m) ÷ Σ(o_z_midC_a) | lower | fantasy, betting | Field-goal percentage in the zone "Mid center". |
+| `o_z_midR_pct` | Opp Mid right FG% | pct | 100 × Σ(o_z_midR_m) ÷ Σ(o_z_midR_a) | lower | fantasy, betting | Field-goal percentage in the zone "Mid right". |
+| `o_z_baseL_pct` | Opp Baseline left FG% | pct | 100 × Σ(o_z_baseL_m) ÷ Σ(o_z_baseL_a) | lower | fantasy, betting | Field-goal percentage in the zone "Baseline left". |
+| `o_z_baseR_pct` | Opp Baseline right FG% | pct | 100 × Σ(o_z_baseR_m) ÷ Σ(o_z_baseR_a) | lower | fantasy, betting | Field-goal percentage in the zone "Baseline right". |
+| `o_z_arcL_pct` | Opp Arc left FG% | pct | 100 × Σ(o_z_arcL_m) ÷ Σ(o_z_arcL_a) | lower | fantasy, betting | Field-goal percentage in the zone "Arc left". |
+| `o_z_arcC_pct` | Opp Arc center FG% | pct | 100 × Σ(o_z_arcC_m) ÷ Σ(o_z_arcC_a) | lower | fantasy, betting | Field-goal percentage in the zone "Arc center". |
+| `o_z_arcR_pct` | Opp Arc right FG% | pct | 100 × Σ(o_z_arcR_m) ÷ Σ(o_z_arcR_a) | lower | fantasy, betting | Field-goal percentage in the zone "Arc right". |
+| `o_z_cornerL_pct` | Opp Corner left FG% | pct | 100 × Σ(o_z_cornerL_m) ÷ Σ(o_z_cornerL_a) | lower | fantasy, betting | Field-goal percentage in the zone "Corner left". |
+| `o_z_cornerR_pct` | Opp Corner right FG% | pct | 100 × Σ(o_z_cornerR_m) ÷ Σ(o_z_cornerR_a) | lower | fantasy, betting | Field-goal percentage in the zone "Corner right". |
+| `o_zs_rim_pct` | Opp At the rim FG% | pct | 100 × Σ(o_zs_rim_m) ÷ Σ(o_zs_rim_a) | lower | fantasy, betting | Field-goal percentage in the sub-area "At the rim" (sum of its zones). |
+| `o_zs_paint_pct` | Opp Rest of paint FG% | pct | 100 × Σ(o_zs_paint_m) ÷ Σ(o_zs_paint_a) | lower | fantasy, betting | Field-goal percentage in the sub-area "Rest of paint" (sum of its zones). |
+| `o_zs_mid_pct` | Opp Mid-range FG% | pct | 100 × Σ(o_zs_mid_m) ÷ Σ(o_zs_mid_a) | lower | fantasy, betting | Field-goal percentage in the sub-area "Mid-range" (sum of its zones). |
+| `o_zs_base_pct` | Opp Baseline FG% | pct | 100 × Σ(o_zs_base_m) ÷ Σ(o_zs_base_a) | lower | fantasy, betting | Field-goal percentage in the sub-area "Baseline" (sum of its zones). |
+| `o_zs_arc_pct` | Opp Arc 3 FG% | pct | 100 × Σ(o_zs_arc_m) ÷ Σ(o_zs_arc_a) | lower | fantasy, betting | Field-goal percentage in the sub-area "Arc 3" (sum of its zones). |
+| `o_zs_corner_pct` | Opp Corner 3 FG% | pct | 100 × Σ(o_zs_corner_m) ÷ Σ(o_zs_corner_a) | lower | fantasy, betting | Field-goal percentage in the sub-area "Corner 3" (sum of its zones). |
+| `o_zm_3p_pct` | Opp 3P FG% | pct | 100 × Σ(o_zm_3p_m) ÷ Σ(o_zm_3p_a) | lower | fantasy, betting | Field-goal percentage in the area "3P" (sum of its zones). |
+| `o_zm_mid_pct` | Opp Mid FG% | pct | 100 × Σ(o_zm_mid_m) ÷ Σ(o_zm_mid_a) | lower | fantasy, betting | Field-goal percentage in the area "Mid" (sum of its zones). |
+| `o_zm_paint_pct` | Opp Paint FG% | pct | 100 × Σ(o_zm_paint_m) ÷ Σ(o_zm_paint_a) | lower | fantasy, betting | Field-goal percentage in the area "Paint" (sum of its zones). |
 

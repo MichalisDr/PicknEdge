@@ -1,0 +1,77 @@
+{
+ "season": "E2026",
+ "games": 100,
+ "lastGame": 99,
+ "lastDate": "2026-11-06T19:45:00.000Z",
+ "windows": [
+  "season",
+  "l3",
+  "l5",
+  "l10"
+ ],
+ "version": "5170052b74",
+ "eligibility": {
+  "note": "Display-only rule used by the site to decide which players to list. Nothing is stored: the site evaluates it at display time on the selected window's gp, min and pir. A player is eligible in a window when ALL of that window's thresholds are met. l3 and l5 follow the old Fantasy filter (GP3 >= 1, MIN3 >= 10, GP5 >= 3, PIR >= 5); season and l10 are placeholders to confirm.",
+  "windows": {
+   "l3": {
+    "minGp": 1,
+    "minMin": 10,
+    "minPir": 5
+   },
+   "l5": {
+    "minGp": 3,
+    "minMin": 10,
+    "minPir": 5
+   },
+   "l10": {
+    "minGp": 3,
+    "minMin": 10,
+    "minPir": 5
+   },
+   "season": {
+    "minGp": 3,
+    "minMin": 10,
+    "minPir": 5
+   }
+  }
+ },
+ "files": [
+  "engine/engine.mjs",
+  "engine/join.mjs",
+  "engine/registry.mjs",
+  "engine/zones.mjs",
+  "games/players.json",
+  "games/teams.json",
+  "metrics.json",
+  "players-l10.json",
+  "players-l3.json",
+  "players-l5.json",
+  "players-season.json",
+  "roster.json",
+  "schedule.json",
+  "shots/ASV.json",
+  "shots/BAR.json",
+  "shots/BAS.json",
+  "shots/BES.json",
+  "shots/DUB.json",
+  "shots/HTA.json",
+  "shots/IST.json",
+  "shots/MAD.json",
+  "shots/MIL.json",
+  "shots/MUN.json",
+  "shots/OLY.json",
+  "shots/PAM.json",
+  "shots/PAN.json",
+  "shots/PAR.json",
+  "shots/PRS.json",
+  "shots/RED.json",
+  "shots/TEL.json",
+  "shots/ULK.json",
+  "shots/VIR.json",
+  "shots/ZAL.json",
+  "teams-l10.json",
+  "teams-l3.json",
+  "teams-l5.json",
+  "teams-season.json"
+ ]
+}
