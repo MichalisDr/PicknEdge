@@ -1,5 +1,5 @@
 // Minimal CSV reader for data/clean (RFC 4180 quoting). Empty cell -> null; columns not listed as text -> Number.
-const TEXT = new Set(['season', 'date_utc', 'team', 'opp', 'player_id', 'player', 'dorsal', 'team_name', 'poss_src', 'action', 'zone_feed', 'clock', 'position_feed', 'position_override', 'position', 'zone']);
+const TEXT = new Set(['season', 'date_utc', 'team', 'opp', 'player_id', 'player', 'dorsal', 'team_name', 'poss_src', 'action', 'zone_feed', 'clock', 'position_feed', 'position_override', 'position', 'zone', 'pos']);
 
 export function parseCsv(text) {
   const rows = [];

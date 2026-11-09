@@ -38,6 +38,7 @@ export const TEAM_COLUMNS = [
   ...['q1', 'q2', 'q3', 'q4', 'ot1', 'ot2', 'ot3', 'ot4', 'ot5'].map(q => C('pts_' + q, `game.<side>.quarters.${q}`)),
   C('pts', 'boxscore Stats[].totr.Points'),
   ...COUNTS.map(([n, s]) => C(n, `boxscore totr.${s}`)),
+  C('oreb_players', 'sum of player OffensiveRebounds (excludes team rebounds)'), C('dreb_players', 'sum of player DefensiveRebounds (excludes team rebounds)'),
   C('poss_pbp', 'playbyplay: counted possessions'), C('poss_ok', 'playbyplay count passed its checks'), C('poss', 'poss_pbp if poss_ok, else Oliver estimate'),
   C('poss_src', '"pbp" | "oliver"'), C('sa', 'playbyplay: team shot attempts'), C('pbp_events', 'playbyplay: events used'),
   C('pts_fastbreak', 'shots: POINTS where FASTBREAK=1'), C('pts_second_chance', 'shots: POINTS where SECOND_CHANCE=1'),
@@ -112,7 +113,7 @@ export function buildGame(season, code, raw) {
     return {
       ...ctx(team, { team_name: names[team], ot_periods: ot, sec: 2400 + 300 * ot }),
       ...Object.fromEntries(['q1', 'q2', 'q3', 'q4', 'ot1', 'ot2', 'ot3', 'ot4', 'ot5'].map(q => ['pts_' + q, quarters[team][q] ?? null])),
-      ...tot[team], poss_pbp: pbp.teams[team].poss, poss_ok: possOk ? 1 : 0, poss, poss_src: possOk ? 'pbp' : 'oliver',
+      ...tot[team], oreb_players: lines[team].reduce((n, l) => n + num(l.p.OffensiveRebounds), 0), dreb_players: lines[team].reduce((n, l) => n + num(l.p.DefensiveRebounds), 0), poss_pbp: pbp.teams[team].poss, poss_ok: possOk ? 1 : 0, poss, poss_src: possOk ? 'pbp' : 'oliver',
       sa: pbp.teams[team].sa, pbp_events: pbp.events,
       pts_fastbreak: tagged(team, 'FASTBREAK'), pts_second_chance: tagged(team, 'SECOND_CHANCE'), pts_off_turnover: tagged(team, 'POINTS_OFF_TURNOVER'),
       shots_ok: shotsOk ? 1 : 0, assists_linked: link?.ok.has(team) ? 1 : 0, ...zoneCounts(r => trim(r.TEAM) === team),

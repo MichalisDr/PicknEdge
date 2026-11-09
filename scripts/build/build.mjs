@@ -6,6 +6,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildGame, toCsv, PLAYER_COLUMNS, TEAM_COLUMNS, SHOT_COLUMNS } from './clean.mjs';
 import { auditPir } from './audit.mjs';
+import { positionGames, POSITION_COLUMNS } from './positions.mjs';
 
 const arg = (n, d) => { const i = process.argv.indexOf('--' + n); return i > 0 ? process.argv[i + 1] : d; };
 const season = arg('season', 'E2026');
@@ -54,7 +55,10 @@ write('player_games.csv', PLAYER_COLUMNS, players);
 write('team_games.csv', TEAM_COLUMNS, teams);
 write('shots.csv', SHOT_COLUMNS, shots);
 write('players.csv', PLAYER_DIM_COLUMNS, dim);
-writeFileSync(join(outDir, 'schema.json'), JSON.stringify({ player_games: PLAYER_COLUMNS, team_games: TEAM_COLUMNS, shots: SHOT_COLUMNS, players: PLAYER_DIM_COLUMNS }, null, 1) + '\n');
+const positionOf = Object.fromEntries(dim.map(d => [d.player_id, d.position]));
+const positions = positionGames(players, teams, positionOf);
+write('position_games.csv', POSITION_COLUMNS, positions);
+writeFileSync(join(outDir, 'schema.json'), JSON.stringify({ player_games: PLAYER_COLUMNS, team_games: TEAM_COLUMNS, shots: SHOT_COLUMNS, players: PLAYER_DIM_COLUMNS, position_games: POSITION_COLUMNS }, null, 1) + '\n');
 
 // ---- quality report ----
 const n = checks.length, cnt = f => checks.filter(f).length;
@@ -78,5 +82,16 @@ for (const t of teams) {
 console.log(`on-court sums = 5 x team figures (possessions, SA, OREB, DREB, TOV, seconds): ${inv.rows - inv.bad.length} of ${inv.rows} team-games` + (inv.bad.length ? `; first failures: ${inv.bad.slice(0, 5).join(' | ')}` : ''));
 const linked = teams.filter(t => t.assists_linked).length, made = shots.filter(s => /^[23]FGM$/.test(s.action));
 console.log(`assist attribution linked: ${linked} of ${teams.length} team-games; made FGs assisted ${made.filter(s => s.assisted === 1).length}, unassisted ${made.filter(s => s.assisted === 0).length}, unknown ${made.filter(s => s.assisted === null).length}`);
+// Position rows: with every player's position known, G + F + C of a team-game add up to the opponent's player totals.
+let posBad = 0, posRows = 0, unknownPos = players.filter(p => p.played && !['G', 'F', 'C'].includes(positionOf[p.player_id])).length;
+for (const t of teams) {
+  const mine = positions.filter(r => r.game === t.game && r.team === t.team);
+  const opp = players.filter(p => p.game === t.game && p.team === t.opp && p.played);
+  posRows++;
+  if (mine.reduce((n, r) => n + r.sec, 0) !== opp.reduce((n, p) => n + p.sec, 0) || mine.reduce((n, r) => n + r.m2, 0) !== opp.reduce((n, p) => n + p.m2, 0)) posBad++;
+}
+console.log(`positions: ${posRows - posBad} of ${posRows} team-games add up to the opponent's player totals; ${unknownPos} played player-games without a roster position`);
+const trb = teams.reduce((n, t) => n + t.oreb + t.dreb, 0), assigned = teams.reduce((n, t) => n + t.oreb_players + t.dreb_players, 0);
+console.log(`rebounds: ${trb - assigned} of ${trb} are team rebounds (credited to no player), excluded from the team radar`);
 const audit = auditPir(players);
 console.log(`PIR vs official valuation (played rows): ${audit.match} of ${audit.total} match` + (audit.bad.length ? `; mismatches: ${audit.bad.slice(0, 10).map(b => `g${b.game} ${b.player_id} ours ${b.ours} official ${b.official}`).join('; ')}${audit.bad.length > 10 ? ' …' : ''}` : ''));
