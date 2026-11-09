@@ -173,7 +173,7 @@
       else if (players) visual = radar(view, byId, roster, cs.cmp ? await W.view('players', cs) : null);
       else visual = teamRadar(view, season);
       root.innerHTML = `<header class="fw-identity">${logo ? `<img src="${esc(logo)}" alt="">` : ''}<div><small>${players ? 'PLAYER' : 'TEAM'} / FANTASY</small><h2>${esc(name)}</h2><p>${players ? esc(roster.teams[team] || team) + ' · ' + esc(row.pos || '—') : ''}</p></div><b>${gp || 0} GP</b></header>
-        <div class="fw-card-controls"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(cs, 'data-card-window')}</div><div class="fw-switch" role="tablist">${['profile', 'shooting'].map(v => `<button data-card-view="${v}" role="tab" aria-selected="${v === cs.mode}">${v === 'profile' ? 'Profile' : 'Shooting'}</button>`).join('')}</div></div>${W.customForm(cs)}
+        <div class="fw-card-controls"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(cs, 'data-card-window')}</div><div class="fw-switch" role="tablist">${['profile', 'shooting'].map(v => `<button data-card-view="${v}" role="tab" aria-selected="${v === cs.mode}">${v === 'profile' ? 'Profile' : 'Shooting'}</button>`).join('')}</div></div>
         ${!gp && players ? '' : players && cs.mode === 'profile' ? profileGrid(view, byId, sel) : players ? '' : teamMetrics(view, byId, sel)}<div class="fw-visual">${visual}</div>${players ? '<div data-box></div>' : ''}`;
       W.wire(root, cs, () => { cs.selected = null; draw(); }, 'data-card-window');
       root.querySelectorAll('[data-card-view]').forEach(b => { b.onclick = () => { cs.mode = b.dataset.cardView; cs.selected = null; draw(); }; });
@@ -191,7 +191,7 @@
 
   function open(entity, id, from = {}) {
     close();
-    cs = { entity, id, win: from.win || 'season', custom: from.custom || { last: 7, venue: 'all' }, customOpen: false, mode: from.mode || 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
+    cs = { entity, id, win: from.win || 'season', mode: from.mode || 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
     dialog = document.createElement('dialog');
     dialog.className = 'fw-dialog';
     dialog.innerHTML = '<button class="fw-close" aria-label="Close card">×</button><div class="fw-card"><p class="fw-empty" role="status">Loading…</p></div>';

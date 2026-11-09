@@ -19,7 +19,7 @@
   const POSITIONS = { G: 'Guard', F: 'Forward', C: 'Center' };
   const EPS = 1e-9, GOOD_TOP = 5;
 
-  const state = { entity: 'teams', side: 'offense', win: 'season', custom: { last: 7, venue: 'all' }, customOpen: false, col: 1, dir: -1, query: '',
+  const state = { entity: 'teams', side: 'offense', win: 'season', col: 1, dir: -1, query: '',
     pl: { view: 'role', team: '', pos: '', min: 10, query: '', col: 'min', dir: -1 } };
   let host = null, drawId = 0, pinned = null;
 
@@ -64,7 +64,7 @@
     const col = Math.min(state.col, ids.length - 1), sortId = ids[col];
     const val = r => (r.avg ? view.league(sortId) : view.get(r.id, sortId)).value;
     rows.sort((a, b) => { const x = val(a), y = val(b); return !Number.isFinite(x) ? (Number.isFinite(y) ? 1 : 0) : !Number.isFinite(y) ? -1 : (x - y) * state.dir || Number(b.avg) - Number(a.avg) || a.name.localeCompare(b.name); });
-    const lastN = state.win === 'custom' ? null : W.LIST.find(w => w[0] === state.win)[2].last;   // custom windows show plain game counts
+    const lastN = W.LIST.find(w => w[0] === state.win)[2].last;
     return { kind: 'teams', ids, defs, view, rows, rk, rk3, col, nTeams: view.keys.length, lastN, byId };
   }
 
@@ -93,7 +93,6 @@
     return `<div class="stats-toolbar"><div class="side-switch" role="group" aria-label="Side of the game"><button data-side="offense" aria-pressed="${off}">Offense</button><button data-side="defense" aria-pressed="${!off}">Defense</button></div>
       <div class="period-switch" role="group" aria-label="Sample window">${W.buttons(state)}</div>
       <label class="team-search"><span class="sr-only">Search team</span><input id="team-search" type="search" placeholder="Search team…" value="${esc(state.query)}"></label></div>
-      ${W.customForm(state, 'stats-toolbar fw-custom')}
       <div class="stats-caption"><span>${off ? 'What the team produces' : 'What it allows the opponent'}</span><span class="rank-legend"><span class="rk good">#1–5</span> best <span class="rk bad">#${m.nTeams - 4}–${m.nTeams}</span> worst${m.rk3 ? ' · L3 = rank over the last 3 games' : ''} · Hover or tap a value for details</span></div>
       <div class="stats-scroll" tabindex="0" aria-label="Team table, scrolls horizontally"><table class="teams-table ranked"><caption class="sr-only">${off ? 'Offensive' : 'Defensive'} team statistics, ranks and league average</caption>
         <thead><tr><th scope="col" class="club-head">Team</th><th scope="col">GP</th>${head}</tr></thead><tbody>${body}</tbody></table></div>
@@ -148,7 +147,6 @@
     const teams = Object.entries(m.teams).sort((a, b) => a[1].localeCompare(b[1]));
     return `<div class="stats-toolbar pl-toolbar"><div class="side-switch" role="group" aria-label="View">${Object.entries(PLAYER_VIEWS).map(([k, [t]]) => `<button data-pl-view="${k}" aria-pressed="${pl.view === k}">${t}</button>`).join('')}</div>
       <div class="period-switch" role="group" aria-label="Sample window">${W.buttons(state)}</div></div>
-      ${W.customForm(state, 'stats-toolbar fw-custom')}
       <div class="stats-toolbar pl-filters"><label>Team<select id="pl-team"><option value="">All</option>${teams.map(([c, n]) => `<option value="${c}" ${pl.team === c ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
         <label>Position<select id="pl-pos"><option value="">All</option>${Object.entries(POSITIONS).map(([k, n]) => `<option value="${k}" ${pl.pos === k ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
         <label>Minutes / game<select id="pl-min">${[0, 5, 10, 15, 20, 25].map(v => `<option value="${v}" ${pl.min === v ? 'selected' : ''}>${v ? '≥ ' + v : 'All'}</option>`).join('')}</select></label>

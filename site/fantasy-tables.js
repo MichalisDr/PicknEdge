@@ -1,7 +1,6 @@
 /* Fantasy · Players and Teams tables on the new data layer (PicknEdgeData). Pure UI: values, labels, descriptions and
    better/worse directions all come from metrics.json and the views; nothing is calculated here except ranking and colours.
-   Windows: Season / Last 10 / Last 5 / Last 3 from the built views, plus a custom window (last N games, home or away)
-   summed in the browser by the same engine the tests cover. Player and team cards and charts arrive in step 3.4. */
+   Windows: Season / Last 10 / Last 5 / Last 3, each a built view. Player and team cards and charts arrive in step 3.4. */
 (function (g) {
   'use strict';
   const D = g.PicknEdgeData, Elig = g.PicknEdgeEligibility, W = g.PicknEdgeWindows;
@@ -23,10 +22,10 @@
   const EVAL = { good: '#DFFBE9', avg: '#FBFFDF', bad: '#F6E0E3', neutral: '#bdc7d5' };   // good / average / bad evaluation palette (UI only)
   const EPS = 1e-9;
 
-  const state = { entity: 'teams', view: 'profile', win: 'season', custom: { last: 7, venue: 'all' }, customOpen: false, position: 'ALL', query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: -1, mode: 'table' };
+  const state = { entity: 'teams', view: 'profile', win: 'season', position: 'ALL', query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: -1, mode: 'table' };
   let host = null, drawId = 0;
 
-  const eligibilityWindow = () => state.win !== 'custom' ? state.win : state.custom.last <= 3 ? 'l3' : state.custom.last <= 5 ? 'l5' : state.custom.last <= 10 ? 'l10' : 'season';
+  const eligibilityWindow = () => state.win;
 
   const fmt = (c, m) => !Number.isFinite(c?.value) ? '—' : c.value.toFixed(m.format.digits) + m.format.suffix;
   const coverage = c => c && c.used !== null && c.used < c.of ? `<small class="fw-cov" title="${c.used} of ${c.of} games had the data">${c.used}/${c.of}</small>` : '';
@@ -94,7 +93,7 @@
       <label class="fw-check"><input data-filter="showAll" type="checkbox" ${state.showAll ? 'checked' : ''}> Show players below the form thresholds</label></div>` : '';
     return `<section class="fantasy-stats fw-workbench">
       <div class="fw-heading"><div><div class="eyebrow">FANTASY / ${teams ? 'TEAMS' : 'PLAYERS'}</div><h1>${title}</h1></div><span role="status">${esc(status)}</span></div>
-      <div class="fw-periods"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(state)}</div></div>${W.customForm(state)}
+      <div class="fw-periods"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(state)}</div></div>
       <div class="fw-toolbar">
         <div class="fw-switch" role="tablist">${['profile', 'shooting'].map(v => `<button data-view="${v}" role="tab" aria-selected="${state.view === v}">${v === 'profile' ? 'Profile' : 'Shooting'}</button>`).join('')}</div>
         ${teams ? '' : `<div class="fw-switch" aria-label="Player position">${['ALL', 'G', 'F', 'C'].map(v => `<button data-position="${v}" aria-pressed="${v === state.position}">${v === 'ALL' ? 'All' : v}</button>`).join('')}</div>`}
@@ -106,7 +105,7 @@
       <div class="fw-foot" ${gallery ? 'hidden' : ''}><span>${shown.length} ${teams ? 'teams' : 'players'} · ${esc(W.label(state))}</span>${teams
         ? '<span>#1 = best defence: lowest value (DRtg, Opp eFG%, Opp AST, Opp FTr, opponent second-chance / fast-break / points-off-turnover, opponent shooting), highest for Opp TOV and DREB%. Pace: highest = #1. Green = favourable for the opposing player.</span>'
         : '<span>Players below the form thresholds of the selected window are hidden unless you change this in Filters. n/m = games with the data out of games played.</span>'}</div>
-      <details class="fw-method"><summary>Sample &amp; calculations</summary><p>Last 3 / 5 / 10 are the team's most recent games, counting only the games the player actually played. Every ratio is a sum divided by a sum, never an average of game percentages. PIR has no Fantasy bonuses. USG%, TOV% and every "per 100" value use possessions counted from the play-by-play while the player is on court. Custom windows sum any selection of games (last N, home or away) in your browser with the same definitions. Full list: docs/METRICS.md.</p></details>
+      <details class="fw-method"><summary>Sample &amp; calculations</summary><p>Last 3 / 5 / 10 are the team's most recent games, counting only the games the player actually played. Every ratio is a sum divided by a sum, never an average of game percentages. PIR has no Fantasy bonuses. USG%, TOV% and every "per 100" value use possessions counted from the play-by-play while the player is on court. Full list: docs/METRICS.md.</p></details>
     </section>`;
   }
 
@@ -114,7 +113,7 @@
     const on = (sel, ev, fn) => host.querySelectorAll(sel).forEach(el => { el[ev] = () => fn(el); });
     W.wire(host, state, () => { state.sort = ''; draw(); });
     on('[data-fwmode]', 'onclick', b => { state.mode = b.dataset.fwmode; draw(); });
-    host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => g.FantasyCards.open(state.entity, p.dataset.open, { win: state.win, custom: { ...state.custom }, mode: state.view }); });
+    host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => g.FantasyCards.open(state.entity, p.dataset.open, { win: state.win, mode: state.view }); });
     on('[data-view]', 'onclick', b => { state.view = b.dataset.view; state.sort = ''; draw(); });
     on('[data-position]', 'onclick', b => { state.position = b.dataset.position; draw(); });
     on('[data-sort]', 'onclick', b => { state.dir = state.sort === b.dataset.sort ? -state.dir : -1; state.sort = b.dataset.sort; draw(); });
@@ -125,7 +124,7 @@
       state[k] = k === 'team' ? el.value : k === 'showAll' ? el.checked : Math.max(0, Number(el.value) || 0);
       draw();
     });
-    on('[data-open]', 'onclick', b => g.FantasyCards.open(state.entity, b.dataset.open, { win: state.win, custom: { ...state.custom }, mode: state.view }));
+    on('[data-open]', 'onclick', b => g.FantasyCards.open(state.entity, b.dataset.open, { win: state.win, mode: state.view }));
     hoverCurves();
     const search = host.querySelector('input[type=search]');
     search.oninput = e => { state.query = e.target.value; draw().then(() => { const i = host.querySelector('input[type=search]'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }); };
