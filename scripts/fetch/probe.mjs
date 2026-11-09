@@ -24,6 +24,22 @@ mkdirSync(out, { recursive: true });
 let bad = 0;
 const report = (code, name, ok, note = '') => { if (!ok) bad++; console.log(`${ok ? 'MATCH   ' : 'MISMATCH'} game ${code} ${name} ${note}`); };
 
+// The schedule entry also carries volatile/decorative data (image URLs, broadcasters...), so only the
+// fields we rely on must match; any other difference is listed as a NOTE and does not fail the probe.
+const flat = (o, p = '', acc = {}) => {
+  if (o && typeof o === 'object') for (const k of Object.keys(o)) flat(o[k], p ? `${p}.${k}` : k, acc);
+  else acc[p] = o;
+  return acc;
+};
+const RELIED_ON = ['round.round', 'date', 'status', 'home.code', 'home.name', 'home.score', 'away.code', 'away.name', 'away.score'];
+function compareGame(code, fresh, stored) {
+  const f = flat(fresh), s = flat(stored);
+  const wrong = RELIED_ON.filter(k => f[k] !== s[k]);
+  report(code, 'game', !wrong.length, wrong.length ? `fields differ: ${wrong.map(k => `${k} ${JSON.stringify(s[k])} -> ${JSON.stringify(f[k])}`).join('; ')}` : `(${RELIED_ON.length} relied-on fields)`);
+  const other = [...new Set([...Object.keys(f), ...Object.keys(s)])].filter(k => !RELIED_ON.includes(k) && f[k] !== s[k]);
+  for (const k of other) console.log(`NOTE     game ${code} game: ${k} | stored ${JSON.stringify(s[k])?.slice(0, 300)} | fresh ${JSON.stringify(f[k])?.slice(0, 300)}`);
+}
+
 const schedule = await fetchSchedule(season);
 for (const code of codes) {
   const game = schedule.find(g => g.code === code);
@@ -35,6 +51,7 @@ for (const code of codes) {
   for (const [name, text] of Object.entries(fresh)) {
     if (text == null) { bad++; continue; }
     await writeFile(join(out, `${code}-${name}.json`), text);
+    if (name === 'game') { compareGame(code, JSON.parse(text), JSON.parse(read(code, name))); continue; }
     const same = text === read(code, name);
     report(code, name, same, same ? `(${text.length} bytes)` : `(fresh ${text.length} vs stored ${read(code, name).length} bytes)`);
   }
