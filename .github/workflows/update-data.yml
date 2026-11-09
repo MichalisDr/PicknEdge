@@ -5,9 +5,6 @@ name: Update data
 #  - probe = true: re-fetch 5 stored games into a runner temp folder, compare byte-for-byte
 #    with data/raw, print MATCH/MISMATCH, commit nothing.
 on:
-  # TEMPORARY (remove after the run): probe-only on push to this branch.
-  push:
-    branches: [rebuild/data-pipeline]
   workflow_dispatch:
     inputs:
       probe:
@@ -33,15 +30,15 @@ jobs:
           node-version: 22
 
       - name: Probe (no commit)
-        if: ${{ github.event_name == 'push' || inputs.probe }}
+        if: ${{ inputs.probe }}
         run: node scripts/fetch/probe.mjs --count 5
 
       - name: Fetch new games
-        if: ${{ github.event_name == 'workflow_dispatch' && !inputs.probe }}
+        if: ${{ !inputs.probe }}
         run: node scripts/fetch/run.mjs --concurrency 1
 
       - name: Commit changed data
-        if: ${{ github.event_name == 'workflow_dispatch' && !inputs.probe }}
+        if: ${{ !inputs.probe }}
         run: |
           git add data
           if git diff --cached --quiet; then
