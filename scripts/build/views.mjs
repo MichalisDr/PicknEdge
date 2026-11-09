@@ -7,11 +7,11 @@ import { withOpponent } from '../metrics/join.mjs';
 
 
 export const WINDOWS = { season: Infinity, l3: 3, l5: 5, l10: 10 };
-const PLAYER_METRICS = METRICS.filter(m => m.scope === 'player' && !m.internal), TEAM_METRICS = METRICS.filter(m => m.scope === 'team' && !m.internal), POSITION_METRICS = METRICS.filter(m => m.scope === 'position');   // internal metrics are for the site's engine calls only
+const PLAYER_METRICS = METRICS.filter(m => m.scope === 'player' && !m.internal), TEAM_METRICS = METRICS.filter(m => m.scope === 'team' && !m.internal);   // internal metrics are for the site's engine calls only
 const byGame = (a, b) => a.date_utc.localeCompare(b.date_utc) || a.game - b.game;
 const roundedCell = r => r.value === null ? null : r.used === r.of ? +r.value.toFixed(6) : [+r.value.toFixed(6), r.used, r.of];   // [value, used, of] when coverage is partial
 
-export function buildViews({ players, teams, dim, positions = [] }, { precise = false } = {}) {
+export function buildViews({ players, teams, dim }, { precise = false } = {}) {
   const cell = precise ? r => r : roundedCell;                         // precise = full-precision {value, used, of} (parity gate)
   const teamRows = withOpponent(teams);
   const gamesOf = {};                                                 // team -> games, oldest first
@@ -41,14 +41,9 @@ export function buildViews({ players, teams, dim, positions = [] }, { precise = 
       trows[team] = { games, v: TEAM_METRICS.map(m => cell(res[m.id])) };
     }
     const tLeague = evaluateAll(TEAM_METRICS, tAll, tAll);
-    const posRows = {}, posLeague = { G: [], F: [], C: [] };                 // what each team allowed to each position, same windows
-    for (const r of positions) if (lastN(r.team, n).has(r.game)) { (posRows[r.team + '|' + r.pos] ||= []).push(r); posLeague[r.pos].push(r); }
-    const prLeague = Object.fromEntries(Object.entries(posLeague).map(([p, rs]) => [p, evaluateAll(POSITION_METRICS, rs, rs)]));
-    const prow = Object.fromEntries(Object.entries(posRows).map(([k, rs]) => { const res = evaluateAll(POSITION_METRICS, rs, posLeague[k.split('|')[1]]); return [k, { games: new Set(rs.map(r => r.game)).size, v: POSITION_METRICS.map(m => cell(res[m.id])) }]; }));
     views[w] = {
       players: { window: w, metrics: PLAYER_METRICS.map(m => m.id), league: PLAYER_METRICS.map(m => cell(evaluate(m, pAll))), rows: prows },
-      teams: { window: w, metrics: TEAM_METRICS.map(m => m.id), league: TEAM_METRICS.map(m => cell(tLeague[m.id])), rows: trows },
-      positions: { window: w, metrics: POSITION_METRICS.map(m => m.id), leagues: Object.fromEntries(Object.entries(prLeague).map(([p, res]) => [p, POSITION_METRICS.map(m => cell(res[m.id]))])), rows: prow },
+      teams: { window: w, metrics: TEAM_METRICS.map(m => m.id), league: TEAM_METRICS.map(m => cell(tLeague[m.id])), rows: trows }
     };
   }
   return views;
