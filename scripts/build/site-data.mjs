@@ -8,6 +8,7 @@ import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseCsv } from './csv.mjs';
+import { displayName } from './names.mjs';
 import { buildViews, catalog, docsMarkdown, WINDOWS } from './views.mjs';
 
 const arg = (n, d) => { const i = process.argv.indexOf('--' + n); return i > 0 ? process.argv[i + 1] : d; };
@@ -34,13 +35,14 @@ for (const [w, v] of Object.entries(views)) { put(`players-${w}.json`, v.players
 put('metrics.json', catalog());
 
 // ---- roster ----
+const fixes = JSON.parse(readFileSync(join(repo, 'data', 'manual', 'name-fixes.json'), 'utf8')).words;
 const names = {};
 for (const t of teams) names[t.team] = t.team_name;
 const lastTeam = {};
 for (const r of [...players].sort(byGame)) lastTeam[r.player_id] = r.team;
 put('roster.json', {
   teams: names,
-  players: Object.fromEntries(dim.map(d => [d.player_id, { name: d.player, team: lastTeam[d.player_id] || d.team, pos: d.position, dorsal: d.dorsal, height: d.height, active: d.active }])),
+  players: Object.fromEntries(dim.map(d => [d.player_id, { name: displayName(d.player, fixes), rawName: d.player, team: lastTeam[d.player_id] || d.team, pos: d.position, dorsal: d.dorsal, height: d.height, active: d.active }])),
 });
 
 // ---- schedule snapshot (fixtures) ----
