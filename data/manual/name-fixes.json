@@ -1,0 +1,4 @@
+{
+  "note": "Display-name corrections applied after capitalising EuroLeague names (which come as 'LAST, FIRST' in capitals). Keys are the capitalised words, values the correct spelling.",
+  "words": { "Leday": "LeDay", "Dibartolomeo": "DiBartolomeo", "Dejulius": "DeJulius", "Mcintyre": "McIntyre" }
+}

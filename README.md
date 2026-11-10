@@ -1,12 +1,63 @@
 # Pick n Edge
 
-Ερευνητικό εργαλείο EuroLeague με δύο περιοχές, Fantasy και Betting, πάνω στα ίδια δεδομένα αγώνων.
+A EuroLeague research tool with two areas, **Fantasy** and **Betting**, built on one shared data layer. Every statistic comes only from the official EuroLeague API (box score, play-by-play, shots, schedule, roster). The site reads ready-made files and never calls the EuroLeague API.
 
-| Αρχείο | Τι είναι |
+## Data flow
+
+```
+EuroLeague API ──(scripts/fetch)──▶ data/raw ──(scripts/build)──▶ data/clean ──(scripts/build/site-data.mjs)──▶ site/data ──▶ site/
+```
+
+- `data/raw/<season>/<game>/`: the exact API responses, gzipped and immutable (game, boxscore, playbyplay, shots), plus one roster and one schedule snapshot per season.
+- `data/clean/`: one row per player-game and per team-game, plus shots and players. **Components only** (attempts, makes, rebounds, possessions on court, ...), never ratios.
+- `site/data/`: precomputed Season / Last 10 / Last 5 / Last 3 views, `metrics.json`, `manifest.json`, per-game rows, shots by team, the roster and a copy of the metric engine. Generated; do not edit by hand.
+- `site/`: static pages (HTML, CSS, plain scripts). No build step.
+
+## Repository map
+
+| Path | What it is |
 |---|---|
-| [`PLAN.md`](PLAN.md) | Το κοινό πλάνο έργου, οι εκκρεμείς αποφάσεις και το αρχείο αποφάσεων |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Τι αρχείο κάνει τι, ροή δεδομένων, κανόνες αλλαγής |
-| [`METRICS.md`](METRICS.md) | Κάθε δείκτης με τύπο, μονάδα και πηγή |
-| `site/` | Το site, όπως ανεβαίνει στη φιλοξενία |
+| `site/` | The site as published (GitHub Pages) |
+| `data/raw`, `data/clean` | Raw API responses and clean tables |
+| `data/manual/` | Hand-kept inputs (see below) |
+| `scripts/fetch/` | Incremental fetch (retries, throttling, shape checks, atomic writes) and the probe |
+| `scripts/build/` | Raw to clean to `site/data` |
+| `scripts/metrics/` | The metric registry and engine |
+| `scripts/parity/` | Parity gate against the old site (needs the old code: see below) |
+| `tests/` | Unit tests (`metrics`, `build`, `loader`) and fixtures |
+| `docs/METRICS.md` | Every metric with its formula, generated from the registry |
+| `.github/workflows/` | `pages.yml` (deploy) and `update-data.yml` (data job) |
 
-Κανόνας: το `main` είναι η μοναδική πηγή αλήθειας. Πριν από κάθε αλλαγή διαβάζονται τα τρία αρχεία παραπάνω και τραβιέται η τελευταία έκδοση.
+## The one rule for metrics
+
+Every metric is defined **once**, in `scripts/metrics/registry.mjs`, as a numerator and a denominator over clean-table components, with a hand-checked unit test. A window (Season, Last N) sums the components over its games and then divides: ratios are never averages of per-game ratios. The site holds no formulas; it shows values from the views and `metrics.json`, and per-game values from the engine copy in `site/data/engine`. To add or fix a metric: change one registry entry, add its test, run the build.
+
+## Run it locally
+
+```bash
+node scripts/build/build.mjs          # data/raw -> data/clean (prints a quality report)
+node scripts/build/site-data.mjs      # data/clean -> site/data and docs/METRICS.md
+node --test "tests/**/*.test.mjs"     # unit tests
+npx serve site                        # open http://localhost:3000
+```
+
+Fetching new games needs network access: `node scripts/fetch/run.mjs --concurrency 1`.
+
+## The update job
+
+`.github/workflows/update-data.yml` is started by hand (`workflow_dispatch`; there is no cron yet).
+- Normal run: fetch new finished games, rebuild `data/clean` and `site/data`, run the tests (nothing is committed if they fail), commit `data/` and `site/data/`, and start the Pages deploy. The deploy is started only on the default branch.
+- `probe = true`: re-fetches 5 stored games, compares them byte for byte with `data/raw` and commits nothing. Use it to check that the API still answers and returns the same data.
+
+## Manual data (`data/manual/`)
+
+- `fantasy-position-overrides.json`: player positions that override the roster (G / F / C).
+- `name-fixes.json`: display-name corrections.
+- `eligibility.json`: display-only thresholds that decide which players the tables list (computed in the browser, never stored).
+- `team-ids.json`: team code to logo id.
+
+## The old site and what is deferred
+
+The previous site is preserved by the tag **`old-site-final`** (last commit of the old site on `main`). To roll back, deploy that tag. The old Betting schedule page and its analysis (allowance, beneficiaries, rotation, absences, role shifts) are in that tag for the redesign. The parity gate (`scripts/parity`) compares the new numbers with the old code: check out the tag `parity-reference` as a worktree (`git worktree add ../old-site parity-reference`) and set `OLD_SITE=../old-site`.
+
+Deferred or removed by decision: the Betting "From the schedule" page and the Tier 2 Betting analysis, Matchup, with/without teammate, NET PIR/USG, Value/CR, the custom window (to be designed as filters), and the players Charts mode (new charts to be designed).

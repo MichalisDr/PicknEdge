@@ -1,0 +1,75 @@
+name: Update data
+
+# Manual only for now (no schedule; a cron is added only when we decide to).
+#  - probe = false (default): fetch new finished games, rebuild the clean tables and site/data, run the tests as a
+#    guard, commit data/ and site/data/ and start the Pages deploy.
+#  - probe = true: re-fetch 5 stored games into a runner temp folder, compare byte-for-byte with data/raw,
+#    print MATCH/MISMATCH, commit nothing.
+on:
+  workflow_dispatch:
+    inputs:
+      probe:
+        description: "Probe only: re-fetch 5 stored games and compare with data/raw (commits nothing)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # commit the data
+  actions: write    # start the Pages deploy workflow
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Probe (no commit)
+        if: ${{ inputs.probe }}
+        run: node scripts/fetch/probe.mjs --count 5
+
+      - name: Fetch new games (raw), roster and schedule snapshot
+        if: ${{ !inputs.probe }}
+        run: node scripts/fetch/run.mjs --concurrency 1
+
+      - name: Build the clean tables
+        if: ${{ !inputs.probe }}
+        run: node scripts/build/build.mjs
+
+      - name: Build site/data and docs
+        if: ${{ !inputs.probe }}
+        run: node scripts/build/site-data.mjs
+
+      - name: "Tests (guard - nothing is committed if they fail)"
+        if: ${{ !inputs.probe }}
+        run: node --test "tests/**/*.test.mjs"
+
+      - name: Commit changed data
+        id: commit
+        if: ${{ !inputs.probe }}
+        run: |
+          git add data site/data docs/METRICS.md
+          if git diff --cached --quiet; then
+            echo "No new data."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "data: update games, clean tables and site/data"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Start the Pages deploy
+        # Only on the default branch: a run on any other branch must never deploy that branch to the live site.
+        if: ${{ !inputs.probe && steps.commit.outputs.changed == 'true' && github.ref_name == github.event.repository.default_branch }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref "${{ github.ref_name }}"
