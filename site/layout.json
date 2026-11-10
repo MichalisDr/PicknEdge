@@ -6,22 +6,22 @@
   "gap": 12,
   "layouts": {
     "player.profile": {
-      "rows": 12,
+      "rows": 10,
       "stack": ["pir", "min", "usg", "load", "tov_pct", "ctov", "pts100", "ast100", "reb100", "ftr", "fd100"],
       "boxes": [
-        { "id": "min", "metric": "min", "label": "MIN", "x": 0, "y": 0, "w": 6, "h": 6, "tier": "lg" },
-        { "id": "pir", "metric": "pir", "label": "PIR", "unit": "/g", "x": 6, "y": 0, "w": 12, "h": 6, "tier": "lg", "sub": [{"metric": "pir_min", "unit": "/m"}, {"metric": "nspir100", "label": "nsPIR", "unit": " /100 poss"}] },
-        { "id": "pts100", "metric": "pts100", "label": "PTS", "unit": "/100", "x": 18, "y": 0, "w": 6, "h": 6, "tier": "lg", "sub": [{"metric": "pts_g", "unit": "/g"}] },
-        { "id": "usg", "metric": "usg", "label": "USG%", "x": 0, "y": 6, "w": 6, "h": 3 },
-        { "id": "load", "metric": "load", "label": "Offensive Load", "x": 0, "y": 9, "w": 6, "h": 3, "sub": [{"metric": "bc", "unit": " Box Creation"}] },
-        { "id": "tov_pct", "metric": "tov_pct", "label": "TOV%", "x": 6, "y": 6, "w": 5, "h": 3, "sub": [{"metric": "tov_g", "unit": "/g"}] },
-        { "id": "ctov", "metric": "ctov", "label": "cTOV%", "x": 6, "y": 9, "w": 5, "h": 3, "sub": [{"metric": "tov100", "unit": " TOV/100"}] },
-        { "id": "ftr", "metric": "ftr", "label": "FTr", "x": 11, "y": 6, "w": 7, "h": 6, "tier": "lg" },
-        { "id": "ast100", "metric": "ast100", "label": "AST", "unit": "/100", "x": 18, "y": 6, "w": 6, "h": 2, "sub": [{"metric": "ast_g", "unit": "/g"}] },
-        { "id": "reb100", "metric": "reb100", "label": "REB", "unit": "/100", "x": 18, "y": 8, "w": 6, "h": 2, "sub": [{"metric": "reb_g", "unit": "/g"}] },
-        { "id": "fd100", "metric": "fd100", "label": "FD", "unit": "/100", "x": 18, "y": 10, "w": 6, "h": 2, "sub": [{"metric": "fd_g", "unit": "/g"}] }
+        { "id": "min", "metric": "min", "label": "MIN", "x": 0, "y": 0, "w": 6, "h": 4, "tier": "lg" },
+        { "id": "pir", "metric": "pir", "label": "PIR", "unit": "/g", "x": 6, "y": 0, "w": 12, "h": 4, "tier": "lg", "sub": [{"metric": "pir_min", "unit": "/m"}, {"metric": "nspir100", "label": "nsPIR", "unit": " /100 poss"}] },
+        { "id": "pts100", "metric": "pts100", "label": "PTS", "unit": "/100", "x": 18, "y": 0, "w": 6, "h": 4, "tier": "lg", "sub": [{"metric": "pts_g", "unit": "/g"}] },
+        { "id": "usg", "metric": "usg", "label": "USG%", "x": 0, "y": 4, "w": 6, "h": 3 },
+        { "id": "load", "metric": "load", "label": "Offensive Load", "x": 0, "y": 7, "w": 6, "h": 3, "sub": [{"metric": "bc", "unit": " Box Creation"}] },
+        { "id": "tov_pct", "metric": "tov_pct", "label": "TOV%", "x": 6, "y": 4, "w": 5, "h": 3, "sub": [{"metric": "tov_g", "unit": "/g"}] },
+        { "id": "ctov", "metric": "ctov", "label": "cTOV%", "x": 6, "y": 7, "w": 5, "h": 3, "sub": [{"metric": "tov100", "unit": " TOV/100"}] },
+        { "id": "ftr", "metric": "ftr", "label": "FTr", "x": 11, "y": 4, "w": 7, "h": 6, "tier": "lg" },
+        { "id": "ast100", "metric": "ast100", "label": "AST", "unit": "/100", "x": 18, "y": 4, "w": 6, "h": 2, "sub": [{"metric": "ast_g", "unit": "/g"}] },
+        { "id": "reb100", "metric": "reb100", "label": "REB", "unit": "/100", "x": 18, "y": 6, "w": 6, "h": 2, "sub": [{"metric": "reb_g", "unit": "/g"}] },
+        { "id": "fd100", "metric": "fd100", "label": "FD", "unit": "/100", "x": 18, "y": 8, "w": 6, "h": 2, "sub": [{"metric": "fd_g", "unit": "/g"}] }
       ],
-      "lines": [{"o": "v", "x": 6, "y": 0, "n": 12}, {"o": "h", "x": 6, "y": 6, "n": 12}, {"o": "v", "x": 18, "y": 6, "n": 6}]
+      "lines": [{"o": "v", "x": 6, "y": 0, "n": 10}, {"o": "h", "x": 6, "y": 4, "n": 12}, {"o": "v", "x": 18, "y": 4, "n": 6}]
     },
     "team.profile": {
       "rows": 12,
