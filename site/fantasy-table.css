@@ -1,0 +1,35 @@
+/* The four Fantasy tables. Column widths come from site/table-layouts.json (set inline on <col>). Flat header with a 2px line above each column group,
+   a grid of 1px cell borders (collapsed, no line on the outer edge: the frame is the container's), sticky first column, equal-width centred numeric
+   columns, small muted rank after the value, no zebra. Colours are theme variables (index.html :root), never fixed hex. */
+.fw-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}
+.fw-t{border-collapse:collapse;table-layout:fixed;white-space:nowrap;font-size:13px}
+.fw-t th,.fw-t td{border:1px solid var(--line);padding:6px 4px;text-align:center;overflow:hidden;vertical-align:middle;height:46px}
+.fw-t tr>:first-child{border-left:0}
+.fw-t tr>:last-child{border-right:0}
+.fw-t thead tr:first-child>*{border-top:0}
+.fw-t tbody tr:last-child>*{border-bottom:0}
+.fw-t thead{background:var(--panel)}
+.fw-t tbody th:first-child{background:var(--bg)}
+.fw-t th:first-child{text-align:left;padding:6px 10px;position:sticky;left:0;z-index:1;box-shadow:1px 0 0 var(--line)}
+.fw-t thead th:first-child{background:var(--panel)}
+.fw-t button{font:inherit;color:inherit;background:none;border:0;padding:4px 0;cursor:pointer;text-align:inherit}
+.fw-t th:first-child .fw-name{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.fw-t .fw-cr-slot:empty{display:none}
+.fw-t th.fw-tm,.fw-t td.fw-tm{font-size:11px;color:var(--muted);padding:6px 2px}
+.fw-t .fw-n{font-variant-numeric:tabular-nums}
+.fw-t thead th{position:relative;vertical-align:bottom;height:50px;line-height:1.15}
+.fw-t thead th button{white-space:normal;text-align:center;padding:2px 0;line-height:1.15}
+.fw-t thead th.fw-n::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--muted)}
+.fw-t thead th.g-start::before{left:4px}
+.fw-t thead th.g-end::before{right:4px}
+.fw-t th[aria-sort=ascending] button::after,.fw-t th[aria-sort=descending] button::after{font-size:8px;margin-left:3px;vertical-align:1px}
+.fw-t th[aria-sort=ascending] button::after{content:"\25B2"}
+.fw-t th[aria-sort=descending] button::after{content:"\25BC"}
+.fw-t thead button[data-sel]{color:var(--accent)}
+.fw-t .fw-cell{display:block;line-height:1.25}
+.fw-t .fw-rk{font-style:normal;font-size:10px;font-weight:400;color:var(--muted);margin-left:4px}
+.fw-t .fw-sub,.fw-t small{display:block;font-size:10px;color:var(--muted);font-weight:400;white-space:nowrap}
+.fw-t .fw-cell small.fw-cov{color:inherit;opacity:.8}
+.fw-t .fw-few{opacity:.45}
+.fw-t .fw-average,.fw-t .fw-average th:first-child{background:color-mix(in srgb,var(--accent) 14%,var(--bg));color:var(--accent)}
+.fw-tinfo{display:flex;justify-content:flex-end;gap:6px 18px;flex-wrap:wrap;margin:0 0 8px;font-size:12px;color:var(--muted)}

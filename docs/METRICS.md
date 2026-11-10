@@ -175,6 +175,18 @@ Every metric is defined once in `scripts/metrics/registry.mjs`. Ratios are `Σ n
 | `o_sc100` | Opp Second chance PTS / 100 poss | per100 | 100 × Σ(o_pts_second_chance) ÷ Σ(o_poss) | lower | fantasy, betting | Opponent second-chance points per 100 opponent possessions (categories overlap; do not add them up). |
 | `t_pot100` | PTS off TO / 100 poss | per100 | 100 × Σ(pts_off_turnover) ÷ Σ(poss) | higher | betting | Own points off turnovers per 100 own possessions. |
 | `o_pot100` | Opp PTS off TO / 100 poss | per100 | 100 × Σ(o_pts_off_turnover) ÷ Σ(o_poss) | lower | fantasy, betting | Opponent points off turnovers per 100 opponent possessions. |
+| `o_zs_rim_made` | Opp At the rim makes | count | Σ o_zs_rim_m | — | fantasy | Field goals made by opponents in the sub-area "At the rim". |
+| `o_zs_rim_att` | Opp At the rim attempts | count | Σ o_zs_rim_a | — | fantasy | Field-goal attempts by opponents in the sub-area "At the rim". |
+| `o_zs_paint_made` | Opp Rest of paint makes | count | Σ o_zs_paint_m | — | fantasy | Field goals made by opponents in the sub-area "Rest of paint". |
+| `o_zs_paint_att` | Opp Rest of paint attempts | count | Σ o_zs_paint_a | — | fantasy | Field-goal attempts by opponents in the sub-area "Rest of paint". |
+| `o_zs_mid_made` | Opp Mid-range makes | count | Σ o_zs_mid_m | — | fantasy | Field goals made by opponents in the sub-area "Mid-range". |
+| `o_zs_mid_att` | Opp Mid-range attempts | count | Σ o_zs_mid_a | — | fantasy | Field-goal attempts by opponents in the sub-area "Mid-range". |
+| `o_zs_base_made` | Opp Baseline makes | count | Σ o_zs_base_m | — | fantasy | Field goals made by opponents in the sub-area "Baseline". |
+| `o_zs_base_att` | Opp Baseline attempts | count | Σ o_zs_base_a | — | fantasy | Field-goal attempts by opponents in the sub-area "Baseline". |
+| `o_zs_arc_made` | Opp Arc 3 makes | count | Σ o_zs_arc_m | — | fantasy | Field goals made by opponents in the sub-area "Arc 3". |
+| `o_zs_arc_att` | Opp Arc 3 attempts | count | Σ o_zs_arc_a | — | fantasy | Field-goal attempts by opponents in the sub-area "Arc 3". |
+| `o_zs_corner_made` | Opp Corner 3 makes | count | Σ o_zs_corner_m | — | fantasy | Field goals made by opponents in the sub-area "Corner 3". |
+| `o_zs_corner_att` | Opp Corner 3 attempts | count | Σ o_zs_corner_a | — | fantasy | Field-goal attempts by opponents in the sub-area "Corner 3". |
 | `t_z_rim_pct` | At the rim FG% | pct | 100 × Σ(z_rim_m) ÷ Σ(z_rim_a) | higher | betting | Field-goal percentage in the zone "At the rim". |
 | `t_z_paint_pct` | Rest of paint FG% | pct | 100 × Σ(z_paint_m) ÷ Σ(z_paint_a) | higher | betting | Field-goal percentage in the zone "Rest of paint". |
 | `t_z_midL_pct` | Mid left FG% | pct | 100 × Σ(z_midL_m) ÷ Σ(z_midL_a) | higher | betting | Field-goal percentage in the zone "Mid left". |
