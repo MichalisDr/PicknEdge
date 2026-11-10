@@ -99,8 +99,8 @@
       const sm = byId[sb.metric], sc = val(sb.metric);
       if (!Number.isFinite(sc?.value)) return '';
       const num = sc.value.toFixed(sm.format.digits);
-      const text = sb.text ? (sc.value === 0 && sb.zeroText ? sb.zeroText : sb.text.replace('{v}', num)) : (sb.label ? sb.label + ' ' : '') + fmt(sc, sm) + (sb.unit ? `<em>${esc(sb.unit)}</em>` : '');
-      return `<small>${sb.text ? esc(text) : text}</small>`;
+      const text = sb.text ? (sc.value === 0 && sb.zeroText ? sb.zeroText : sb.text.replace('{v}', num)) : (sb.label ? (sb.side ? `<i class="lx-sl">${esc(sb.label)}</i>` : sb.label + ' ') : '') + fmt(sc, sm) + (sb.unit ? `<em>${esc(sb.unit)}</em>` : '');
+      return `<small${sb.side ? ' class="lx-side"' : ''}>${sb.text ? esc(text) : text}</small>`;   // side: shown on the right of the tile, small, not a metric of its own
     }).join('');
     const subTitle = (b.sub || []).filter(sb => sb.label).map(sb => ' · ' + sb.label + ': ' + byId[sb.metric].description).join('');
     const open = (cls, style, title) => `<button class="fw-metric ${cls}${edge}" style="${area}${style ? ';' + style : ''}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(title)}">`;

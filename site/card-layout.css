@@ -25,6 +25,9 @@ lx-r{display:flex;align-items:baseline;gap:8px}
   .lx-grid .fw-m-lg{padding:10px 13px}
   .lx-grid .fw-m-sm{padding:8px 11px}
 }
+.lx-grid .fw-metric{position:relative}
+.lx-grid .fw-metric small.lx-side{position:absolute;right:18px;top:50%;transform:translateY(-50%);text-align:right;white-space:nowrap}
+.lx-grid .fw-metric i.lx-sl{display:block;font-style:normal;font-size:11px;color:#94a3b8}
 .lx-few{opacity:.45}
 .lx-few strong{font-weight:500}
 .lx-line{position:absolute;background:#2b3a4f;pointer-events:none}
@@ -37,6 +40,7 @@ lx-r{display:flex;align-items:baseline;gap:8px}
   lx-t{display:flex;flex-direction:column;gap:2px;grid-column:1;min-width:0}
   .lx-grid .fw-metric>strong{grid-column:2;order:0}
   lx-t>.fw-rank,lx-t>small{order:0}
+  .lx-grid .fw-metric small.lx-side{position:static;transform:none;text-align:left}
   .lx-grid .fw-metric.lx-strip{display:flex!important;justify-content:space-between!important;align-items:center!important}
   .lx-grid .fw-metric.lx-zone{grid-column:auto!important;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
 }
