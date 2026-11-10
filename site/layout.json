@@ -16,7 +16,7 @@
         { "id": "load", "metric": "load", "label": "Offensive Load", "x": 0, "y": 7, "w": 6, "h": 3, "sub": [{"metric": "bc", "unit": " Box Creation"}] },
         { "id": "tov_pct", "metric": "tov_pct", "label": "TOV%", "x": 6, "y": 4, "w": 5, "h": 3, "sub": [{"metric": "tov_g", "unit": "/g"}] },
         { "id": "ctov", "metric": "ctov", "label": "cTOV%", "x": 6, "y": 7, "w": 5, "h": 3, "sub": [{"metric": "tov100", "unit": " TOV/100"}] },
-        { "id": "ftr", "metric": "ftr", "label": "FTr", "x": 11, "y": 4, "w": 7, "h": 6, "tier": "lg", "sub": [{ "metric": "ft_pct", "text": "FT {v}%" }] },
+        { "id": "ftr", "metric": "ftr", "label": "FTr", "x": 11, "y": 4, "w": 7, "h": 6, "tier": "lg", "sub": [{"metric": "ft_pct", "text": "FT {v}%"}] },
         { "id": "ast100", "metric": "ast100", "label": "AST", "unit": "/100", "x": 18, "y": 4, "w": 6, "h": 2, "sub": [{"metric": "ast_g", "unit": "/g"}] },
         { "id": "reb100", "metric": "reb100", "label": "REB", "unit": "/100", "x": 18, "y": 6, "w": 6, "h": 2, "sub": [{"metric": "reb_g", "unit": "/g"}] },
         { "id": "fd100", "metric": "fd100", "label": "FD", "unit": "/100", "x": 18, "y": 8, "w": 6, "h": 2, "sub": [{"metric": "fd_g", "unit": "/g"}] }
@@ -24,20 +24,21 @@
       "lines": [{"o": "v", "x": 6, "y": 0, "n": 10}, {"o": "h", "x": 6, "y": 4, "n": 12}, {"o": "v", "x": 18, "y": 4, "n": 6}]
     },
     "team.profile": {
-      "rows": 12,
+      "rows": 6,
+      "rowPx": 50,
       "boxes": [
-        { "id": "pace", "metric": "pace", "label": "Pace", "x": 0, "y": 0, "w": 6, "h": 6, "tier": "lg" },
-        { "id": "drtg", "metric": "drtg", "label": "DRtg", "x": 6, "y": 0, "w": 6, "h": 6, "tier": "lg" },
-        { "id": "o_efg", "metric": "o_efg", "label": "Opp eFG%", "x": 12, "y": 0, "w": 6, "h": 6, "tier": "lg" },
-        { "id": "o_ftr", "metric": "o_ftr", "label": "Opp FTr", "x": 18, "y": 0, "w": 6, "h": 6, "tier": "lg" },
-        { "id": "o_tov100", "metric": "o_tov100", "label": "Opp TOV", "unit": "/100", "x": 0, "y": 6, "w": 6, "h": 6, "tier": "lg" },
-        { "id": "o_ast100", "metric": "o_ast100", "label": "Opp AST", "unit": "/100", "x": 6, "y": 6, "w": 6, "h": 6, "tier": "lg" },
-        { "id": "t_dreb_pct", "metric": "t_dreb_pct", "label": "DREB%", "x": 12, "y": 6, "w": 6, "h": 6, "tier": "lg" },
-        { "id": "o_pot100", "metric": "o_pot100", "label": "Opp PTS off TO", "unit": "/100", "x": 18, "y": 6, "w": 6, "h": 2, "tier": "strip" },
-        { "id": "o_fb100", "metric": "o_fb100", "label": "Opp fast break", "unit": "/100", "x": 18, "y": 8, "w": 6, "h": 2, "tier": "strip" },
-        { "id": "o_sc100", "metric": "o_sc100", "label": "Opp 2nd chance", "unit": "/100", "x": 18, "y": 10, "w": 6, "h": 2, "tier": "strip" }
+        { "id": "pace", "metric": "pace", "label": "Pace", "x": 0, "y": 0, "w": 6, "h": 3, "tier": "lg" },
+        { "id": "drtg", "metric": "drtg", "label": "DRtg", "x": 6, "y": 0, "w": 6, "h": 3, "tier": "lg" },
+        { "id": "o_efg", "metric": "o_efg", "label": "Opp eFG%", "x": 12, "y": 0, "w": 6, "h": 3, "tier": "lg" },
+        { "id": "o_ftr", "metric": "o_ftr", "label": "Opp FTr", "x": 18, "y": 0, "w": 6, "h": 3, "tier": "lg" },
+        { "id": "o_tov100", "metric": "o_tov100", "label": "Opp TOV", "unit": "/100", "x": 0, "y": 3, "w": 6, "h": 3, "tier": "lg" },
+        { "id": "o_ast100", "metric": "o_ast100", "label": "Opp AST", "unit": "/100", "x": 6, "y": 3, "w": 6, "h": 3, "tier": "lg" },
+        { "id": "t_dreb_pct", "metric": "t_dreb_pct", "label": "DREB%", "x": 12, "y": 3, "w": 6, "h": 3, "tier": "lg" },
+        { "id": "o_pot100", "metric": "o_pot100", "label": "Opp PTS off TO", "unit": "/100", "x": 18, "y": 3, "w": 6, "h": 1, "tier": "strip" },
+        { "id": "o_fb100", "metric": "o_fb100", "label": "Opp fast break", "unit": "/100", "x": 18, "y": 4, "w": 6, "h": 1, "tier": "strip" },
+        { "id": "o_sc100", "metric": "o_sc100", "label": "Opp 2nd chance", "unit": "/100", "x": 18, "y": 5, "w": 6, "h": 1, "tier": "strip" }
       ],
-      "lines": [{"o": "h", "x": 0, "y": 6, "n": 24}, {"o": "v", "x": 18, "y": 6, "n": 6}]
+      "lines": [{"o": "h", "x": 0, "y": 3, "n": 24}, {"o": "v", "x": 18, "y": 3, "n": 3}]
     },
     "player.shooting": {
       "rows": 4,
