@@ -28,9 +28,8 @@
       "rowPx": [120, 80, 52],
       "boxes": [
         { "id": "pace", "metric": "pace", "label": "Pace", "x": 0, "y": 0, "w": 8, "h": 1, "tier": "lg" },
-        { "id": "drtg", "metric": "drtg", "label": "DRtg", "x": 8, "y": 0, "w": 8, "h": 1, "tier": "lg" },
-        { "id": "o_efg", "metric": "o_efg", "label": "Opp eFG%", "x": 16, "y": 0, "w": 4, "h": 1, "tier": "lg" },
-        { "id": "o_ftr", "metric": "o_ftr", "label": "Opp FTr", "x": 20, "y": 0, "w": 4, "h": 1, "tier": "lg" },
+        { "id": "o_efg", "metric": "o_efg", "label": "Opp eFG%", "x": 8, "y": 0, "w": 8, "h": 1, "tier": "lg" },
+        { "id": "o_ftr", "metric": "o_ftr", "label": "Opp FTr", "x": 16, "y": 0, "w": 8, "h": 1, "tier": "lg" },
         { "id": "o_tov100", "metric": "o_tov100", "label": "Opp TOV", "unit": "/100", "x": 0, "y": 1, "w": 8, "h": 1, "tier": "sm" },
         { "id": "o_ast100", "metric": "o_ast100", "label": "Opp AST", "unit": "/100", "x": 8, "y": 1, "w": 8, "h": 1, "tier": "sm" },
         { "id": "t_dreb_pct", "metric": "t_dreb_pct", "label": "DREB%", "x": 16, "y": 1, "w": 8, "h": 1, "tier": "sm" },
