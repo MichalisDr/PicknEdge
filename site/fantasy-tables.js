@@ -116,7 +116,7 @@
     const on = (sel, ev, fn) => host.querySelectorAll(sel).forEach(el => { el[ev] = () => fn(el); });
     W.wire(host, state, () => { state.sort = ''; draw(); });
     on('[data-fwmode]', 'onclick', b => { state.mode = b.dataset.fwmode; draw(); });
-    host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => g.FantasyCards.open(state.entity, p.dataset.open, { win: state.win, mode: state.view }); });
+    host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => g.FantasyCards.open(state.entity, p.dataset.open, { win: state.win }); });
     on('[data-view]', 'onclick', b => { state.view = b.dataset.view; state.sort = ''; draw(); });
     on('[data-position]', 'onclick', b => { state.position = b.dataset.position; draw(); });
     on('[data-sort]', 'onclick', b => { state.dir = state.sort === b.dataset.sort ? -state.dir : -1; state.sort = b.dataset.sort; draw(); });
@@ -127,7 +127,7 @@
       state[k] = k === 'team' ? el.value : k === 'showAll' ? el.checked : Math.max(0, Number(el.value) || 0);
       draw();
     });
-    on('[data-open]', 'onclick', b => g.FantasyCards.open(state.entity, b.dataset.open, { win: state.win, mode: state.view }));
+    on('[data-open]', 'onclick', b => g.FantasyCards.open(state.entity, b.dataset.open, { win: state.win }));
     hoverCurves();
     const search = host.querySelector('input[type=search]');
     search.oninput = e => { state.query = e.target.value; draw().then(() => { const i = host.querySelector('input[type=search]'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }); };

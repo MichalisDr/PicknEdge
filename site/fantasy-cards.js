@@ -3,16 +3,11 @@
    (the registry's own definitions), league percentiles and spreads are statistics of those per-game values. */
 (function (g) {
   'use strict';
+  const SHOW_LAYOUT_LINES = false;
+  const GROUP_EDGES = false;        // the group lines of layout.json shown as brighter outline sides of the tiles next to them (instead of separate lines)   // the 1px divider lines of layout.json on the desktop grid; false hides them
   const D = g.PicknEdgeData, W = g.PicknEdgeWindows, esc = W.esc;
   const T = () => g.FantasyTables;
 
-  /* Player profile grid: [metric id, label, unit, secondary metric id, secondary unit] */
-  const PROFILE = [['min', 'MIN', '', null, ''], ['usg', 'USG%', '', null, ''], ['pir', 'PIR', '/g', 'pir_min', '/m'], ['pts100', 'PTS', '/100', 'pts_g', '/g'],
-    ['tov_pct', 'TOV%', '', 'tov_g', '/g'], ['ast100', 'AST', '/100', 'ast_g', '/g'], ['ftr', 'FTr', '', null, ''],
-    ['reb100', 'REB', '/100', 'reb_g', '/g'], ['fd100', 'FD', '/100', 'fd_g', '/g'],
-    ['load', 'Offensive Load', '', 'bc', ' Box Creation'], ['ctov', 'cTOV%', '', 'tov100', ' TOV/100']];
-  /* Extras shown inside a metric's box and tooltip, never as a column: PIR carries Non Scoring PIR (nsPIR) per 100 possessions. */
-  const EXTRAS = { pir: { id: 'nspir100', label: 'nsPIR', unit: ' /100 poss' } };
   const TEAM_RADAR = [['2p', '2P'], ['3p', '3P'], ['ft', 'FT'], ['ast', 'AST'], ['dreb', 'DREB'], ['oreb', 'OREB'], ['blk', 'BLK'], ['stl', 'STL']];
   const RADAR = [['ft', 'FT'], ['2p', '2P'], ['3p', '3P'], ['ast', 'AST−TOV'], ['dreb', 'DREB'], ['oreb', 'OREB'], ['stlblk', 'STL+BLK'], ['fd', 'FD−FC']];
   const RSCALE = { game: { lo: -3, hi: 15, step: 3, suffix: '_g', label: 'Net PIR / game' }, per100: { lo: -10, hi: 50, step: 10, suffix: '_100', label: 'Net PIR / 100 poss' } };
@@ -85,19 +80,57 @@
   }
 
   /* ---------- card parts ---------- */
-  function profileGrid(view, byId, sel) {
-    return `<div class="fw-pgrid">${PROFILE.map(([id, label, unit, sid, sunit], i) => {
-      const m = byId[id], c = view.get(cs.id, id), s = sid ? view.get(cs.id, sid) : null, sm = sid ? byId[sid] : null, extra = EXTRAS[id] ? view.get(cs.id, EXTRAS[id].id) : null;
-      const u = (v, t) => Number.isFinite(v) && t ? `<em>${t}</em>` : '';
-      return `<button class="fw-metric ${i < 4 ? 'fw-m-lg' : i >= PROFILE.length - 2 ? 'fw-m-sm fw-m-wide' : 'fw-m-sm'}" data-metric="${id}" aria-pressed="${sel === id}" title="${esc(m.description + (extra ? ' · ' + EXTRAS[id].label + ': ' + byId[EXTRAS[id].id].description : ''))}"><span>${label}</span><strong>${fmt(c, m)}${u(c.value, unit)}</strong>${sm ? `<small>${fmt(s, sm)}${u(s.value, sunit)}</small>` : ''}${extra ? `<small title="${esc(byId[EXTRAS[id].id].description)}">${EXTRAS[id].label} ${fmt(extra, byId[EXTRAS[id].id])}<em>${EXTRAS[id].unit}</em></small>` : ''}</button>`;
-    }).join('')}</div>`;
+  /* ---------- card metric grids: drawn from site/layout.json (24 columns) ----------
+     Which metrics, where, how big and which secondary lines is all in the layout file; this code only turns a box into the old tile
+     markup (classes fw-metric fw-m-lg / fw-m-sm, same CSS as before). Tile tier: the box's optional 'tier' field (lg / sm / strip), else by box area w*h: >= 36 large, 13..35 small, <= 12 strip. */
+  let layoutPromise = null;
+  const layoutFile = () => layoutPromise || (layoutPromise = fetch('layout.json').then(r => { if (!r.ok) throw new Error('layout.json ' + r.status); return r.json(); }));
+  const unitHtml = t => t ? `<em>${esc(t)}</em>` : '';
+  function boxHtml(b, view, byId, sel, players, edge = '') {
+    const m = byId[b.metric], c = view.get(cs.id, b.metric), label = b.label || m.label, area = `grid-area:${b.y + 1}/${b.x + 1}/span ${b.h}/span ${b.w}`, size = b.w * b.h;
+    const r = players ? null : T().rankOf(view, b.metric, c.value, m.direction);
+    const tint = r ? `color:${r.color}` : '';
+    const rank = r ? `<b class="fw-rank">#${r.position}</b>` : '';
+    const val = id => view.get(cs.id, id);
+    const subs = (b.sub || []).map(sb => {
+      const sm = byId[sb.metric], sc = val(sb.metric);
+      if (!Number.isFinite(sc?.value)) return '';
+      const num = sc.value.toFixed(sm.format.digits);
+      const text = sb.text ? (sc.value === 0 && sb.zeroText ? sb.zeroText : sb.text.replace('{v}', num)) : (sb.label ? (sb.side ? `<i class="lx-sl">${esc(sb.label)}</i>` : sb.label + ' ') : '') + fmt(sc, sm) + (sb.unit ? `<em>${esc(sb.unit)}</em>` : '');
+      return `<small${sb.side ? ' class="lx-side"' : ''}>${sb.text ? esc(text) : text}</small>`;   // side: shown on the right of the tile, small, not a metric of its own
+    }).join('');
+    const subTitle = (b.sub || []).filter(sb => sb.label).map(sb => ' · ' + sb.label + ': ' + byId[sb.metric].description).join('');
+    const open = (cls, style, title) => `<button class="fw-metric ${cls}${edge}" style="${area}${style ? ';' + style : ''}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(title)}">`;
+    const value = `<strong style="${tint}">${fmt(c, m)}${Number.isFinite(c.value) ? unitHtml(b.unit) : ''}</strong>`;
+    const tier = b.tier || (size >= 36 ? 'lg' : size <= 12 ? 'strip' : 'sm');
+    if (tier === 'strip') return `${open('fw-m-sm lx-strip', '', m.description + subTitle)}<span>${esc(label)}</span><lx-r>${rank}${value}${subs}</lx-r></button>`;
+    return `${open(tier === 'lg' ? 'fw-m-lg' : 'fw-m-sm', '', m.description + subTitle)}<lx-t><span>${esc(label)}</span>${rank}${subs}</lx-t>${value}</button>`;
   }
-  function teamMetrics(view, byId, sel) {
-    const ids = T().COLUMNS.teams[cs.mode];
-    return `<div class="fw-metrics">${ids.map(id => {
-      const m = byId[id], c = view.get(cs.id, id), r = T().rankOf(view, id, c.value, m.direction);
-      return `<button class="fw-metric" data-metric="${id}" aria-pressed="${sel === id}" title="${esc(m.description)}"><span>${esc(m.label)}</span><strong style="${r ? 'color:' + r.color : ''}">${fmt(c, m)}</strong>${r ? `<b class="fw-rank" style="color:${r.color}">${r.position}#</b>` : ''}</button>`;
-    }).join('')}</div>`;
+  /* CSS length of grid line k (of `count` cells) on one axis: the middle of the gap between cell k-1 and k */
+  const linePos = (k, count) => k <= 0 ? '0px' : k >= count ? '100%' : `(${k} * (100% - ${count - 1} * var(--gap)) / ${count} + ${k - 0.5} * var(--gap))`;
+  /* Group lines as tile outline sides: a line on a grid line brightens the facing side of every box that touches it (top/bottom of a horizontal line, left/right of a vertical one). */
+  function groupEdges(L) {
+    const out = {};
+    if (!GROUP_EDGES) return out;
+    for (const l of L.lines) for (const b of L.boxes) {
+      const add = c => { out[b.id] = (out[b.id] || '') + ' ' + c; };
+      if (l.o === 'h' && b.x < l.x + l.n && b.x + b.w > l.x) { if (b.y === l.y) add('lx-e-t'); if (b.y + b.h === l.y) add('lx-e-b'); }
+      if (l.o === 'v' && b.y < l.y + l.n && b.y + b.h > l.y) { if (b.x === l.x) add('lx-e-l'); if (b.x + b.w === l.x) add('lx-e-r'); }
+    }
+    return out;
+  }
+  async function layoutGrid(name, view, byId, sel, players) {
+    const F = await layoutFile(), L = F.layouts[name];
+    if (!L) throw new Error('no layout ' + name);
+    const px = L.rowPx ?? F.rowPx ?? 24, rowsT = Array.from({ length: L.rows }, (_, i) => (Array.isArray(px) ? px[i] ?? px.at(-1) : px) + 'px').join(' ');   // row heights: one number, or one per row
+    const edges = groupEdges(L), order = g.PicknEdgeLayout.stackOrder(L);   // DOM order = stacked order; desktop placement is by grid-area
+    const lines = !SHOW_LAYOUT_LINES ? '' : L.lines.map(l => {
+      const a = l.o === 'h' ? [l.x, l.x + l.n, 24, l.y, L.rows] : [l.y, l.y + l.n, L.rows, l.x, 24];
+      return l.o === 'h'
+        ? `<i class="lx-line" style="left:calc${linePos(a[0], a[2])};right:calc(100% - ${linePos(a[1], a[2])});top:calc${linePos(a[3], a[4])};height:1px"></i>`
+        : `<i class="lx-line" style="top:calc${linePos(a[0], a[2])};bottom:calc(100% - ${linePos(a[1], a[2])});left:calc${linePos(a[3], a[4])};width:1px"></i>`;
+    }).join('');
+    return `<div class="lx" data-layout="${name}"><div class="lx-grid fw-pgrid" style="--rows:${L.rows};--gap:${F.gap ?? 8}px;--rowsT:${rowsT}">${order.map(b => boxHtml(b, view, byId, sel, players, edges[b.id] || '')).join('')}${lines}</div></div>`;
   }
   /* Radar geometry shared by the player and team radars. axes = [[label, value, otherValue?]], frac maps a value to 0..1 of the radius. */
   function radarSvg(axes, frac, rings, labelOf) {
@@ -167,24 +200,26 @@
       const team = players ? row.team : cs.id, name = players ? roster.players[cs.id]?.name || cs.id : roster.teams[cs.id] || cs.id;
       const logoId = roster.logoIds?.[team], logo = (g.PICKNEDGE_TEAMS || []).find(t => t.id === logoId)?.logo;
       const sel = cs.selected && byId[cs.selected] ? cs.selected : null;
-      let visual = '';
+      let visual = '', gridHtml = '';
+      if (gp || !players) gridHtml = await layoutGrid((players ? 'player.' : 'team.') + cs.mode, view, byId, sel, players);
+      if (mine !== cs.token || !dialog) return;
       if (!gp && players) visual = '<p class="fw-empty">No appearances in this sample.</p>';
       else if (sel) visual = await trendBlock(view, season, byId);
       else if (cs.mode === 'shooting') visual = '<div class="fw-shots" data-shots></div>';
       else if (players) visual = radar(view, byId, roster, cs.cmp ? await W.view('players', cs) : null);
       else visual = teamRadar(view, season);
       root.innerHTML = `<header class="fw-identity">${logo ? `<img src="${esc(logo)}" alt="">` : ''}<div><small>${players ? 'PLAYER' : 'TEAM'} / FANTASY</small><h2>${esc(name)}</h2><p>${players ? esc(roster.teams[team] || team) + ' · ' + esc(row.pos || '—') : ''}</p></div><b>${gp || 0} GP</b></header>
-        <div class="fw-card-controls"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(cs, 'data-card-window')}</div><div class="fw-switch" role="tablist">${['profile', 'shooting'].map(v => `<button data-card-view="${v}" role="tab" aria-selected="${v === cs.mode}">${v === 'profile' ? 'Profile' : 'Shooting'}</button>`).join('')}</div></div>
-        ${!gp && players ? '' : players && cs.mode === 'profile' ? profileGrid(view, byId, sel) : players ? '' : teamMetrics(view, byId, sel)}<div class="fw-visual">${visual}</div>${players ? '<div data-box></div>' : ''}`;
+        <div class="fw-card-controls"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(cs, 'data-card-window')}</div><div class="fw-switch" role="group" aria-label="Card view"><button data-card-view="shooting" aria-pressed="${cs.mode === 'shooting'}">Shooting</button></div></div>
+        ${!gp && players ? '' : gridHtml}<div class="fw-visual">${visual}</div>${players ? '<div data-box></div>' : ''}`;
       W.wire(root, cs, () => { cs.selected = null; draw(); }, 'data-card-window');
-      root.querySelectorAll('[data-card-view]').forEach(b => { b.onclick = () => { cs.mode = b.dataset.cardView; cs.selected = null; draw(); }; });
+      root.querySelectorAll('[data-card-view]').forEach(b => { b.onclick = () => { cs.mode = cs.mode === 'shooting' ? 'profile' : 'shooting'; cs.selected = null; draw(); }; });
       root.querySelectorAll('[data-metric]').forEach(b => { b.onclick = () => { cs.selected = cs.selected === b.dataset.metric ? null : b.dataset.metric; draw(); }; });
       root.querySelectorAll('[data-radar]').forEach(b => { b.onclick = () => { cs.radar = b.dataset.radar; draw(); }; });
       root.querySelectorAll('[data-net]').forEach(b => { b.onclick = () => { cs.net = b.dataset.net; draw(); }; });
       const cmp = root.querySelector('[data-cmp]');
       if (cmp) cmp.onchange = () => { cs.cmp = cmp.value; draw(); };
       const shots = root.querySelector('[data-shots]');
-      if (shots && (gp || !players)) g.FantasyShotChart.mount(shots, { kind, id: cs.id, team, spec: W.spec(cs), view, teamsView }, cs.shot);
+      if (shots && (gp || !players)) g.FantasyShotChart.mount(shots, { kind, id: cs.id, team, spec: W.spec(cs), view, teamsView, grid: true }, cs.shot);
       const box = root.querySelector('[data-box]');
       if (box && players) boxScores().then(h => { if (mine === cs.token && box.isConnected) box.innerHTML = h; });
     } catch (e) { root.textContent = 'Could not load the card: ' + e.message; }
@@ -192,7 +227,7 @@
 
   function open(entity, id, from = {}) {
     close();
-    cs = { entity, id, win: from.win || 'season', mode: from.mode || 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
+    cs = { entity, id, win: from.win || 'season', mode: 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
     dialog = document.createElement('dialog');
     dialog.className = 'fw-dialog';
     dialog.innerHTML = '<button class="fw-close" aria-label="Close card">×</button><div class="fw-card"><p class="fw-empty" role="status">Loading…</p></div>';

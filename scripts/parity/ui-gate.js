@@ -41,7 +41,7 @@ export async function run(page) {
       document.querySelector('.fw-name[data-open]').click(); await wait(2200);
       const steps = kind === 'teams' ? ['profile', 'shooting'] : ['profile', 'shooting'];
       for (const v of steps) {
-        document.querySelector(`[data-card-view=${v}]`)?.click(); await wait(v === 'shooting' ? 3000 : 1200);
+        if (v === "shooting") document.querySelector("[data-card-view=shooting]")?.click(); await wait(v === 'shooting' ? 3000 : 1200);
         out.checked++;
         const txt = document.querySelector('.fw-card')?.innerText || '';
         if (!/Could not/.test(txt) && document.querySelector('.fw-visual')) out.matched++; else out.mismatches.push(`card ${kind} ${v}: ${txt.slice(0, 80)}`);

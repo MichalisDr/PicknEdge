@@ -31,7 +31,7 @@ const pct = idx => 100 * idx.reduce((n, i) => n + i + 1, 0) / idx.reduce((n, i) 
 
 test('zone FG% for zones, sub-areas and areas, for players, own team and opponent', () => {
   let checked = 0;
-  for (const m of METRICS.filter(m => /^(t_|o_)?z[sm]?_/.test(m.id))) {
+  for (const m of METRICS.filter(m => /^(t_|o_)?z[sm]?_.*_pct$/.test(m.id))) {
     const opp = m.id.startsWith('o_'), id = m.id.replace(/^(t_|o_)/, '');
     const key = id.replace(/_pct$/, '');
     const idx = GROUPS[key] ?? [ORDER.indexOf(key.replace(/^z_/, ''))];
@@ -47,4 +47,26 @@ test('zone FG% for zones, sub-areas and areas, for players, own team and opponen
 test('zone FG% sums made and attempts over games, not an average of rates', () => {
   const m = METRICS.find(m => m.id === 'z_rim_pct');
   assert.equal(evaluate(m, [{ played: 1, z_rim_m: 1, z_rim_a: 1 }, { played: 1, z_rim_m: 0, z_rim_a: 9 }]).value, 10);
+});
+
+test('player sub-area detail: makes, attempts, share of classified shots, attempts per 100 possessions', () => {
+  const row = { played: 1, poss_off_on: 50, ...fixture('') };
+  const total = ORDER.reduce((n, _, i) => n + i + 2, 0);                 // 90 classified attempts
+  assert.equal(total, 90);
+  let checked = 0;
+  for (const [key, idx] of Object.entries(GROUPS).filter(([k]) => k.startsWith('zs_'))) {
+    const made = idx.reduce((n, i) => n + i + 1, 0), att = idx.reduce((n, i) => n + i + 2, 0), v = id => evaluate(METRICS.find(m => m.id === id), [row]).value;
+    assert.equal(v(key + '_made'), made);
+    assert.equal(v(key + '_att'), att);
+    assert.ok(Math.abs(v(key + '_share') - 100 * att / total) < 1e-9, key);
+    assert.ok(Math.abs(v(key + '_a100') - 100 * att / 50) < 1e-9, key);
+    checked++;
+  }
+  assert.equal(checked, 6);
+});
+test('sub-area shares of a window sum attempts first (not an average of shares)', () => {
+  const m = METRICS.find(m => m.id === 'zs_rim_share');
+  const zero = Object.fromEntries(ORDER.flatMap(k => [['z_' + k + '_a', 0], ['z_' + k + '_m', 0]]));
+  const g1 = { ...zero, played: 1, z_rim_a: 1, z_rim_m: 1, z_paint_a: 1 }, g2 = { ...zero, played: 1, z_paint_a: 9 };
+  assert.equal(evaluate(m, [g1, g2]).value, 100 * 1 / 11);
 });

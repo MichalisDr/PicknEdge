@@ -24,6 +24,7 @@ EuroLeague API ──(scripts/fetch)──▶ data/raw ──(scripts/build)─�
 | `scripts/build/` | Raw to clean to `site/data` |
 | `scripts/metrics/` | The metric registry and engine |
 | `scripts/parity/` | Parity gate against the old site (needs the old code: see below) |
+| `site/layout.json` | Single source of the Fantasy card metric grids (24 columns, square cells, boxes and rules); validated by `tests/layout` |
 | `tests/` | Unit tests (`metrics`, `build`, `loader`) and fixtures |
 | `docs/METRICS.md` | Every metric with its formula, generated from the registry |
 | `.github/workflows/` | `pages.yml` (deploy) and `update-data.yml` (data job) |
