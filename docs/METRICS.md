@@ -85,6 +85,16 @@ Every metric is defined once in `scripts/metrics/registry.mjs`. Ratios are `Σ n
 | `zs_corner_att` | Corner 3 attempts | count | Σ zs_corner_a | — | fantasy | Field-goal attempts in the sub-area "Corner 3". |
 | `zs_corner_share` | Corner 3 share of FGA | pct | 100 × Σ(zs_corner_a) ÷ Σ(zall_a) | — | fantasy | Share of the classified field-goal attempts taken in "Corner 3". |
 | `zs_corner_a100` | Corner 3 FGA / 100 poss | per100 | 100 × Σ(zs_corner_a) ÷ Σ(poss_off_on) | — | fantasy | Field-goal attempts in "Corner 3" per 100 team offensive possessions while on court. |
+| `zm_mid_made` | Mid-range makes | count | Σ zm_mid_m | — | fantasy | Field goals made in the area "Mid" (mid-range plus baseline). |
+| `zm_mid_att` | Mid-range attempts | count | Σ zm_mid_a | — | fantasy | Field-goal attempts in the area "Mid" (mid-range plus baseline). |
+| `zm_mid_share` | Mid-range share of FGA | pct | 100 × Σ(zm_mid_a) ÷ Σ(zall_a) | — | fantasy | Share of the classified field-goal attempts taken in the area "Mid". |
+| `zm_mid_a100` | Mid-range FGA / 100 poss | per100 | 100 × Σ(zm_mid_a) ÷ Σ(poss_off_on) | — | fantasy | Field-goal attempts in the area "Mid" per 100 team offensive possessions while on court. |
+| `fg2_made` | 2P makes | count | Σ m2 | — | fantasy | 2P made. |
+| `fg2_att` | 2P attempts | count | Σ a2 | — | fantasy | 2P attempted. |
+| `fg3_made` | 3P makes | count | Σ m3 | — | fantasy | 3P made. |
+| `fg3_att` | 3P attempts | count | Σ a3 | — | fantasy | 3P attempted. |
+| `ft_made` | FT makes | count | Σ m1 | — | fantasy | FT made. |
+| `ft_att` | FT attempts | count | Σ a1 | — | fantasy | FT attempted. |
 | `z_rim_pct` | At the rim FG% | pct | 100 × Σ(z_rim_m) ÷ Σ(z_rim_a) | higher | fantasy, betting | Field-goal percentage in the zone "At the rim". |
 | `z_paint_pct` | Rest of paint FG% | pct | 100 × Σ(z_paint_m) ÷ Σ(z_paint_a) | higher | fantasy, betting | Field-goal percentage in the zone "Rest of paint". |
 | `z_midL_pct` | Mid left FG% | pct | 100 × Σ(z_midL_m) ÷ Σ(z_midL_a) | higher | fantasy, betting | Field-goal percentage in the zone "Mid left". |
@@ -187,6 +197,12 @@ Every metric is defined once in `scripts/metrics/registry.mjs`. Ratios are `Σ n
 | `o_zs_arc_att` | Opp Arc 3 attempts | count | Σ o_zs_arc_a | — | fantasy | Field-goal attempts by opponents in the sub-area "Arc 3". |
 | `o_zs_corner_made` | Opp Corner 3 makes | count | Σ o_zs_corner_m | — | fantasy | Field goals made by opponents in the sub-area "Corner 3". |
 | `o_zs_corner_att` | Opp Corner 3 attempts | count | Σ o_zs_corner_a | — | fantasy | Field-goal attempts by opponents in the sub-area "Corner 3". |
+| `o_zm_mid_made` | Opp Mid-range makes | count | Σ o_zm_mid_m | — | fantasy | Field goals made by opponents in the area "Mid". |
+| `o_zm_mid_att` | Opp Mid-range attempts | count | Σ o_zm_mid_a | — | fantasy | Field-goal attempts by opponents in the area "Mid". |
+| `o_fg2_made` | Opp 2P makes | count | Σ o_m2 | — | fantasy | Opponent 2P made. |
+| `o_fg2_att` | Opp 2P attempts | count | Σ o_a2 | — | fantasy | Opponent 2P attempted. |
+| `o_fg3_made` | Opp 3P makes | count | Σ o_m3 | — | fantasy | Opponent 3P made. |
+| `o_fg3_att` | Opp 3P attempts | count | Σ o_a3 | — | fantasy | Opponent 3P attempted. |
 | `t_z_rim_pct` | At the rim FG% | pct | 100 × Σ(z_rim_m) ÷ Σ(z_rim_a) | higher | betting | Field-goal percentage in the zone "At the rim". |
 | `t_z_paint_pct` | Rest of paint FG% | pct | 100 × Σ(z_paint_m) ÷ Σ(z_paint_a) | higher | betting | Field-goal percentage in the zone "Rest of paint". |
 | `t_z_midL_pct` | Mid left FG% | pct | 100 × Σ(z_midL_m) ÷ Σ(z_midL_a) | higher | betting | Field-goal percentage in the zone "Mid left". |

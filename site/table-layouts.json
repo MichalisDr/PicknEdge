@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "note": "Single source of the four Fantasy tables. numWidth: the one width in px of every numeric column (same in all four tables, wide enough for the widest value with its '#n' rank and sub-line); teamWidth: the Team column of the players tables; firstCol: the first (name) column is as wide as the longest name needs (chars * charPx + pad), never below min or above cap, longer names are cut with an ellipsis (full name in the title). A table has 'groups' (each group: a 2px line above it and a 0.5px divider at its start), a column is {metric, label?, colour?, sub?, few?}. colour: 'rank' = top/bottom quarter of the rank pool, 'zone' = player zone FG% against the league average (neutral within zoneNeutralPp points). sub: {metric, text} (a second registry value, '{v}' is replaced) or {made, att} (makes/attempts). few: registry id of the zone's attempts per 100; under fewBelow the value is shown as a dimmed '-', has no rank and sorts last. defaultSort.dir: 'asc' or 'desc'.",
-  "numWidth": 78,
+  "note": "Single source of the four Fantasy tables. numWidth: the one width in px of every numeric column (same in all four tables: wide enough for the widest header label on one line and the widest value with its rank chip); teamWidth: the Team column of the players tables; firstCol: the first (name) column is as wide as the longest displayed name needs (measured text + pad), never below min or above cap. A table has 'groups' (a 2px line above each group, none clickable); a column is {metric, label, colour?, chart?, few?, detail?}. label: the short one-line header (the full name goes in the title). colour: 'rank' = top/bottom quarter of the rank pool, 'zone' = player zone FG% against the league average (neutral within zoneNeutralPp points). chart: hovering a cell shows the per-game progression (main metric columns only). detail: {made, att, share?} registry ids shown in the pop-out of a clicked cell. few: registry id of the zone's attempts per 100; under fewBelow the value is a dimmed '-', has no rank and sorts last. defaultSort.dir: 'asc' or 'desc'.",
+  "numWidth": 90,
   "teamWidth": 54,
-  "firstCol": { "min": 150, "cap": 196, "charPx": 7.4, "pad": 30},
+  "firstCol": { "min": 120, "cap": 230, "pad": 26 },
   "zoneNeutralPp": 3,
   "fewBelow": 1,
   "tables": {
@@ -12,23 +12,23 @@
       "defaultSort": { "metric": "pir", "dir": "desc" },
       "groups": [
         [
-          { "metric": "pir", "label": "PIR", "colour": "rank" }
+          { "metric": "pir", "label": "PIR", "colour": "rank", "chart": true }
         ],
         [
-          { "metric": "min", "label": "MIN" },
-          { "metric": "usg", "label": "USG%" },
-          { "metric": "load", "label": "Offensive load" },
-          { "metric": "tov_pct", "label": "TOV%", "colour": "rank" },
-          { "metric": "ctov", "label": "cTOV%", "colour": "rank" }
+          { "metric": "min", "label": "MIN", "chart": true },
+          { "metric": "usg", "label": "USG%", "chart": true },
+          { "metric": "load", "label": "Offensive load", "chart": true },
+          { "metric": "tov_pct", "label": "TOV%", "colour": "rank", "chart": true },
+          { "metric": "ctov", "label": "cTOV%", "colour": "rank", "chart": true }
         ],
         [
-          { "metric": "pts100", "label": "PTS/100", "colour": "rank" },
-          { "metric": "ast100", "label": "AST/100", "colour": "rank" },
-          { "metric": "reb100", "label": "REB/100", "colour": "rank" }
+          { "metric": "pts100", "label": "PTS/100", "colour": "rank", "chart": true },
+          { "metric": "ast100", "label": "AST/100", "colour": "rank", "chart": true },
+          { "metric": "reb100", "label": "REB/100", "colour": "rank", "chart": true }
         ],
         [
-          { "metric": "ftr", "label": "FTr" },
-          { "metric": "fd100", "label": "FD/100", "colour": "rank" }
+          { "metric": "ftr", "label": "FTr", "chart": true },
+          { "metric": "fd100", "label": "FD/100", "colour": "rank", "chart": true }
         ]
       ]
     },
@@ -37,18 +37,17 @@
       "defaultSort": { "metric": "efg", "dir": "desc" },
       "groups": [
         [
-          { "metric": "efg", "label": "eFG%", "sub": { "metric": "fga100", "text": "FGA {v} /100" } },
-          { "metric": "fg2_pct", "label": "2FG%", "sub": { "metric": "a2_rate", "text": "{v}% of FGA" } },
-          { "metric": "fg3_pct", "label": "3FG%", "sub": { "metric": "a3_rate", "text": "{v}% of FGA" } },
-          { "metric": "ft_pct", "label": "FT%" }
+          { "metric": "efg", "label": "eFG%", "chart": true },
+          { "metric": "fg2_pct", "label": "2FG%", "chart": true, "detail": {"made": "fg2_made", "att": "fg2_att"} },
+          { "metric": "fg3_pct", "label": "3FG%", "chart": true, "detail": {"made": "fg3_made", "att": "fg3_att"} },
+          { "metric": "ft_pct", "label": "FT%", "chart": true, "detail": {"made": "ft_made", "att": "ft_att"} }
         ],
         [
-          { "metric": "zs_rim_pct", "label": "At the rim", "colour": "zone", "sub": { "made": "zs_rim_made", "att": "zs_rim_att" }, "few": "zs_rim_a100" },
-          { "metric": "zs_paint_pct", "label": "Rest of paint", "colour": "zone", "sub": { "made": "zs_paint_made", "att": "zs_paint_att" }, "few": "zs_paint_a100" },
-          { "metric": "zs_mid_pct", "label": "Mid-range", "colour": "zone", "sub": { "made": "zs_mid_made", "att": "zs_mid_att" }, "few": "zs_mid_a100" },
-          { "metric": "zs_base_pct", "label": "Baseline", "colour": "zone", "sub": { "made": "zs_base_made", "att": "zs_base_att" }, "few": "zs_base_a100" },
-          { "metric": "zs_arc_pct", "label": "Arc 3", "colour": "zone", "sub": { "made": "zs_arc_made", "att": "zs_arc_att" }, "few": "zs_arc_a100" },
-          { "metric": "zs_corner_pct", "label": "Corner 3", "colour": "zone", "sub": { "made": "zs_corner_made", "att": "zs_corner_att" }, "few": "zs_corner_a100" }
+          { "metric": "zs_rim_pct", "label": "At the rim", "colour": "zone", "few": "zs_rim_a100", "detail": {"made": "zs_rim_made", "att": "zs_rim_att", "share": "zs_rim_share"} },
+          { "metric": "zs_paint_pct", "label": "Rest of paint", "colour": "zone", "few": "zs_paint_a100", "detail": {"made": "zs_paint_made", "att": "zs_paint_att", "share": "zs_paint_share"} },
+          { "metric": "zs_corner_pct", "label": "Corner 3", "colour": "zone", "few": "zs_corner_a100", "detail": {"made": "zs_corner_made", "att": "zs_corner_att", "share": "zs_corner_share"} },
+          { "metric": "zs_arc_pct", "label": "Arc 3", "colour": "zone", "few": "zs_arc_a100", "detail": {"made": "zs_arc_made", "att": "zs_arc_att", "share": "zs_arc_share"} },
+          { "metric": "zm_mid_pct", "label": "Mid-range", "colour": "zone", "few": "zm_mid_a100", "detail": {"made": "zm_mid_made", "att": "zm_mid_att", "share": "zm_mid_share"} }
         ]
       ]
     },
@@ -57,22 +56,22 @@
       "defaultSort": { "metric": "drtg", "dir": "asc" },
       "groups": [
         [
-          { "metric": "pace", "label": "Pace" },
-          { "metric": "drtg", "label": "DRtg", "colour": "rank" }
+          { "metric": "pace", "label": "Pace", "chart": true },
+          { "metric": "drtg", "label": "DRtg", "colour": "rank", "chart": true }
         ],
         [
-          { "metric": "o_efg", "label": "Opp eFG%", "colour": "rank" },
-          { "metric": "o_ftr", "label": "Opp FTr", "colour": "rank" }
+          { "metric": "o_efg", "label": "Opp eFG%", "colour": "rank", "chart": true },
+          { "metric": "o_ftr", "label": "Opp FTr", "colour": "rank", "chart": true }
         ],
         [
-          { "metric": "o_tov100", "label": "Opp TOV/100", "colour": "rank" },
-          { "metric": "o_ast100", "label": "Opp AST/100", "colour": "rank" },
-          { "metric": "t_dreb_pct", "label": "DREB%", "colour": "rank" }
+          { "metric": "o_tov100", "label": "Opp TOV/100", "colour": "rank", "chart": true },
+          { "metric": "o_ast100", "label": "Opp AST/100", "colour": "rank", "chart": true },
+          { "metric": "t_dreb_pct", "label": "DREB%", "colour": "rank", "chart": true }
         ],
         [
-          { "metric": "o_pot100", "label": "Opp PTS off TO", "colour": "rank" },
-          { "metric": "o_fb100", "label": "Opp fast break", "colour": "rank" },
-          { "metric": "o_sc100", "label": "Opp 2nd chance", "colour": "rank" }
+          { "metric": "o_pot100", "label": "Opp PTS off TO", "colour": "rank", "chart": true },
+          { "metric": "o_fb100", "label": "Opp fast break", "colour": "rank", "chart": true },
+          { "metric": "o_sc100", "label": "Opp 2nd chance", "colour": "rank", "chart": true }
         ]
       ]
     },
@@ -81,17 +80,16 @@
       "defaultSort": { "metric": "o_efg", "dir": "asc" },
       "groups": [
         [
-          { "metric": "o_efg", "label": "Opp eFG%", "colour": "rank" },
-          { "metric": "o_fg2_pct", "label": "Opp 2FG%", "colour": "rank" },
-          { "metric": "o_fg3_pct", "label": "Opp 3FG%", "colour": "rank" }
+          { "metric": "o_efg", "label": "Opp eFG%", "colour": "rank", "chart": true },
+          { "metric": "o_fg2_pct", "label": "Opp 2FG%", "colour": "rank", "chart": true, "detail": {"made": "o_fg2_made", "att": "o_fg2_att"} },
+          { "metric": "o_fg3_pct", "label": "Opp 3FG%", "colour": "rank", "chart": true, "detail": {"made": "o_fg3_made", "att": "o_fg3_att"} }
         ],
         [
-          { "metric": "o_zs_rim_pct", "label": "At the rim", "colour": "rank", "sub": { "made": "o_zs_rim_made", "att": "o_zs_rim_att" } },
-          { "metric": "o_zs_paint_pct", "label": "Rest of paint", "colour": "rank", "sub": { "made": "o_zs_paint_made", "att": "o_zs_paint_att" } },
-          { "metric": "o_zs_mid_pct", "label": "Mid-range", "colour": "rank", "sub": { "made": "o_zs_mid_made", "att": "o_zs_mid_att" } },
-          { "metric": "o_zs_base_pct", "label": "Baseline", "colour": "rank", "sub": { "made": "o_zs_base_made", "att": "o_zs_base_att" } },
-          { "metric": "o_zs_arc_pct", "label": "Arc 3", "colour": "rank", "sub": { "made": "o_zs_arc_made", "att": "o_zs_arc_att" } },
-          { "metric": "o_zs_corner_pct", "label": "Corner 3", "colour": "rank", "sub": { "made": "o_zs_corner_made", "att": "o_zs_corner_att" } }
+          { "metric": "o_zs_rim_pct", "label": "At the rim", "colour": "rank", "detail": {"made": "o_zs_rim_made", "att": "o_zs_rim_att"} },
+          { "metric": "o_zs_paint_pct", "label": "Rest of paint", "colour": "rank", "detail": {"made": "o_zs_paint_made", "att": "o_zs_paint_att"} },
+          { "metric": "o_zs_corner_pct", "label": "Corner 3", "colour": "rank", "detail": {"made": "o_zs_corner_made", "att": "o_zs_corner_att"} },
+          { "metric": "o_zs_arc_pct", "label": "Arc 3", "colour": "rank", "detail": {"made": "o_zs_arc_made", "att": "o_zs_arc_att"} },
+          { "metric": "o_zm_mid_pct", "label": "Mid-range", "colour": "rank", "detail": {"made": "o_zm_mid_made", "att": "o_zm_mid_att"} }
         ]
       ]
     }

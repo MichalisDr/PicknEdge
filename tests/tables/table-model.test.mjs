@@ -37,9 +37,10 @@ test('combined rank: mean percentile of the selected columns over the pool, null
   assert.equal(r.get('b'), 0.5);           // x: 0.5 only
   assert.equal(r.get('c'), (1 + 0) / 2);
 });
-test('first column width: longest name, within [min, cap]', () => {
-  const f = { min: 150, cap: 220, charPx: 7.4, pad: 30 };
-  assert.equal(M.firstColWidth(['Ab'], f), 150);
-  assert.equal(M.firstColWidth(['x'.repeat(20)], f), Math.ceil(20 * 7.4 + 30));
-  assert.equal(M.firstColWidth(['x'.repeat(60)], f), 220);
+test('first column width: widest displayed name plus padding, within [min, cap]', () => {
+  const f = { min: 120, cap: 230, pad: 26 };
+  assert.equal(M.firstColWidth([40, 60], f), 120);
+  assert.equal(M.firstColWidth([90.2, 150], f), 176);
+  assert.equal(M.firstColWidth([400], f), 230);
+  assert.equal(M.firstColWidth([], f), 120);
 });

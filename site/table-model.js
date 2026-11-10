@@ -45,8 +45,8 @@
       return [id, ps.length ? ps.reduce((a, b) => a + b, 0) / ps.length : null];
     }));
   }
-  /** Width of the first column: as wide as the longest name needs, within [min, cap]. */
-  const firstColWidth = (names, f) => Math.min(f.cap, Math.max(f.min, Math.ceil(Math.max(0, ...names.map(n => String(n).length)) * f.charPx + f.pad)));
+  /** Width of the first column: the widest displayed name (measured text widths in px) plus padding, within [min, cap]. */
+  const firstColWidth = (textWidths, f) => Math.min(f.cap, Math.max(f.min, Math.ceil(Math.max(0, ...textWidths)) + f.pad));
   /** Text of the rank-pool note. */
   const poolLabel = (name, n) => `${name} (${n})`;
   /** Total width of a table: first column, optional team column, numeric columns (all numWidth). */
