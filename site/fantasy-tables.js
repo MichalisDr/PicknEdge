@@ -53,13 +53,16 @@
       const [view, { byId }, roster, manifest, status] = await Promise.all([W.view(state.entity, state), D.metrics(), D.roster(), D.manifest(), D.status()]);
       if (mine !== drawId) return;
       const ids = COLUMNS[state.entity][state.view], defs = ids.map(id => byId[id]);
+      // Availability gate: the gp of the availability window's view (L3 by default); the view is a built file, nothing is stored.
+      const avail = !teams && manifest.eligibility.availability ? await D.view('players', manifest.eligibility.availability.window) : null;
+      if (mine !== drawId) return;
       const rows = view.keys.map(id => {
         const r = view.row(id), gp = teams ? r.games : view.get(id, 'gp').value;
         return { id, name: teams ? roster.teams[id] || id : roster.players[id]?.name || r.name || id, team: r.team, pos: r.pos, gp,
-          min: teams ? null : view.get(id, 'min').value, pir: teams ? null : view.get(id, 'pir').value };
+          min: teams ? null : view.get(id, 'min').value, pir: teams ? null : view.get(id, 'pir').value, availGp: avail ? (avail.get(id, 'gp')?.value ?? 0) : null };
       });
       const ew = eligibilityWindow();
-      const pool = teams ? rows : rows.filter(r => (state.showAll || Elig.eligible(manifest.eligibility, ew, r)) && (state.position === 'ALL' || r.pos === state.position)
+      const pool = teams ? rows : rows.filter(r => Elig.listed(manifest.eligibility, ew, r, r.availGp, state.showAll) && (state.position === 'ALL' || r.pos === state.position)
         && r.gp >= state.minGp && (r.min ?? 0) >= state.minMin && (!state.team || r.team === state.team));
       const q = state.query.trim().toLowerCase();
       const shown = pool.filter(r => !q || (r.name + ' ' + (roster.teams[r.team] || r.team || '')).toLowerCase().includes(q));
@@ -104,7 +107,7 @@
         <tbody>${body}<tr class="fw-average"><th>League average<small>full league${teams ? '' : ' · all players who played'} · ignores filters</small></th><td class="fw-gp">—</td>${cells(null, true)}</tr></tbody></table></div>
       <div class="fw-foot" ${gallery ? 'hidden' : ''}><span>${shown.length} ${teams ? 'teams' : 'players'} · ${esc(W.label(state))}</span>${teams
         ? '<span>#1 = best defence: lowest value (DRtg, Opp eFG%, Opp AST, Opp FTr, opponent second-chance / fast-break / points-off-turnover, opponent shooting), highest for Opp TOV and DREB%. Pace: highest = #1. Green = favourable for the opposing player.</span>'
-        : '<span>Players below the form thresholds of the selected window are hidden unless you change this in Filters. n/m = games with the data out of games played.</span>'}</div>
+        : '<span>Players who missed the last 3 games of their team, or who are below the thresholds of the selected window, are hidden unless you tick the box in Filters. n/m = games with the data out of games played.</span>'}</div>
       <details class="fw-method"><summary>Sample &amp; calculations</summary><p>Last 3 / 5 / 10 are the team's most recent games, counting only the games the player actually played. Every ratio is a sum divided by a sum, never an average of game percentages. PIR has no Fantasy bonuses. USG%, TOV% and every "per 100" value use possessions counted from the play-by-play while the player is on court. Full list: docs/METRICS.md.</p></details>
     </section>`;
   }

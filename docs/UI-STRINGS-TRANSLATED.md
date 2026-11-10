@@ -98,3 +98,9 @@ League-average label (Fantasy and Betting): "League average" + small text "Full 
 ## Step 3.5 · hidden page
 
 The "From the schedule" page and its overview card are hidden until the Betting redesign. Overview text changed: "Start from this round's games or from a point you want to examine. Both routes end in the same analysis card." → "Start from a point you want to examine and record it on an analysis card."
+
+## Eligibility availability gate
+
+| Where | Before | After |
+|---|---|---|
+| Players footnote | Players below the form thresholds of the selected window are hidden unless you change this in Filters. n/m = games with the data out of games played. | Players who missed the last 3 games of their team, or who are below the thresholds of the selected window, are hidden unless you tick the box in Filters. n/m = games with the data out of games played. |
