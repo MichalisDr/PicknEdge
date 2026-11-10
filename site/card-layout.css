@@ -3,7 +3,7 @@
    divider lines, and re-flows the grid as a list on narrow containers. */
 .lx{container-type:inline-size;width:100%}
 .lx-grid{--gap:8px;position:relative;display:grid;grid-template-columns:repeat(24,minmax(0,1fr));grid-template-rows:repeat(var(--rows),minmax(0,1fr));aspect-ratio:24/var(--rows);gap:var(--gap);width:100%}
-.lx-grid .fw-metric{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-height:0}
+.lx-grid .fw-metric{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;min-height:0}
 /* label and secondary lines sit in <lx-t>, transparent on the grid; ordering keeps the old sequence label, value, rank, secondary text */
 lx-t{display:contents}
 .lx-grid .fw-metric>strong{order:1}
@@ -13,6 +13,7 @@ lx-t>.fw-rank{order:2}
 lx-t>small{order:2}
 .lx-strip{flex-direction:row!important;justify-content:space-between!important;align-items:center!important}
 lx-r{display:flex;align-items:baseline;gap:8px}
+.lx-grid .fw-rank{font-size:11px;font-weight:500;color:#94a3b8;margin:0}
 .lx-few{opacity:.45}
 .lx-few strong{font-weight:500}
 .lx-line{position:absolute;background:#2b3a4f;pointer-events:none}

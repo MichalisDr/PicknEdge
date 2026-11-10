@@ -1,84 +1,72 @@
 {
   "version": 1,
-  "note": "Single source of the Fantasy card metric grids. 24 columns, square cells; 'rows' per layout. A box is {id, metric, x, y, w, h} (cells). 'lines' are 1px rules on grid lines: {o:'h', x, y, n} runs right from (x,y) for n cells, {o:'v', x, y, n} runs down. Optional layout field 'stack': box ids in the order of the stacked (narrow-screen) list; without it the order is (y, x). Optional box fields: label (else the registry label), unit, kind ('zone' = shooting-zone box), sub (secondary text lines), extra (a second registry metric shown in the box). Tile style follows the box area w*h: >= 36 large tile, 13 to 35 small tile, <= 12 compact strip (zone boxes are always small tiles). Every metric id must exist in the registry (tests/layout/layout.test.mjs).",
+  "note": "Single source of the Fantasy card metric grids. 24 columns, square cells; 'rows' per layout. A box is {id, metric, x, y, w, h} (cells). 'lines' are 1px rules on grid lines: {o:'h', x, y, n} runs right from (x,y) for n cells, {o:'v', x, y, n} runs down. Optional layout field 'stack': box ids in the order of the stacked (narrow-screen) list; without it the order is (y, x). Optional box fields: label (else the registry label), unit, kind ('zone' = shooting-zone box), sub (secondary text lines), extra (a second registry metric shown in the box). Tile style: optional box field 'tier' ('lg' large tile, 'sm' small tile, 'strip' compact row); without it the box area w*h decides: >= 36 large, 13 to 35 small, <= 12 strip (zone boxes are always small tiles). Every metric id must exist in the registry (tests/layout/layout.test.mjs).",
   "cols": 24,
   "layouts": {
     "player.profile": {
-      "rows": 12,
+      "rows": 10,
       "stack": ["pir", "min", "usg", "load", "tov_pct", "ctov", "pts100", "ast100", "reb100", "ftr", "fd100"],
       "boxes": [
-        { "id": "min", "metric": "min", "label": "MIN", "x": 0, "y": 0, "w": 6, "h": 6 },
-        { "id": "pir", "metric": "pir", "label": "PIR", "unit": "/g", "x": 6, "y": 0, "w": 12, "h": 6,
-          "sub": [{ "metric": "pir_min", "unit": "/m" }, { "metric": "nspir100", "label": "nsPIR", "unit": " /100 poss" }] },
-        { "id": "pts100", "metric": "pts100", "label": "PTS", "unit": "/100", "x": 18, "y": 0, "w": 6, "h": 6, "sub": [{ "metric": "pts_g", "unit": "/g" }] },
-        { "id": "usg", "metric": "usg", "label": "USG%", "x": 0, "y": 6, "w": 6, "h": 3 },
-        { "id": "load", "metric": "load", "label": "Offensive Load", "x": 0, "y": 9, "w": 6, "h": 3, "sub": [{ "metric": "bc", "unit": " Box Creation" }] },
-        { "id": "tov_pct", "metric": "tov_pct", "label": "TOV%", "x": 6, "y": 6, "w": 5, "h": 3, "sub": [{ "metric": "tov_g", "unit": "/g" }] },
-        { "id": "ctov", "metric": "ctov", "label": "cTOV%", "x": 6, "y": 9, "w": 5, "h": 3, "sub": [{ "metric": "tov100", "unit": " TOV/100" }] },
-        { "id": "ftr", "metric": "ftr", "label": "FTr", "x": 11, "y": 6, "w": 7, "h": 6 },
-        { "id": "ast100", "metric": "ast100", "label": "AST", "unit": "/100", "x": 18, "y": 6, "w": 6, "h": 2, "sub": [{ "metric": "ast_g", "unit": "/g" }] },
-        { "id": "reb100", "metric": "reb100", "label": "REB", "unit": "/100", "x": 18, "y": 8, "w": 6, "h": 2, "sub": [{ "metric": "reb_g", "unit": "/g" }] },
-        { "id": "fd100", "metric": "fd100", "label": "FD", "unit": "/100", "x": 18, "y": 10, "w": 6, "h": 2, "sub": [{ "metric": "fd_g", "unit": "/g" }] }
+        { "id": "min", "metric": "min", "label": "MIN", "x": 0, "y": 0, "w": 6, "h": 4, "tier": "lg" },
+        { "id": "pir", "metric": "pir", "label": "PIR", "unit": "/g", "x": 6, "y": 0, "w": 12, "h": 4, "tier": "lg", "sub": [{"metric": "pir_min", "unit": "/m"}, {"metric": "nspir100", "label": "nsPIR", "unit": " /100 poss"}] },
+        { "id": "pts100", "metric": "pts100", "label": "PTS", "unit": "/100", "x": 18, "y": 0, "w": 6, "h": 4, "tier": "lg", "sub": [{"metric": "pts_g", "unit": "/g"}] },
+        { "id": "usg", "metric": "usg", "label": "USG%", "x": 0, "y": 4, "w": 6, "h": 3, "tier": "sm" },
+        { "id": "load", "metric": "load", "label": "Offensive Load", "x": 0, "y": 7, "w": 6, "h": 3, "tier": "sm", "sub": [{"metric": "bc", "unit": " Box Creation"}] },
+        { "id": "tov_pct", "metric": "tov_pct", "label": "TOV%", "x": 6, "y": 4, "w": 5, "h": 3, "tier": "sm", "sub": [{"metric": "tov_g", "unit": "/g"}] },
+        { "id": "ctov", "metric": "ctov", "label": "cTOV%", "x": 6, "y": 7, "w": 5, "h": 3, "tier": "sm", "sub": [{"metric": "tov100", "unit": " TOV/100"}] },
+        { "id": "ftr", "metric": "ftr", "label": "FTr", "x": 11, "y": 4, "w": 7, "h": 3, "tier": "sm" },
+        { "id": "ast100", "metric": "ast100", "label": "AST", "unit": "/100", "x": 18, "y": 4, "w": 6, "h": 3, "tier": "sm", "sub": [{"metric": "ast_g", "unit": "/g"}] },
+        { "id": "reb100", "metric": "reb100", "label": "REB", "unit": "/100", "x": 18, "y": 7, "w": 6, "h": 3, "tier": "sm", "sub": [{"metric": "reb_g", "unit": "/g"}] },
+        { "id": "fd100", "metric": "fd100", "label": "FD", "unit": "/100", "x": 11, "y": 7, "w": 7, "h": 3, "tier": "sm", "sub": [{"metric": "fd_g", "unit": "/g"}] }
       ],
-      "lines": [
-        { "o": "v", "x": 6, "y": 0, "n": 12 },
-        { "o": "h", "x": 6, "y": 6, "n": 12 },
-        { "o": "v", "x": 18, "y": 6, "n": 6 }
-      ]
+      "lines": []
     },
     "team.profile": {
-      "rows": 12,
+      "rows": 9,
       "boxes": [
-        { "id": "pace", "metric": "pace", "label": "Pace", "x": 0, "y": 0, "w": 6, "h": 6 },
-        { "id": "drtg", "metric": "drtg", "label": "DRtg", "x": 6, "y": 0, "w": 6, "h": 6 },
-        { "id": "o_efg", "metric": "o_efg", "label": "Opp eFG%", "x": 12, "y": 0, "w": 6, "h": 6 },
-        { "id": "o_ftr", "metric": "o_ftr", "label": "Opp FTr", "x": 18, "y": 0, "w": 6, "h": 6 },
-        { "id": "o_tov100", "metric": "o_tov100", "label": "Opp TOV", "unit": "/100", "x": 0, "y": 6, "w": 5, "h": 6 },
-        { "id": "o_ast100", "metric": "o_ast100", "label": "Opp AST", "unit": "/100", "x": 5, "y": 6, "w": 5, "h": 6 },
-        { "id": "t_dreb_pct", "metric": "t_dreb_pct", "label": "DREB%", "x": 10, "y": 6, "w": 5, "h": 6 },
-        { "id": "o_pot100", "metric": "o_pot100", "label": "Opp PTS off TO", "unit": "/100", "x": 15, "y": 6, "w": 9, "h": 2 },
-        { "id": "o_fb100", "metric": "o_fb100", "label": "Opp fast break", "unit": "/100", "x": 15, "y": 8, "w": 9, "h": 2 },
-        { "id": "o_sc100", "metric": "o_sc100", "label": "Opp 2nd chance", "unit": "/100", "x": 15, "y": 10, "w": 9, "h": 2 }
+        { "id": "pace", "metric": "pace", "label": "Pace", "x": 0, "y": 0, "w": 6, "h": 3, "tier": "lg" },
+        { "id": "drtg", "metric": "drtg", "label": "DRtg", "x": 6, "y": 0, "w": 6, "h": 3, "tier": "lg" },
+        { "id": "o_efg", "metric": "o_efg", "label": "Opp eFG%", "x": 12, "y": 0, "w": 6, "h": 3, "tier": "lg" },
+        { "id": "o_ftr", "metric": "o_ftr", "label": "Opp FTr", "x": 18, "y": 0, "w": 6, "h": 3, "tier": "lg" },
+        { "id": "o_tov100", "metric": "o_tov100", "label": "Opp TOV", "unit": "/100", "x": 0, "y": 3, "w": 8, "h": 3, "tier": "lg" },
+        { "id": "o_ast100", "metric": "o_ast100", "label": "Opp AST", "unit": "/100", "x": 8, "y": 3, "w": 8, "h": 3, "tier": "lg" },
+        { "id": "t_dreb_pct", "metric": "t_dreb_pct", "label": "DREB%", "x": 16, "y": 3, "w": 8, "h": 3, "tier": "lg" },
+        { "id": "o_pot100", "metric": "o_pot100", "label": "Opp PTS off TO", "unit": "/100", "x": 0, "y": 6, "w": 8, "h": 3, "tier": "lg" },
+        { "id": "o_fb100", "metric": "o_fb100", "label": "Opp fast break", "unit": "/100", "x": 8, "y": 6, "w": 8, "h": 3, "tier": "lg" },
+        { "id": "o_sc100", "metric": "o_sc100", "label": "Opp 2nd chance", "unit": "/100", "x": 16, "y": 6, "w": 8, "h": 3, "tier": "lg" }
       ],
-      "lines": [
-        { "o": "h", "x": 0, "y": 6, "n": 24 },
-        { "o": "v", "x": 15, "y": 6, "n": 6 }
-      ]
+      "lines": []
     },
     "player.shooting": {
       "rows": 6,
       "boxes": [
-        { "id": "efg", "metric": "efg", "label": "eFG%", "x": 0, "y": 0, "w": 7, "h": 4, "sub": [{ "metric": "fga100", "text": "FGA {v} /100" }] },
-        { "id": "fg2", "metric": "fg2_pct", "label": "2FG%", "x": 7, "y": 0, "w": 6, "h": 4, "sub": [{ "metric": "a2_rate", "text": "{v}% of FGA" }] },
-        { "id": "fg3", "metric": "fg3_pct", "label": "3FG%", "x": 13, "y": 0, "w": 6, "h": 4, "sub": [{ "metric": "a3_rate", "text": "{v}% of FGA", "zeroText": "no 3PA" }] },
-        { "id": "ft", "metric": "ft_pct", "label": "FT%", "x": 19, "y": 0, "w": 5, "h": 4 },
-        { "id": "zone_rim", "kind": "zone", "zone": "rim", "metric": "zs_rim_pct", "made": "zs_rim_made", "att": "zs_rim_att", "share": "zs_rim_share", "per100": "zs_rim_a100", "label": "At the rim", "x": 0, "y": 4, "w": 4, "h": 2 },
-        { "id": "zone_paint", "kind": "zone", "zone": "paint", "metric": "zs_paint_pct", "made": "zs_paint_made", "att": "zs_paint_att", "share": "zs_paint_share", "per100": "zs_paint_a100", "label": "Rest of paint", "x": 4, "y": 4, "w": 4, "h": 2 },
-        { "id": "zone_mid", "kind": "zone", "zone": "mid", "metric": "zs_mid_pct", "made": "zs_mid_made", "att": "zs_mid_att", "share": "zs_mid_share", "per100": "zs_mid_a100", "label": "Mid-range", "x": 8, "y": 4, "w": 4, "h": 2 },
-        { "id": "zone_base", "kind": "zone", "zone": "base", "metric": "zs_base_pct", "made": "zs_base_made", "att": "zs_base_att", "share": "zs_base_share", "per100": "zs_base_a100", "label": "Baseline", "x": 12, "y": 4, "w": 4, "h": 2 },
-        { "id": "zone_arc", "kind": "zone", "zone": "arc", "metric": "zs_arc_pct", "made": "zs_arc_made", "att": "zs_arc_att", "share": "zs_arc_share", "per100": "zs_arc_a100", "label": "Arc 3", "x": 16, "y": 4, "w": 4, "h": 2 },
-        { "id": "zone_corner", "kind": "zone", "zone": "corner", "metric": "zs_corner_pct", "made": "zs_corner_made", "att": "zs_corner_att", "share": "zs_corner_share", "per100": "zs_corner_a100", "label": "Corner 3", "x": 20, "y": 4, "w": 4, "h": 2 }
+        { "id": "efg", "metric": "efg", "label": "eFG%", "x": 0, "y": 0, "w": 7, "h": 3, "tier": "lg", "sub": [{"metric": "fga100", "text": "FGA {v} /100"}] },
+        { "id": "fg2", "metric": "fg2_pct", "label": "2FG%", "x": 7, "y": 0, "w": 6, "h": 3, "tier": "lg", "sub": [{"metric": "a2_rate", "text": "{v}% of FGA"}] },
+        { "id": "fg3", "metric": "fg3_pct", "label": "3FG%", "x": 13, "y": 0, "w": 6, "h": 3, "tier": "lg", "sub": [{"metric": "a3_rate", "text": "{v}% of FGA", "zeroText": "no 3PA"}] },
+        { "id": "ft", "metric": "ft_pct", "label": "FT%", "x": 19, "y": 0, "w": 5, "h": 3, "tier": "lg" },
+        { "id": "zone_rim", "kind": "zone", "zone": "rim", "metric": "zs_rim_pct", "made": "zs_rim_made", "att": "zs_rim_att", "share": "zs_rim_share", "per100": "zs_rim_a100", "label": "At the rim", "x": 0, "y": 3, "w": 4, "h": 3 },
+        { "id": "zone_paint", "kind": "zone", "zone": "paint", "metric": "zs_paint_pct", "made": "zs_paint_made", "att": "zs_paint_att", "share": "zs_paint_share", "per100": "zs_paint_a100", "label": "Rest of paint", "x": 4, "y": 3, "w": 4, "h": 3 },
+        { "id": "zone_mid", "kind": "zone", "zone": "mid", "metric": "zs_mid_pct", "made": "zs_mid_made", "att": "zs_mid_att", "share": "zs_mid_share", "per100": "zs_mid_a100", "label": "Mid-range", "x": 8, "y": 3, "w": 4, "h": 3 },
+        { "id": "zone_base", "kind": "zone", "zone": "base", "metric": "zs_base_pct", "made": "zs_base_made", "att": "zs_base_att", "share": "zs_base_share", "per100": "zs_base_a100", "label": "Baseline", "x": 12, "y": 3, "w": 4, "h": 3 },
+        { "id": "zone_arc", "kind": "zone", "zone": "arc", "metric": "zs_arc_pct", "made": "zs_arc_made", "att": "zs_arc_att", "share": "zs_arc_share", "per100": "zs_arc_a100", "label": "Arc 3", "x": 16, "y": 3, "w": 4, "h": 3 },
+        { "id": "zone_corner", "kind": "zone", "zone": "corner", "metric": "zs_corner_pct", "made": "zs_corner_made", "att": "zs_corner_att", "share": "zs_corner_share", "per100": "zs_corner_a100", "label": "Corner 3", "x": 20, "y": 3, "w": 4, "h": 3 }
       ],
-      "lines": [
-        { "o": "h", "x": 0, "y": 4, "n": 24 }
-      ]
+      "lines": []
     },
     "team.shooting": {
       "rows": 6,
       "boxes": [
-        { "id": "o_efg", "metric": "o_efg", "label": "Opp eFG%", "x": 0, "y": 0, "w": 8, "h": 4 },
-        { "id": "o_fg2", "metric": "o_fg2_pct", "label": "Opp 2FG%", "x": 8, "y": 0, "w": 8, "h": 4 },
-        { "id": "o_fg3", "metric": "o_fg3_pct", "label": "Opp 3FG%", "x": 16, "y": 0, "w": 8, "h": 4 },
-        { "id": "zone_rim", "kind": "zone", "zone": "rim", "metric": "o_zs_rim_pct", "label": "At the rim", "x": 0, "y": 4, "w": 4, "h": 2 },
-        { "id": "zone_paint", "kind": "zone", "zone": "paint", "metric": "o_zs_paint_pct", "label": "Rest of paint", "x": 4, "y": 4, "w": 4, "h": 2 },
-        { "id": "zone_mid", "kind": "zone", "zone": "mid", "metric": "o_zs_mid_pct", "label": "Mid-range", "x": 8, "y": 4, "w": 4, "h": 2 },
-        { "id": "zone_base", "kind": "zone", "zone": "base", "metric": "o_zs_base_pct", "label": "Baseline", "x": 12, "y": 4, "w": 4, "h": 2 },
-        { "id": "zone_arc", "kind": "zone", "zone": "arc", "metric": "o_zs_arc_pct", "label": "Arc 3", "x": 16, "y": 4, "w": 4, "h": 2 },
-        { "id": "zone_corner", "kind": "zone", "zone": "corner", "metric": "o_zs_corner_pct", "label": "Corner 3", "x": 20, "y": 4, "w": 4, "h": 2 }
+        { "id": "o_efg", "metric": "o_efg", "label": "Opp eFG%", "x": 0, "y": 0, "w": 8, "h": 3, "tier": "lg" },
+        { "id": "o_fg2", "metric": "o_fg2_pct", "label": "Opp 2FG%", "x": 8, "y": 0, "w": 8, "h": 3, "tier": "lg" },
+        { "id": "o_fg3", "metric": "o_fg3_pct", "label": "Opp 3FG%", "x": 16, "y": 0, "w": 8, "h": 3, "tier": "lg" },
+        { "id": "zone_rim", "kind": "zone", "zone": "rim", "metric": "o_zs_rim_pct", "label": "At the rim", "x": 0, "y": 3, "w": 4, "h": 3 },
+        { "id": "zone_paint", "kind": "zone", "zone": "paint", "metric": "o_zs_paint_pct", "label": "Rest of paint", "x": 4, "y": 3, "w": 4, "h": 3 },
+        { "id": "zone_mid", "kind": "zone", "zone": "mid", "metric": "o_zs_mid_pct", "label": "Mid-range", "x": 8, "y": 3, "w": 4, "h": 3 },
+        { "id": "zone_base", "kind": "zone", "zone": "base", "metric": "o_zs_base_pct", "label": "Baseline", "x": 12, "y": 3, "w": 4, "h": 3 },
+        { "id": "zone_arc", "kind": "zone", "zone": "arc", "metric": "o_zs_arc_pct", "label": "Arc 3", "x": 16, "y": 3, "w": 4, "h": 3 },
+        { "id": "zone_corner", "kind": "zone", "zone": "corner", "metric": "o_zs_corner_pct", "label": "Corner 3", "x": 20, "y": 3, "w": 4, "h": 3 }
       ],
-      "lines": [
-        { "o": "h", "x": 0, "y": 4, "n": 24 }
-      ]
+      "lines": []
     }
   }
 }

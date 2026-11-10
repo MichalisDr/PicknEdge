@@ -3,7 +3,7 @@
    (the registry's own definitions), league percentiles and spreads are statistics of those per-game values. */
 (function (g) {
   'use strict';
-  const SHOW_LAYOUT_LINES = true;   // the 1px divider lines of layout.json on the desktop grid; false hides them
+  const SHOW_LAYOUT_LINES = false;   // the 1px divider lines of layout.json on the desktop grid; false hides them
   const D = g.PicknEdgeData, W = g.PicknEdgeWindows, esc = W.esc;
   const T = () => g.FantasyTables;
 
@@ -81,7 +81,7 @@
   /* ---------- card parts ---------- */
   /* ---------- card metric grids: drawn from site/layout.json (24 columns) ----------
      Which metrics, where, how big and which secondary lines is all in the layout file; this code only turns a box into the old tile
-     markup (classes fw-metric fw-m-lg / fw-m-sm, same CSS as before). Tile tier by box area w*h: >= 36 large, 13..35 small, <= 12 strip. */
+     markup (classes fw-metric fw-m-lg / fw-m-sm, same CSS as before). Tile tier: the box's optional 'tier' field (lg / sm / strip), else by box area w*h: >= 36 large, 13..35 small, <= 12 strip. */
   let layoutPromise = null;
   const layoutFile = () => layoutPromise || (layoutPromise = fetch('layout.json').then(r => { if (!r.ok) throw new Error('layout.json ' + r.status); return r.json(); }));
   const ZONE_TINT = true;            // one-line switch: green/red tint of the player zone boxes by FG% versus the league zone average
@@ -92,7 +92,7 @@
     const m = byId[b.metric], c = view.get(cs.id, b.metric), label = b.label || m.label, area = `grid-area:${b.y + 1}/${b.x + 1}/span ${b.h}/span ${b.w}`, size = b.w * b.h;
     const r = players ? null : T().rankOf(view, b.metric, c.value, m.direction);
     const tint = r ? `color:${r.color}` : '';
-    const rank = r ? `<b class="fw-rank" style="color:${r.color}">${r.position}#</b>` : '';
+    const rank = r ? `<b class="fw-rank">#${r.position}</b>` : '';
     const val = id => view.get(cs.id, id);
     const subs = (b.sub || []).map(sb => {
       const sm = byId[sb.metric], sc = val(sb.metric);
@@ -116,8 +116,9 @@
     }
     if (b.kind === 'zone') return `${open('fw-m-sm lx-zone', '', m.description)}<span>${esc(label)}</span><strong style="${tint}">${fmt(c, m)}</strong>${rank}</button>`;
     const value = `<strong style="${tint}">${fmt(c, m)}${Number.isFinite(c.value) ? unitHtml(b.unit) : ''}</strong>`;
-    if (size <= 12) return `${open('fw-m-sm lx-strip', '', m.description + subTitle)}<span>${esc(label)}</span><lx-r>${rank}${value}${subs}</lx-r></button>`;
-    return `${open(size >= 36 ? 'fw-m-lg' : 'fw-m-sm', '', m.description + subTitle)}<lx-t><span>${esc(label)}</span>${rank}${subs}</lx-t>${value}</button>`;
+    const tier = b.tier || (size >= 36 ? 'lg' : size <= 12 ? 'strip' : 'sm');
+    if (tier === 'strip') return `${open('fw-m-sm lx-strip', '', m.description + subTitle)}<span>${esc(label)}</span><lx-r>${rank}${value}${subs}</lx-r></button>`;
+    return `${open(tier === 'lg' ? 'fw-m-lg' : 'fw-m-sm', '', m.description + subTitle)}<lx-t><span>${esc(label)}</span>${rank}${subs}</lx-t>${value}</button>`;
   }
   /* CSS length of grid line k (of `count` cells) on one axis: the middle of the gap between cell k-1 and k */
   const linePos = (k, count) => k <= 0 ? '0px' : k >= count ? '100%' : `(${k} * (100% - ${count - 1} * var(--gap)) / ${count} + ${k - 0.5} * var(--gap))`;
