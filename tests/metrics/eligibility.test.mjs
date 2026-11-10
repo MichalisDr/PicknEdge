@@ -41,3 +41,57 @@ test('views contain every player who played and no eligibility flag', () => {
   const differs = Object.keys(views.l3.players.rows).filter(p => views.l5.players.rows[p] && eligible(rule, 'l3', stat('l3', p)) !== eligible(rule, 'l5', stat('l5', p)));
   assert.ok(differs.length > 0, 'expected at least one player whose eligibility differs between L3 and L5');
 });
+
+// ---- availability gate: played at least 1 of the team's last 3 games (the gp of the L3 view), evaluated once for every window ----
+const { available, listed } = createRequire(import.meta.url)('../../site/eligibility.js');
+const csv = f => parseCsv(readFileSync(new URL('../../data/clean/' + f, import.meta.url), 'utf8'));
+const clean = { players: csv('player_games.csv'), teams: csv('team_games.csv'), dim: csv('players.csv') };
+const ids = METRICS.filter(m => m.scope === 'player' && !m.internal).map(m => m.id);
+const stat = (views, w, p) => { const v = views[w].players.rows[p].v, x = id => { const c = v[ids.indexOf(id)]; return Array.isArray(c) ? c[0] : c; }; return { gp: x('gp'), min: x('min'), pir: x('pir') }; };
+const shown = (views, w, p, showAll = false) => listed(rule, w, stat(views, w, p), stat(views, 'l3', p).gp, showAll);
+const idOf = (name, team) => { const r = clean.dim.find(d => d.player.startsWith(name) && d.team === team); assert.ok(r, name); return r.player_id; };
+
+test('the gate is one global setting copied from data/manual/eligibility.json', () => {
+  assert.deepEqual(rule.availability, { window: 'l3', minGp: 1 });
+  assert.equal(available(rule, 0), false); assert.equal(available(rule, 1), true); assert.equal(available(rule, null), false);
+  assert.equal(available({ windows: {} }, 0), true, 'no availability setting = no gate');
+});
+
+test('Mike James (IST) and Jean Montero (OLY) are hidden in every window by default and shown with the checkbox on', () => {
+  const views = buildViews(clean);
+  for (const p of [idOf('JAMES, MIKE', 'IST'), idOf('MONTERO, JEAN', 'OLY')]) {
+    for (const w of ['season', 'l10', 'l5', 'l3']) {
+      assert.equal(shown(views, w, p), false, `${p} hidden in ${w}`);
+      assert.equal(shown(views, w, p, true), true, `${p} listed in ${w} with the checkbox`);
+    }
+    assert.ok(stat(views, 'season', p).gp >= 3, 'he passes the old Season rule by his early games');
+  }
+});
+
+test('the gate only removes players: everyone it lists also passes the thresholds, and all players stay in the views', () => {
+  const views = buildViews(clean), all = Object.keys(views.l3.players.rows);
+  for (const w of ['season', 'l10', 'l5', 'l3']) {
+    const byThresholds = all.filter(p => listed({ ...rule, availability: undefined }, w, stat(views, w, p), 0));
+    const byGate = all.filter(p => shown(views, w, p));
+    assert.ok(byGate.every(p => byThresholds.includes(p)), w);
+    if (w === 'season' || w === 'l10') assert.ok(byGate.length < byThresholds.length, `${w}: the gate hides someone`);   // L5 and L3 thresholds already need recent games
+    assert.ok(all.length >= 292);
+  }
+});
+
+test('a player returning after an absence is listed again once he appears in the L3 view (no stored flag)', () => {
+  const james = idOf('JAMES, MIKE', 'IST'), last = clean.teams.filter(t => t.team === 'IST').sort((a, b) => b.date_utc.localeCompare(a.date_utc))[0];
+  const before = buildViews(clean);
+  assert.equal(shown(before, 'season', james), false);
+  // IST plays one more game and James plays in it
+  const game = 99999, date = '2026-12-01T18:00:00.000Z';
+  const teams = [...clean.teams, ...clean.teams.filter(t => t.game === last.game).map(t => ({ ...t, game, date_utc: date, round: last.round + 1 }))];
+  const jamesRow = clean.players.filter(r => r.player_id === james && r.played).at(-1);
+  const players = [...clean.players, { ...jamesRow, game, date_utc: date, round: last.round + 1 }];
+  const after = buildViews({ ...clean, teams, players });
+  assert.equal(stat(after, 'l3', james).gp, 1);
+  assert.equal(available(rule, stat(after, 'l3', james).gp), true);
+  for (const w of ['season', 'l10', 'l5', 'l3']) assert.equal(shown(after, w, james), listed({ ...rule, availability: undefined }, w, stat(after, w, james), 0), w);   // now only the window thresholds decide
+  assert.equal(shown(after, 'season', james), true);
+  assert.equal(listed(rule, 'season', stat(after, 'season', james), stat(after, 'l3', james).gp, false), true);
+});

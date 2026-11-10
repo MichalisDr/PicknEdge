@@ -11,7 +11,11 @@
  ],
  "version": "b5d8b6065c",
  "eligibility": {
-  "note": "Display-only rule used by the site to decide which players to list. Nothing is stored: the site evaluates it at display time on the selected window's gp, min and pir. A player is eligible in a window when ALL of that window's thresholds are met. l3 and l5 follow the old Fantasy filter (GP3 >= 1, MIN3 >= 10, GP5 >= 3, PIR >= 5); season and l10 are placeholders to confirm.",
+  "note": "Display-only rule used by the site to decide which players to list. Nothing is stored: the site evaluates it at display time. 1) Availability gate, evaluated once per player for every window: he must have played at least availability.minGp of his team's last games, read from the gp of the availability.window view (l3). 2) Then the selected window's thresholds: gp, average minutes and PIR per game must all be met. The 'Show players below the thresholds' checkbox lists everyone, including players hidden by the gate. l3 and l5 follow the old Fantasy filter (GP3 >= 1, MIN3 >= 10, GP5 >= 3, PIR >= 5); season and l10 are placeholders to confirm.",
+  "availability": {
+   "window": "l3",
+   "minGp": 1
+  },
   "windows": {
    "l3": {
     "minGp": 1,
