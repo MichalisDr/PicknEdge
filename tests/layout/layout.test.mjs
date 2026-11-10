@@ -63,3 +63,15 @@ test('the six zone boxes use the six sub-areas of zones.mjs, in the same order, 
     assert.deepEqual(zones.map(b => b.x), [0, 4, 8, 12, 16, 20], n);
   }
 });
+
+test('the stacked (narrow) order covers every box of every layout exactly once, in (y, x) order', async () => {
+  const { stackOrder, dividers } = await import('../../site/layout-order.js');
+  for (const name of NAMES) {
+    const L = layout.layouts[name], order = stackOrder(L);
+    assert.equal(order.length, L.boxes.length, name);
+    assert.deepEqual([...order.map(b => b.id)].sort(), L.boxes.map(b => b.id).sort(), `${name}: each box exactly once`);
+    for (let i = 1; i < order.length; i++) assert.ok(order[i].y > order[i - 1].y || (order[i].y === order[i - 1].y && order[i].x > order[i - 1].x), `${name}: order is (y, x)`);
+    const rules = dividers(L), first = order[0].id;
+    assert.ok([...rules].every(id => id !== first && L.boxes.some(b => b.id === id)), `${name}: dividers are on known boxes, never above the first row`);
+  }
+});

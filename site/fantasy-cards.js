@@ -114,15 +114,16 @@
     if (b.kind === 'zone') return `<button class="lx-box lx-zone" style="${area}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(m.description)}"><span class="lx-l">${esc(label)}</span><strong class="lx-v" style="${tint}">${fmt(c, m)}</strong>${rank}</button>`;
     const value = `<strong class="lx-v" style="${tint}">${fmt(c, m)}${Number.isFinite(c.value) ? unitHtml(b.unit) : ''}</strong>`;
     if (b.kind === 'strip') return `<button class="lx-box lx-strip" style="${area}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(m.description + subTitle)}"><span class="lx-l">${esc(label)}</span><span class="lx-r">${rank}${value}${subs}</span></button>`;
-    return `<button class="lx-box" style="${area}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(m.description + subTitle)}"><span class="lx-l">${esc(label)}${rank}</span>${value}${subs}</button>`;
+    return `<button class="lx-box" style="${area}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(m.description + subTitle)}"><span class="lx-t"><span class="lx-l">${esc(label)}${rank}</span>${subs}</span>${value}</button>`;
   }
   async function layoutGrid(name, view, byId, sel, players) {
     const L = (await layoutFile()).layouts[name];
     if (!L) throw new Error('no layout ' + name);
+    const order = g.PicknEdgeLayout.stackOrder(L), rules = g.PicknEdgeLayout.dividers(L);   // DOM order = stacked order (y, x); desktop placement is by grid-area
     const lines = L.lines.map(l => l.o === 'h'
       ? `<i class="lx-line" style="left:${l.x / 24 * 100}%;top:${l.y / L.rows * 100}%;width:${l.n / 24 * 100}%;height:1px"></i>`
       : `<i class="lx-line" style="left:${l.x / 24 * 100}%;top:${l.y / L.rows * 100}%;height:${l.n / L.rows * 100}%;width:1px"></i>`).join('');
-    return `<div class="lx" data-layout="${name}"><div class="lx-grid" style="--rows:${L.rows}">${L.boxes.map(b => boxHtml(b, view, byId, sel, players)).join('')}${lines}</div></div>`;
+    return `<div class="lx" data-layout="${name}"><div class="lx-grid" style="--rows:${L.rows}">${order.map(b => boxHtml(b, view, byId, sel, players).replace('<button ', `<button data-big="${b.w * b.h >= 36 ? 1 : 0}"${rules.has(b.id) ? ' data-div="1"' : ''} `)).join('')}${lines}</div></div>`;
   }
   /* Radar geometry shared by the player and team radars. axes = [[label, value, otherValue?]], frac maps a value to 0..1 of the radius. */
   function radarSvg(axes, frac, rings, labelOf) {

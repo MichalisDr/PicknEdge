@@ -20,3 +20,28 @@
 .lx-few .lx-v{font-weight:500}
 .fw-visual .pc-shooting{margin-top:0}
 .lx-l .fw-rank{display:inline}
+/* label and secondary lines sit in .lx-t; on the desktop grid it is transparent and ordering puts the value between them, as before */
+.lx-t{display:contents}.lx-box:not(.lx-zone):not(.lx-strip)>.lx-v{order:1}.lx-t small{order:2}
+/* Narrow containers (< 650px): the 24-column grid becomes a stacked list in layout order (y, x). Rows are full width: label and secondary text
+   left, value right. Large layout boxes (w*h >= 36, data-big) get a taller row and a bigger value. The six zone boxes stay together as 3 x 2. */
+@container (max-width: 650px) {
+  .lx-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none;aspect-ratio:auto;gap:0}
+  .lx-line{display:none}
+  .lx-box{grid-area:auto!important;grid-column:1/-1!important;margin:0;padding:9px 6px;border-radius:0;min-height:44px;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:center;justify-content:normal}
+  .lx-box[data-div]{border-top:1px solid #34445a}
+  .lx-box[data-big="1"]{min-height:76px;padding:12px 6px}
+  .lx-t{display:flex;flex-direction:column;gap:2px;grid-column:1;min-width:0}
+  .lx-box:not(.lx-zone):not(.lx-strip)>.lx-v{grid-column:2;order:0;font-size:20px}
+  .lx-box[data-big="1"]:not(.lx-zone):not(.lx-strip)>.lx-v{font-size:32px}
+  .lx-t small{order:0}
+  .lx-box .lx-l{font-size:12px}
+  .lx-box small{font-size:11px}
+  .lx-box .fw-rank{font-size:11px}
+  .lx-strip{display:flex;justify-content:space-between;align-items:center;min-height:40px}
+  .lx-strip .lx-r{gap:8px}
+  .lx-strip .lx-v{font-size:17px}
+  .lx-box.lx-zone{grid-column:auto!important;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-height:64px;padding:8px 8px;margin:1px;border-radius:6px}
+  .lx-zone .lx-v{font-size:18px;grid-column:auto;grid-row:auto}
+  .lx-box.lx-zone .lx-l{font-size:11px}
+  .lx-box.lx-zone[data-div]{border-top:0}
+}
