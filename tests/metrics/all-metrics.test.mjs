@@ -13,6 +13,7 @@ const approx = (a, b, tol = 1e-9) => assert.ok(Math.abs(a - b) <= tol, `${a} != 
 const PLAYER = {
   gs: 1, oreb_g: 1, dreb_g: 4, m3_g: 2, a3_g: 5, a1_g: 4, m3_100: 2 / 50 * 100, a3_100: 5 / 50 * 100, a1_100: 4 / 50 * 100, pf100: 3 / 48 * 100,
   ast_pct: 3 / (15 - (5 + 2)) * 100, blk_pct: 1 / 30 * 100, a3_rate: 5 / 14 * 100,
+  fga100: 14 / 50 * 100, a2_rate: 9 / 14 * 100,
   gp: 1, min: 30, pts_g: 19, reb_g: 5, ast_g: 3, stl_g: 2, blk_g: 1, tov_g: 2, fd_g: 5, pf_g: 3,
   pts100: 19 / 50 * 100, ast100: 3 / 50 * 100, tov100: 2 / 50 * 100, oreb100: 1 / 50 * 100, fd100: 5 / 50 * 100,
   stl100: 2 / 48 * 100, blk100: 1 / 48 * 100, dreb100: 4 / 48 * 100, reb100: 5 * 200 / (50 + 48),

@@ -35,6 +35,7 @@ export const DERIVED = {
 import { ZONES, SUBS, MAINS, zonesOfSub, zonesOfMain } from './zones.mjs';
 
 // Zone sums (sub-areas and areas) for own figures and the opponent's (o_ prefix); zones themselves are build-time columns z_<zone>_a / _m.
+DERIVED.zall_a = ZONES.map(z => [1, 'z_' + z.key + '_a']);   // every classified attempt of a player: the whole of the zone shares
 for (const p of ['', 'o_']) for (const q of ['a', 'm']) {
   for (const sub of SUBS) DERIVED[`${p}zs_${sub.key}_${q}`] = zonesOfSub(sub.key).map(z => [1, `${p}z_${z}_${q}`]);
   for (const main of MAINS) DERIVED[`${p}zm_${main.key}_${q}`] = zonesOfMain(main.key).map(z => [1, `${p}z_${z}_${q}`]);
@@ -182,7 +183,17 @@ const zoneEntries = (scope, p, idp, labelp, tags) => [
   ...SUBS.map(z => e(`${idp}zs_${z.key}_pct`, `${labelp}${z.name} FG%`, scope, 'pct', S(`${p}zs_${z.key}_m`), S(`${p}zs_${z.key}_a`), tags, 1, `Field-goal percentage in the sub-area "${z.name}" (sum of its zones).`)),
   ...MAINS.map(z => e(`${idp}zm_${z.key}_pct`, `${labelp}${z.name} FG%`, scope, 'pct', S(`${p}zm_${z.key}_m`), S(`${p}zm_${z.key}_a`), tags, 1, `Field-goal percentage in the area "${z.name}" (sum of its zones).`)),
 ];
-METRICS.push(...zoneEntries(P, '', '', '', FB), ...zoneEntries(T, '', 't_', '', B), ...zoneEntries(T, 'o_', 'o_', 'Opp ', FB));
+METRICS.push(
+  e('fga100', 'FGA / 100 poss', P, 'per100', S('fga'), S('poss_off_on'), F, 1, 'Field-goal attempts per 100 team offensive possessions while on court.'),
+  e('a2_rate', '2PA / FGA', P, 'pct', S('a2'), S('fga'), F, 1, 'Share of field-goal attempts that are two-pointers.'),
+  // Player sub-area detail for the Shooting card (the six sub-areas of zones.mjs): makes, attempts, share of the player's classified shots, attempts per 100 team offensive possessions.
+  ...SUBS.flatMap(z => [
+    e('zs_' + z.key + '_made', z.name + ' makes', P, 'count', S('zs_' + z.key + '_m'), null, F, 0, 'Field goals made in the sub-area "' + z.name + '".'),
+    e('zs_' + z.key + '_att', z.name + ' attempts', P, 'count', S('zs_' + z.key + '_a'), null, F, 0, 'Field-goal attempts in the sub-area "' + z.name + '".'),
+    e('zs_' + z.key + '_share', z.name + ' share of FGA', P, 'pct', S('zs_' + z.key + '_a'), S('zall_a'), F, 1, 'Share of the classified field-goal attempts taken in "' + z.name + '".'),
+    e('zs_' + z.key + '_a100', z.name + ' FGA / 100 poss', P, 'per100', S('zs_' + z.key + '_a'), S('poss_off_on'), F, 1, 'Field-goal attempts in "' + z.name + '" per 100 team offensive possessions while on court.'),
+  ]),
+  ...zoneEntries(P, '', '', '', FB), ...zoneEntries(T, '', 't_', '', B), ...zoneEntries(T, 'o_', 'o_', 'Opp ', FB));
 
 /* Generic share of a whole: the site passes counts ({ n, of }) for splits that are not columns of the clean tables
    (shot-chart zone shares, assisted / unassisted splits), so even these ratios are defined here. */
@@ -242,8 +253,8 @@ METRICS.push({
 /* ---------- direction: which way is better FOR THE ENTITY (+1 higher, -1 lower, 0 style / volume, no judgement) ----------
    Opponent figures (o_*) are better when low, except opponent turnovers (a defence wants them high). The Fantasy lens
    (green = good for the opposing player) is the UI's inversion of this. */
-const NEUTRAL = new Set(['gp', 'gs', 'min', 'usg', 'ftr', 'load', 'bc', 'a3_rate', 'a3_g', 'a1_g', 'a3_100', 'a1_100', 'pace', 't_a3_rate']);
+const NEUTRAL = new Set(['fga100', 'a2_rate', 'gp', 'gs', 'min', 'usg', 'ftr', 'load', 'bc', 'a3_rate', 'a3_g', 'a1_g', 'a3_100', 'a1_100', 'pace', 't_a3_rate']);
 const LOWER = new Set(['pf_g', 'pf100', 'tov_g', 'tov100', 'tov_pct', 'ctov', 'drtg', 't_tov100']);
 for (const m of METRICS) {
-  m.direction = NEUTRAL.has(m.id) ? 0 : LOWER.has(m.id) || (m.scope === 'team' && m.id.startsWith('o_') && m.id !== 'o_tov100') ? -1 : 1;
+  m.direction = NEUTRAL.has(m.id) || /^zs_[a-z0-9]+_(made|att|share|a100)$/.test(m.id) ? 0 : LOWER.has(m.id) || (m.scope === 'team' && m.id.startsWith('o_') && m.id !== 'o_tov100') ? -1 : 1;
 }
