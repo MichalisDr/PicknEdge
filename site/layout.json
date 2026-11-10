@@ -24,18 +24,21 @@
       "lines": [{"o": "v", "x": 6, "y": 0, "n": 10}, {"o": "h", "x": 6, "y": 4, "n": 11}, {"o": "v", "x": 17, "y": 4, "n": 6}]
     },
     "team.profile": {
-      "rows": 3,
-      "rowPx": [120, 80, 52],
+      "rows": 5,
+      "rowPx": 50,
       "boxes": [
-        { "id": "pace", "metric": "pace", "label": "Pace", "x": 0, "y": 0, "w": 8, "h": 1, "tier": "lg" },
-        { "id": "drtg", "metric": "drtg", "label": "DRtg", "x": 8, "y": 0, "w": 8, "h": 1, "tier": "lg" },
-        { "id": "o_ftr", "metric": "o_ftr", "label": "Opp FTr", "x": 16, "y": 0, "w": 8, "h": 1, "tier": "lg" },
-        { "id": "o_tov100", "metric": "o_tov100", "label": "Opp TOV", "unit": "/100", "x": 0, "y": 1, "w": 8, "h": 1, "tier": "sm" },
-        { "id": "o_ast100", "metric": "o_ast100", "label": "Opp AST", "unit": "/100", "x": 8, "y": 1, "w": 8, "h": 1, "tier": "sm" },
-        { "id": "t_dreb_pct", "metric": "t_dreb_pct", "label": "DREB%", "x": 16, "y": 1, "w": 8, "h": 1, "tier": "sm" },
-        { "id": "o_pot100", "metric": "o_pot100", "kind": "group", "label": "Opp points", "items": [{"metric": "o_pot100", "label": "Opp PTS off TO", "unit": "/100"}, {"metric": "o_fb100", "label": "Opp fast break", "unit": "/100"}, {"metric": "o_sc100", "label": "Opp 2nd chance", "unit": "/100"}], "x": 0, "y": 2, "w": 24, "h": 1, "tier": "strip" }
+        { "id": "pace", "metric": "pace", "label": "Pace", "x": 0, "y": 0, "w": 6, "h": 2, "tier": "sm" },
+        { "id": "drtg", "metric": "drtg", "label": "DRtg", "x": 6, "y": 0, "w": 12, "h": 2, "tier": "sm" },
+        { "id": "o_ftr", "metric": "o_ftr", "label": "Opp FTr", "x": 18, "y": 0, "w": 6, "h": 2, "tier": "sm" },
+        { "id": "o_efg", "metric": "o_efg", "label": "Opp eFG%", "x": 0, "y": 2, "w": 6, "h": 3 },
+        { "id": "t_dreb_pct", "metric": "t_dreb_pct", "label": "DREB%", "x": 6, "y": 2, "w": 6, "h": 2 },
+        { "id": "o_sc100", "metric": "o_sc100", "label": "Opp 2nd chance", "unit": "/100", "x": 6, "y": 4, "w": 6, "h": 1 },
+        { "id": "o_tov100", "metric": "o_tov100", "label": "Opp TOV", "unit": "/100", "x": 12, "y": 2, "w": 6, "h": 3 },
+        { "id": "o_ast100", "metric": "o_ast100", "label": "Opp AST", "unit": "/100", "x": 18, "y": 2, "w": 6, "h": 1 },
+        { "id": "o_pot100", "metric": "o_pot100", "label": "Opp PTS off TO", "unit": "/100", "x": 18, "y": 3, "w": 6, "h": 1 },
+        { "id": "o_fb100", "metric": "o_fb100", "label": "Opp fast break", "unit": "/100", "x": 18, "y": 4, "w": 6, "h": 1 }
       ],
-      "lines": [{"o": "h", "x": 0, "y": 1, "n": 24}, {"o": "h", "x": 0, "y": 2, "n": 24}]
+      "lines": []
     },
     "player.shooting": {
       "rows": 4,

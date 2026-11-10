@@ -30,6 +30,8 @@ lx-r{display:flex;align-items:baseline;gap:8px}
 .lx-grid .fw-metric i.lx-sl{display:block;font-style:normal;font-size:11px;color:#94a3b8}
 .lx-grid .fw-metric.lx-group{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;padding:6px 14px;cursor:default}
 .lx-gt{font-size:11px;color:#94a3b8;white-space:nowrap}
+.lx-grid .fw-metric.lx-gv{flex-direction:column;align-items:stretch;justify-content:center;gap:6px;padding:8px 12px}
+.lx-gv .lx-gi{flex:0 0 auto;padding:0}
 .lx-gi{display:flex;flex:1;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;padding:0 6px}
 .lx-gi>span{font-size:11px;color:#acbace}
 .lx-gi strong{font-size:19px;margin:0}
@@ -57,3 +59,5 @@ lx-r{display:flex;align-items:baseline;gap:8px}
   .fw-boxscores table{min-width:620px}
   .fw-boxscores th:first-child,.fw-boxscores td:first-child{position:sticky;left:0;z-index:1;background:#101925;box-shadow:1px 0 0 #2b394b}
 }
+.lx-grid .fw-metric.lx-gv .lx-gi{display:flex;flex-direction:row;justify-content:space-between;align-items:baseline;gap:8px}
+.lx-grid .fw-metric.lx-gv .lx-gt{margin-bottom:2px}
