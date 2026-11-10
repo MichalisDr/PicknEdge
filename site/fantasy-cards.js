@@ -135,8 +135,9 @@
     return out;
   }
   async function layoutGrid(name, view, byId, sel, players) {
-    const L = (await layoutFile()).layouts[name];
+    const F = await layoutFile(), L = F.layouts[name];
     if (!L) throw new Error('no layout ' + name);
+    const px = L.rowPx ?? F.rowPx ?? 24, rowsT = Array.from({ length: L.rows }, (_, i) => (Array.isArray(px) ? px[i] ?? px.at(-1) : px) + 'px').join(' ');   // row heights: one number, or one per row
     const edges = groupEdges(L), order = g.PicknEdgeLayout.stackOrder(L);   // DOM order = stacked order; desktop placement is by grid-area
     const lines = !SHOW_LAYOUT_LINES ? '' : L.lines.map(l => {
       const a = l.o === 'h' ? [l.x, l.x + l.n, 24, l.y, L.rows] : [l.y, l.y + l.n, L.rows, l.x, 24];
@@ -144,7 +145,7 @@
         ? `<i class="lx-line" style="left:calc${linePos(a[0], a[2])};right:calc(100% - ${linePos(a[1], a[2])});top:calc${linePos(a[3], a[4])};height:1px"></i>`
         : `<i class="lx-line" style="top:calc${linePos(a[0], a[2])};bottom:calc(100% - ${linePos(a[1], a[2])});left:calc${linePos(a[3], a[4])};width:1px"></i>`;
     }).join('');
-    return `<div class="lx" data-layout="${name}"><div class="lx-grid fw-pgrid" style="--rows:${L.rows};--rowh:${(await layoutFile()).rowPx || 24}px">${order.map(b => boxHtml(b, view, byId, sel, players, edges[b.id] || '')).join('')}${lines}</div></div>`;
+    return `<div class="lx" data-layout="${name}"><div class="lx-grid fw-pgrid" style="--rows:${L.rows};--gap:${F.gap ?? 8}px;--rowsT:${rowsT}">${order.map(b => boxHtml(b, view, byId, sel, players, edges[b.id] || '')).join('')}${lines}</div></div>`;
   }
   /* Radar geometry shared by the player and team radars. axes = [[label, value, otherValue?]], frac maps a value to 0..1 of the radius. */
   function radarSvg(axes, frac, rings, labelOf) {

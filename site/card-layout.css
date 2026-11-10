@@ -2,7 +2,7 @@
    background, border, radius, padding, fonts, colours). This file only places them on the 24-column grid, adds the strip variant and the
    divider lines, and re-flows the grid as a list on narrow containers. */
 .lx{container:lx/inline-size;width:100%}
-.lx-grid{--gap:8px;position:relative;display:grid;grid-template-columns:repeat(24,minmax(0,1fr));grid-template-rows:repeat(var(--rows),var(--rowh,24px));gap:var(--gap);width:100%}
+.lx-grid{position:relative;display:grid;grid-template-columns:repeat(24,minmax(0,1fr));grid-template-rows:var(--rowsT);gap:var(--gap);width:100%}
 .lx-grid .fw-metric{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-height:0}
 /* label and secondary lines sit in <lx-t>, transparent on the grid; ordering keeps the old sequence label, value, rank, secondary text */
 lx-t{display:contents}
