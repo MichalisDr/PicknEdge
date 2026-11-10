@@ -104,6 +104,13 @@
     }).join('');
     const subTitle = (b.sub || []).filter(sb => sb.label).map(sb => ' · ' + sb.label + ': ' + byId[sb.metric].description).join('');
     const open = (cls, style, title) => `<button class="fw-metric ${cls}${edge}" style="${area}${style ? ';' + style : ''}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(title)}">`;
+    if (b.kind === 'group') {   // several related metrics in one wide tile; each item keeps its own value and rank
+      const items = b.items.map(it => {
+        const im = byId[it.metric], ic = val(it.metric), ir = players ? null : T().rankOf(view, it.metric, ic.value, im.direction);
+        return `<span class="lx-gi" data-metric="${it.metric}" role="button" tabindex="0" title="${esc(im.description)}"><span>${esc(it.label)}</span><lx-r>${ir ? `<b class="fw-rank">#${ir.position}</b>` : ''}<strong style="${ir ? 'color:' + ir.color : ''}">${fmt(ic, im)}${Number.isFinite(ic.value) ? unitHtml(it.unit) : ''}</strong></lx-r></span>`;
+      }).join('');
+      return `<div class="fw-metric lx-group${edge}" style="${area}"><span class="lx-gt">${esc(label)}</span>${items}</div>`;
+    }
     if (b.kind === 'zone' && players) {
       const made = val(b.made).value, att = val(b.att).value, share = val(b.share).value, p100 = val(b.per100).value;
       const few = !(p100 >= ZONE_FEW), lg = view.league(b.metric)?.value;
