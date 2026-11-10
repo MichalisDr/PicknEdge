@@ -36,16 +36,16 @@
         { "id": "drtg", "metric": "drtg", "label": "DRtg", "x": 6, "y": 0, "w": 6, "h": 6, "tier": "lg" },
         { "id": "o_efg", "metric": "o_efg", "label": "Opp eFG%", "x": 12, "y": 0, "w": 6, "h": 6, "tier": "lg" },
         { "id": "o_ftr", "metric": "o_ftr", "label": "Opp FTr", "x": 18, "y": 0, "w": 6, "h": 6, "tier": "lg" },
-        { "id": "o_tov100", "metric": "o_tov100", "label": "Opp TOV", "unit": "/100", "x": 0, "y": 6, "w": 5, "h": 6, "tier": "lg" },
-        { "id": "o_ast100", "metric": "o_ast100", "label": "Opp AST", "unit": "/100", "x": 5, "y": 6, "w": 5, "h": 6, "tier": "lg" },
-        { "id": "t_dreb_pct", "metric": "t_dreb_pct", "label": "DREB%", "x": 10, "y": 6, "w": 5, "h": 6, "tier": "lg" },
-        { "id": "o_pot100", "metric": "o_pot100", "label": "Opp PTS off TO", "unit": "/100", "x": 15, "y": 6, "w": 9, "h": 2, "tier": "strip" },
-        { "id": "o_fb100", "metric": "o_fb100", "label": "Opp fast break", "unit": "/100", "x": 15, "y": 8, "w": 9, "h": 2, "tier": "strip" },
-        { "id": "o_sc100", "metric": "o_sc100", "label": "Opp 2nd chance", "unit": "/100", "x": 15, "y": 10, "w": 9, "h": 2, "tier": "strip" }
+        { "id": "o_tov100", "metric": "o_tov100", "label": "Opp TOV", "unit": "/100", "x": 0, "y": 6, "w": 6, "h": 6, "tier": "lg" },
+        { "id": "o_ast100", "metric": "o_ast100", "label": "Opp AST", "unit": "/100", "x": 6, "y": 6, "w": 6, "h": 6, "tier": "lg" },
+        { "id": "t_dreb_pct", "metric": "t_dreb_pct", "label": "DREB%", "x": 12, "y": 6, "w": 6, "h": 6, "tier": "lg" },
+        { "id": "o_pot100", "metric": "o_pot100", "label": "Opp PTS off TO", "unit": "/100", "x": 18, "y": 6, "w": 6, "h": 2, "tier": "strip" },
+        { "id": "o_fb100", "metric": "o_fb100", "label": "Opp fast break", "unit": "/100", "x": 18, "y": 8, "w": 6, "h": 2, "tier": "strip" },
+        { "id": "o_sc100", "metric": "o_sc100", "label": "Opp 2nd chance", "unit": "/100", "x": 18, "y": 10, "w": 6, "h": 2, "tier": "strip" }
       ],
       "lines": [
         { "o": "h", "x": 0, "y": 6, "n": 24 },
-        { "o": "v", "x": 15, "y": 6, "n": 6 }
+        { "o": "v", "x": 18, "y": 6, "n": 6 }
       ]
     },
     "player.shooting": {
