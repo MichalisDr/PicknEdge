@@ -34,6 +34,20 @@ export async function run(page) {
       document.querySelectorAll('.fw-table-wrap tbody tr').forEach(tr => { const n = tr.querySelector('.fw-name')?.textContent; if (n) rows.set(n, [...tr.querySelectorAll('td')].slice(1).map(td => td.textContent)); });
       await compare(exp[teams ? 'teams' : 'players'][w], rows, ids, exp, `${page} ${w}`, out);
     }
+  } else if (page === 'cards') {
+    // Smoke test: every card view of a player and of a team must draw without an error message.
+    for (const kind of ['players', 'teams']) {
+      location.hash = kind === 'teams' ? '#fantasy' : '#fantasy/players'; await wait(1200);
+      document.querySelector('.fw-name[data-open]').click(); await wait(2200);
+      const steps = kind === 'teams' ? ['profile', 'shooting'] : ['profile', 'shooting'];
+      for (const v of steps) {
+        document.querySelector(`[data-card-view=${v}]`)?.click(); await wait(v === 'shooting' ? 3000 : 1200);
+        out.checked++;
+        const txt = document.querySelector('.fw-card')?.innerText || '';
+        if (!/Could not/.test(txt) && document.querySelector('.fw-visual')) out.matched++; else out.mismatches.push(`card ${kind} ${v}: ${txt.slice(0, 80)}`);
+      }
+      document.querySelector('.fw-close')?.click(); await wait(300);
+    }
   } else if (page === 'betting-teams') {
     for (const side of ['offense', 'defense']) {
       await click(`[data-side=${side}]`);

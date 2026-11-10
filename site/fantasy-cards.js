@@ -13,6 +13,7 @@
     ['load', 'Offensive Load', '', 'bc', ' Box Creation'], ['ctov', 'cTOV%', '', 'tov100', ' TOV/100']];
   /* Extras shown inside a metric's box and tooltip, never as a column: PIR carries Non Scoring PIR (nsPIR) per 100 possessions. */
   const EXTRAS = { pir: { id: 'nspir100', label: 'nsPIR', unit: ' /100 poss' } };
+  const TEAM_RADAR = [['2p', '2P'], ['3p', '3P'], ['ft', 'FT'], ['ast', 'AST'], ['dreb', 'DREB'], ['oreb', 'OREB'], ['blk', 'BLK'], ['stl', 'STL']];
   const RADAR = [['ft', 'FT'], ['2p', '2P'], ['3p', '3P'], ['ast', 'AST−TOV'], ['dreb', 'DREB'], ['oreb', 'OREB'], ['stlblk', 'STL+BLK'], ['fd', 'FD−FC']];
   const RSCALE = { game: { lo: -3, hi: 15, step: 3, suffix: '_g', label: 'Net PIR / game' }, per100: { lo: -10, hi: 50, step: 10, suffix: '_100', label: 'Net PIR / 100 poss' } };
   const LEVELS = { good: '#DFFBE9', bad: '#F6E0E3' };
