@@ -84,3 +84,15 @@ test('opponent sub-area makes and attempts for teams (neutral direction)', () =>
   }
   assert.equal(checked, 6);
 });
+
+test('Mid area detail and shooting makes/attempts (player and opponent), neutral direction', () => {
+  const row = { played: 1, poss_off_on: 50, ...fixture(''), ...fixture('o_'), m2: 7, a2: 10, m3: 3, a3: 8, m1: 4, a1: 5, o_m2: 6, o_a2: 12, o_m3: 2, o_a3: 9 };
+  const v = id => evaluate(METRICS.find(m => m.id === id), [row]).value, mid = GROUPS.zm_mid;
+  const made = mid.reduce((n, i) => n + i + 1, 0), att = mid.reduce((n, i) => n + i + 2, 0), total = ORDER.reduce((n, _, i) => n + i + 2, 0);
+  assert.equal(v('zm_mid_made'), made); assert.equal(v('zm_mid_att'), att);
+  assert.ok(Math.abs(v('zm_mid_share') - 100 * att / total) < 1e-9); assert.ok(Math.abs(v('zm_mid_a100') - 100 * att / 50) < 1e-9);
+  assert.equal(v('o_zm_mid_made'), made); assert.equal(v('o_zm_mid_att'), att);
+  assert.deepEqual([v('fg2_made'), v('fg2_att'), v('fg3_made'), v('fg3_att'), v('ft_made'), v('ft_att')], [7, 10, 3, 8, 4, 5]);
+  assert.deepEqual([v('o_fg2_made'), v('o_fg2_att'), v('o_fg3_made'), v('o_fg3_att')], [6, 12, 2, 9]);
+  for (const id of ['zm_mid_made', 'o_zm_mid_att', 'fg3_att', 'o_fg2_made', 'ft_made']) assert.equal(METRICS.find(m => m.id === id).direction, 0, id);
+});

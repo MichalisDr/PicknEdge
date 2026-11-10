@@ -18,6 +18,7 @@ const PLAYER = {
   pts100: 19 / 50 * 100, ast100: 3 / 50 * 100, tov100: 2 / 50 * 100, oreb100: 1 / 50 * 100, fd100: 5 / 50 * 100,
   stl100: 2 / 48 * 100, blk100: 1 / 48 * 100, dreb100: 4 / 48 * 100, reb100: 5 * 200 / (50 + 48),
   usg: (16 + 2) / (40 + 10) * 100, tov_pct: 2 / (16 + 2) * 100, oreb_pct: 1 / (8 + 25) * 100, dreb_pct: 4 / (20 + 10) * 100,
+  fg2_made: 5, fg2_att: 9, fg3_made: 2, fg3_att: 5, ft_made: 3, ft_att: 4,
   efg: (5 + 1.5 * 2) / 14 * 100, fg2_pct: 5 / 9 * 100, fg3_pct: 2 / 5 * 100, ft_pct: 3 / 4 * 100, ftr: 4 / 14 * 100, ts_pct: 19 / (2 * (14 + 0.44 * 4)) * 100,
   pir: 21, pir_min: 21 / 30, nspir100: 10 * 200 / (50 + 48),   // nsPIR = 10 (see above): x200 / (offensive + defensive possessions on court)
 };
@@ -43,6 +44,7 @@ const T = { games: 1, sec: 2400, poss: 70, o_poss: 68, m1: 12, a1: 16, m2: 20, a
 const TEAM_EXTRA = { share: 100 * 3 / 8 };
 const TEAM = {
   pace: (70 + 68) * 1200 / 2400, ortg: 76 / 70 * 100, drtg: 73 / 68 * 100, t_pts_g: 76, o_pts_g: 73,
+  o_fg2_made: 18, o_fg2_att: 35, o_fg3_made: 9, o_fg3_att: 28,
   t_efg: (20 + 12) / 65 * 100, o_efg: (18 + 13.5) / 63 * 100, t_fg2_pct: 20 / 40 * 100, o_fg2_pct: 18 / 35 * 100, t_fg3_pct: 8 / 25 * 100, o_fg3_pct: 9 / 28 * 100,
   t_ftr: 16 / 65 * 100, o_ftr: 14 / 63 * 100, t_a3_rate: 25 / 65 * 100, o_a3_rate: 28 / 63 * 100,
   t_oreb_pct: 9 / (9 + 22) * 100, t_dreb_pct: 24 / (24 + 11) * 100,

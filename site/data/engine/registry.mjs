@@ -198,6 +198,18 @@ METRICS.push(
     e('o_zs_' + z.key + '_made', 'Opp ' + z.name + ' makes', T, 'count', S('o_zs_' + z.key + '_m'), null, F, 0, 'Field goals made by opponents in the sub-area "' + z.name + '".'),
     e('o_zs_' + z.key + '_att', 'Opp ' + z.name + ' attempts', T, 'count', S('o_zs_' + z.key + '_a'), null, F, 0, 'Field-goal attempts by opponents in the sub-area "' + z.name + '".'),
   ]),
+  // Mid-range area (the shots feed's "Mid": mid-range plus baseline): same detail as the sub-areas, for the Shooting tables' pop-out and few-shots rule.
+  e('zm_mid_made', 'Mid-range makes', P, 'count', S('zm_mid_m'), null, F, 0, 'Field goals made in the area "Mid" (mid-range plus baseline).'),
+  e('zm_mid_att', 'Mid-range attempts', P, 'count', S('zm_mid_a'), null, F, 0, 'Field-goal attempts in the area "Mid" (mid-range plus baseline).'),
+  e('zm_mid_share', 'Mid-range share of FGA', P, 'pct', S('zm_mid_a'), S('zall_a'), F, 1, 'Share of the classified field-goal attempts taken in the area "Mid".'),
+  e('zm_mid_a100', 'Mid-range FGA / 100 poss', P, 'per100', S('zm_mid_a'), S('poss_off_on'), F, 1, 'Field-goal attempts in the area "Mid" per 100 team offensive possessions while on court.'),
+  e('o_zm_mid_made', 'Opp Mid-range makes', T, 'count', S('o_zm_mid_m'), null, F, 0, 'Field goals made by opponents in the area "Mid".'),
+  e('o_zm_mid_att', 'Opp Mid-range attempts', T, 'count', S('o_zm_mid_a'), null, F, 0, 'Field-goal attempts by opponents in the area "Mid".'),
+  // Makes and attempts behind the shooting percentages (pop-out of the Shooting tables).
+  ...[['fg2', '2P', 'm2', 'a2'], ['fg3', '3P', 'm3', 'a3'], ['ft', 'FT', 'm1', 'a1']].flatMap(([k, n, m, a]) => [
+    e(k + '_made', n + ' makes', P, 'count', S(m), null, F, 0, n + ' made.'), e(k + '_att', n + ' attempts', P, 'count', S(a), null, F, 0, n + ' attempted.')]),
+  ...[['fg2', '2P', 'o_m2', 'o_a2'], ['fg3', '3P', 'o_m3', 'o_a3']].flatMap(([k, n, m, a]) => [
+    e('o_' + k + '_made', 'Opp ' + n + ' makes', T, 'count', S(m), null, F, 0, 'Opponent ' + n + ' made.'), e('o_' + k + '_att', 'Opp ' + n + ' attempts', T, 'count', S(a), null, F, 0, 'Opponent ' + n + ' attempted.')]),
   ...zoneEntries(P, '', '', '', FB), ...zoneEntries(T, '', 't_', '', B), ...zoneEntries(T, 'o_', 'o_', 'Opp ', FB));
 
 /* Generic share of a whole: the site passes counts ({ n, of }) for splits that are not columns of the clean tables
@@ -261,5 +273,5 @@ METRICS.push({
 const NEUTRAL = new Set(['fga100', 'a2_rate', 'gp', 'gs', 'min', 'usg', 'ftr', 'load', 'bc', 'a3_rate', 'a3_g', 'a1_g', 'a3_100', 'a1_100', 'pace', 't_a3_rate']);
 const LOWER = new Set(['pf_g', 'pf100', 'tov_g', 'tov100', 'tov_pct', 'ctov', 'drtg', 't_tov100']);
 for (const m of METRICS) {
-  m.direction = NEUTRAL.has(m.id) || /^(o_)?zs_[a-z0-9]+_(made|att|share|a100)$/.test(m.id) ? 0 : LOWER.has(m.id) || (m.scope === 'team' && m.id.startsWith('o_') && m.id !== 'o_tov100') ? -1 : 1;
+  m.direction = NEUTRAL.has(m.id) || /^(o_)?z[sm]_[a-z0-9]+_(made|att|share|a100)$/.test(m.id) || /^(o_)?(fg2|fg3|ft)_(made|att)$/.test(m.id) ? 0 : LOWER.has(m.id) || (m.scope === 'team' && m.id.startsWith('o_') && m.id !== 'o_tov100') ? -1 : 1;
 }
