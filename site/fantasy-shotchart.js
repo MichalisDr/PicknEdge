@@ -80,10 +80,10 @@
     const unknown = zones.reduce((n, z) => n + z.uk, 0), who = team ? ' (opponent baskets)' : '';
     zones.forEach(z => { z.change = m.cmp ? (z.season === null || z.fg === null ? '—' : (Math.abs(z.fg - z.season) < 0.05 ? '0.0' : (z.fg - z.season > 0 ? '↑ ' : '↓ ') + signed(z.fg - z.season)) + ' percentage points vs Season') : null; });
     const color = z => SZ.levelColor(z.level);
-    const rates = m.rates.map(([l, v, r]) => `<div><span>${l}</span><strong>${pc(v)}</strong>${r ? `<b class="metric-rank">Rank ${r.rank} / ${r.n}</b>` : ''}</div>`).join('');
+    const rates = m.ctx.grid ? '' : m.rates.map(([l, v, r]) => `<div><span>${l}</span><strong>${pc(v)}</strong>${r ? `<b class="metric-rank">Rank ${r.rank} / ${r.n}</b>` : ''}</div>`).join('');
     const variants = (tag, a, b, c) => ['fg', 'a', 'u'].map((k, i) => `<${tag} data-m="${k}">${[a, b, c][i]}</${tag}>`).join('');
     const split = (c, k) => c.uk > 0 || c.as + c.un === 0 ? null : m.eng.evaluate(m.eng.byId('share'), [{ n: k === 'a' ? c.as : c.un, of: c.as + c.un }]).value;
-    const areaHtml = areas.map(a => `<div class="sz-area"><span>${a.name}</span>${variants('strong', pc(a.fg), pc(split(a, 'a')), pc(split(a, 'u')))}${variants('small', a.m + '/' + a.a, a.as + '/' + (a.as + a.un + a.uk), a.un + '/' + (a.as + a.un + a.uk))}${a.rank ? `<b class="sz-area-rank" data-m="fg">#${a.rank.rank} / ${a.rank.n}</b>` : ''}</div>`).join('');
+    const areaHtml = m.ctx.grid ? '' : areas.map(a => `<div class="sz-area"><span>${a.name}</span>${variants('strong', pc(a.fg), pc(split(a, 'a')), pc(split(a, 'u')))}${variants('small', a.m + '/' + a.a, a.as + '/' + (a.as + a.un + a.uk), a.un + '/' + (a.as + a.un + a.uk))}${a.rank ? `<b class="sz-area-rank" data-m="fg">#${a.rank.rank} / ${a.rank.n}</b>` : ''}</div>`).join('');
     const { cells } = SZ.bin(m.events.map(e => ({ x: e.x, y: e.y, zone: zones.findIndex(z => z.key === e.zone) })));
     const dominant = c => c.zones.reduce((b, n, i) => n > c.zones[b] ? i : b, 0);
     const hexPath = (cx, cy, r) => SZ.hexPts(cx, cy, r).map(([a, b]) => SZ.X(a) + ',' + SZ.Y(b)).join(' ');
@@ -99,10 +99,10 @@
     }).join('');
     const svg = (view, body) => `<svg class="pc-court sz-court" data-shotview="${view}" viewBox="0 0 ${SZ.VIEW.w} ${SZ.VIEW.h}" role="img" aria-label="${team ? 'Opponent' : 'Player'} shots, ${view === 'hex' ? 'hexagon volume' : 'individual shots'}"${st.view === view ? '' : ' hidden'}>${SZ.court()}${body}${labels}</svg>`;
     const mode = (k, l) => `<p class="sz-mode" data-m="${k}">${l}: share of all made shots of each zone and area${who}${unknown ? ` · "—" where the assist is not confirmed (${unknown} made shots)` : ''}.</p>`;
-    return `<div class="pc-shooting" data-hl="${st.view === 'shots' ? st.hl || 'none' : 'none'}" data-sc="${st.view === 'shots' && st.sc ? 1 : 0}"><div class="pc-shoot-rates">${rates}</div>
+    return `<div class="pc-shooting" data-hl="${st.view === 'shots' ? st.hl || 'none' : 'none'}" data-sc="${st.view === 'shots' && st.sc ? 1 : 0}">${m.ctx.grid ? '' : `<div class="pc-shoot-rates">${rates}</div>`}
       <div class="sz-head"><div class="sz-switch" role="group" aria-label="Shot chart view">${[['hex', 'Hex'], ['shots', 'Shots']].map(([k, l]) => `<button type="button" data-shotview-btn="${k}" aria-pressed="${st.view === k}">${l}</button>`).join('')}</div>
       <div class="sz-switch sz-au" role="group" aria-label="Second Chance, Assisted / Unassisted${who}"${st.view === 'shots' ? '' : ' hidden'}><button type="button" data-sc-btn aria-pressed="${st.view === 'shots' && st.sc}">Second Chance</button><span class="sz-sep" aria-hidden="true"></span>${[['a', 'Assisted'], ['u', 'Unassisted']].map(([k, l]) => `<button type="button" data-hl-btn="${k}" aria-pressed="${st.hl === k}">${l}</button>`).join('')}</div></div>
-      ${mode('a', 'Assisted')}${mode('u', 'Unassisted')}<div class="sz-areas">${areaHtml}</div>${svg('hex', `<g class="sz-hex">${hex}</g>`)}${svg('shots', `<g class="sz-shots">${shots}</g><g class="sz-hlg">${hl}</g>`)}
+      ${mode('a', 'Assisted')}${mode('u', 'Unassisted')}${m.ctx.grid ? '' : `<div class="sz-areas">${areaHtml}</div>`}${svg('hex', `<g class="sz-hex">${hex}</g>`)}${svg('shots', `<g class="sz-shots">${shots}</g><g class="sz-hlg">${hl}</g>`)}
       <div class="sz-pop" role="status" hidden></div><p class="pc-note">${m.gp ?? 0} GP · ${m.total} FGA${team ? ' · Defence rank: #1 = lowest opponent FG%.' : ''}</p></div>`;
   }
 
