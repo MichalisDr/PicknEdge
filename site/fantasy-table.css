@@ -1,7 +1,7 @@
 /* The four Fantasy tables. Column widths come from site/table-layouts.json (set inline on <col>). Flat header with a 2px line above each column group,
    a collapsed 1px cell grid (no line on the outer edge: the frame is the container's), sticky first column, equal-width centred numeric columns,
    value on the first line and a small boxed rank chip on the second, no zebra. Colours are theme variables (index.html :root), never fixed hex. */
-.fw-table-wrap{overflow:auto;border:1px solid var(--gridline);border-radius:10px}
+.fw-table-wrap{width:fit-content;max-width:100%;overflow:auto;border:1px solid var(--gridline);border-radius:10px}
 .fw-t{border-collapse:collapse;table-layout:fixed;white-space:nowrap;font-size:13px}
 .fw-t th,.fw-t td{border:1px solid var(--gridline);padding:5px 4px;text-align:center;overflow:hidden;vertical-align:middle;height:46px}
 .fw-t tr>:first-child{border-left:0}
@@ -16,7 +16,7 @@
 .fw-t th:first-child .fw-name{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
 .fw-t th.fw-tm,.fw-t td.fw-tm{font-size:11px;color:var(--muted);padding:5px 2px}
 .fw-t .fw-n{font-variant-numeric:tabular-nums}
-.fw-t thead th{position:relative;height:40px;line-height:1.15;font-size:11px}
+.fw-t thead th{position:relative;height:40px;line-height:1.15;font-size:10px;font-weight:600;padding:5px 2px}
 .fw-t thead th button{white-space:nowrap;text-align:center;padding:2px 0;width:100%}
 .fw-t thead th.fw-n::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--groupline)}
 .fw-t thead th.g-start::before{left:4px}

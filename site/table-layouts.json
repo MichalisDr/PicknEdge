@@ -1,9 +1,9 @@
 {
   "version": 1,
   "note": "Single source of the four Fantasy tables. numWidth: the one width in px of every numeric column (same in all four tables: wide enough for the widest header label on one line and the widest value with its rank chip); teamWidth: the Team column of the players tables; firstCol: the first (name) column is as wide as the longest displayed name needs (measured text + pad), never below min or above cap. A table has 'groups' (a 2px line above each group, none clickable); a column is {metric, label, colour?, chart?, few?, detail?}. label: the short one-line header (the full name goes in the title). colour: 'rank' = top/bottom quarter of the rank pool, 'zone' = player zone FG% against the league average (neutral within zoneNeutralPp points). chart: hovering a cell shows the per-game progression (main metric columns only). detail: {made, att, share?} registry ids shown in the pop-out of a clicked cell. few: registry id of the zone's attempts per 100; under fewBelow the value is a dimmed '-', has no rank and sorts last. defaultSort.dir: 'asc' or 'desc'.",
-  "numWidth": 90,
-  "teamWidth": 54,
-  "firstCol": { "min": 120, "cap": 230, "pad": 26 },
+  "numWidth": 80,
+  "teamWidth": 40,
+  "firstCol": { "min": 110, "cap": 198, "pad": 22 },
   "zoneNeutralPp": 3,
   "fewBelow": 1,
   "tables": {

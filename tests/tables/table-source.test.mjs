@@ -28,7 +28,11 @@ test('headers stay on one line; sorted column and group line use their theme var
   assert.match(css, /fw-sorted\{background:var\(--sorthead\)\}/);
   assert.match(css, /td\.fw-sorted\{background:var\(--sortcell\)\}/);
   assert.match(css, /height:2px;background:var\(--groupline\)/);
-  for (const v of ['--gridline', '--sorthead', '--sortcell', '--groupline']) assert.ok(html.includes(v + ':'), v + ' defined in :root');
+  assert.equal(js.split("'color:var(--eval-'").length - 1, 2);   // value colours use the visible text variables
+  for (const v of ['--eval-good-text', '--eval-bad-text', '--gridline', '--sorthead', '--sortcell', '--groupline']) assert.ok(html.includes(v + ':'), v + ' defined in :root');
+});
+test('the table frame shrinks to the table (no empty framed area beside it)', () => {
+  assert.ok(css.includes('.fw-table-wrap{width:fit-content;max-width:100%;'));
 });
 test('no zebra: no alternating row background in the table CSS', () => {
   assert.ok(!/nth-child\((even|odd|2n)/.test(css));

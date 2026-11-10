@@ -66,7 +66,7 @@
       const gallery = state.mode === 'charts' && g.FantasyGallery.available(state.entity, state.view) ? await g.FantasyGallery.html(state.entity, state.view, state, pool.map(r => r.id)) : '';
       if (mine !== drawId) return;
       const font = '700 13px ' + getComputedStyle(document.body).fontFamily;
-      M = { view, TL, T, tname, cols, model, few, roster, status, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth(rows.map(r => textWidth(r.name, font)), TL.firstCol), poolN: pool.length, sel, cur, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
+      M = { view, TL, T, tname, cols, model, few, roster, status, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth([...rows.map(r => r.name), 'League average'].map(n => textWidth(n, font)), TL.firstCol), poolN: pool.length, sel, cur, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
     } catch (e) {
       host.innerHTML = `<section class="fantasy-stats fw-workbench"><div class="fw-heading"><div><div class="eyebrow">FANTASY</div><h1>${teams ? 'Teams' : 'Players'}</h1></div></div><p class="fw-empty" role="status">Could not load the data: ${esc(e.message)}</p></section>`;
       return;
@@ -89,8 +89,8 @@
     }).join('');
     const tint = (c, value, rankInfo) => {
       if (!Number.isFinite(value)) return '';
-      if (c.colour === 'zone') { const lg = view.league(c.metric)?.value; if (!Number.isFinite(lg)) return ''; const d = value - lg; return Math.abs(d) <= TL.zoneNeutralPp ? '' : 'color:var(--eval-' + (d > 0 ? 'good' : 'bad') + ')'; }
-      if (c.colour === 'rank') { const qt = TM.quarter(rankInfo); if (!qt) return ''; const good = teams ? qt === 'bottom' : qt === 'top'; return 'color:var(--eval-' + (good ? 'good' : 'bad') + ')'; }   // teams: green = favourable for the opposing player
+      if (c.colour === 'zone') { const lg = view.league(c.metric)?.value; if (!Number.isFinite(lg)) return ''; const d = value - lg; return Math.abs(d) <= TL.zoneNeutralPp ? '' : 'color:var(--eval-' + (d > 0 ? 'good' : 'bad') + '-text)'; }
+      if (c.colour === 'rank') { const qt = TM.quarter(rankInfo); if (!qt) return ''; const good = teams ? qt === 'bottom' : qt === 'top'; return 'color:var(--eval-' + (good ? 'good' : 'bad') + '-text)'; }   // teams: green = favourable for the opposing player
       return '';
     };
     const cells = (key, avgRow) => cols.map(c => {
