@@ -99,7 +99,7 @@
       const v = isFew ? '<span class="fw-v fw-few">-</span>' : `<span class="fw-v" style="${avgRow ? '' : tint(c, cell.value, r)}">${fmt(cell, m)}</span>`;
       return `<td class="${cls(c)}"><span class="fw-cell" ${avgRow ? '' : `data-id="${esc(key)}" data-metric="${c.metric}" ${c.chart ? 'data-chart ' : ''}tabindex="0"`}>${v}${r ? `<i class="fw-rk">#${r.position}</i>` : ''}</span></td>`;
     }).join('');
-    const body = rowsShown.map(r => `<tr><th><button class="fw-name" data-open="${esc(r.id)}" title="${esc(r.full)}">${esc(r.name)}</button>${teams ? '' : `<small class="fw-who" title="${esc(roster.teams[r.team] || r.team)}">${esc([r.team, r.pos].filter(Boolean).join(' · '))}</small>`}</th>${cells(r.id, false)}</tr>`).join('');
+    const body = rowsShown.map(r => `<tr><th><button class="fw-name" data-open="${esc(r.id)}" title="${esc(r.full)}">${esc(r.name)}</button>${teams ? '' : `<small class="fw-who" title="${esc(roster.teams[r.team] || r.team)}">${esc([g.PICKNEDGE_TEAM_CODE(roster, r.team), r.pos].filter(Boolean).join(' · '))}</small>`}</th>${cells(r.id, false)}</tr>`).join('');
     const filters = !teams && state.filters ? `<div class="fw-filters" role="dialog" aria-label="Filters">
       <label>Team<select data-filter="team"><option value="">All</option>${Object.entries(roster.teams).sort((a, b) => a[1].localeCompare(b[1])).map(([c, n]) => `<option value="${c}" ${c === state.team ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
       <label>MIN ≥<input data-filter="minMin" type="number" min="0" value="${state.minMin}"></label>
