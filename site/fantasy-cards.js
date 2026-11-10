@@ -3,6 +3,7 @@
    (the registry's own definitions), league percentiles and spreads are statistics of those per-game values. */
 (function (g) {
   'use strict';
+  const SHOW_LAYOUT_LINES = true;   // the 1px divider lines of layout.json on the desktop grid; false hides them
   const D = g.PicknEdgeData, W = g.PicknEdgeWindows, esc = W.esc;
   const T = () => g.FantasyTables;
 
@@ -78,8 +79,9 @@
   }
 
   /* ---------- card parts ---------- */
-  /* ---------- card metric grids: drawn from site/layout.json (24 columns, square cells) ----------
-     Which metrics, where, how big and which secondary lines is all in the layout file; this code only turns a box into HTML. */
+  /* ---------- card metric grids: drawn from site/layout.json (24 columns) ----------
+     Which metrics, where, how big and which secondary lines is all in the layout file; this code only turns a box into the old tile
+     markup (classes fw-metric fw-m-lg / fw-m-sm, same CSS as before). Tile tier by box area w*h: >= 36 large, 13..35 small, <= 12 strip. */
   let layoutPromise = null;
   const layoutFile = () => layoutPromise || (layoutPromise = fetch('layout.json').then(r => { if (!r.ok) throw new Error('layout.json ' + r.status); return r.json(); }));
   const ZONE_TINT = true;            // one-line switch: green/red tint of the player zone boxes by FG% versus the league zone average
@@ -87,11 +89,11 @@
   const ZONE_FEW = 1;                // attempts per 100 possessions below this: "–" and a dimmed box
   const unitHtml = t => t ? `<em>${esc(t)}</em>` : '';
   function boxHtml(b, view, byId, sel, players) {
-    const m = byId[b.metric], c = view.get(cs.id, b.metric), label = b.label || m.label, area = `grid-area:${b.y + 1}/${b.x + 1}/span ${b.h}/span ${b.w};--s:${Math.sqrt(b.w * b.h).toFixed(3)}`;
+    const m = byId[b.metric], c = view.get(cs.id, b.metric), label = b.label || m.label, area = `grid-area:${b.y + 1}/${b.x + 1}/span ${b.h}/span ${b.w}`, size = b.w * b.h;
     const r = players ? null : T().rankOf(view, b.metric, c.value, m.direction);
     const tint = r ? `color:${r.color}` : '';
     const rank = r ? `<b class="fw-rank" style="color:${r.color}">${r.position}#</b>` : '';
-    const val = (id, f) => view.get(cs.id, id);
+    const val = id => view.get(cs.id, id);
     const subs = (b.sub || []).map(sb => {
       const sm = byId[sb.metric], sc = val(sb.metric);
       if (!Number.isFinite(sc?.value)) return '';
@@ -100,30 +102,36 @@
       return `<small>${sb.text ? esc(text) : text}</small>`;
     }).join('');
     const subTitle = (b.sub || []).filter(sb => sb.label).map(sb => ' · ' + sb.label + ': ' + byId[sb.metric].description).join('');
+    const open = (cls, style, title) => `<button class="fw-metric ${cls}" style="${area}${style ? ';' + style : ''}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(title)}">`;
     if (b.kind === 'zone' && players) {
       const made = val(b.made).value, att = val(b.att).value, share = val(b.share).value, p100 = val(b.per100).value;
       const few = !(p100 >= ZONE_FEW), lg = view.league(b.metric)?.value;
       let style = '';
       if (ZONE_TINT && !few && Number.isFinite(c.value) && Number.isFinite(lg)) {
         const d = c.value - lg, a = Math.min(ZONE_TINT_MAX, Math.abs(d) / ZONE_TINT_PP * ZONE_TINT_MAX);
-        style = `background:${d >= 0 ? `rgba(60,200,120,${a.toFixed(3)})` : `rgba(235,80,95,${a.toFixed(3)})`};`;
+        style = `background:${d >= 0 ? `rgba(60,200,120,${a.toFixed(3)})` : `rgba(235,80,95,${a.toFixed(3)})`}`;
       }
       const tip = `${label}: ${Number.isFinite(share) ? share.toFixed(1) + '% of the player\'s shots' : 'no shots'} · ${Number.isFinite(p100) ? p100.toFixed(1) : '—'} attempts per 100 possessions${Number.isFinite(lg) ? ' · league FG% ' + lg.toFixed(1) + '%' : ''}${few ? ' · few shots' : ''}`;
-      return `<button class="lx-box lx-zone${few ? ' lx-few' : ''}" style="${area};${style}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(tip)}"><span class="lx-l">${esc(label)}</span><strong class="lx-v">${few ? '–' : fmt(c, m)}</strong><small>${Number.isFinite(att) ? `${made}/${att}` : ''}</small></button>`;
+      return `${open('fw-m-sm lx-zone' + (few ? ' lx-few' : ''), style, tip)}<span>${esc(label)}</span><strong>${few ? '–' : fmt(c, m)}</strong><small>${Number.isFinite(att) ? `${made}/${att}` : ''}</small></button>`;
     }
-    if (b.kind === 'zone') return `<button class="lx-box lx-zone" style="${area}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(m.description)}"><span class="lx-l">${esc(label)}</span><strong class="lx-v" style="${tint}">${fmt(c, m)}</strong>${rank}</button>`;
-    const value = `<strong class="lx-v" style="${tint}">${fmt(c, m)}${Number.isFinite(c.value) ? unitHtml(b.unit) : ''}</strong>`;
-    if (b.kind === 'strip') return `<button class="lx-box lx-strip" style="${area}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(m.description + subTitle)}"><span class="lx-l">${esc(label)}</span><span class="lx-r">${rank}${value}${subs}</span></button>`;
-    return `<button class="lx-box" style="${area}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(m.description + subTitle)}"><span class="lx-t"><span class="lx-l">${esc(label)}${rank}</span>${subs}</span>${value}</button>`;
+    if (b.kind === 'zone') return `${open('fw-m-sm lx-zone', '', m.description)}<span>${esc(label)}</span><strong style="${tint}">${fmt(c, m)}</strong>${rank}</button>`;
+    const value = `<strong style="${tint}">${fmt(c, m)}${Number.isFinite(c.value) ? unitHtml(b.unit) : ''}</strong>`;
+    if (size <= 12) return `${open('fw-m-sm lx-strip', '', m.description + subTitle)}<span>${esc(label)}</span><lx-r>${rank}${value}${subs}</lx-r></button>`;
+    return `${open(size >= 36 ? 'fw-m-lg' : 'fw-m-sm', '', m.description + subTitle)}<lx-t><span>${esc(label)}</span>${rank}${subs}</lx-t>${value}</button>`;
   }
+  /* CSS length of grid line k (of `count` cells) on one axis: the middle of the gap between cell k-1 and k */
+  const linePos = (k, count) => k <= 0 ? '0px' : k >= count ? '100%' : `(${k} * (100% - ${count - 1} * var(--gap)) / ${count} + ${k - 0.5} * var(--gap))`;
   async function layoutGrid(name, view, byId, sel, players) {
     const L = (await layoutFile()).layouts[name];
     if (!L) throw new Error('no layout ' + name);
-    const order = g.PicknEdgeLayout.stackOrder(L), rules = g.PicknEdgeLayout.dividers(L);   // DOM order = stacked order (y, x); desktop placement is by grid-area
-    const lines = L.lines.map(l => l.o === 'h'
-      ? `<i class="lx-line" style="left:${l.x / 24 * 100}%;top:${l.y / L.rows * 100}%;width:${l.n / 24 * 100}%;height:1px"></i>`
-      : `<i class="lx-line" style="left:${l.x / 24 * 100}%;top:${l.y / L.rows * 100}%;height:${l.n / L.rows * 100}%;width:1px"></i>`).join('');
-    return `<div class="lx" data-layout="${name}"><div class="lx-grid" style="--rows:${L.rows}">${order.map(b => boxHtml(b, view, byId, sel, players).replace('<button ', `<button data-big="${b.w * b.h >= 36 ? 1 : 0}"${rules.has(b.id) ? ' data-div="1"' : ''} `)).join('')}${lines}</div></div>`;
+    const order = g.PicknEdgeLayout.stackOrder(L);   // DOM order = stacked order; desktop placement is by grid-area
+    const lines = !SHOW_LAYOUT_LINES ? '' : L.lines.map(l => {
+      const a = l.o === 'h' ? [l.x, l.x + l.n, 24, l.y, L.rows] : [l.y, l.y + l.n, L.rows, l.x, 24];
+      return l.o === 'h'
+        ? `<i class="lx-line" style="left:calc${linePos(a[0], a[2])};right:calc(100% - ${linePos(a[1], a[2])});top:calc${linePos(a[3], a[4])};height:1px"></i>`
+        : `<i class="lx-line" style="top:calc${linePos(a[0], a[2])};bottom:calc(100% - ${linePos(a[1], a[2])});left:calc${linePos(a[3], a[4])};width:1px"></i>`;
+    }).join('');
+    return `<div class="lx" data-layout="${name}"><div class="lx-grid fw-pgrid" style="--rows:${L.rows}">${order.map(b => boxHtml(b, view, byId, sel, players)).join('')}${lines}</div></div>`;
   }
   /* Radar geometry shared by the player and team radars. axes = [[label, value, otherValue?]], frac maps a value to 0..1 of the radius. */
   function radarSvg(axes, frac, rings, labelOf) {
