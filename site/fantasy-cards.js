@@ -85,9 +85,6 @@
      markup (classes fw-metric fw-m-lg / fw-m-sm, same CSS as before). Tile tier: the box's optional 'tier' field (lg / sm / strip), else by box area w*h: >= 36 large, 13..35 small, <= 12 strip. */
   let layoutPromise = null;
   const layoutFile = () => layoutPromise || (layoutPromise = fetch('layout.json').then(r => { if (!r.ok) throw new Error('layout.json ' + r.status); return r.json(); }));
-  const ZONE_TINT = true;            // one-line switch: green/red tint of the player zone boxes by FG% versus the league zone average
-  const ZONE_TINT_MAX = 0.38, ZONE_TINT_PP = 15;   // strongest alpha, reached at this many percentage points from the league
-  const ZONE_FEW = 1;                // attempts per 100 possessions below this: "–" and a dimmed box
   const unitHtml = t => t ? `<em>${esc(t)}</em>` : '';
   function boxHtml(b, view, byId, sel, players, edge = '') {
     const m = byId[b.metric], c = view.get(cs.id, b.metric), label = b.label || m.label, area = `grid-area:${b.y + 1}/${b.x + 1}/span ${b.h}/span ${b.w}`, size = b.w * b.h;
@@ -104,25 +101,6 @@
     }).join('');
     const subTitle = (b.sub || []).filter(sb => sb.label).map(sb => ' · ' + sb.label + ': ' + byId[sb.metric].description).join('');
     const open = (cls, style, title) => `<button class="fw-metric ${cls}${edge}" style="${area}${style ? ';' + style : ''}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(title)}">`;
-    if (b.kind === 'group') {   // several related metrics in one wide tile; each item keeps its own value and rank
-      const items = b.items.map(it => {
-        const im = byId[it.metric], ic = val(it.metric), ir = players ? null : T().rankOf(view, it.metric, ic.value, im.direction);
-        return `<span class="lx-gi" data-metric="${it.metric}" role="button" tabindex="0" title="${esc(im.description)}"><span>${esc(it.label)}</span><lx-r>${ir ? `<b class="fw-rank">#${ir.position}</b>` : ''}<strong style="${ir ? 'color:' + ir.color : ''}">${fmt(ic, im)}${Number.isFinite(ic.value) ? unitHtml(it.unit) : ''}</strong></lx-r></span>`;
-      }).join('');
-      return `<div class="fw-metric lx-group${b.h > 1 ? ' lx-gv' : ''}${edge}" style="${area}"><span class="lx-gt">${esc(label)}</span>${items}</div>`;
-    }
-    if (b.kind === 'zone' && players) {
-      const made = val(b.made).value, att = val(b.att).value, share = val(b.share).value, p100 = val(b.per100).value;
-      const few = !(p100 >= ZONE_FEW), lg = view.league(b.metric)?.value;
-      let style = '';
-      if (ZONE_TINT && !few && Number.isFinite(c.value) && Number.isFinite(lg)) {
-        const d = c.value - lg, a = Math.min(ZONE_TINT_MAX, Math.abs(d) / ZONE_TINT_PP * ZONE_TINT_MAX);
-        style = `background:${d >= 0 ? `rgba(60,200,120,${a.toFixed(3)})` : `rgba(235,80,95,${a.toFixed(3)})`}`;
-      }
-      const tip = `${label}: ${Number.isFinite(share) ? share.toFixed(1) + '% of the player\'s shots' : 'no shots'} · ${Number.isFinite(p100) ? p100.toFixed(1) : '—'} attempts per 100 possessions${Number.isFinite(lg) ? ' · league FG% ' + lg.toFixed(1) + '%' : ''}${few ? ' · few shots' : ''}`;
-      return `${open('fw-m-sm lx-zone' + (few ? ' lx-few' : ''), style, tip)}<span>${esc(label)}</span><strong>${few ? '–' : fmt(c, m)}</strong><small>${Number.isFinite(att) ? `${made}/${att}` : ''}</small></button>`;
-    }
-    if (b.kind === 'zone') return `${open('fw-m-sm lx-zone', '', m.description)}<span>${esc(label)}</span><strong style="${tint}">${fmt(c, m)}</strong>${rank}</button>`;
     const value = `<strong style="${tint}">${fmt(c, m)}${Number.isFinite(c.value) ? unitHtml(b.unit) : ''}</strong>`;
     const tier = b.tier || (size >= 36 ? 'lg' : size <= 12 ? 'strip' : 'sm');
     if (tier === 'strip') return `${open('fw-m-sm lx-strip', '', m.description + subTitle)}<span>${esc(label)}</span><lx-r>${rank}${value}${subs}</lx-r></button>`;
@@ -231,10 +209,10 @@
       else if (players) visual = radar(view, byId, roster, cs.cmp ? await W.view('players', cs) : null);
       else visual = teamRadar(view, season);
       root.innerHTML = `<header class="fw-identity">${logo ? `<img src="${esc(logo)}" alt="">` : ''}<div><small>${players ? 'PLAYER' : 'TEAM'} / FANTASY</small><h2>${esc(name)}</h2><p>${players ? esc(roster.teams[team] || team) + ' · ' + esc(row.pos || '—') : ''}</p></div><b>${gp || 0} GP</b></header>
-        <div class="fw-card-controls"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(cs, 'data-card-window')}</div><div class="fw-switch" role="tablist">${['profile', 'shooting'].map(v => `<button data-card-view="${v}" role="tab" aria-selected="${v === cs.mode}">${v === 'profile' ? 'Profile' : 'Shooting'}</button>`).join('')}</div></div>
+        <div class="fw-card-controls"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(cs, 'data-card-window')}</div><div class="fw-switch" role="group" aria-label="Card view"><button data-card-view="shooting" aria-pressed="${cs.mode === 'shooting'}">Shooting</button></div></div>
         ${!gp && players ? '' : gridHtml}<div class="fw-visual">${visual}</div>${players ? '<div data-box></div>' : ''}`;
       W.wire(root, cs, () => { cs.selected = null; draw(); }, 'data-card-window');
-      root.querySelectorAll('[data-card-view]').forEach(b => { b.onclick = () => { cs.mode = b.dataset.cardView; cs.selected = null; draw(); }; });
+      root.querySelectorAll('[data-card-view]').forEach(b => { b.onclick = () => { cs.mode = cs.mode === 'shooting' ? 'profile' : 'shooting'; cs.selected = null; draw(); }; });
       root.querySelectorAll('[data-metric]').forEach(b => { b.onclick = () => { cs.selected = cs.selected === b.dataset.metric ? null : b.dataset.metric; draw(); }; });
       root.querySelectorAll('[data-radar]').forEach(b => { b.onclick = () => { cs.radar = b.dataset.radar; draw(); }; });
       root.querySelectorAll('[data-net]').forEach(b => { b.onclick = () => { cs.net = b.dataset.net; draw(); }; });
@@ -249,7 +227,7 @@
 
   function open(entity, id, from = {}) {
     close();
-    cs = { entity, id, win: from.win || 'season', mode: from.mode || 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
+    cs = { entity, id, win: from.win || 'season', mode: 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
     dialog = document.createElement('dialog');
     dialog.className = 'fw-dialog';
     dialog.innerHTML = '<button class="fw-close" aria-label="Close card">×</button><div class="fw-card"><p class="fw-empty" role="status">Loading…</p></div>';

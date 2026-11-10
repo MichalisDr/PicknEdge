@@ -8,19 +8,13 @@
 lx-t{display:contents}
 .lx-grid .fw-metric>strong{order:1}
 .lx-grid .fw-metric>.fw-rank{order:2}
-.lx-grid .fw-metric.lx-zone>strong{order:0}
 lx-t>.fw-rank{order:2}
 lx-t>small{order:2}
 .lx-strip{flex-direction:row!important;justify-content:space-between!important;align-items:center!important}
 lx-r{display:flex;align-items:baseline;gap:8px}
 .lx-grid .fw-rank{font-size:11px;font-weight:500;color:#94a3b8;margin:0}
 /* Desktop: the grid unit is a fixed row height (layout.json "rowPx") and a tile's content is always the same size, so a box of a given size in cells looks the same on every card; the layout proportions are kept, the boxes just are not taller than their content. */
-@container lx (min-width: 651px) {
-  /* zone boxes are two cells high: label on the first line, value and makes/attempts (or rank) side by side on the second */
-  .lx-grid .fw-metric.lx-zone{display:grid;grid-template-columns:auto 1fr;align-content:center;align-items:end;column-gap:8px;row-gap:1px;padding:6px 10px}
-  .lx-grid .fw-metric.lx-zone>span{grid-column:1/-1;grid-row:1}
-  .lx-grid .fw-metric.lx-zone>strong{grid-column:1;grid-row:2;margin:0}
-  .lx-grid .fw-metric.lx-zone>small,.lx-grid .fw-metric.lx-zone>.fw-rank{grid-column:2;grid-row:2;margin:0 0 2px;line-height:1.1}
+@container lx (min-width: 781px) {
   .lx-grid .fw-metric.lx-strip{padding:6px 12px}
   .lx-grid .fw-m-lg{padding:10px 13px}
   .lx-grid .fw-m-sm{padding:8px 11px}
@@ -28,18 +22,11 @@ lx-r{display:flex;align-items:baseline;gap:8px}
 .lx-grid .fw-metric{position:relative}
 .lx-grid .fw-metric small.lx-side{position:absolute;right:18px;top:50%;transform:translateY(-50%);text-align:right;white-space:nowrap}
 .lx-grid .fw-metric i.lx-sl{display:block;font-style:normal;font-size:11px;color:#94a3b8}
-.lx-grid .fw-metric.lx-group{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;padding:6px 14px;cursor:default}
-.lx-gt{font-size:11px;color:#94a3b8;white-space:nowrap}
-.lx-grid .fw-metric.lx-gv{flex-direction:column;align-items:stretch;justify-content:center;gap:6px;padding:8px 12px}
-.lx-gv .lx-gi{flex:0 0 auto;padding:0}
-.lx-gi{display:flex;flex:1;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;padding:0 6px}
-.lx-gi>span{font-size:11px;color:#acbace}
-.lx-gi strong{font-size:19px;margin:0}
-.lx-few{opacity:.45}
-.lx-few strong{font-weight:500}
+/* GROUP_EDGES: the group lines as brighter outline sides of the tiles next to them */
+.lx-e-t{border-top-color:#3a4d68}.lx-e-b{border-bottom-color:#3a4d68}.lx-e-l{border-left-color:#3a4d68}.lx-e-r{border-right-color:#3a4d68}
 .lx-line{position:absolute;background:#2b3a4f;pointer-events:none}
-/* Narrow containers (< 650px): the grid becomes a list in layout order (the "stack" order or (y, x)); each row is a tile; no layout lines. */
-@container lx (max-width: 650px) {
+/* Narrow containers (<= 780px, the smallest width at which every desktop tile of every layout fits with margin): the grid becomes a list in layout order (the "stack" order or (y, x)); each row is a tile; no layout lines. */
+@container lx (max-width: 780px) {
   .lx-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none;aspect-ratio:auto}
   .lx-line{display:none}
   .lx-grid .fw-metric{grid-area:auto!important;grid-column:1/-1!important;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:12px;min-height:44px}
@@ -48,10 +35,7 @@ lx-r{display:flex;align-items:baseline;gap:8px}
   .lx-grid .fw-metric>strong{grid-column:2;order:0}
   lx-t>.fw-rank,lx-t>small{order:0}
   .lx-grid .fw-metric small.lx-side{position:static;transform:none;text-align:left}
-  .lx-grid .fw-metric.lx-group{display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:10px 12px}
-  .lx-gi{padding:0}
   .lx-grid .fw-metric.lx-strip{display:flex!important;justify-content:space-between!important;align-items:center!important}
-  .lx-grid .fw-metric.lx-zone{grid-column:auto!important;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
 }
 /* Box scores on narrow screens: the table scrolls sideways inside its own container (.fw-tbl) and the Game column stays in view. */
 @media (max-width: 650px) {
@@ -59,5 +43,3 @@ lx-r{display:flex;align-items:baseline;gap:8px}
   .fw-boxscores table{min-width:620px}
   .fw-boxscores th:first-child,.fw-boxscores td:first-child{position:sticky;left:0;z-index:1;background:#101925;box-shadow:1px 0 0 #2b394b}
 }
-.lx-grid .fw-metric.lx-gv .lx-gi{display:flex;flex-direction:row;justify-content:space-between;align-items:baseline;gap:8px}
-.lx-grid .fw-metric.lx-gv .lx-gt{margin-bottom:2px}
