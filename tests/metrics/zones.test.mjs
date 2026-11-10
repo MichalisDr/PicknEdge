@@ -70,3 +70,17 @@ test('sub-area shares of a window sum attempts first (not an average of shares)'
   const g1 = { ...zero, played: 1, z_rim_a: 1, z_rim_m: 1, z_paint_a: 1 }, g2 = { ...zero, played: 1, z_paint_a: 9 };
   assert.equal(evaluate(m, [g1, g2]).value, 100 * 1 / 11);
 });
+
+test('opponent sub-area makes and attempts for teams (neutral direction)', () => {
+  const row = { played: 1, ...fixture('o_') };
+  let checked = 0;
+  for (const [key, idx] of Object.entries(GROUPS).filter(([k]) => k.startsWith('zs_'))) {
+    const made = idx.reduce((n, i) => n + i + 1, 0), att = idx.reduce((n, i) => n + i + 2, 0), v = id => METRICS.find(m => m.id === id);
+    assert.equal(evaluate(v('o_' + key + '_made'), [row]).value, made);
+    assert.equal(evaluate(v('o_' + key + '_att'), [row]).value, att);
+    assert.equal(v('o_' + key + '_made').scope, 'team');
+    assert.equal(v('o_' + key + '_att').direction, 0);
+    checked++;
+  }
+  assert.equal(checked, 6);
+});

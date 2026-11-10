@@ -26,12 +26,12 @@ export async function run(page) {
   const exp = await (await fetch('/_gate/ui-expected.json')).json(), out = { page, checked: 0, matched: 0, mismatches: [], notDisplayed: [] };
   const click = async sel => { const b = document.querySelector(sel); if (!b) throw new Error('missing ' + sel); b.click(); await wait(900); };
   if (page === 'fantasy-players' || page === 'fantasy-teams') {
-    const teams = page === 'fantasy-teams', ids = FantasyTables.COLUMNS[teams ? 'teams' : 'players'].profile;
+    const teams = page === 'fantasy-teams', ids = (await (await fetch('/table-layouts.json')).json()).tables[(teams ? 'teams' : 'players') + '.profile'].groups.flat().map(c => c.metric);
     for (const w of ['season', 'l5', 'l3']) {
       await click(`[data-window=${w}]`);
       if (!teams) { await click('[data-filters]'); const all = document.querySelector('[data-filter=showAll]'); if (!all.checked) { all.click(); await wait(700); } await click('[data-filters]'); }   // show everyone: eligibility is display-only
       const rows = new Map();
-      document.querySelectorAll('.fw-table-wrap tbody tr').forEach(tr => { const n = tr.querySelector('.fw-name')?.textContent; if (n) rows.set(n, [...tr.querySelectorAll('td')].slice(1).map(td => td.textContent)); });
+      document.querySelectorAll('.fw-table-wrap tbody tr').forEach(tr => { const n = tr.querySelector('.fw-name')?.textContent; if (n) rows.set(n, [...tr.querySelectorAll('td .fw-v')].map(e => e.textContent)); });
       await compare(exp[teams ? 'teams' : 'players'][w], rows, ids, exp, `${page} ${w}`, out);
     }
   } else if (page === 'cards') {

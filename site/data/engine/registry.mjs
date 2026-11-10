@@ -193,6 +193,11 @@ METRICS.push(
     e('zs_' + z.key + '_share', z.name + ' share of FGA', P, 'pct', S('zs_' + z.key + '_a'), S('zall_a'), F, 1, 'Share of the classified field-goal attempts taken in "' + z.name + '".'),
     e('zs_' + z.key + '_a100', z.name + ' FGA / 100 poss', P, 'per100', S('zs_' + z.key + '_a'), S('poss_off_on'), F, 1, 'Field-goal attempts in "' + z.name + '" per 100 team offensive possessions while on court.'),
   ]),
+  // Opponent sub-area makes and attempts (Teams Shooting table: the makes/attempts line under the opponent FG%).
+  ...SUBS.flatMap(z => [
+    e('o_zs_' + z.key + '_made', 'Opp ' + z.name + ' makes', T, 'count', S('o_zs_' + z.key + '_m'), null, F, 0, 'Field goals made by opponents in the sub-area "' + z.name + '".'),
+    e('o_zs_' + z.key + '_att', 'Opp ' + z.name + ' attempts', T, 'count', S('o_zs_' + z.key + '_a'), null, F, 0, 'Field-goal attempts by opponents in the sub-area "' + z.name + '".'),
+  ]),
   ...zoneEntries(P, '', '', '', FB), ...zoneEntries(T, '', 't_', '', B), ...zoneEntries(T, 'o_', 'o_', 'Opp ', FB));
 
 /* Generic share of a whole: the site passes counts ({ n, of }) for splits that are not columns of the clean tables
@@ -256,5 +261,5 @@ METRICS.push({
 const NEUTRAL = new Set(['fga100', 'a2_rate', 'gp', 'gs', 'min', 'usg', 'ftr', 'load', 'bc', 'a3_rate', 'a3_g', 'a1_g', 'a3_100', 'a1_100', 'pace', 't_a3_rate']);
 const LOWER = new Set(['pf_g', 'pf100', 'tov_g', 'tov100', 'tov_pct', 'ctov', 'drtg', 't_tov100']);
 for (const m of METRICS) {
-  m.direction = NEUTRAL.has(m.id) || /^zs_[a-z0-9]+_(made|att|share|a100)$/.test(m.id) ? 0 : LOWER.has(m.id) || (m.scope === 'team' && m.id.startsWith('o_') && m.id !== 'o_tov100') ? -1 : 1;
+  m.direction = NEUTRAL.has(m.id) || /^(o_)?zs_[a-z0-9]+_(made|att|share|a100)$/.test(m.id) ? 0 : LOWER.has(m.id) || (m.scope === 'team' && m.id.startsWith('o_') && m.id !== 'o_tov100') ? -1 : 1;
 }
