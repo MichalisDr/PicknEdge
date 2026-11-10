@@ -49,8 +49,8 @@
   const firstColWidth = (textWidths, f) => Math.min(f.cap, Math.max(f.min, Math.ceil(Math.max(0, ...textWidths)) + f.pad));
   /** Text of the rank-pool note. */
   const poolLabel = (name, n) => `${name} (${n})`;
-  /** Total width of a table: first column, optional team column, numeric columns (all numWidth). */
-  const tableWidth = (T, name, first) => first + (T.tables[name].teamColumn ? T.teamWidth : 0) + T.tables[name].groups.flat().length * T.numWidth;
+  /** Minimum width of a table: the first column plus every numeric column at its minimum (numWidth). Wider containers share the rest equally between the numeric columns. */
+  const tableWidth = (T, name, first) => first + T.tables[name].groups.flat().length * T.numWidth;
 
   const api = { rankOf, quarter, percentile, firstDirection, order, combined, firstColWidth, poolLabel, tableWidth, EPS };
   g.PicknEdgeTable = api;
