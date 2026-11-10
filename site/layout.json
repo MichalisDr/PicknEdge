@@ -16,7 +16,7 @@
         { "id": "load", "metric": "load", "label": "Offensive Load", "x": 0, "y": 7, "w": 6, "h": 3, "sub": [{"metric": "bc", "unit": " Box Creation"}] },
         { "id": "tov_pct", "metric": "tov_pct", "label": "TOV%", "x": 6, "y": 4, "w": 5, "h": 3, "sub": [{"metric": "tov_g", "unit": "/g"}] },
         { "id": "ctov", "metric": "ctov", "label": "cTOV%", "x": 6, "y": 7, "w": 5, "h": 3, "sub": [{"metric": "tov100", "unit": " TOV/100"}] },
-        { "id": "ftr", "metric": "ftr", "label": "FTr", "x": 11, "y": 4, "w": 7, "h": 6, "tier": "lg" },
+        { "id": "ftr", "metric": "ftr", "label": "FTr", "x": 11, "y": 4, "w": 7, "h": 6, "tier": "lg", "sub": [{ "metric": "ft_pct", "text": "FT {v}%" }] },
         { "id": "ast100", "metric": "ast100", "label": "AST", "unit": "/100", "x": 18, "y": 4, "w": 6, "h": 2, "sub": [{"metric": "ast_g", "unit": "/g"}] },
         { "id": "reb100", "metric": "reb100", "label": "REB", "unit": "/100", "x": 18, "y": 6, "w": 6, "h": 2, "sub": [{"metric": "reb_g", "unit": "/g"}] },
         { "id": "fd100", "metric": "fd100", "label": "FD", "unit": "/100", "x": 18, "y": 8, "w": 6, "h": 2, "sub": [{"metric": "fd_g", "unit": "/g"}] }
