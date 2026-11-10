@@ -24,15 +24,16 @@ test('column order and groups follow the locked table design', () => {
 test('no Value or Credits column in any table', () => {
   for (const [name, t] of Object.entries(T.tables)) for (const c of t.groups.flat()) assert.ok(!/value|credit/i.test(c.metric + (c.label || '')), `${name}: ${c.metric}`);
 });
-test('players tables have the Team column, team tables do not', () => {
-  for (const [name, t] of Object.entries(T.tables)) assert.equal(t.teamColumn, name.startsWith('players'), name);
+test('no separate Team column anywhere (the players tables show team and position under the name)', () => {
+  assert.ok(!('teamWidth' in T));
+  for (const [name, t] of Object.entries(T.tables)) assert.ok(!('teamColumn' in t), name);
 });
-test('all numeric columns share one width (numWidth); no column sets its own', () => {
+test('all numeric columns share one minimum width (numWidth, 80 px) and the rest of the container equally; no column sets its own', () => {
   assert.ok(Number.isInteger(T.numWidth) && T.numWidth >= 60);
   assert.equal(T.numWidth, 80);
-  assert.ok(M.tableWidth(T, 'players.profile', T.firstCol.cap) <= 1120, 'Players Overview fits the 1440 px content width (1120 px) without sideways scrolling');
+  assert.ok(M.tableWidth(T, 'players.profile', T.firstCol.cap) <= 1120, 'the minimum width of Players Overview fits the 1440 px content width (1120 px)');
   for (const [name, t] of Object.entries(T.tables)) for (const c of t.groups.flat()) assert.ok(!('w' in c) && !('width' in c), `${name}: ${c.metric} has its own width`);
-  const widths = Object.keys(T.tables).map(n => M.tableWidth(T, n, 200) - 200 - (T.tables[n].teamColumn ? T.teamWidth : 0));
+  const widths = Object.keys(T.tables).map(n => M.tableWidth(T, n, 200) - 200);
   widths.forEach((w, i) => assert.equal(w % T.numWidth, 0, Object.keys(T.tables)[i]));
 });
 test('metric ids exist in the registry with the right scope; subs and few-shot ids too', () => {

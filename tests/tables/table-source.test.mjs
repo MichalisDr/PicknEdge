@@ -16,7 +16,9 @@ test('no Colours button and no switch: evaluation colours are always on', () => 
 });
 test('no GP column, no subtitle or credits slot in the first column, no sub-lines in cells', () => {
   assert.ok(!/fw-gp|>GP<|fw-cr-slot|fw-sub|fw-cov/.test(js));
-  assert.match(js, /<th><button class="fw-name"[^>]*>\$\{esc\(r\.name\)\}<\/button><\/th>/);
+  assert.match(js, /<th><button class="fw-name"[^>]*>\$\{esc\(r\.name\)\}<\/button>\$\{teams \? '' : `<small class="fw-who"/);
+  assert.ok(js.includes("[r.team, r.pos].filter(Boolean).join(' · ')"), 'second line: team code and position');
+  assert.ok(!js.includes('fw-tm') && !css.includes('fw-tm'), 'no Team column');
 });
 test('a cell is the value and a rank chip (two lines at most)', () => {
   assert.match(js, /<i class="fw-rk">#\$\{r\.position\}<\/i>/);
@@ -32,8 +34,10 @@ test('headers stay on one line; sorted column and group line use their theme var
   assert.equal(js.split("'color:var(--eval-'").length - 1, 2);   // value colours use the visible text variables
   for (const v of ['--chip', '--eval-good-text', '--eval-bad-text', '--gridline', '--sorthead', '--sortcell', '--groupline']) assert.ok(html.includes(v + ':'), v + ' defined in :root');
 });
-test('the table frame shrinks to the table (no empty framed area beside it)', () => {
-  assert.ok(css.includes('.fw-table-wrap{width:fit-content;max-width:100%;'));
+test('the table fills its container: numeric columns share the rest equally above a minimum width', () => {
+  assert.ok(css.includes('.fw-t{width:100%;border-collapse:collapse;table-layout:fixed;'));
+  assert.ok(!css.includes('fit-content'));
+  assert.ok(js.includes("style=\"min-width:${totalW}px\"") && js.includes("cols.map(() => '<col>')"), 'numeric <col> carry no width');
 });
 test('no zebra: no alternating row background in the table CSS', () => {
   assert.ok(!/nth-child\((even|odd|2n)/.test(css));
