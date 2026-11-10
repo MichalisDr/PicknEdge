@@ -3,7 +3,8 @@
    (the registry's own definitions), league percentiles and spreads are statistics of those per-game values. */
 (function (g) {
   'use strict';
-  const SHOW_LAYOUT_LINES = false;   // the 1px divider lines of layout.json on the desktop grid; false hides them
+  const SHOW_LAYOUT_LINES = false;
+  const GROUP_EDGES = false;        // the group lines of layout.json shown as brighter outline sides of the tiles next to them (instead of separate lines)   // the 1px divider lines of layout.json on the desktop grid; false hides them
   const D = g.PicknEdgeData, W = g.PicknEdgeWindows, esc = W.esc;
   const T = () => g.FantasyTables;
 
@@ -88,7 +89,7 @@
   const ZONE_TINT_MAX = 0.38, ZONE_TINT_PP = 15;   // strongest alpha, reached at this many percentage points from the league
   const ZONE_FEW = 1;                // attempts per 100 possessions below this: "–" and a dimmed box
   const unitHtml = t => t ? `<em>${esc(t)}</em>` : '';
-  function boxHtml(b, view, byId, sel, players) {
+  function boxHtml(b, view, byId, sel, players, edge = '') {
     const m = byId[b.metric], c = view.get(cs.id, b.metric), label = b.label || m.label, area = `grid-area:${b.y + 1}/${b.x + 1}/span ${b.h}/span ${b.w}`, size = b.w * b.h;
     const r = players ? null : T().rankOf(view, b.metric, c.value, m.direction);
     const tint = r ? `color:${r.color}` : '';
@@ -102,7 +103,7 @@
       return `<small>${sb.text ? esc(text) : text}</small>`;
     }).join('');
     const subTitle = (b.sub || []).filter(sb => sb.label).map(sb => ' · ' + sb.label + ': ' + byId[sb.metric].description).join('');
-    const open = (cls, style, title) => `<button class="fw-metric ${cls}" style="${area}${style ? ';' + style : ''}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(title)}">`;
+    const open = (cls, style, title) => `<button class="fw-metric ${cls}${edge}" style="${area}${style ? ';' + style : ''}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(title)}">`;
     if (b.kind === 'zone' && players) {
       const made = val(b.made).value, att = val(b.att).value, share = val(b.share).value, p100 = val(b.per100).value;
       const few = !(p100 >= ZONE_FEW), lg = view.league(b.metric)?.value;
@@ -122,17 +123,28 @@
   }
   /* CSS length of grid line k (of `count` cells) on one axis: the middle of the gap between cell k-1 and k */
   const linePos = (k, count) => k <= 0 ? '0px' : k >= count ? '100%' : `(${k} * (100% - ${count - 1} * var(--gap)) / ${count} + ${k - 0.5} * var(--gap))`;
+  /* Group lines as tile outline sides: a line on a grid line brightens the facing side of every box that touches it (top/bottom of a horizontal line, left/right of a vertical one). */
+  function groupEdges(L) {
+    const out = {};
+    if (!GROUP_EDGES) return out;
+    for (const l of L.lines) for (const b of L.boxes) {
+      const add = c => { out[b.id] = (out[b.id] || '') + ' ' + c; };
+      if (l.o === 'h' && b.x < l.x + l.n && b.x + b.w > l.x) { if (b.y === l.y) add('lx-e-t'); if (b.y + b.h === l.y) add('lx-e-b'); }
+      if (l.o === 'v' && b.y < l.y + l.n && b.y + b.h > l.y) { if (b.x === l.x) add('lx-e-l'); if (b.x + b.w === l.x) add('lx-e-r'); }
+    }
+    return out;
+  }
   async function layoutGrid(name, view, byId, sel, players) {
     const L = (await layoutFile()).layouts[name];
     if (!L) throw new Error('no layout ' + name);
-    const order = g.PicknEdgeLayout.stackOrder(L);   // DOM order = stacked order; desktop placement is by grid-area
+    const edges = groupEdges(L), order = g.PicknEdgeLayout.stackOrder(L);   // DOM order = stacked order; desktop placement is by grid-area
     const lines = !SHOW_LAYOUT_LINES ? '' : L.lines.map(l => {
       const a = l.o === 'h' ? [l.x, l.x + l.n, 24, l.y, L.rows] : [l.y, l.y + l.n, L.rows, l.x, 24];
       return l.o === 'h'
         ? `<i class="lx-line" style="left:calc${linePos(a[0], a[2])};right:calc(100% - ${linePos(a[1], a[2])});top:calc${linePos(a[3], a[4])};height:1px"></i>`
         : `<i class="lx-line" style="top:calc${linePos(a[0], a[2])};bottom:calc(100% - ${linePos(a[1], a[2])});left:calc${linePos(a[3], a[4])};width:1px"></i>`;
     }).join('');
-    return `<div class="lx" data-layout="${name}"><div class="lx-grid fw-pgrid" style="--rows:${L.rows}">${order.map(b => boxHtml(b, view, byId, sel, players)).join('')}${lines}</div></div>`;
+    return `<div class="lx" data-layout="${name}"><div class="lx-grid fw-pgrid" style="--rows:${L.rows};--rowh:${(await layoutFile()).rowPx || 24}px">${order.map(b => boxHtml(b, view, byId, sel, players, edges[b.id] || '')).join('')}${lines}</div></div>`;
   }
   /* Radar geometry shared by the player and team radars. axes = [[label, value, otherValue?]], frac maps a value to 0..1 of the radius. */
   function radarSvg(axes, frac, rings, labelOf) {

@@ -2,7 +2,7 @@
    background, border, radius, padding, fonts, colours). This file only places them on the 24-column grid, adds the strip variant and the
    divider lines, and re-flows the grid as a list on narrow containers. */
 .lx{container:lx/inline-size;width:100%}
-.lx-grid{--gap:8px;position:relative;display:grid;grid-template-columns:repeat(24,minmax(0,1fr));grid-template-rows:repeat(var(--rows),minmax(0,1fr));aspect-ratio:24/var(--rows);gap:var(--gap);width:100%}
+.lx-grid{--gap:8px;position:relative;display:grid;grid-template-columns:repeat(24,minmax(0,1fr));grid-template-rows:repeat(var(--rows),var(--rowh,24px));gap:var(--gap);width:100%}
 .lx-grid .fw-metric{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-height:0}
 /* label and secondary lines sit in <lx-t>, transparent on the grid; ordering keeps the old sequence label, value, rank, secondary text */
 lx-t{display:contents}
@@ -14,20 +14,16 @@ lx-t>small{order:2}
 .lx-strip{flex-direction:row!important;justify-content:space-between!important;align-items:center!important}
 lx-r{display:flex;align-items:baseline;gap:8px}
 .lx-grid .fw-rank{font-size:11px;font-weight:500;color:#94a3b8;margin:0}
-/* Desktop: every tile is a size container and the value of a large tile grows with its box (cqmin), so a big box is filled by a big number instead of a small number in an empty frame.
-   Label, secondary lines and rank keep one size everywhere. Stacked (narrow) rows are not size containers, they size to their content. */
+/* Desktop: the grid unit is a fixed row height (layout.json "rowPx") and a tile's content is always the same size, so a box of a given size in cells looks the same on every card; the layout proportions are kept, the boxes just are not taller than their content. */
 @container lx (min-width: 651px) {
-  .lx-grid .fw-metric{container-type:size}
-  .lx-grid .fw-m-lg{padding:clamp(10px,5cqmin,18px)}
-  .lx-grid .fw-m-lg{justify-content:center}
-  .lx-grid .fw-m-lg>strong{font-size:clamp(28px,26cqmin,60px);margin:clamp(3px,3cqmin,10px) 0 2px}
-  .lx-grid .fw-m-lg>strong em{font-size:clamp(11px,6cqmin,15px)}
-  .lx-grid .fw-m-lg>small{font-size:clamp(12px,5.5cqmin,14px)}
-  .lx-grid .fw-m-lg>span{font-size:clamp(12px,5.5cqmin,14px)}
-  .lx-grid .fw-metric.lx-zone{padding:6px 10px;justify-content:center}
-  .lx-grid .fw-metric.lx-zone>strong{margin:2px 0 0}
-  .lx-grid .fw-metric.lx-zone>small,.lx-grid .fw-metric.lx-zone>.fw-rank{line-height:1.15}
+  /* zone boxes are two cells high: label on the first line, value and makes/attempts (or rank) side by side on the second */
+  .lx-grid .fw-metric.lx-zone{display:grid;grid-template-columns:auto 1fr;align-content:center;align-items:end;column-gap:8px;row-gap:1px;padding:6px 10px}
+  .lx-grid .fw-metric.lx-zone>span{grid-column:1/-1;grid-row:1}
+  .lx-grid .fw-metric.lx-zone>strong{grid-column:1;grid-row:2;margin:0}
+  .lx-grid .fw-metric.lx-zone>small,.lx-grid .fw-metric.lx-zone>.fw-rank{grid-column:2;grid-row:2;margin:0 0 2px;line-height:1.1}
   .lx-grid .fw-metric.lx-strip{padding:6px 12px}
+  .lx-grid .fw-m-lg{padding:10px 13px}
+  .lx-grid .fw-m-sm{padding:8px 11px}
 }
 .lx-few{opacity:.45}
 .lx-few strong{font-weight:500}
