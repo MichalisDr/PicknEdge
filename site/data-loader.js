@@ -67,6 +67,15 @@
     /* ---- small things ---- */
     const metrics = () => once('metrics', async () => { const list = await need('metrics.json'); return { list, byId: Object.fromEntries(list.map(m => [m.id, m])) }; });
     const roster = () => need('roster.json');
+    const schedule = () => once('schedule', () => need('schedule.json'));
+    /* Next game of a team (data code): the confirmed game with the earliest date, or null. */
+    async function nextGame(team) {
+      let next = null;
+      for (const x of await schedule()) if (x.status === 'confirmed' && (x.home.code === team || x.away.code === team) && (!next || x.date < next.date)) next = x;
+      if (!next) return null;
+      const home = next.home.code === team, opp = home ? next.away : next.home;
+      return { code: next.code, round: next.round, date: next.date, home, opp: opp.code, oppName: opp.name };
+    }
     const status = async () => { const m = await manifest(); return `${m.games} games · latest ${String(m.lastDate).slice(0, 10)}`; };
     /* The old site cached EuroLeague data in localStorage; drop those keys once. */
     function clearOldCaches(store = storage || (typeof localStorage !== 'undefined' ? localStorage : null)) {
@@ -76,7 +85,7 @@
       return n;
     }
 
-    return { manifest, metrics, view, windowGames, games, shots, roster, engine, status, clearOldCaches, records, decode };
+    return { manifest, metrics, view, windowGames, games, shots, roster, schedule, nextGame, engine, status, clearOldCaches, records, decode };
   }
   return { create, decode };
 });

@@ -201,12 +201,21 @@
   }
 
   /* ---------- dialog ---------- */
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const dayLabel = iso => { const d = new Date(iso); return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()]; };
+  /** "vs FBT ↗" (home) or "@ FBT ↗" (away): opens the opponent's team card. Empty when the team has no upcoming game. */
+  function nextBtn(next, roster) {
+    if (!next) return '';
+    const label = (next.home ? 'vs ' : '@ ') + esc(g.PICKNEDGE_TEAM_CODE(roster, next.opp)), tip = 'Open ' + (roster.teams[next.opp] || next.oppName || next.opp) + ' card · ' + dayLabel(next.date);
+    return `<button class="fw-next" data-next="${esc(next.opp)}" title="${esc(tip)}" aria-label="${esc(tip)}">${label}<span class="fw-arrow"> ↗</span></button>`;
+  }
   async function draw() {
     if (!dialog) return;
     const root = dialog.querySelector('.fw-card'), mine = cs.token = (cs.token || 0) + 1;
     const kind = cs.entity;
     try {
       const [view, season, teamsView, { byId }, roster] = await Promise.all([W.view(kind, cs), D.view(kind, 'season'), W.view('teams', cs), D.metrics(), D.roster()]);
+      const next = kind === 'players' && season.row(cs.id) ? await D.nextGame(season.row(cs.id).team).catch(() => null) : null;
       if (mine !== cs.token || !dialog) return;
       const row = view.row(cs.id) || season.row(cs.id);
       if (!row) { root.textContent = 'No data available.'; return; }
@@ -222,10 +231,12 @@
       else if (cs.mode === 'shooting') visual = '<div class="fw-shots" data-shots></div>';
       else if (players) visual = radar(view, byId, roster, cs.cmp ? await W.view('players', cs) : null);
       else visual = teamRadar(view, season);
-      root.innerHTML = `<header class="fw-identity">${logo ? `<img src="${esc(logo)}" alt="">` : ''}<div><small>${players ? 'PLAYER' : 'TEAM'} / FANTASY</small><h2>${esc(name)}</h2><p>${players ? esc(roster.teams[team] || team) + ' · ' + esc(row.pos || '—') : ''}</p></div><b>${gp || 0} GP</b></header>
-        <div class="fw-card-controls"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(cs, 'data-card-window')}</div><div class="fw-switch" role="group" aria-label="Card view"><button data-card-view="shooting" aria-pressed="${cs.mode === 'shooting'}">Shooting</button></div></div>
+      root.innerHTML = `<header class="fw-identity">${logo ? `<img src="${esc(logo)}" alt="">` : ''}<div><small>${players ? 'PLAYER' : 'TEAM'} / FANTASY</small><h2>${esc(name)}</h2><p>${players ? esc(roster.teams[team] || team) + ' · ' + esc(row.pos || '—') : ''}</p></div>${nextBtn(next, roster)}${!players && cs.back ? `<button class="fw-next fw-back" data-back title="Back to ${esc(cs.back.name)}">← ${esc(cs.back.name)}</button>` : ''}</header>
+        <div class="fw-card-controls"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(cs, 'data-card-window')}</div><b>${gp || 0} GP</b><div class="fw-switch" role="group" aria-label="Card view"><button data-card-view="shooting" aria-pressed="${cs.mode === 'shooting'}">Shooting</button></div></div>
         ${!gp && players ? '' : gridHtml}<div class="fw-visual">${visual}</div>${players ? '<div data-box></div>' : ''}`;
       W.wire(root, cs, () => { cs.selected = null; draw(); }, 'data-card-window');
+      root.querySelector('[data-next]')?.addEventListener('click', e => { const t = e.currentTarget.dataset.next; open('teams', t, { win: cs.win, back: { id: cs.id, name }, previous: cs.previous }); });
+      root.querySelector('[data-back]')?.addEventListener('click', () => open('players', cs.back.id, { win: cs.win, previous: cs.previous }));
       root.querySelectorAll('[data-card-view]').forEach(b => { b.onclick = () => { cs.mode = cs.mode === 'shooting' ? 'profile' : 'shooting'; cs.selected = null; draw(); }; });
       root.querySelectorAll('[data-metric]').forEach(b => { b.onclick = () => { cs.selected = cs.selected === b.dataset.metric ? null : b.dataset.metric; draw(); }; });
       root.querySelectorAll('[data-radar]').forEach(b => { b.onclick = () => { cs.radar = b.dataset.radar; draw(); }; });
@@ -241,12 +252,12 @@
 
   function open(entity, id, from = {}) {
     close();
-    cs = { entity, id, win: from.win || 'season', mode: 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
+    const previous = from.previous || document.activeElement;
+    cs = { entity, id, previous, back: from.back || null, win: from.win || 'season', mode: 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
     dialog = document.createElement('dialog');
     dialog.className = 'fw-dialog';
     dialog.innerHTML = '<button class="fw-close" aria-label="Close card">×</button><div class="fw-card"><p class="fw-empty" role="status">Loading…</p></div>';
     document.body.append(dialog);
-    const previous = document.activeElement;
     const done = () => { close(); previous?.focus?.(); };
     dialog.querySelector('.fw-close').onclick = done;
     dialog.oncancel = e => { e.preventDefault(); done(); };
