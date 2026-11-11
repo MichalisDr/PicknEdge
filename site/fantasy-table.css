@@ -18,9 +18,6 @@
 .fw-t .fw-n{font-variant-numeric:tabular-nums}
 .fw-t thead th{position:relative;height:40px;line-height:1.15;font-size:10px;font-weight:600;padding:5px 2px}
 .fw-t thead th button{white-space:nowrap;text-align:center;padding:2px 0;width:100%}
-.fw-t thead th.fw-n::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--groupline)}
-.fw-t thead th.g-start::before{left:4px}
-.fw-t thead th.g-end::before{right:4px}
 .fw-t th[aria-sort=ascending] button::after,.fw-t th[aria-sort=descending] button::after{position:absolute;right:3px;top:5px;font-size:7px}
 .fw-t th[aria-sort=ascending] button::after{content:"\25B2"}
 .fw-t th[aria-sort=descending] button::after{content:"\25BC"}

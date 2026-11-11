@@ -48,11 +48,10 @@
   /** Width of the first column: the widest displayed name (measured text widths in px) plus padding, within [min, cap]. */
   const firstColWidth = (textWidths, f) => Math.min(f.cap, Math.max(f.min, Math.ceil(Math.max(0, ...textWidths)) + f.pad));
   /** Text of the rank-pool note. */
-  const poolLabel = (name, n) => `${name} (${n})`;
   /** Minimum width of a table: the first column plus every numeric column at its minimum (numWidth). Wider containers share the rest equally between the numeric columns. */
   const tableWidth = (T, name, first) => first + T.tables[name].groups.flat().length * T.numWidth;
 
-  const api = { rankOf, quarter, percentile, firstDirection, order, combined, firstColWidth, poolLabel, tableWidth, EPS };
+  const api = { rankOf, quarter, percentile, firstDirection, order, combined, firstColWidth, tableWidth, EPS };
   g.PicknEdgeTable = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

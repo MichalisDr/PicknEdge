@@ -26,13 +26,12 @@ test('a cell is the value and a rank chip (two lines at most)', () => {
   const chip = css.match(/.fw-t .fw-rk{([^}]*)}/)[1];   // filled, no border, small radius (not a pill), bold, theme variables only
   assert.ok(chip.includes('background:var(--chip)') && chip.includes('border-radius:4px') && chip.includes('font-weight:700') && !/border:/.test(chip), chip);
 });
-test('headers stay on one line; sorted column and group line use their theme variables', () => {
+test('headers stay on one line; sorted column uses their theme variables', () => {
   assert.match(css, /\.fw-t thead th button\{white-space:nowrap/);
   assert.match(css, /fw-sorted\{background:var\(--sorthead\)\}/);
   assert.match(css, /td\.fw-sorted\{background:var\(--sortcell\)\}/);
-  assert.match(css, /height:2px;background:var\(--groupline\)/);
   assert.equal(js.split("'color:var(--eval-'").length - 1, 2);   // value colours use the visible text variables
-  for (const v of ['--chip', '--eval-good-text', '--eval-bad-text', '--gridline', '--sorthead', '--sortcell', '--groupline']) assert.ok(html.includes(v + ':'), v + ' defined in :root');
+  for (const v of ['--chip', '--eval-good-text', '--eval-bad-text', '--gridline', '--sorthead', '--sortcell']) assert.ok(html.includes(v + ':'), v + ' defined in :root');
 });
 test('the table fills its container: numeric columns share the rest equally above a minimum width', () => {
   assert.ok(css.includes('.fw-t{width:100%;border-collapse:collapse;table-layout:fixed;'));

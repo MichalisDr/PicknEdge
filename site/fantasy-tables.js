@@ -18,7 +18,6 @@
   const signed = (v, d = 1) => (v < 0 ? '−' : '+') + Math.abs(v).toFixed(d);
   /* League average row: every player (or team) of the window, straight from the view's league row; no per-game rows needed. */
   const leagueCells = (view, ids) => Object.fromEntries(ids.map(id => [id, view.league(id)]));
-  const POOL_NAMES = { ALL: 'All players', G: 'Guards', F: 'Forwards', C: 'Centers' };
   /* Short display name of a team (team-assets.js label), the full name stays in the title. */
   const teamLabel = (roster, code) => (g.PICKNEDGE_TEAMS || []).find(t => t.id === roster.logoIds?.[code])?.label || roster.teams[code] || code;
   let measureCtx = null;
@@ -66,7 +65,7 @@
       const gallery = state.mode === 'charts' && g.FantasyGallery.available(state.entity, state.view) ? await g.FantasyGallery.html(state.entity, state.view, state, pool.map(r => r.id)) : '';
       if (mine !== drawId) return;
       const font = '700 13px ' + getComputedStyle(document.body).fontFamily;
-      M = { view, TL, T, tname, cols, model, few, roster, status, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth([...rows.map(r => r.name), 'League average'].map(n => textWidth(n, font)), TL.firstCol), poolN: pool.length, sel, cur, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
+      M = { view, TL, T, tname, cols, model, few, roster, status, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth([...rows.map(r => r.name), 'League average'].map(n => textWidth(n, font)), TL.firstCol), sel, cur, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
     } catch (e) {
       host.innerHTML = `<section class="fantasy-stats fw-workbench"><div class="fw-heading"><div><div class="eyebrow">FANTASY</div><h1>${teams ? 'Teams' : 'Players'}</h1></div></div><p class="fw-empty" role="status">Could not load the data: ${esc(e.message)}</p></section>`;
       return;
@@ -77,12 +76,11 @@
     wire();
   }
 
-  function html({ view, TL, T, tname, cols, model, few, roster, status, shown: rowsShown, firstW, poolN, sel, cur, avg, gallery, byId }) {
+  function html({ view, TL, T, tname, cols, model, few, roster, status, shown: rowsShown, firstW, sel, cur, avg, gallery, byId }) {
     const teams = state.entity === 'teams', title = teams ? 'Teams' : 'Players', hasCharts = g.FantasyGallery.available(state.entity, state.view);
     const totalW = TM.tableWidth(TL, tname, firstW);
-    const pos = new Map(); T.groups.forEach(gr => gr.forEach((c, ci) => pos.set(c.metric, { start: ci === 0, end: ci === gr.length - 1 })));
     const sortedCols = new Set(sel.length ? sel : [cur.metric]);
-    const cls = c => 'fw-n' + (pos.get(c.metric).start ? ' g-start' : '') + (pos.get(c.metric).end ? ' g-end' : '') + (sortedCols.has(c.metric) ? ' fw-sorted' : '');
+    const cls = c => 'fw-n' + (sortedCols.has(c.metric) ? ' fw-sorted' : '');
     const header = cols.map(c => {
       const m = byId[c.metric], on = cur.metric === c.metric && !sel.length;
       return `<th class="${cls(c)}" aria-sort="${on ? (cur.dir === 'asc' ? 'ascending' : 'descending') : 'none'}"><button data-sort="${c.metric}" ${sel.includes(c.metric) ? 'data-sel' : ''} title="${esc(m.label + ': ' + m.description)}">${esc(c.label)}</button></th>`;
@@ -105,8 +103,7 @@
       <label>MIN ≥<input data-filter="minMin" type="number" min="0" value="${state.minMin}"></label>
       <label>GP ≥<input data-filter="minGp" type="number" min="0" value="${state.minGp}"></label>
       <label class="fw-check"><input data-filter="showAll" type="checkbox" ${state.showAll ? 'checked' : ''}> Show players below the form thresholds</label></div>` : '';
-    const poolName = TM.poolLabel(teams ? 'All teams' : POOL_NAMES[state.position], poolN);
-    const info = `<div class="fw-tinfo"><span>Rank among: ${esc(poolName)}</span><span>${sel.length ? 'Combined rank: ' + esc(sel.map(id => cols.find(c => c.metric === id).label).join(' + ')) + ' (mean percentile). Click a header to clear.' : 'Click a header to sort. Shift+click (long-press on touch) combines columns. Click a value for details.'}</span></div>`;
+    const info = sel.length ? `<div class="fw-tinfo">Combined rank: ${esc(sel.map(id => cols.find(c => c.metric === id).label).join(' + '))} (mean percentile). Click a header to clear.</div>` : '';
     return `<section class="fantasy-stats fw-workbench">
       <div class="fw-heading"><div><div class="eyebrow">FANTASY / ${teams ? 'TEAMS' : 'PLAYERS'}</div><h1>${title}</h1></div><span role="status">${esc(status)}</span></div>
       <div class="fw-periods"><div class="fw-switch" role="group" aria-label="Sample window">${W.buttons(state)}</div></div>
