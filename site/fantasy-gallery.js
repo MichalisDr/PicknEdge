@@ -56,7 +56,30 @@
     const charts = CHARTS.filter(c => c.entity === kind && c.view === viewName);
     const where = `${kind === 'teams' ? 'Teams' : 'Players'} · ${viewName === 'profile' ? 'Profile' : 'Shooting'} · ${W.label(state)}`;
     if (!charts.length) return `<section class="fc-gallery"><div class="fw-section-title"><h3>Comparative charts</h3><span>${esc(where)}</span></div><p class="fw-empty">No comparative charts for this view yet. Open a ${kind === 'teams' ? 'team' : 'player'} card (click a name in the Table) for its radar and trends.</p></section>`;
-    return `<section class="fc-gallery"><div class="fw-section-title"><h3>Comparative charts</h3><span>${esc(where)} · ${charts.length} ${charts.length === 1 ? 'chart' : 'charts'}</span></div><div class="fc-grid-gallery">${charts.map(c => `<div class="fc-card"><span class="fc-card-title">${esc(c.title)}</span><span class="fc-card-sub">${esc(c.subtitle || '')}</span>${scatter(c, view, ids ?? view.keys, byId, roster)}${c.note ? `<p class="fc-note">${esc(c.note)}</p>` : ''}${c.equal ? '<p class="fc-note">Dotted line = actual equals expected · green: opponents shot better than expected (favourable for the opposing player), red: worse</p>' : '<p class="fc-note">Dashed lines = league values · green: favourable for the opposing player on both axes, red: unfavourable</p>'}</div>`).join('')}</div></section>`;
+    return `<section class="fc-gallery" data-entity="${kind}" data-win="${esc(state.win)}"><div class="fw-section-title"><h3>Comparative charts</h3><span>${esc(where)} · ${charts.length} ${charts.length === 1 ? 'chart' : 'charts'}</span></div><div class="fc-grid-gallery">${charts.map(c => `<div class="fc-card" tabindex="0" role="button" data-chart-id="${esc(c.id)}"><span class="fc-card-title">${esc(c.title)}</span><span class="fc-card-sub">${esc(c.subtitle || '')}</span>${scatter(c, view, ids ?? view.keys, byId, roster)}${c.note ? `<p class="fc-note">${esc(c.note)}</p>` : ''}${c.equal ? '<p class="fc-note">Dotted line = actual equals expected · green: opponents shot better than expected (favourable for the opposing player), red: worse</p>' : '<p class="fc-note">Dashed lines = league values · green: favourable for the opposing player on both axes, red: unfavourable</p>'}</div>`).join('')}</div></section>`;
   }
+  /* Click, Enter or Space on a card opens the same scatter large in a <dialog> (same pattern as FantasyCards). One delegated listener on the document, so it survives every re-render. */
+  let dlg = null;
+  function close() { if (dlg) { dlg.close(); dlg.remove(); dlg = null; } }
+  function open(card) {
+    close();
+    const gal = card.closest('.fc-gallery');
+    dlg = document.createElement('dialog');
+    dlg.className = 'fw-dialog fc-dialog';
+    dlg.innerHTML = '<button class="fw-close" aria-label="Close chart">×</button><header class="fc-mhead"><h2>' + card.querySelector('.fc-card-title').innerHTML + '<small>' + card.querySelector('.fc-card-sub').innerHTML + '</small></h2></header><div class="fc-stage">' + card.querySelector('.fc-svg').outerHTML + '</div>' + [...card.querySelectorAll('.fc-note')].map(n => n.outerHTML).join('');
+    document.body.append(dlg);
+    const mine = dlg, done = () => { if (dlg === mine) close(); if (card.isConnected) card.focus(); };
+    mine.querySelector('.fw-close').onclick = done;
+    mine.oncancel = e => { e.preventDefault(); done(); };
+    mine.onclick = e => {
+      if (e.target === mine) return done();
+      const pt = e.target.closest('.fc-pt[data-open]');
+      if (pt) { close(); g.FantasyCards.open(gal.dataset.entity, pt.dataset.open, { win: gal.dataset.win }); }
+    };
+    mine.showModal();
+  }
+  document.addEventListener('click', e => { const card = e.target.closest('.fc-grid-gallery .fc-card'); if (card && !e.target.closest('.fc-pt')) open(card); });
+  document.addEventListener('keydown', e => { const card = e.target.closest?.('.fc-grid-gallery .fc-card'); if (card && e.target === card && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(card); } });
+  g.addEventListener('hashchange', close);
   g.FantasyGallery = { html, available: (kind, view) => CHARTS.some(c => c.entity === kind && c.view === view) };
 })(globalThis);
