@@ -65,6 +65,7 @@ export const METRICS = [
   e('tov100', 'TOV / 100 poss', P, 'per100', S('tov'), S('poss_off_on'), FB, 1, 'Turnovers per 100 team offensive possessions while on court.'),
   e('oreb100', 'OREB / 100 poss', P, 'per100', S('oreb'), S('poss_off_on'), FB, 1, 'Offensive rebounds per 100 team offensive possessions while on court.'),
   e('fd100', 'FD / 100 poss', P, 'per100', S('fd'), S('poss_off_on'), FB, 1, 'Fouls drawn per 100 team offensive possessions while on court.'),
+  e('fc100', 'FC / 100 poss', P, 'per100', S('pf'), S('poss_off_on'), F, 1, 'Fouls committed per 100 possessions'),
   e('stl100', 'STL / 100 poss', P, 'per100', S('stl'), S('poss_def_on'), FB, 1, 'Steals per 100 team defensive possessions while on court.'),
   e('blk100', 'BLK / 100 poss', P, 'per100', S('blk'), S('poss_def_on'), FB, 1, 'Blocks per 100 team defensive possessions while on court.'),
   e('dreb100', 'DREB / 100 poss', P, 'per100', S('dreb'), S('poss_def_on'), FB, 1, 'Defensive rebounds per 100 team defensive possessions while on court.'),
@@ -271,7 +272,7 @@ METRICS.push({
    Opponent figures (o_*) are better when low, except opponent turnovers (a defence wants them high). The Fantasy lens
    (green = good for the opposing player) is the UI's inversion of this. */
 const NEUTRAL = new Set(['fga100', 'a2_rate', 'gp', 'gs', 'min', 'usg', 'ftr', 'load', 'bc', 'a3_rate', 'a3_g', 'a1_g', 'a3_100', 'a1_100', 'pace', 't_a3_rate']);
-const LOWER = new Set(['pf_g', 'pf100', 'tov_g', 'tov100', 'tov_pct', 'ctov', 'drtg', 't_tov100']);
+const LOWER = new Set(['pf_g', 'pf100', 'fc100', 'tov_g', 'tov100', 'tov_pct', 'ctov', 'drtg', 't_tov100']);
 for (const m of METRICS) {
   m.direction = NEUTRAL.has(m.id) || /^(o_)?z[sm]_[a-z0-9]+_(made|att|share|a100)$/.test(m.id) || /^(o_)?(fg2|fg3|ft)_(made|att)$/.test(m.id) ? 0 : LOWER.has(m.id) || (m.scope === 'team' && m.id.startsWith('o_') && m.id !== 'o_tov100') ? -1 : 1;
 }

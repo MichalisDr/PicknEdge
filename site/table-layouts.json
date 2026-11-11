@@ -26,7 +26,8 @@
         ],
         [
           { "metric": "ftr", "label": "FTr", "chart": true },
-          { "metric": "fd100", "label": "FD/100", "colour": "rank", "chart": true }
+          { "metric": "fd100", "label": "FD/100", "colour": "rank", "chart": true },
+          { "metric": "fc100", "label": "FC/100", "colour": "rank", "chart": true }
         ]
       ]
     },

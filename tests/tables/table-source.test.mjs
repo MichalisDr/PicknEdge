@@ -17,7 +17,7 @@ test('no Colours button and no switch: evaluation colours are always on', () => 
 test('no GP column, no subtitle or credits slot in the first column, no sub-lines in cells', () => {
   assert.ok(!/fw-gp|>GP<|fw-cr-slot|fw-sub|fw-cov/.test(js));
   assert.match(js, /<th><button class="fw-name"[^>]*>\$\{esc\(r\.name\)\}<\/button>\$\{teams \? '' : `<small class="fw-who"/);
-  assert.ok(js.includes("[r.team, r.pos].filter(Boolean).join(' · ')"), 'second line: team code and position');
+  assert.ok(js.includes("[g.PICKNEDGE_TEAM_CODE(roster, r.team), r.pos].filter(Boolean).join(' · ')"), 'second line: team code (Euroleague Fantasy code) and position');
   assert.ok(!js.includes('fw-tm') && !css.includes('fw-tm'), 'no Team column');
 });
 test('a cell is the value and a rank chip (two lines at most)', () => {
