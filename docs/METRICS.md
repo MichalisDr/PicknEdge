@@ -26,6 +26,7 @@ Every metric is defined once in `scripts/metrics/registry.mjs`. Ratios are `Σ n
 | `tov100` | TOV / 100 poss | per100 | 100 × Σ(tov) ÷ Σ(poss_off_on) | lower | fantasy, betting | Turnovers per 100 team offensive possessions while on court. |
 | `oreb100` | OREB / 100 poss | per100 | 100 × Σ(oreb) ÷ Σ(poss_off_on) | higher | fantasy, betting | Offensive rebounds per 100 team offensive possessions while on court. |
 | `fd100` | FD / 100 poss | per100 | 100 × Σ(fd) ÷ Σ(poss_off_on) | higher | fantasy, betting | Fouls drawn per 100 team offensive possessions while on court. |
+| `fc100` | FC / 100 poss | per100 | 100 × Σ(pf) ÷ Σ(poss_off_on) | lower | fantasy | Fouls committed per 100 possessions |
 | `stl100` | STL / 100 poss | per100 | 100 × Σ(stl) ÷ Σ(poss_def_on) | higher | fantasy, betting | Steals per 100 team defensive possessions while on court. |
 | `blk100` | BLK / 100 poss | per100 | 100 × Σ(blk) ÷ Σ(poss_def_on) | higher | fantasy, betting | Blocks per 100 team defensive possessions while on court. |
 | `dreb100` | DREB / 100 poss | per100 | 100 × Σ(dreb) ÷ Σ(poss_def_on) | higher | fantasy, betting | Defensive rebounds per 100 team defensive possessions while on court. |

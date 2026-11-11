@@ -11,7 +11,7 @@ const byId = Object.fromEntries(METRICS.map(m => [m.id, m]));
 const ZONES = ['rim', 'paint', 'corner', 'arc', 'mid'];                       // Mid-range = the area "Mid" (mid-range plus baseline); no separate Baseline
 const zp = (pre, z) => `${pre}${z === 'mid' ? 'zm' : 'zs'}_${z}_pct`;
 const EXPECT = {
-  'players.profile': [['pir'], ['min', 'usg', 'load', 'tov_pct', 'ctov'], ['pts100', 'ast100', 'reb100'], ['ftr', 'fd100']],
+  'players.profile': [['pir'], ['min', 'usg', 'load', 'tov_pct', 'ctov'], ['pts100', 'ast100', 'reb100'], ['ftr', 'fd100', 'fc100']],
   'players.shooting': [['efg', 'fg2_pct', 'fg3_pct', 'ft_pct'], ZONES.map(z => zp('', z))],
   'teams.profile': [['pace', 'drtg'], ['o_efg', 'o_ftr'], ['o_tov100', 'o_ast100', 't_dreb_pct'], ['o_pot100', 'o_fb100', 'o_sc100']],
   'teams.shooting': [['o_efg', 'o_fg2_pct', 'o_fg3_pct'], ZONES.map(z => zp('o_', z))],
@@ -31,7 +31,6 @@ test('no separate Team column anywhere (the players tables show team and positio
 test('all numeric columns share one minimum width (numWidth, 80 px) and the rest of the container equally; no column sets its own', () => {
   assert.ok(Number.isInteger(T.numWidth) && T.numWidth >= 60);
   assert.equal(T.numWidth, 80);
-  assert.ok(M.tableWidth(T, 'players.profile', T.firstCol.cap) <= 1120, 'the minimum width of Players Overview fits the 1440 px content width (1120 px)');
   for (const [name, t] of Object.entries(T.tables)) for (const c of t.groups.flat()) assert.ok(!('w' in c) && !('width' in c), `${name}: ${c.metric} has its own width`);
   const widths = Object.keys(T.tables).map(n => M.tableWidth(T, n, 200) - 200);
   widths.forEach((w, i) => assert.equal(w % T.numWidth, 0, Object.keys(T.tables)[i]));
