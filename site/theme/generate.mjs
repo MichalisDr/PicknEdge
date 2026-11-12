@@ -24,16 +24,50 @@ function accentRules(theme) {
   return `body{--color-accent:${valueOf(a.default)}}body[data-area=fantasy]{--color-accent:${valueOf(a.fantasy)}}body[data-area=betting]{--color-accent:${valueOf(a.betting)}}`;
 }
 
-export function buildThemeCss(theme) {
+/** For every component name, the selectors of the style sheets that read it (cssTexts = the text of the style sheets). Names a script sets itself are marked. */
+export function selectorMap(theme, cssTexts) {
+  const used = new Map();
+  for (const css of cssTexts) {
+    for (const m of css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      for (const v of m[2].matchAll(/var\((--[\w-]+)\)/g)) {
+        if (!used.has(v[1])) used.set(v[1], new Set());
+        used.get(v[1]).add(m[1].trim().replace(/\s+/g, ' '));
+      }
+    }
+  }
+  const out = [];
+  for (const [area, comps] of Object.entries(theme.component)) for (const [comp, parts] of Object.entries(comps)) for (const [part, props] of Object.entries(parts)) for (const prop of Object.keys(props)) {
+    const name = `${area}.${comp}.${part}.${prop}`, v = '--' + name.replaceAll('.', '-');
+    out.push(`  ${name} : ${used.has(v) ? [...used.get(v)].join('  |  ') : '(set by a script)'}`);
+  }
+  return out;
+}
+
+export function buildThemeCss(theme, cssTexts = []) {
   const decl = themeVariables(theme).map(([k, v]) => `${k}:${v}`).join(';\n');
-  return `/* Generated from theme.json by theme/generate.mjs. Do not edit by hand. */\nbody{\n${decl}\n}\n${accentRules(theme)}\n`;
+  const where = cssTexts.length ? `/* Where each component colour is used (name : selectors of the style sheets)\n${selectorMap(theme, cssTexts).join('\n')}\n*/\n` : '';
+  return `/* Generated from theme.json by theme/generate.mjs. Do not edit by hand. */\nbody{\n${decl}\n}\n${accentRules(theme)}\n${where}`;
+}
+
+/** The text of every style sheet of the site except theme.css and the editor's own (for the selector map). Node only. */
+export async function readStyleSheets(siteDir) {
+  const { readdirSync, readFileSync } = await import('node:fs');
+  const out = [];
+  (function walk(dir) {
+    for (const e of readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+      const p = new URL(e.name + (e.isDirectory() ? '/' : ''), dir);
+      if (e.isDirectory()) { if (e.name !== 'data') walk(p); }
+      else if (e.name.endsWith('.css') && !['theme.css', 'editor.css'].includes(e.name)) out.push(readFileSync(p, 'utf8'));
+    }
+  })(siteDir);
+  return out;
 }
 
 /* command line: node site/theme/generate.mjs [--check] */
 if (typeof process !== 'undefined' && /generate.mjs$/.test(process.argv[1] || '')) {
   const { readFileSync, writeFileSync } = await import('node:fs');
   const dir = new URL('./', import.meta.url);
-  const css = buildThemeCss(JSON.parse(readFileSync(new URL('theme.json', dir), 'utf8')));
+  const css = buildThemeCss(JSON.parse(readFileSync(new URL('theme.json', dir), 'utf8')), await readStyleSheets(new URL('../', import.meta.url)));
   if (process.argv.includes('--check')) { if (readFileSync(new URL('theme.css', dir), 'utf8') !== css) { console.error('theme.css is out of date: run node site/theme/generate.mjs'); process.exit(1); } }
   else writeFileSync(new URL('theme.css', dir), css);
 }

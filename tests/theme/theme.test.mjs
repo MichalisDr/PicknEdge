@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { buildThemeCss, themeVariables } from '../../site/theme/generate.mjs';
+import { buildThemeCss, themeVariables, readStyleSheets } from '../../site/theme/generate.mjs';
 import { parseTheme, serializeTheme, tokenIndex, setToken, resolve } from '../../site/theme/editor-model.js';
 
 const SITE = new URL('../../site/', import.meta.url);
@@ -20,8 +20,8 @@ const COLOUR = /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/;   // in scripts: hex a
 const NAMED = /(?<![-\w])(?:white|black|red|green|blue|gray|grey|orange|yellow|purple|pink)(?![-\w])/;   // in style sheets: also colour names
 const strip = s => s.replace(/\/\*[\s\S]*?\*\//g, '');
 
-test('theme.css is exactly what theme.json generates', () => {
-  assert.equal(read('theme/theme.css'), buildThemeCss(theme), 'run: node site/theme/generate.mjs');
+test('theme.css is exactly what theme.json generates', async () => {
+  assert.equal(read('theme/theme.css'), buildThemeCss(theme, await readStyleSheets(SITE)), 'run: node site/theme/generate.mjs');
 });
 
 test('no raw colours in any style sheet or script (only variables from the theme)', () => {
@@ -56,7 +56,7 @@ test('every variable a style sheet or script reads exists in the theme (or is a 
 
 test('nothing unused: every component token is read by a style sheet or a script', () => {
   const code = [...styles, ...scripts.filter(f => !f.startsWith('theme/'))].map(read).join('\n');
-  const unused = tokenIndex(theme).filter(t => t.layer === 'component' && !code.includes(`var(${t.cssVar}`) && !code.includes(t.cssVar.replace(/-(own|compare)-(fill|stroke)$/, '-${who}-$2')));
+  const unused = tokenIndex(theme).filter(t => t.layer === 'component' && !code.includes(`var(${t.cssVar}`) && !code.includes(t.cssVar.replace(/-radar-(player|comparison)-(fill|line)$/, '-radar-${who}-$2')));
   assert.deepEqual(unused.map(t => t.key), []);
 });
 

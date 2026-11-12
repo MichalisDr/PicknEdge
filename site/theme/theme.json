@@ -178,54 +178,40 @@
  },
  "component": {
   "app": {
-   "shell": {
-    "action-a": {
-     "text": "{semantic.accent}"
-    },
-    "aside-a-active": {
-     "bg": "{palette.green-17}",
-     "bg-2": "{palette.red-13}",
-     "text": "{semantic.accent}"
-    },
-    "aside-a": {
-     "text": "{semantic.muted}"
-    },
-    "aside-note": {
+   "page": {
+    "badge": {
      "border": "{semantic.line}",
+     "text": "{semantic.accent}"
+    },
+    "body": {
+     "background": "{semantic.bg}",
+     "text": "{semantic.text}"
+    },
+    "eyebrow": {
      "text": "{semantic.muted}"
     },
-    "aside-small": {
+    "paragraph": {
      "text": "{semantic.muted}"
-    },
-    "aside": {
-     "border-bottom": "{semantic.line}",
-     "border-right": "{semantic.line}"
-    },
-    "brand-b1": {
-     "text": "{semantic.accent-fantasy}",
-     "text-2": "{semantic.white}"
-    },
-    "brand-b2": {
-     "text": "{palette.violet-77}"
-    },
-    "brand-b3": {
-     "text": "{semantic.white}",
-     "text-2": "{semantic.accent}"
-    },
-    "btn-primary": {
-     "bg": "{semantic.accent}",
-     "text": "{palette.green-09}"
-    },
-    "btn": {
-     "bg": "{palette.slate-16}",
+    }
+   },
+   "research": {
+    "button": {
+     "background": "{palette.slate-16}",
      "border": "{semantic.line}",
      "text": "{semantic.white}"
     },
+    "button-main": {
+     "background": "{semantic.accent}",
+     "text": "{palette.green-09}"
+    },
     "card": {
-     "bg": "{semantic.panel}",
+     "background": "{semantic.panel}",
      "border": "{semantic.line}"
     },
-    "empty": {
+    "card-big-number": {
+     "text": "{semantic.accent}"
+    },
+    "empty-note": {
      "border": "{palette.slate-27}",
      "text": "{semantic.muted}"
     },
@@ -233,682 +219,691 @@
      "border-top": "{semantic.line}",
      "text": "{semantic.muted}"
     },
-    "iframe": {
-     "bg": "{palette.blue-09}",
-     "border": "{semantic.line}"
-    },
-    "input": {
-     "bg": "{palette.blue-08}",
+    "form-field": {
+     "background": "{palette.blue-08}",
      "border": "{palette.slate-27}",
      "text": "{semantic.white}"
     },
-    "label": {
+    "form-label": {
      "text": "{semantic.muted}"
     },
-    "metric": {
-     "text": "{semantic.accent}"
-    },
-    "muted": {
-     "text": "{semantic.muted}"
-    },
-    "nav-a-active": {
-     "border": "{semantic.accent}",
-     "text": "{semantic.white}"
-    },
-    "nav-a": {
+    "muted-text": {
      "text": "{semantic.muted}"
     },
     "notice": {
-     "bg": "{palette.green-11}",
+     "background": "{palette.green-11}",
      "border-left": "{semantic.accent}",
      "text": "{palette.green-80}"
     },
-    "number": {
+    "overview-card-label": {
      "text": "{semantic.accent}"
     },
-    "p": {
+    "overview-card-link": {
+     "text": "{semantic.accent}"
+    }
+   },
+   "sidebar": {
+    "link": {
      "text": "{semantic.muted}"
     },
-    "pill": {
+    "link-selected": {
+     "background": "{palette.green-17}",
+     "background-in-fantasy": "{palette.red-13}",
+     "text": "{semantic.accent}"
+    },
+    "note": {
      "border": "{semantic.line}",
-     "text": "{semantic.accent}"
-    },
-    "root": {
-     "bg": "{semantic.bg}",
-     "text": "{semantic.text}"
-    },
-    "tag": {
      "text": "{semantic.muted}"
     },
-    "top": {
+    "panel": {
+     "border-bottom": "{semantic.line}",
+     "border-right": "{semantic.line}"
+    }
+   },
+   "top-bar": {
+    "bar": {
      "border-bottom": "{semantic.line}"
+    },
+    "logo-and": {
+     "text": "{palette.violet-77}"
+    },
+    "logo-edge": {
+     "text-in-betting": "{semantic.accent}",
+     "text-in-fantasy": "{semantic.white}"
+    },
+    "logo-pick": {
+     "text-in-betting": "{semantic.white}",
+     "text-in-fantasy": "{semantic.accent-fantasy}"
+    },
+    "nav-link": {
+     "text": "{semantic.muted}"
+    },
+    "nav-link-selected": {
+     "border": "{semantic.accent}",
+     "text": "{semantic.white}"
+    },
+    "tagline": {
+     "text": "{semantic.muted}"
     }
    }
   },
   "betting": {
-   "players": {
-    "pl-filters-label": {
+   "stats-table": {
+    "caption": {
+     "text": "{palette.slate-63}"
+    },
+    "caption-title": {
+     "text": "{palette.slate-89}"
+    },
+    "category-count": {
+     "border": "{palette.slate-26-2}",
+     "text": "{palette.slate-66-2}"
+    },
+    "category-tab": {
+     "text": "{palette.slate-64}"
+    },
+    "category-tab-selected": {
+     "border": "{semantic.accent}",
+     "text": "{palette.green-95}"
+    },
+    "category-tabs": {
+     "border-bottom": "{semantic.line}"
+    },
+    "cell": {
+     "border-bottom": "{palette.slate-20-2}"
+    },
+    "footer-dot": {
+     "background": "{semantic.accent}"
+    },
+    "games-column": {
+     "text": "{palette.slate-58}"
+    },
+    "header": {
+     "background": "{palette.sky-16}",
+     "text": "{palette.slate-73}"
+    },
+    "header-note": {
+     "text": "{palette.slate-53}"
+    },
+    "header-sorted": {
+     "text": "{semantic.accent}"
+    },
+    "header-team-cell": {
+     "background": "{palette.sky-16}"
+    },
+    "last3-rank": {
+     "text": "{palette.slate-57}"
+    },
+    "last3-rank-down": {
+     "text": "{semantic.eval-bad}"
+    },
+    "last3-rank-up": {
+     "text": "{semantic.eval-good}"
+    },
+    "league-average-badge": {
+     "background": "{palette.green-25}",
+     "text": "{palette.lime-77}"
+    },
+    "league-average-note": {
+     "text": "{palette.lime-64}"
+    },
+    "league-average-row": {
+     "background": "{palette.green-18}",
+     "border-bottom": "{palette.lime-49}",
+     "border-top": "{palette.lime-49}",
+     "text": "{palette.lime-84}"
+    },
+    "method-note": {
+     "border-top": "{semantic.line}",
+     "text": "{palette.slate-63}"
+    },
+    "method-title": {
+     "text": "{palette.slate-72-2}"
+    },
+    "missing-data-note": {
+     "text": "{palette.yellow-65}"
+    },
+    "player-filter-label": {
      "text": "{palette.slate-63-2}"
     },
-    "small-miss": {
-     "text": "{palette.yellow-65}"
+    "popup": {
+     "background": "{palette.teal-11}",
+     "border": "{palette.green-34}",
+     "shadow": "{palette.gray-00-a}"
+    },
+    "popup-description": {
+     "text": "{palette.gray-68}"
+    },
+    "popup-label": {
+     "text": "{palette.green-72}"
+    },
+    "popup-rank": {
+     "text": "{palette.lime-84}"
+    },
+    "popup-title": {
+     "text": "{palette.lime-94-2}"
+    },
+    "popup-value": {
+     "text": "{semantic.accent-default}"
+    },
+    "rank-bad": {
+     "background": "{semantic.eval-bad}",
+     "text": "{semantic.eval-bad}"
+    },
+    "rank-chip": {
+     "background": "{palette.slate-16-2}",
+     "text": "{palette.slate-65-2}"
+    },
+    "rank-good": {
+     "background": "{semantic.eval-good}",
+     "text": "{semantic.eval-good}"
+    },
+    "rank-neutral": {
+     "background": "{palette.slate-16-2}",
+     "text": "{palette.slate-72-3}"
+    },
+    "row-even": {
+     "background": "{palette.sky-13}"
+    },
+    "row-even-sorted-column": {
+     "background": "{palette.sky-20}"
+    },
+    "row-hover": {
+     "background": "{palette.slate-22-2}"
+    },
+    "side-button": {
+     "text": "{palette.slate-69}"
+    },
+    "side-button-selected": {
+     "background": "{semantic.accent-default}",
+     "text": "{palette.green-09-2}"
+    },
+    "side-buttons": {
+     "background": "{palette.sky-11-2}",
+     "border": "{palette.slate-24}"
+    },
+    "sidebar": {
+     "border-bottom": "{semantic.line}"
+    },
+    "sort-arrow": {
+     "text": "{palette.slate-50}"
+    },
+    "sorted-column": {
+     "background": "{palette.sky-17}"
+    },
+    "status-dot": {
+     "background": "{palette.slate-44}"
+    },
+    "status-dot-live": {
+     "background": "{semantic.accent}"
+    },
+    "status-dot-loading": {
+     "background": "{palette.yellow-65}"
+    },
+    "status-dot-partial": {
+     "background": "{palette.orange-65}"
+    },
+    "status-line": {
+     "text": "{palette.slate-69-2}"
+    },
+    "table-frame": {
+     "background": "{semantic.surface-dialog}",
+     "border": "{palette.slate-22}"
+    },
+    "team-badge": {
+     "background": "{palette.slate-22-3}",
+     "text": "{palette.slate-68}"
+    },
+    "team-cell": {
+     "background": "{palette.sky-12}"
     },
     "trend-down": {
      "text": "{semantic.eval-bad}"
     },
     "trend-up": {
      "text": "{semantic.eval-good}"
-    }
-   },
-   "stats": {
-    "body-aside": {
-     "border-bottom": "{semantic.line}"
     },
-    "button-span": {
-     "border": "{palette.slate-26-2}",
-     "text": "{palette.slate-66-2}"
-    },
-    "club-mark": {
-     "bg": "{palette.slate-22-3}",
-     "text": "{palette.slate-68}"
-    },
-    "entity-switch-button-on": {
-     "border": "{semantic.accent}",
-     "text": "{palette.green-95}"
-    },
-    "entity-switch-button": {
-     "text": "{palette.slate-64}"
-    },
-    "entity-switch": {
-     "border-bottom": "{semantic.line}"
-    },
-    "league-average-club-mark": {
-     "bg": "{palette.green-25}",
-     "text": "{palette.lime-77}"
-    },
-    "league-average-stat-cell": {
-     "text": "{palette.lime-84}"
-    },
-    "live-status-before-live-live": {
-     "bg": "{semantic.accent}"
-    },
-    "live-status-before-live-loading": {
-     "bg": "{palette.yellow-65}"
-    },
-    "live-status-before-live-partial": {
-     "bg": "{palette.orange-65}"
-    },
-    "live-status-before": {
-     "bg": "{palette.slate-44}"
-    },
-    "live-status": {
-     "text": "{palette.slate-69-2}"
-    },
-    "period-switch-button-on": {
-     "bg": "{palette.slate-28}",
-     "text": "{semantic.white}"
-    },
-    "period-switch-button": {
-     "text": "{palette.slate-68-2}"
-    },
-    "period-switch": {
-     "border": "{palette.slate-26-3}"
-    },
-    "rk-bad": {
-     "bg": "{semantic.eval-bad}",
-     "text": "{semantic.eval-bad}"
-    },
-    "rk-good": {
-     "bg": "{semantic.eval-good}",
-     "text": "{semantic.eval-good}"
-    },
-    "rk-neutral": {
-     "bg": "{palette.slate-16-2}",
-     "text": "{palette.slate-72-3}"
-    },
-    "rk": {
-     "bg": "{palette.slate-16-2}",
-     "text": "{palette.slate-65-2}"
-    },
-    "rk3-down": {
-     "text": "{semantic.eval-bad}"
-    },
-    "rk3-up": {
-     "text": "{semantic.eval-good}"
-    },
-    "rk3": {
-     "text": "{palette.slate-57}"
-    },
-    "side-switch-button-on": {
-     "bg": "{semantic.accent-default}",
-     "text": "{palette.green-09-2}"
-    },
-    "side-switch-button": {
-     "text": "{palette.slate-69}"
-    },
-    "side-switch": {
-     "bg": "{palette.sky-11-2}",
-     "border": "{palette.slate-24}"
-    },
-    "stat-cell-hover": {
-     "text": "{semantic.accent-default}"
-    },
-    "stat-cell": {
+    "value": {
      "text": "{palette.sky-90}"
     },
-    "stats-caption-span-first-child": {
-     "text": "{palette.slate-89}"
-    },
-    "stats-caption": {
-     "text": "{palette.slate-63}"
-    },
-    "stats-foot-i": {
-     "bg": "{semantic.accent}"
-    },
-    "stats-method-summary": {
-     "text": "{palette.slate-72-2}"
-    },
-    "stats-method": {
-     "border-top": "{semantic.line}",
-     "text": "{palette.slate-63}"
-    },
-    "stats-scroll": {
-     "bg": "{semantic.surface-dialog}",
-     "border": "{palette.slate-22}"
-    },
-    "stats-tooltip-b": {
+    "value-on-hover": {
      "text": "{semantic.accent-default}"
     },
-    "stats-tooltip-p": {
-     "text": "{palette.gray-68}"
+    "window-button": {
+     "text": "{palette.slate-68-2}"
     },
-    "stats-tooltip-span": {
-     "text": "{palette.green-72}"
+    "window-button-selected": {
+     "background": "{palette.slate-28}",
+     "text": "{semantic.white}"
     },
-    "stats-tooltip-strong": {
-     "text": "{palette.lime-94-2}"
-    },
-    "stats-tooltip": {
-     "bg": "{palette.teal-11}",
-     "border": "{palette.green-34}",
-     "shadow": "{palette.gray-00-a}"
-    },
-    "teams-table-gp": {
-     "text": "{palette.slate-58}"
-    },
-    "teams-table-sort-arrow": {
-     "text": "{palette.slate-50}"
-    },
-    "teams-table-td-sorted-column": {
-     "bg": "{palette.sky-17}"
-    },
-    "teams-table-th": {
-     "border-bottom": "{palette.slate-20-2}"
-    },
-    "th-button": {
-     "text": "{semantic.accent}"
-    },
-    "th-small": {
-     "text": "{palette.lime-64}"
-    },
-    "thead-club-head": {
-     "bg": "{palette.sky-16}"
-    },
-    "thead-small": {
-     "text": "{palette.slate-53}"
-    },
-    "thead-th": {
-     "bg": "{palette.sky-16}",
-     "text": "{palette.slate-73}"
-    },
-    "tip-rank": {
-     "text": "{palette.lime-84}"
-    },
-    "tr-league-average-td": {
-     "bg": "{palette.green-18}",
-     "border-bottom": "{palette.lime-49}",
-     "border-top": "{palette.lime-49}"
-    },
-    "tr-td-sorted-column": {
-     "bg": "{palette.sky-20}"
-    },
-    "tr-td": {
-     "bg": "{palette.sky-13}",
-     "bg-2": "{palette.slate-22-2}"
-    },
-    "tr-th-first-child": {
-     "bg": "{palette.sky-12}"
+    "window-buttons": {
+     "border": "{palette.slate-26-3}"
     }
    }
   },
   "fantasy": {
-   "card-grid": {
-    "fw-boxscores-th-first-child": {
-     "bg": "{semantic.surface-dialog}",
-     "shadow": "{semantic.border-soft}"
+   "charts-gallery": {
+    "average": {
+     "line": "{palette.slate-70}"
     },
-    "fw-metric-i-lx-sl": {
-     "text": "{semantic.muted}"
+    "axis": {
+     "line": "{palette.slate-28-2}"
     },
-    "lx-grid-fw-rank": {
-     "text": "{semantic.muted}"
-    }
-   },
-   "charts": {
-    "fc-avg": {
-     "stroke": "{palette.slate-70}"
+    "axis-numbers": {
+     "text": "{palette.slate-58-2}"
     },
-    "fc-ax": {
-     "fill": "{palette.slate-78-2}"
+    "axis-title": {
+     "text": "{palette.slate-78-2}"
     },
-    "fc-card-focus": {
-     "outline": "{semantic.accent-fantasy}"
-    },
-    "fc-card-hover": {
-     "border": "{semantic.accent-fantasy}"
-    },
-    "fc-card-sub": {
-     "text": "{semantic.text-muted-2}"
-    },
-    "fc-card": {
-     "bg": "{palette.blue-15}",
+    "chart-card": {
+     "background": "{palette.blue-15}",
      "border": "{palette.slate-24-2}",
      "text": "{semantic.text-soft}"
     },
-    "fc-note": {
-     "text": "{semantic.text-muted-2}"
-    },
-    "fc-pl": {
-     "fill": "{semantic.text-soft}",
-     "stroke": "{semantic.surface-dialog}"
-    },
-    "fc-pt-circle-hover": {
-     "stroke": "{semantic.white}"
-    },
-    "fc-pt-circle": {
-     "fill": "{semantic.accent-default}",
-     "fill-2": "{palette.slate-58-3}",
-     "stroke": "{semantic.surface-dialog}"
-    },
-    "fc-pt-text": {
-     "fill": "{palette.slate-83}"
-    },
-    "fc-tick": {
-     "fill": "{palette.slate-58-2}"
-    },
-    "h2-small": {
-     "text": "{semantic.text-muted-2}"
-    },
-    "axis": {
-     "stroke": "{palette.slate-28-2}"
-    },
-    "diagonal": {
-     "stroke": "{palette.slate-50-2}"
-    }
-   },
-   "shotchart": {
-    "pc-note": {
-     "text": "{palette.slate-64-2}"
-    },
-    "sz-au-button-on": {
-     "bg": "{semantic.accent-fantasy-dark}",
-     "border": "{semantic.accent-fantasy}",
-     "text": "{semantic.accent-fantasy-light}"
-    },
-    "sz-au-button-sc-btn-on": {
-     "bg": "{semantic.accent-fantasy-dark}",
-     "border": "{semantic.accent-fantasy}",
-     "text": "{semantic.accent-fantasy-light}"
-    },
-    "sz-court-pc-court": {
-     "bg": "{semantic.surface-deep}"
-    },
-    "sz-hex-polygon": {
-     "stroke": "{semantic.surface-deep}"
-    },
-    "sz-hl": {
-     "fill": "{semantic.accent-fantasy}",
-     "stroke": "{semantic.surface-deep}"
-    },
-    "sz-label-rect-sz-au-r": {
-     "stroke": "{semantic.accent-fantasy}"
-    },
-    "sz-label-rect": {
-     "fill": "{semantic.surface-deep}"
-    },
-    "sz-label-sz-zone-rank": {
-     "fill": "{semantic.text-dim}"
-    },
-    "sz-label-text": {
-     "fill": "{palette.sky-96}"
-    },
-    "sz-made": {
-     "fill": "{palette.sky-90-2}"
-    },
-    "sz-miss": {
-     "stroke": "{palette.slate-64-3}"
-    },
-    "sz-mode": {
-     "text": "{semantic.accent-fantasy-light}"
-    },
-    "sz-pop-d": {
-     "border-top": "{palette.sky-21}"
-    },
-    "sz-pop-row-span": {
-     "text": "{palette.slate-71-2}"
-    },
-    "sz-pop-sel-span": {
-     "text": "{semantic.accent-fantasy-light}"
-    },
-    "sz-pop-sel": {
-     "bg": "{semantic.accent-fantasy-dark}"
-    },
-    "sz-pop-small": {
-     "text": "{palette.slate-63-2}"
-    },
-    "sz-pop": {
-     "bg": "{palette.sky-12-2}",
-     "border": "{semantic.border-control}",
-     "shadow": "{palette.gray-00-a-2}"
-    },
-    "sz-sep": {
-     "bg": "{semantic.border-control}"
-    },
-    "sz-switch-button-on": {
-     "bg": "{semantic.accent-fantasy}",
-     "border": "{semantic.accent-fantasy}",
-     "text": "{semantic.white}"
-    },
-    "sz-switch-button": {
-     "border": "{semantic.border-control}",
-     "text": "{semantic.text-soft}"
-    },
-    "grade-very-bad": {
-     "color": "{palette.red-55}"
-    },
-    "grade-bad": {
-     "color": "{palette.red-73}"
-    },
-    "grade-average": {
-     "color": "{palette.slate-73-2}"
-    },
-    "grade-good": {
-     "color": "{palette.green-68}"
-    },
-    "grade-very-good": {
-     "color": "{palette.green-46}"
-    },
-    "grade-none": {
-     "color": "{palette.slate-73-2}"
-    },
-    "grade-empty": {
-     "color": "{palette.slate-41}"
-    },
-    "court-border": {
-     "stroke": "{palette.slate-37}"
-    },
-    "court-line": {
-     "stroke": "{palette.slate-56}"
-    }
-   },
-   "table": {
-    "fw-t-fw-average": {
-     "bg": "{semantic.accent}",
-     "bg-2": "{semantic.bg}",
-     "text": "{semantic.accent}"
-    },
-    "fw-t-fw-rk": {
-     "bg": "{semantic.chip}",
-     "text": "{semantic.muted}"
-    },
-    "fw-t-td-fw-sorted": {
-     "bg": "{semantic.sortcell}"
-    },
-    "fw-t-th-first-child": {
-     "shadow": "{semantic.gridline}"
-    },
-    "fw-t-th": {
-     "border": "{semantic.gridline}"
-    },
-    "fw-t-thead": {
-     "bg": "{semantic.panel}"
-    },
-    "fw-table-wrap": {
-     "border": "{semantic.gridline}"
-    },
-    "fw-tinfo": {
-     "text": "{semantic.muted}"
-    },
-    "fw-tooltip-p": {
-     "text": "{semantic.accent}"
-    },
-    "fw-tooltip": {
-     "bg": "{semantic.panel}",
-     "border": "{semantic.gridline}",
-     "shadow": "{semantic.bg}"
-    },
-    "tbody-th-first-child": {
-     "bg": "{semantic.bg}"
-    },
-    "th-fw-who": {
-     "text": "{semantic.muted}"
-    },
-    "thead-button-sel": {
-     "text": "{semantic.accent}"
-    },
-    "thead-th-first-child": {
-     "bg": "{semantic.panel}"
-    },
-    "thead-th-fw-sorted": {
-     "bg": "{semantic.sorthead}"
-    },
-    "value-good": {
-     "text": "{semantic.eval-good-text}"
-    },
-    "value-bad": {
-     "text": "{semantic.eval-bad-text}"
-    }
-   },
-   "workbench": {
-    "button-small": {
-     "text": "{semantic.text-muted-2}"
-    },
-    "fw-band": {
-     "fill": "{palette.slate-62}"
-    },
-    "fw-close": {
-     "bg": "{palette.slate-20-3}",
-     "text": "{palette.sky-95}"
-    },
-    "fw-curve-text": {
-     "fill": "{palette.slate-75}"
-    },
-    "fw-dialog-backdrop": {
-     "bg": "{palette.blue-03-a}"
-    },
-    "fw-dialog-button-focus": {
+    "chart-card-focused": {
      "outline": "{semantic.accent-fantasy}"
     },
-    "fw-dialog": {
-     "bg": "{semantic.surface-dialog}",
-     "border": "{palette.slate-29}",
-     "text": "{palette.sky-95}"
+    "chart-card-hovered": {
+     "border": "{semantic.accent-fantasy}"
     },
-    "fw-empty": {
-     "text": "{palette.slate-72-4}"
-    },
-    "fw-filter-btn": {
-     "border": "{semantic.border-control}"
-    },
-    "fw-filters": {
-     "bg": "{semantic.surface-dialog}",
-     "border": "{palette.slate-29}",
-     "shadow": "{palette.gray-00-a-2}"
-    },
-    "fw-gl": {
-     "stroke": "{semantic.border-soft}"
-    },
-    "fw-heading-role-status": {
+    "chart-note": {
      "text": "{semantic.text-muted-2}"
     },
-    "fw-ibox-small": {
+    "chart-subtitle": {
      "text": "{semantic.text-muted-2}"
     },
-    "fw-ibox-span": {
+    "diagonal": {
+     "line": "{palette.slate-50-2}"
+    },
+    "enlarged-chart-subtitle": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "point": {
+     "border": "{semantic.surface-dialog}",
+     "fill": "{palette.slate-58-3}"
+    },
+    "point-hovered": {
+     "border": "{semantic.white}",
+     "fill": "{semantic.accent-default}"
+    },
+    "point-label": {
+     "text": "{palette.slate-83}"
+    },
+    "team-label": {
+     "outline": "{semantic.surface-dialog}"
+    }
+   },
+   "player-card": {
+    "box-scores-cell-note": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "box-scores-first-column": {
+     "background": "{semantic.surface-dialog}",
+     "shadow": "{semantic.border-soft}"
+    },
+    "box-scores-header": {
      "text": "{semantic.text-subtle}"
     },
-    "fw-ibox-strong": {
+    "box-scores-header-button": {
      "text": "{palette.sky-93}"
     },
-    "fw-ibox": {
-     "bg": "{palette.slate-15}",
-     "border": "{semantic.border-soft}"
+    "box-scores-header-button-focused": {
+     "outline": "{semantic.accent-fantasy}"
     },
-    "fw-identity-small": {
+    "box-scores-header-note": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "box-scores-row": {
+     "border-top": "{semantic.border-soft}"
+    },
+    "box-scores-row-highlighted": {
+     "background": "{palette.red-54-a}"
+    },
+    "close-and-next-button": {
+     "background": "{palette.slate-20-3}",
+     "text": "{palette.sky-95}"
+    },
+    "close-and-next-button-hovered": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "header-kicker": {
      "text": "{palette.slate-71}"
     },
-    "fw-k-b": {
-     "bg": "{palette.slate-62}"
+    "large-tile": {
+     "border": "{palette.slate-32}"
     },
-    "fw-k-g": {
-     "bg": "{semantic.accent-fantasy}"
-    },
-    "fw-k-r": {
-     "bg": "{palette.yellow-63}"
-    },
-    "fw-k-s": {
-     "border-top": "{semantic.text-dim}"
-    },
-    "fw-leg": {
-     "text": "{semantic.text-subtle}"
-    },
-    "fw-m-lg-span": {
+    "large-tile-label": {
      "text": "{semantic.text-soft}"
     },
-    "fw-method": {
-     "text": "{palette.slate-67}"
+    "legend": {
+     "text": "{semantic.text-subtle}"
     },
-    "fw-metric-em": {
-     "text": "{palette.slate-74}"
+    "legend-band": {
+     "background": "{palette.slate-62}"
     },
-    "fw-metric-i": {
+    "legend-game-dot": {
+     "background": "{semantic.accent-fantasy}"
+    },
+    "legend-rolling-line": {
+     "background": "{palette.yellow-63}"
+    },
+    "legend-season-line": {
+     "border-top": "{semantic.text-dim}"
+    },
+    "radar-axes": {
+     "line": "{palette.slate-26-4}"
+    },
+    "radar-comparison": {
+     "fill": "{palette.violet-77-a}",
+     "line": "{palette.violet-77}"
+    },
+    "radar-labels": {
+     "text": "{palette.slate-78-2}"
+    },
+    "radar-player": {
+     "fill": "{palette.red-54-a-2}",
+     "line": "{semantic.accent-fantasy}"
+    },
+    "radar-rings": {
+     "line": "{palette.slate-26-4}"
+    },
+    "radar-zero-ring": {
+     "line": "{palette.slate-44-2}"
+    },
+    "section-title": {
+     "text": "{semantic.text-subtle}"
+    },
+    "section-title-value": {
      "text": "{semantic.accent-fantasy-light}"
     },
-    "fw-metric-on": {
+    "small-sample-note": {
+     "text": "{palette.yellow-63}"
+    },
+    "summary-box": {
+     "background": "{palette.slate-15}",
+     "border": "{semantic.border-soft}"
+    },
+    "summary-box-label": {
+     "text": "{semantic.text-subtle}"
+    },
+    "summary-box-note": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "summary-box-value": {
+     "text": "{palette.sky-93}"
+    },
+    "tile": {
+     "background": "{palette.blue-15}",
+     "border": "{palette.slate-24-2}",
+     "text": "{semantic.text-soft}"
+    },
+    "tile-accent-text": {
+     "text": "{semantic.accent-fantasy-light}"
+    },
+    "tile-label": {
+     "text": "{palette.slate-74}"
+    },
+    "tile-note": {
+     "text": "{semantic.text-soft}"
+    },
+    "tile-rank": {
+     "text": "{semantic.muted}"
+    },
+    "tile-rank-average": {
+     "text": "{semantic.eval-avg}"
+    },
+    "tile-rank-bad": {
+     "text": "{semantic.eval-bad}"
+    },
+    "tile-rank-good": {
+     "text": "{semantic.eval-good}"
+    },
+    "tile-rank-neutral": {
+     "text": "{palette.slate-79-2}"
+    },
+    "tile-selected": {
      "border": "{semantic.accent-fantasy}",
      "shadow": "{semantic.accent-fantasy}"
     },
-    "fw-metric-small": {
-     "text": "{semantic.text-soft}"
+    "tile-side-label": {
+     "text": "{semantic.muted}"
     },
-    "fw-metric-span": {
+    "tile-unit": {
      "text": "{palette.slate-74}"
     },
-    "fw-metric": {
-     "bg": "{palette.blue-15}",
-     "border": "{palette.slate-24-2}",
-     "text": "{semantic.text-soft}"
-    },
-    "fw-name-hover": {
-     "text": "{semantic.accent-fantasy}"
-    },
-    "fw-next-hover": {
-     "border": "{semantic.accent-fantasy}"
-    },
-    "fw-pgrid-fw-m-lg": {
-     "border": "{palette.slate-32}"
-    },
-    "fw-radar-text": {
-     "fill": "{palette.slate-78-2}"
-    },
-    "fw-ref": {
-     "stroke": "{semantic.text-dim}"
-    },
-    "fw-section-title-b": {
-     "text": "{semantic.accent-fantasy-light}"
-    },
-    "fw-section-title-span": {
-     "text": "{semantic.text-subtle}"
-    },
-    "fw-small": {
-     "text": "{palette.yellow-63}"
-    },
-    "fw-switch-button": {
-     "text": "{palette.slate-79}"
-    },
-    "fw-switch-on": {
-     "bg": "{semantic.accent-fantasy}",
-     "text": "{semantic.white}"
-    },
-    "fw-switch": {
-     "border": "{semantic.border-control}"
-    },
-    "fw-visual": {
-     "border-top": "{semantic.border-soft}"
-    },
-    "fw-with-th": {
-     "border-top": "{semantic.border-soft}"
-    },
-    "fw-with-tr-on": {
-     "bg": "{palette.red-54-a}"
-    },
-    "td-small": {
-     "text": "{semantic.text-muted-2}"
-    },
-    "th-button-focus": {
-     "outline": "{semantic.accent-fantasy}"
-    },
-    "th-button": {
-     "text": "{palette.sky-93}"
-    },
-    "thead-th": {
-     "text": "{semantic.text-subtle}"
-    }
-   },
-   "card": {
-    "tile-eval-good": {
-     "text": "{semantic.eval-good}"
-    },
-    "tile-eval-avg": {
-     "text": "{semantic.eval-avg}"
-    },
-    "tile-eval-bad": {
-     "text": "{semantic.eval-bad}"
-    },
-    "tile-eval-neutral": {
-     "text": "{palette.slate-79-2}"
-    },
     "trend-axis": {
-     "stroke": "{palette.slate-28-2}"
-    },
-    "trend-line-game": {
-     "stroke": "{semantic.accent-fantasy}"
-    },
-    "trend-line-roll": {
-     "stroke": "{palette.yellow-63}"
+     "line": "{palette.slate-28-2}"
     },
     "trend-dot": {
      "fill": "{semantic.accent-fantasy}"
     },
-    "trend-dot-outside": {
+    "trend-dot-outside-window": {
      "fill": "{palette.red-37}"
     },
-    "radar-ring-zero": {
-     "stroke": "{palette.slate-44-2}"
+    "trend-game": {
+     "line": "{semantic.accent-fantasy}"
     },
-    "radar-ring": {
-     "stroke": "{palette.slate-26-4}"
+    "trend-grid": {
+     "line": "{semantic.border-soft}"
     },
-    "radar-axis": {
-     "stroke": "{palette.slate-26-4}"
+    "trend-labels": {
+     "text": "{palette.slate-75}"
     },
-    "radar-own": {
-     "stroke": "{semantic.accent-fantasy}",
-     "fill": "{palette.red-54-a-2}"
+    "trend-league-band": {
+     "fill": "{palette.slate-62}"
     },
-    "radar-compare": {
-     "stroke": "{palette.violet-77}",
-     "fill": "{palette.violet-77-a}"
+    "trend-rolling": {
+     "line": "{palette.yellow-63}"
+    },
+    "trend-season": {
+     "line": "{semantic.text-dim}"
+    },
+    "visual-section": {
+     "border-top": "{semantic.border-soft}"
+    },
+    "window": {
+     "background": "{semantic.surface-dialog}",
+     "border": "{palette.slate-29}",
+     "text": "{palette.sky-95}"
+    },
+    "window-backdrop": {
+     "background": "{palette.blue-03-a}"
+    }
+   },
+   "shot-chart": {
+    "assist-button-selected": {
+     "background": "{semantic.accent-fantasy-dark}",
+     "border": "{semantic.accent-fantasy}",
+     "text": "{semantic.accent-fantasy-light}"
+    },
+    "buttons-divider": {
+     "background": "{semantic.border-control}"
+    },
+    "court": {
+     "background": "{semantic.surface-deep}"
+    },
+    "court-markings": {
+     "line": "{palette.slate-56}"
+    },
+    "court-outline": {
+     "line": "{palette.slate-37}"
+    },
+    "explanation": {
+     "text": "{semantic.accent-fantasy-light}"
+    },
+    "hexagon": {
+     "border": "{semantic.surface-deep}"
+    },
+    "highlighted-shot": {
+     "border": "{semantic.surface-deep}",
+     "fill": "{semantic.accent-fantasy}"
+    },
+    "made-shot": {
+     "fill": "{palette.sky-90-2}"
+    },
+    "missed-shot": {
+     "line": "{palette.slate-64-3}"
+    },
+    "note": {
+     "text": "{palette.slate-64-2}"
+    },
+    "popup": {
+     "background": "{palette.sky-12-2}",
+     "border": "{semantic.border-control}",
+     "shadow": "{palette.gray-00-a-2}"
+    },
+    "popup-change-line": {
+     "border-top": "{palette.sky-21}"
+    },
+    "popup-label": {
+     "text": "{palette.slate-71-2}"
+    },
+    "popup-note": {
+     "text": "{palette.slate-63-2}"
+    },
+    "popup-selected-row": {
+     "background": "{semantic.accent-fantasy-dark}"
+    },
+    "popup-selected-text": {
+     "text": "{semantic.accent-fantasy-light}"
+    },
+    "second-chance-button-selected": {
+     "background": "{semantic.accent-fantasy-dark}",
+     "border": "{semantic.accent-fantasy}",
+     "text": "{semantic.accent-fantasy-light}"
+    },
+    "view-button": {
+     "border": "{semantic.border-control}",
+     "text": "{semantic.text-soft}"
+    },
+    "view-button-selected": {
+     "background": "{semantic.accent-fantasy}",
+     "border": "{semantic.accent-fantasy}",
+     "text": "{semantic.white}"
+    },
+    "zone-average": {
+     "color": "{palette.slate-73-2}"
+    },
+    "zone-bad": {
+     "color": "{palette.red-73}"
+    },
+    "zone-good": {
+     "color": "{palette.green-68}"
+    },
+    "zone-label": {
+     "background": "{semantic.surface-deep}"
+    },
+    "zone-label-assist-box": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "zone-label-rank": {
+     "text": "{semantic.text-dim}"
+    },
+    "zone-label-text": {
+     "text": "{palette.sky-96}"
+    },
+    "zone-no-shots": {
+     "color": "{palette.slate-41}"
+    },
+    "zone-unknown": {
+     "color": "{palette.slate-73-2}"
+    },
+    "zone-very-bad": {
+     "color": "{palette.red-55}"
+    },
+    "zone-very-good": {
+     "color": "{palette.green-46}"
+    }
+   },
+   "stat-table": {
+    "buttons-focused": {
+     "outline": "{semantic.accent-fantasy}"
+    },
+    "cell": {
+     "border": "{semantic.gridline}"
+    },
+    "combined-rank-note": {
+     "text": "{semantic.muted}"
+    },
+    "empty-note": {
+     "text": "{palette.slate-72-4}"
+    },
+    "filter-button": {
+     "border": "{semantic.border-control}"
+    },
+    "filters-panel": {
+     "background": "{semantic.surface-dialog}",
+     "border": "{palette.slate-29}",
+     "shadow": "{palette.gray-00-a-2}"
+    },
+    "first-column": {
+     "shadow": "{semantic.gridline}"
+    },
+    "first-column-body": {
+     "background": "{semantic.bg}"
+    },
+    "first-column-team-and-position": {
+     "text": "{semantic.muted}"
+    },
+    "header": {
+     "background": "{semantic.panel}"
+    },
+    "header-first-cell": {
+     "background": "{semantic.panel}"
+    },
+    "header-selected": {
+     "text": "{semantic.accent}"
+    },
+    "header-sorted": {
+     "background": "{semantic.sorthead}"
+    },
+    "hover-popup": {
+     "background": "{semantic.panel}",
+     "border": "{semantic.gridline}",
+     "shadow": "{semantic.bg}"
+    },
+    "hover-popup-value": {
+     "text": "{semantic.accent}"
+    },
+    "league-average-row": {
+     "background-base": "{semantic.bg}",
+     "background-tint": "{semantic.accent}",
+     "text": "{semantic.accent}"
+    },
+    "method-note": {
+     "text": "{palette.slate-67}"
+    },
+    "name-hovered": {
+     "text": "{semantic.accent-fantasy}"
+    },
+    "rank-chip": {
+     "background": "{semantic.chip}",
+     "text": "{semantic.muted}"
+    },
+    "sorted-column": {
+     "background": "{semantic.sortcell}"
+    },
+    "status-and-footer": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "switch-button": {
+     "text": "{palette.slate-79}"
+    },
+    "switch-button-selected": {
+     "background": "{semantic.accent-fantasy}",
+     "text": "{semantic.white}"
+    },
+    "switch-buttons": {
+     "border": "{semantic.border-control}"
+    },
+    "table-frame": {
+     "border": "{semantic.gridline}"
+    },
+    "value-bad": {
+     "text": "{semantic.eval-bad-text}"
+    },
+    "value-good": {
+     "text": "{semantic.eval-good-text}"
     }
    }
   }

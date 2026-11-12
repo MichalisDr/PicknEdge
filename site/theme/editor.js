@@ -61,7 +61,8 @@ function show(el) {
   if (!el) return;
   const chain = []; for (let e = el, i = 0; e && e.nodeType === 1 && i < 14 && e.tagName !== 'HTML'; e = e.parentElement, i++) chain.push(e);
   const parts = chain.map((e, i) => ({ e, i, list: tokensOf(e) })).filter(p => p.list.length);
-  const first = parts[0]?.list[0]?.t.key.split('.').slice(0, 3).join(' > ');
+  const firstToken = (parts.flatMap(p => p.list).find(x => !x.stateful) || parts[0]?.list[0])?.t;
+  const first = firstToken?.key.split('.').slice(0, 3).join(' > ');
   $('ed-title').textContent = first || 'No themed colour here';
   $('ed-hint').hidden = true;
   $('ed-element').innerHTML = parts.map(p => `<h3 class="ed-sub">${p.i ? 'Parent: ' : ''}&lt;${p.e.tagName.toLowerCase()}${p.e.className && typeof p.e.className === 'string' ? '.' + esc(p.e.className.trim().split(/\s+/).join('.')) : ''}&gt;</h3>` + p.list.map(x => row(x.t, x.selector)).join('')).join('') || '<p class="ed-hint">The colours here come from the parent elements or from a general colour.</p>';
