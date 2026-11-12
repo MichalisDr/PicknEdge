@@ -1,6 +1,7 @@
 /* One comparative scatter chart as an SVG string: points are the entities of the current view, dashed lines are the league values from the view's league row,
    tones come from each metric's direction. A point is clickable (class fc-pt, data-open) and opens the card. */
 import { esc } from '../../core/html.js';
+import { size } from '../../core/sizes.js';
 
 
 function nice(lo, hi, count = 4) {
@@ -16,7 +17,7 @@ export function scatter(chart, view, ids, byId, roster) {
     if (Number.isFinite(a) && Number.isFinite(b)) pts.push({ id, a, b, name: chart.entity === 'teams' ? roster.teams[id] || id : roster.players[id]?.name || id, pos: view.row(id)?.pos });
   }
   if (pts.length < 2) return '<p class="fw-empty">Not enough data for this chart.</p>';
-  const Wd = 520, H = 360, L = 52, R = 14, Tp = 14, B = 44;
+  const Wd = size('fantasy.charts-gallery.plot.plot-width'), H = size('fantasy.charts-gallery.plot.plot-height'), L = size('fantasy.charts-gallery.plot.margin-left'), R = size('fantasy.charts-gallery.plot.margin-right'), Tp = size('fantasy.charts-gallery.plot.margin-top'), B = size('fantasy.charts-gallery.plot.margin-bottom');
   const ext = k => { const v = pts.map(p => p[k]), lo = Math.min(...v), hi = Math.max(...v), pad = (hi - lo) * .06 || 1; return [lo - pad, hi + pad]; };
   let [x0, x1] = ext('a'), [y0, y1] = ext('b');
   if (chart.equal) { x0 = y0 = Math.min(x0, y0); x1 = y1 = Math.max(x1, y1); }

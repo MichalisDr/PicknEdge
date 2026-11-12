@@ -165,166 +165,301 @@ body{
 --color-border-soft:var(--palette-slate-23);
 --font-ui:'Segoe UI',sans-serif;
 --app-page-badge-border:var(--color-line);
+--app-page-badge-border-width:1px;
+--app-page-badge-font-size:12px;
+--app-page-badge-radius:30px;
 --app-page-badge-text:var(--color-accent);
 --app-page-body-background:var(--color-bg);
+--app-page-body-font-size:15px;
 --app-page-body-text:var(--color-text);
+--app-page-eyebrow-font-size:11px;
 --app-page-eyebrow-text:var(--color-muted);
+--app-page-interactive-elements-outline-offset:4px;
 --app-page-paragraph-text:var(--color-muted);
+--app-page-section-title-font-size:16px;
+--app-page-subtitle-font-size:21px;
+--app-page-title-font-size:clamp(28px,3.2vw,46px);
 --app-research-button-background:var(--palette-slate-16);
 --app-research-button-border:var(--color-line);
+--app-research-button-border-width:1px;
+--app-research-button-radius:7px;
 --app-research-button-text:var(--color-white);
 --app-research-button-main-background:var(--color-accent);
 --app-research-button-main-text:var(--palette-green-09);
 --app-research-card-background:var(--color-panel);
 --app-research-card-border:var(--color-line);
+--app-research-card-border-width:1px;
+--app-research-card-radius:12px;
+--app-research-card-big-number-font-size:30px;
 --app-research-card-big-number-text:var(--color-accent);
 --app-research-empty-note-border:var(--palette-slate-27);
+--app-research-empty-note-border-width:1px;
+--app-research-empty-note-radius:10px;
 --app-research-empty-note-text:var(--color-muted);
 --app-research-footer-border-top:var(--color-line);
+--app-research-footer-border-top-width:1px;
+--app-research-footer-font-size:12px;
 --app-research-footer-text:var(--color-muted);
 --app-research-form-field-background:var(--palette-blue-08);
 --app-research-form-field-border:var(--palette-slate-27);
+--app-research-form-field-border-width:1px;
+--app-research-form-field-radius:6px;
 --app-research-form-field-text:var(--color-white);
+--app-research-form-label-font-size:13px;
 --app-research-form-label-text:var(--color-muted);
+--app-research-muted-text-font-size:13px;
 --app-research-muted-text-text:var(--color-muted);
 --app-research-notice-background:var(--palette-green-11);
 --app-research-notice-border-left:var(--color-accent);
+--app-research-notice-border-left-width:3px;
+--app-research-notice-font-size:13px;
 --app-research-notice-text:var(--palette-green-80);
+--app-research-overview-card-label-font-size:12px;
 --app-research-overview-card-label-text:var(--color-accent);
 --app-research-overview-card-link-text:var(--color-accent);
+--app-sidebar-link-font-size-below-900px:13px;
+--app-sidebar-link-radius:7px;
 --app-sidebar-link-text:var(--color-muted);
 --app-sidebar-link-selected-background:var(--palette-green-17);
 --app-sidebar-link-selected-background-in-fantasy:var(--palette-red-13);
 --app-sidebar-link-selected-text:var(--color-accent);
 --app-sidebar-note-border:var(--color-line);
+--app-sidebar-note-border-width:1px;
+--app-sidebar-note-font-size:12px;
 --app-sidebar-note-text:var(--color-muted);
 --app-sidebar-panel-border-bottom:var(--color-line);
+--app-sidebar-panel-border-bottom-width-below-900px:1px;
 --app-sidebar-panel-border-right:var(--color-line);
+--app-sidebar-panel-border-right-width:1px;
 --app-top-bar-bar-border-bottom:var(--color-line);
+--app-top-bar-bar-border-bottom-width:1px;
+--app-top-bar-logo-font-size:21px;
+--app-top-bar-logo-font-size-below-480px:17px;
 --app-top-bar-logo-and-text:var(--palette-violet-77);
 --app-top-bar-logo-edge-text-in-betting:var(--color-accent);
 --app-top-bar-logo-edge-text-in-fantasy:var(--color-white);
 --app-top-bar-logo-pick-text-in-betting:var(--color-white);
 --app-top-bar-logo-pick-text-in-fantasy:var(--color-accent-fantasy);
+--app-top-bar-nav-link-border-bottom-width:3px;
 --app-top-bar-nav-link-text:var(--color-muted);
 --app-top-bar-nav-link-selected-border:var(--color-accent);
 --app-top-bar-nav-link-selected-text:var(--color-white);
+--app-top-bar-tagline-font-size:12px;
 --app-top-bar-tagline-text:var(--color-muted);
+--betting-stats-table-caption-font-size:11px;
+--betting-stats-table-caption-font-size-below-600px:10px;
 --betting-stats-table-caption-text:var(--palette-slate-63);
+--betting-stats-table-caption-title-font-size:13px;
 --betting-stats-table-caption-title-text:var(--palette-slate-89);
 --betting-stats-table-category-count-border:var(--palette-slate-26-2);
+--betting-stats-table-category-count-border-width:1px;
+--betting-stats-table-category-count-font-size:10px;
+--betting-stats-table-category-count-radius:4px;
 --betting-stats-table-category-count-text:var(--palette-slate-66-2);
+--betting-stats-table-category-tab-border-bottom-width:3px;
+--betting-stats-table-category-tab-font-size:16px;
 --betting-stats-table-category-tab-text:var(--palette-slate-64);
 --betting-stats-table-category-tab-selected-border:var(--color-accent);
 --betting-stats-table-category-tab-selected-text:var(--palette-green-95);
 --betting-stats-table-category-tabs-border-bottom:var(--color-line);
+--betting-stats-table-category-tabs-border-bottom-width:1px;
 --betting-stats-table-cell-border-bottom:var(--palette-slate-20-2);
+--betting-stats-table-cell-border-bottom-width:1px;
 --betting-stats-table-footer-dot-background:var(--color-accent);
+--betting-stats-table-footer-dot-radius:50%;
+--betting-stats-table-games-column-font-size:11px;
 --betting-stats-table-games-column-text:var(--palette-slate-58);
 --betting-stats-table-header-background:var(--palette-sky-16);
+--betting-stats-table-header-font-size:11px;
 --betting-stats-table-header-text:var(--palette-slate-73);
+--betting-stats-table-header-button-font-size:11px;
+--betting-stats-table-header-note-font-size:8px;
 --betting-stats-table-header-note-text:var(--palette-slate-53);
 --betting-stats-table-header-sorted-text:var(--color-accent);
 --betting-stats-table-header-team-cell-background:var(--palette-sky-16);
+--betting-stats-table-heading-badge-font-size-below-600px:10px;
+--betting-stats-table-heading-title-font-size:34px;
+--betting-stats-table-heading-title-font-size-below-1000px:28px;
+--betting-stats-table-last3-rank-font-size:9px;
 --betting-stats-table-last3-rank-text:var(--palette-slate-57);
 --betting-stats-table-last3-rank-down-text:var(--color-eval-bad);
 --betting-stats-table-last3-rank-up-text:var(--color-eval-good);
 --betting-stats-table-league-average-badge-background:var(--palette-green-25);
 --betting-stats-table-league-average-badge-text:var(--palette-lime-77);
+--betting-stats-table-league-average-note-font-size:9px;
+--betting-stats-table-league-average-note-font-size-below-600px:8px;
 --betting-stats-table-league-average-note-text:var(--palette-lime-64);
 --betting-stats-table-league-average-row-background:var(--palette-green-18);
 --betting-stats-table-league-average-row-border-bottom:var(--palette-lime-49);
+--betting-stats-table-league-average-row-border-bottom-width:1px;
 --betting-stats-table-league-average-row-border-top:var(--palette-lime-49);
+--betting-stats-table-league-average-row-border-top-width:1px;
 --betting-stats-table-league-average-row-text:var(--palette-lime-84);
 --betting-stats-table-method-note-border-top:var(--color-line);
+--betting-stats-table-method-note-border-top-width:1px;
+--betting-stats-table-method-note-font-size:12px;
 --betting-stats-table-method-note-text:var(--palette-slate-63);
 --betting-stats-table-method-title-text:var(--palette-slate-72-2);
 --betting-stats-table-missing-data-note-text:var(--palette-yellow-65);
+--betting-stats-table-player-filter-label-font-size:11px;
 --betting-stats-table-player-filter-label-text:var(--palette-slate-63-2);
+--betting-stats-table-player-filter-select-font-size:12px;
+--betting-stats-table-player-view-button-font-size-below-650px:12px;
 --betting-stats-table-popup-background:var(--palette-teal-11);
 --betting-stats-table-popup-border:var(--palette-green-34);
+--betting-stats-table-popup-border-width:1px;
+--betting-stats-table-popup-radius:9px;
 --betting-stats-table-popup-shadow:var(--palette-gray-00-a);
+--betting-stats-table-popup-shadow-size:0 10px 40px;
+--betting-stats-table-popup-description-font-size:11px;
 --betting-stats-table-popup-description-text:var(--palette-gray-68);
+--betting-stats-table-popup-label-font-size:12px;
 --betting-stats-table-popup-label-text:var(--palette-green-72);
+--betting-stats-table-popup-rank-font-size:12px!important;
 --betting-stats-table-popup-rank-text:var(--palette-lime-84);
+--betting-stats-table-popup-title-font-size:12px;
 --betting-stats-table-popup-title-text:var(--palette-lime-94-2);
+--betting-stats-table-popup-value-font-size:24px;
 --betting-stats-table-popup-value-text:var(--color-accent-default);
 --betting-stats-table-rank-bad-background:var(--color-eval-bad);
 --betting-stats-table-rank-bad-text:var(--color-eval-bad);
 --betting-stats-table-rank-chip-background:var(--palette-slate-16-2);
+--betting-stats-table-rank-chip-font-size:9px;
+--betting-stats-table-rank-chip-radius:3px;
 --betting-stats-table-rank-chip-text:var(--palette-slate-65-2);
 --betting-stats-table-rank-good-background:var(--color-eval-good);
 --betting-stats-table-rank-good-text:var(--color-eval-good);
+--betting-stats-table-rank-line-font-size:9px;
 --betting-stats-table-rank-neutral-background:var(--palette-slate-16-2);
 --betting-stats-table-rank-neutral-text:var(--palette-slate-72-3);
 --betting-stats-table-row-even-background:var(--palette-sky-13);
 --betting-stats-table-row-even-sorted-column-background:var(--palette-sky-20);
 --betting-stats-table-row-hover-background:var(--palette-slate-22-2);
+--betting-stats-table-search-field-font-size:12px;
+--betting-stats-table-side-button-font-size:13px;
+--betting-stats-table-side-button-radius:5px;
 --betting-stats-table-side-button-text:var(--palette-slate-69);
 --betting-stats-table-side-button-selected-background:var(--color-accent-default);
 --betting-stats-table-side-button-selected-text:var(--palette-green-09-2);
 --betting-stats-table-side-buttons-background:var(--palette-sky-11-2);
 --betting-stats-table-side-buttons-border:var(--palette-slate-24);
+--betting-stats-table-side-buttons-border-width:1px;
+--betting-stats-table-side-buttons-radius:8px;
 --betting-stats-table-sidebar-border-bottom:var(--color-line);
+--betting-stats-table-sidebar-border-bottom-width-above-901px:1px;
+--betting-stats-table-sidebar-link-font-size-above-901px:13px;
+--betting-stats-table-sort-arrow-font-size:11px;
 --betting-stats-table-sort-arrow-text:var(--palette-slate-50);
 --betting-stats-table-sorted-column-background:var(--palette-sky-17);
 --betting-stats-table-status-dot-background:var(--palette-slate-44);
+--betting-stats-table-status-dot-radius:50%;
 --betting-stats-table-status-dot-live-background:var(--color-accent);
 --betting-stats-table-status-dot-loading-background:var(--palette-yellow-65);
 --betting-stats-table-status-dot-partial-background:var(--palette-orange-65);
+--betting-stats-table-status-line-font-size:12px;
 --betting-stats-table-status-line-text:var(--palette-slate-69-2);
+--betting-stats-table-table-font-size:12px;
 --betting-stats-table-table-frame-background:var(--color-surface-dialog);
 --betting-stats-table-table-frame-border:var(--palette-slate-22);
+--betting-stats-table-table-frame-border-width:1px;
+--betting-stats-table-table-frame-radius:9px;
 --betting-stats-table-team-badge-background:var(--palette-slate-22-3);
+--betting-stats-table-team-badge-font-size:10px;
+--betting-stats-table-team-badge-radius:6px;
 --betting-stats-table-team-badge-text:var(--palette-slate-68);
 --betting-stats-table-team-cell-background:var(--palette-sky-12);
+--betting-stats-table-team-cell-font-size:12px;
 --betting-stats-table-trend-down-text:var(--color-eval-bad);
 --betting-stats-table-trend-up-text:var(--color-eval-good);
+--betting-stats-table-value-font-size:12px;
 --betting-stats-table-value-text:var(--palette-sky-90);
 --betting-stats-table-value-on-hover-text:var(--color-accent-default);
+--betting-stats-table-window-button-font-size:12px;
+--betting-stats-table-window-button-radius:4px;
 --betting-stats-table-window-button-text:var(--palette-slate-68-2);
 --betting-stats-table-window-button-selected-background:var(--palette-slate-28);
 --betting-stats-table-window-button-selected-text:var(--color-white);
 --betting-stats-table-window-buttons-border:var(--palette-slate-26-3);
+--betting-stats-table-window-buttons-border-width:1px;
+--betting-stats-table-window-buttons-radius:7px;
 --fantasy-charts-gallery-average-line:var(--palette-slate-70);
 --fantasy-charts-gallery-axis-line:var(--palette-slate-28-2);
+--fantasy-charts-gallery-axis-numbers-font-size:10px;
 --fantasy-charts-gallery-axis-numbers-text:var(--palette-slate-58-2);
+--fantasy-charts-gallery-axis-title-font-size:11.5px;
 --fantasy-charts-gallery-axis-title-text:var(--palette-slate-78-2);
 --fantasy-charts-gallery-chart-card-background:var(--palette-blue-15);
 --fantasy-charts-gallery-chart-card-border:var(--palette-slate-24-2);
+--fantasy-charts-gallery-chart-card-border-width:1px;
+--fantasy-charts-gallery-chart-card-radius:10px;
 --fantasy-charts-gallery-chart-card-text:var(--color-text-soft);
 --fantasy-charts-gallery-chart-card-focused-outline:var(--color-accent-fantasy);
+--fantasy-charts-gallery-chart-card-focused-outline-offset:3px;
+--fantasy-charts-gallery-chart-card-focused-outline-width:2px;
 --fantasy-charts-gallery-chart-card-hovered-border:var(--color-accent-fantasy);
+--fantasy-charts-gallery-chart-note-font-size:11px;
 --fantasy-charts-gallery-chart-note-text:var(--color-text-muted-2);
+--fantasy-charts-gallery-chart-subtitle-font-size:11px;
 --fantasy-charts-gallery-chart-subtitle-text:var(--color-text-muted-2);
+--fantasy-charts-gallery-chart-title-font-size:14px;
 --fantasy-charts-gallery-diagonal-line:var(--palette-slate-50-2);
+--fantasy-charts-gallery-enlarged-chart-subtitle-font-size:12px;
 --fantasy-charts-gallery-enlarged-chart-subtitle-text:var(--color-text-muted-2);
+--fantasy-charts-gallery-enlarged-chart-title-font-size:22px;
+--fantasy-charts-gallery-enlarged-chart-title-font-size-below-650px:18px;
 --fantasy-charts-gallery-point-border:var(--color-surface-dialog);
 --fantasy-charts-gallery-point-fill:var(--palette-slate-58-3);
 --fantasy-charts-gallery-point-hovered-border:var(--color-white);
 --fantasy-charts-gallery-point-hovered-fill:var(--color-accent-default);
+--fantasy-charts-gallery-point-label-font-size:10px;
 --fantasy-charts-gallery-point-label-text:var(--palette-slate-83);
+--fantasy-charts-gallery-team-label-font-size:11px;
 --fantasy-charts-gallery-team-label-outline:var(--color-surface-dialog);
+--fantasy-player-card-box-scores-cell-note-font-size:10px;
 --fantasy-player-card-box-scores-cell-note-text:var(--color-text-muted-2);
 --fantasy-player-card-box-scores-first-column-background:var(--color-surface-dialog);
 --fantasy-player-card-box-scores-first-column-shadow:var(--color-border-soft);
+--fantasy-player-card-box-scores-first-column-shadow-size-below-650px:1px 0 0;
+--fantasy-player-card-box-scores-header-font-size:11px;
 --fantasy-player-card-box-scores-header-text:var(--color-text-subtle);
+--fantasy-player-card-box-scores-header-button-radius:4px;
 --fantasy-player-card-box-scores-header-button-text:var(--palette-sky-93);
 --fantasy-player-card-box-scores-header-button-focused-outline:var(--color-accent-fantasy);
+--fantasy-player-card-box-scores-header-button-focused-outline-width:2px;
+--fantasy-player-card-box-scores-header-note-font-size:10px;
 --fantasy-player-card-box-scores-header-note-text:var(--color-text-muted-2);
 --fantasy-player-card-box-scores-row-border-top:var(--color-border-soft);
+--fantasy-player-card-box-scores-row-border-top-width:1px;
 --fantasy-player-card-box-scores-row-highlighted-background:var(--palette-red-54-a);
+--fantasy-player-card-box-scores-table-body-font-size:13px;
 --fantasy-player-card-close-and-next-button-background:var(--palette-slate-20-3);
+--fantasy-player-card-close-and-next-button-border-width:1px;
+--fantasy-player-card-close-and-next-button-font-size:22px;
+--fantasy-player-card-close-and-next-button-font-size-2:13px;
+--fantasy-player-card-close-and-next-button-radius:6px;
 --fantasy-player-card-close-and-next-button-text:var(--palette-sky-95);
 --fantasy-player-card-close-and-next-button-hovered-border:var(--color-accent-fantasy);
+--fantasy-player-card-controls-games-played-font-size:15px;
+--fantasy-player-card-controls-games-played-font-size-below-650px:12px;
+--fantasy-player-card-header-kicker-font-size:10px;
 --fantasy-player-card-header-kicker-text:var(--palette-slate-71);
+--fantasy-player-card-header-name-font-size:24px;
+--fantasy-player-card-header-name-font-size-below-650px:20px;
+--fantasy-player-card-header-team-font-size:12px;
 --fantasy-player-card-large-tile-border:var(--palette-slate-32);
+--fantasy-player-card-large-tile-label-font-size:12px;
 --fantasy-player-card-large-tile-label-text:var(--color-text-soft);
+--fantasy-player-card-large-tile-value-font-size:28px;
+--fantasy-player-card-large-tile-value-font-size-below-650px:26px;
+--fantasy-player-card-legend-font-size:11px;
 --fantasy-player-card-legend-text:var(--color-text-subtle);
 --fantasy-player-card-legend-band-background:var(--palette-slate-62);
 --fantasy-player-card-legend-game-dot-background:var(--color-accent-fantasy);
+--fantasy-player-card-legend-game-dot-radius:50%;
 --fantasy-player-card-legend-rolling-line-background:var(--palette-yellow-63);
+--fantasy-player-card-legend-rolling-line-radius:2px;
 --fantasy-player-card-legend-season-line-border-top:var(--color-text-dim);
+--fantasy-player-card-legend-season-line-border-top-width:2px;
 --fantasy-player-card-radar-axes-line:var(--palette-slate-26-4);
 --fantasy-player-card-radar-comparison-fill:var(--palette-violet-77-a);
 --fantasy-player-card-radar-comparison-line:var(--palette-violet-77);
@@ -333,20 +468,38 @@ body{
 --fantasy-player-card-radar-player-line:var(--color-accent-fantasy);
 --fantasy-player-card-radar-rings-line:var(--palette-slate-26-4);
 --fantasy-player-card-radar-zero-ring-line:var(--palette-slate-44-2);
+--fantasy-player-card-rank-label-font-size:11px;
+--fantasy-player-card-section-title-font-size:11px;
 --fantasy-player-card-section-title-text:var(--color-text-subtle);
+--fantasy-player-card-section-title-text-font-size:14px;
 --fantasy-player-card-section-title-value-text:var(--color-accent-fantasy-light);
+--fantasy-player-card-shot-chart-note-font-size:11px;
+--fantasy-player-card-small-sample-marker-font-size:10px;
+--fantasy-player-card-small-sample-note-font-size:10px;
 --fantasy-player-card-small-sample-note-text:var(--palette-yellow-63);
+--fantasy-player-card-small-tile-value-font-size:19px;
+--fantasy-player-card-small-tile-value-font-size-below-650px:19px;
 --fantasy-player-card-summary-box-background:var(--palette-slate-15);
 --fantasy-player-card-summary-box-border:var(--color-border-soft);
+--fantasy-player-card-summary-box-border-width:1px;
+--fantasy-player-card-summary-box-radius:10px;
+--fantasy-player-card-summary-box-label-font-size:11px;
 --fantasy-player-card-summary-box-label-text:var(--color-text-subtle);
+--fantasy-player-card-summary-box-note-font-size:11px;
 --fantasy-player-card-summary-box-note-text:var(--color-text-muted-2);
+--fantasy-player-card-summary-box-value-font-size:17px;
 --fantasy-player-card-summary-box-value-text:var(--palette-sky-93);
 --fantasy-player-card-tile-background:var(--palette-blue-15);
 --fantasy-player-card-tile-border:var(--palette-slate-24-2);
+--fantasy-player-card-tile-border-width:1px;
+--fantasy-player-card-tile-radius:9px;
 --fantasy-player-card-tile-text:var(--color-text-soft);
 --fantasy-player-card-tile-accent-text-text:var(--color-accent-fantasy-light);
+--fantasy-player-card-tile-label-font-size:11px;
 --fantasy-player-card-tile-label-text:var(--palette-slate-74);
+--fantasy-player-card-tile-note-font-size:12px;
 --fantasy-player-card-tile-note-text:var(--color-text-soft);
+--fantasy-player-card-tile-rank-font-size:11px;
 --fantasy-player-card-tile-rank-text:var(--color-muted);
 --fantasy-player-card-tile-rank-average-text:var(--color-eval-avg);
 --fantasy-player-card-tile-rank-bad-text:var(--color-eval-bad);
@@ -354,48 +507,73 @@ body{
 --fantasy-player-card-tile-rank-neutral-text:var(--palette-slate-79-2);
 --fantasy-player-card-tile-selected-border:var(--color-accent-fantasy);
 --fantasy-player-card-tile-selected-shadow:var(--color-accent-fantasy);
+--fantasy-player-card-tile-selected-shadow-size:inset 0 0 0 1px;
+--fantasy-player-card-tile-side-label-font-size:11px;
 --fantasy-player-card-tile-side-label-text:var(--color-muted);
+--fantasy-player-card-tile-unit-font-size:11px;
 --fantasy-player-card-tile-unit-text:var(--palette-slate-74);
+--fantasy-player-card-tile-value-font-size:24px;
+--fantasy-player-card-tile-value-font-size-below-650px:21px;
 --fantasy-player-card-trend-axis-line:var(--palette-slate-28-2);
+--fantasy-player-card-trend-difference-label-font-size:12px;
 --fantasy-player-card-trend-dot-fill:var(--color-accent-fantasy);
 --fantasy-player-card-trend-dot-outside-window-fill:var(--palette-red-37);
 --fantasy-player-card-trend-game-line:var(--color-accent-fantasy);
 --fantasy-player-card-trend-grid-line:var(--color-border-soft);
+--fantasy-player-card-trend-labels-font-size:11px;
 --fantasy-player-card-trend-labels-text:var(--palette-slate-75);
 --fantasy-player-card-trend-league-band-fill:var(--palette-slate-62);
 --fantasy-player-card-trend-rolling-line:var(--palette-yellow-63);
 --fantasy-player-card-trend-season-line:var(--color-text-dim);
 --fantasy-player-card-visual-section-border-top:var(--color-border-soft);
+--fantasy-player-card-visual-section-border-top-width:1px;
 --fantasy-player-card-window-background:var(--color-surface-dialog);
 --fantasy-player-card-window-border:var(--palette-slate-29);
+--fantasy-player-card-window-border-width:1px;
+--fantasy-player-card-window-radius:15px;
 --fantasy-player-card-window-text:var(--palette-sky-95);
 --fantasy-player-card-window-backdrop-background:var(--palette-blue-03-a);
 --fantasy-shot-chart-assist-button-selected-background:var(--color-accent-fantasy-dark);
 --fantasy-shot-chart-assist-button-selected-border:var(--color-accent-fantasy);
 --fantasy-shot-chart-assist-button-selected-text:var(--color-accent-fantasy-light);
 --fantasy-shot-chart-buttons-divider-background:var(--color-border-control);
+--fantasy-shot-chart-controls-title-font-size:12px;
 --fantasy-shot-chart-court-background:var(--color-surface-deep);
+--fantasy-shot-chart-court-radius:8px;
 --fantasy-shot-chart-court-markings-line:var(--palette-slate-56);
 --fantasy-shot-chart-court-outline-line:var(--palette-slate-37);
+--fantasy-shot-chart-explanation-font-size:11px;
 --fantasy-shot-chart-explanation-text:var(--color-accent-fantasy-light);
 --fantasy-shot-chart-hexagon-border:var(--color-surface-deep);
 --fantasy-shot-chart-highlighted-shot-border:var(--color-surface-deep);
 --fantasy-shot-chart-highlighted-shot-fill:var(--color-accent-fantasy);
 --fantasy-shot-chart-made-shot-fill:var(--palette-sky-90-2);
 --fantasy-shot-chart-missed-shot-line:var(--palette-slate-64-3);
+--fantasy-shot-chart-note-font-size:11px;
 --fantasy-shot-chart-note-text:var(--palette-slate-64-2);
 --fantasy-shot-chart-popup-background:var(--palette-sky-12-2);
 --fantasy-shot-chart-popup-border:var(--color-border-control);
+--fantasy-shot-chart-popup-border-width:1px;
+--fantasy-shot-chart-popup-font-size:12px;
+--fantasy-shot-chart-popup-radius:8px;
 --fantasy-shot-chart-popup-shadow:var(--palette-gray-00-a-2);
+--fantasy-shot-chart-popup-shadow-size:0 6px 18px;
 --fantasy-shot-chart-popup-change-line-border-top:var(--palette-sky-21);
+--fantasy-shot-chart-popup-change-line-border-top-width:1px;
 --fantasy-shot-chart-popup-label-text:var(--palette-slate-71-2);
+--fantasy-shot-chart-popup-note-font-size:11px;
 --fantasy-shot-chart-popup-note-text:var(--palette-slate-63-2);
 --fantasy-shot-chart-popup-selected-row-background:var(--color-accent-fantasy-dark);
+--fantasy-shot-chart-popup-selected-row-radius:4px;
 --fantasy-shot-chart-popup-selected-text-text:var(--color-accent-fantasy-light);
+--fantasy-shot-chart-popup-title-font-size:13px;
 --fantasy-shot-chart-second-chance-button-selected-background:var(--color-accent-fantasy-dark);
 --fantasy-shot-chart-second-chance-button-selected-border:var(--color-accent-fantasy);
 --fantasy-shot-chart-second-chance-button-selected-text:var(--color-accent-fantasy-light);
 --fantasy-shot-chart-view-button-border:var(--color-border-control);
+--fantasy-shot-chart-view-button-border-width:1px;
+--fantasy-shot-chart-view-button-font-size:12px;
+--fantasy-shot-chart-view-button-radius:6px;
 --fantasy-shot-chart-view-button-text:var(--color-text-soft);
 --fantasy-shot-chart-view-button-selected-background:var(--color-accent-fantasy);
 --fantasy-shot-chart-view-button-selected-border:var(--color-accent-fantasy);
@@ -405,211 +583,376 @@ body{
 --fantasy-shot-chart-zone-good-color:var(--palette-green-68);
 --fantasy-shot-chart-zone-label-background:var(--color-surface-deep);
 --fantasy-shot-chart-zone-label-assist-box-border:var(--color-accent-fantasy);
+--fantasy-shot-chart-zone-label-rank-font-size:6.5px;
 --fantasy-shot-chart-zone-label-rank-text:var(--color-text-dim);
+--fantasy-shot-chart-zone-label-text-font-size:8.6px;
 --fantasy-shot-chart-zone-label-text-text:var(--palette-sky-96);
 --fantasy-shot-chart-zone-no-shots-color:var(--palette-slate-41);
 --fantasy-shot-chart-zone-unknown-color:var(--palette-slate-73-2);
 --fantasy-shot-chart-zone-very-bad-color:var(--palette-red-55);
 --fantasy-shot-chart-zone-very-good-color:var(--palette-green-46);
 --fantasy-stat-table-buttons-focused-outline:var(--color-accent-fantasy);
+--fantasy-stat-table-buttons-focused-outline-offset:3px;
+--fantasy-stat-table-buttons-focused-outline-width:2px;
 --fantasy-stat-table-cell-border:var(--color-gridline);
+--fantasy-stat-table-cell-border-width:1px;
+--fantasy-stat-table-combined-rank-note-font-size:12px;
 --fantasy-stat-table-combined-rank-note-text:var(--color-muted);
 --fantasy-stat-table-empty-note-text:var(--palette-slate-72-4);
 --fantasy-stat-table-filter-button-border:var(--color-border-control);
+--fantasy-stat-table-filter-button-border-width:1px;
 --fantasy-stat-table-filters-panel-background:var(--color-surface-dialog);
 --fantasy-stat-table-filters-panel-border:var(--palette-slate-29);
+--fantasy-stat-table-filters-panel-border-width:1px;
+--fantasy-stat-table-filters-panel-radius:10px;
 --fantasy-stat-table-filters-panel-shadow:var(--palette-gray-00-a-2);
+--fantasy-stat-table-filters-panel-shadow-size:0 10px 40px;
 --fantasy-stat-table-first-column-shadow:var(--color-gridline);
+--fantasy-stat-table-first-column-shadow-size:1px 0 0;
 --fantasy-stat-table-first-column-body-background:var(--color-bg);
+--fantasy-stat-table-first-column-team-and-position-font-size:10px;
 --fantasy-stat-table-first-column-team-and-position-text:var(--color-muted);
 --fantasy-stat-table-header-background:var(--color-panel);
+--fantasy-stat-table-header-cell-font-size:10px;
 --fantasy-stat-table-header-first-cell-background:var(--color-panel);
 --fantasy-stat-table-header-selected-text:var(--color-accent);
+--fantasy-stat-table-header-sort-arrow-font-size:7px;
 --fantasy-stat-table-header-sorted-background:var(--color-sorthead);
+--fantasy-stat-table-heading-title-font-size:34px;
 --fantasy-stat-table-hover-popup-background:var(--color-panel);
 --fantasy-stat-table-hover-popup-border:var(--color-gridline);
+--fantasy-stat-table-hover-popup-border-width:1px;
+--fantasy-stat-table-hover-popup-radius:10px;
 --fantasy-stat-table-hover-popup-shadow:var(--color-bg);
+--fantasy-stat-table-hover-popup-shadow-size:0 10px 30px;
+--fantasy-stat-table-hover-popup-legend-font-size:10px;
 --fantasy-stat-table-hover-popup-value-text:var(--color-accent);
 --fantasy-stat-table-league-average-row-background-base:var(--color-bg);
 --fantasy-stat-table-league-average-row-background-tint:var(--color-accent);
 --fantasy-stat-table-league-average-row-text:var(--color-accent);
+--fantasy-stat-table-method-note-font-size:11px;
 --fantasy-stat-table-method-note-text:var(--palette-slate-67);
 --fantasy-stat-table-name-hovered-text:var(--color-accent-fantasy);
 --fantasy-stat-table-rank-chip-background:var(--color-chip);
+--fantasy-stat-table-rank-chip-font-size:10px;
+--fantasy-stat-table-rank-chip-radius:4px;
 --fantasy-stat-table-rank-chip-text:var(--color-muted);
 --fantasy-stat-table-sorted-column-background:var(--color-sortcell);
+--fantasy-stat-table-status-and-footer-font-size:12px;
 --fantasy-stat-table-status-and-footer-text:var(--color-text-muted-2);
+--fantasy-stat-table-switch-button-font-size:13px;
+--fantasy-stat-table-switch-button-radius:5px;
 --fantasy-stat-table-switch-button-text:var(--palette-slate-79);
 --fantasy-stat-table-switch-button-selected-background:var(--color-accent-fantasy);
 --fantasy-stat-table-switch-button-selected-text:var(--color-white);
 --fantasy-stat-table-switch-buttons-border:var(--color-border-control);
+--fantasy-stat-table-switch-buttons-border-width:1px;
+--fantasy-stat-table-switch-buttons-radius:8px;
+--fantasy-stat-table-table-font-size:13px;
 --fantasy-stat-table-table-frame-border:var(--color-gridline);
+--fantasy-stat-table-table-frame-border-width:1px;
+--fantasy-stat-table-table-frame-radius:10px;
 --fantasy-stat-table-value-bad-text:var(--color-eval-bad-text);
 --fantasy-stat-table-value-good-text:var(--color-eval-good-text)
 }
 body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-accent:var(--color-accent-fantasy)}body[data-area=betting]{--color-accent:var(--color-accent-betting)}
 /* Where each component colour is used (name : selectors of the style sheets)
   app.page.badge.border : .pill
+  app.page.badge.border-width : .pill
+  app.page.badge.font-size : .pill
+  app.page.badge.radius : .pill
   app.page.badge.text : .pill
   app.page.body.background : body
+  app.page.body.font-size : body
   app.page.body.text : body
+  app.page.eyebrow.font-size : aside small,.eyebrow
   app.page.eyebrow.text : aside small,.eyebrow
+  app.page.interactive-elements.outline-offset : button,a,input,select,textarea
   app.page.paragraph.text : p
+  app.page.section-title.font-size : h3
+  app.page.subtitle.font-size : h2
+  app.page.title.font-size : h1
   app.research.button.background : .btn
   app.research.button.border : .btn
+  app.research.button.border-width : .btn
+  app.research.button.radius : .btn
   app.research.button.text : .btn
   app.research.button-main.background : .btn.primary
   app.research.button-main.text : .btn.primary
   app.research.card.background : .card
   app.research.card.border : .card
+  app.research.card.border-width : .card
+  app.research.card.radius : .card
+  app.research.card-big-number.font-size : .metric
   app.research.card-big-number.text : .metric
   app.research.empty-note.border : .empty
+  app.research.empty-note.border-width : .empty
+  app.research.empty-note.radius : .empty
   app.research.empty-note.text : .empty
   app.research.footer.border-top : .footer
+  app.research.footer.border-top-width : .footer
+  app.research.footer.font-size : .footer
   app.research.footer.text : .footer
   app.research.form-field.background : input,select,textarea
   app.research.form-field.border : input,select,textarea
+  app.research.form-field.border-width : input,select,textarea
+  app.research.form-field.radius : input,select,textarea
   app.research.form-field.text : input,select,textarea
+  app.research.form-label.font-size : label
   app.research.form-label.text : label
+  app.research.muted-text.font-size : .muted
   app.research.muted-text.text : .muted
   app.research.notice.background : .notice
   app.research.notice.border-left : .notice
+  app.research.notice.border-left-width : .notice
+  app.research.notice.font-size : .notice
   app.research.notice.text : .notice
+  app.research.overview-card-label.font-size : .number
   app.research.overview-card-label.text : .number
   app.research.overview-card-link.text : .action a
+  app.sidebar.link.font-size-below-900px : aside a
+  app.sidebar.link.radius : aside a
   app.sidebar.link.text : aside a
   app.sidebar.link-selected.background : aside a.active
   app.sidebar.link-selected.background-in-fantasy : body:has(.fantasy-stats) aside a.active
   app.sidebar.link-selected.text : aside a.active
   app.sidebar.note.border : .aside-note
+  app.sidebar.note.border-width : .aside-note
+  app.sidebar.note.font-size : .aside-note
   app.sidebar.note.text : .aside-note
   app.sidebar.panel.border-bottom : aside
+  app.sidebar.panel.border-bottom-width-below-900px : aside
   app.sidebar.panel.border-right : aside
+  app.sidebar.panel.border-right-width : aside
   app.top-bar.bar.border-bottom : .top
+  app.top-bar.bar.border-bottom-width : .top
+  app.top-bar.logo.font-size : .brand
+  app.top-bar.logo.font-size-below-480px : .brand
   app.top-bar.logo-and.text : .brand .b2
   app.top-bar.logo-edge.text-in-betting : body[data-area=betting] .brand .b3
   app.top-bar.logo-edge.text-in-fantasy : body[data-area=fantasy] .brand .b3
   app.top-bar.logo-pick.text-in-betting : body[data-area=betting] .brand .b1
   app.top-bar.logo-pick.text-in-fantasy : body[data-area=fantasy] .brand .b1
+  app.top-bar.nav-link.border-bottom-width : .top nav a
   app.top-bar.nav-link.text : .top nav a
   app.top-bar.nav-link-selected.border : .top nav a.active
   app.top-bar.nav-link-selected.text : .top nav a.active
+  app.top-bar.tagline.font-size : .tag
   app.top-bar.tagline.text : .tag
+  betting.stats-table.caption.font-size : .stats-caption,.stats-foot
+  betting.stats-table.caption.font-size-below-600px : .stats-caption
   betting.stats-table.caption.text : .stats-caption,.stats-foot
+  betting.stats-table.caption-title.font-size : .stats-caption>span:first-child
   betting.stats-table.caption-title.text : .stats-caption>span:first-child
   betting.stats-table.category-count.border : .entity-switch button span,.entity-switch small
+  betting.stats-table.category-count.border-width : .entity-switch button span,.entity-switch small
+  betting.stats-table.category-count.font-size : .entity-switch button span,.entity-switch small
+  betting.stats-table.category-count.radius : .entity-switch button span,.entity-switch small
   betting.stats-table.category-count.text : .entity-switch button span,.entity-switch small
+  betting.stats-table.category-tab.border-bottom-width : .entity-switch button
+  betting.stats-table.category-tab.font-size : .entity-switch button
   betting.stats-table.category-tab.text : .entity-switch button
   betting.stats-table.category-tab-selected.border : .entity-switch button[aria-pressed=true]
   betting.stats-table.category-tab-selected.text : .entity-switch button[aria-pressed=true]
   betting.stats-table.category-tabs.border-bottom : .entity-switch
+  betting.stats-table.category-tabs.border-bottom-width : .entity-switch
   betting.stats-table.cell.border-bottom : .teams-table th,.teams-table td
+  betting.stats-table.cell.border-bottom-width : .teams-table th,.teams-table td
   betting.stats-table.footer-dot.background : .stats-foot i
+  betting.stats-table.footer-dot.radius : .stats-foot i
+  betting.stats-table.games-column.font-size : .teams-table .gp
   betting.stats-table.games-column.text : .teams-table .gp
   betting.stats-table.header.background : .teams-table thead th
+  betting.stats-table.header.font-size : .teams-table thead th
   betting.stats-table.header.text : .teams-table thead th
+  betting.stats-table.header-button.font-size : .teams-table thead button
+  betting.stats-table.header-note.font-size : .teams-table thead small
   betting.stats-table.header-note.text : .teams-table thead small
   betting.stats-table.header-sorted.text : .teams-table th[aria-sort=ascending] button,.teams-table th[aria-sort=descending] button,.teams-table th[aria-sort=ascending] .sort-arrow,.teams-table th[aria-sort=descending] .sort-arrow
   betting.stats-table.header-team-cell.background : .teams-table thead .club-head
+  betting.stats-table.heading-badge.font-size-below-600px : .stats-heading .pill
+  betting.stats-table.heading-title.font-size : .stats-heading h1
+  betting.stats-table.heading-title.font-size-below-1000px : .stats-heading h1
+  betting.stats-table.last3-rank.font-size : .rk3
   betting.stats-table.last3-rank.text : .rk3
   betting.stats-table.last3-rank-down.text : .rk3.down
   betting.stats-table.last3-rank-up.text : .rk3.up
   betting.stats-table.league-average-badge.background : .league-average .club-mark
   betting.stats-table.league-average-badge.text : .league-average .club-mark
+  betting.stats-table.league-average-note.font-size : .league-average th small
+  betting.stats-table.league-average-note.font-size-below-600px : .league-average th small
   betting.stats-table.league-average-note.text : .league-average th small
   betting.stats-table.league-average-row.background : .teams-table tr.league-average td,.teams-table tr.league-average>th
   betting.stats-table.league-average-row.border-bottom : .teams-table tr.league-average td,.teams-table tr.league-average>th
+  betting.stats-table.league-average-row.border-bottom-width : .teams-table tr.league-average td,.teams-table tr.league-average>th
   betting.stats-table.league-average-row.border-top : .teams-table tr.league-average td,.teams-table tr.league-average>th
+  betting.stats-table.league-average-row.border-top-width : .teams-table tr.league-average td,.teams-table tr.league-average>th
   betting.stats-table.league-average-row.text : .league-average .stat-cell,.league-average th
   betting.stats-table.method-note.border-top : .stats-method
+  betting.stats-table.method-note.border-top-width : .stats-method
+  betting.stats-table.method-note.font-size : .stats-method
   betting.stats-table.method-note.text : .stats-method
   betting.stats-table.method-title.text : .stats-method summary
   betting.stats-table.missing-data-note.text : small.miss,.miss
+  betting.stats-table.player-filter-label.font-size : .pl-filters label
   betting.stats-table.player-filter-label.text : .pl-filters label
+  betting.stats-table.player-filter-select.font-size : .pl-filters select
+  betting.stats-table.player-view-button.font-size-below-650px : .pl-toolbar .side-switch button
   betting.stats-table.popup.background : .stats-tooltip
   betting.stats-table.popup.border : .stats-tooltip
+  betting.stats-table.popup.border-width : .stats-tooltip
+  betting.stats-table.popup.radius : .stats-tooltip
   betting.stats-table.popup.shadow : .stats-tooltip
+  betting.stats-table.popup.shadow-size : .stats-tooltip
+  betting.stats-table.popup-description.font-size : .stats-tooltip p
   betting.stats-table.popup-description.text : .stats-tooltip p
+  betting.stats-table.popup-label.font-size : .stats-tooltip span
   betting.stats-table.popup-label.text : .stats-tooltip span
+  betting.stats-table.popup-rank.font-size : .tip-rank
   betting.stats-table.popup-rank.text : .tip-rank
+  betting.stats-table.popup-title.font-size : .stats-tooltip strong
   betting.stats-table.popup-title.text : .stats-tooltip strong
+  betting.stats-table.popup-value.font-size : .stats-tooltip b
   betting.stats-table.popup-value.text : .stats-tooltip b
   betting.stats-table.rank-bad.background : .rk.bad
   betting.stats-table.rank-bad.text : .rk.bad
   betting.stats-table.rank-chip.background : .rk
+  betting.stats-table.rank-chip.font-size : .rk
+  betting.stats-table.rank-chip.radius : .rk
   betting.stats-table.rank-chip.text : .rk
   betting.stats-table.rank-good.background : .rk.good
   betting.stats-table.rank-good.text : .rk.good
+  betting.stats-table.rank-line.font-size : .rk-line
   betting.stats-table.rank-neutral.background : .rk.neutral
   betting.stats-table.rank-neutral.text : .rk.neutral
   betting.stats-table.row-even.background : .teams-table tr:nth-child(even) td,.teams-table tr:nth-child(even)>th
   betting.stats-table.row-even-sorted-column.background : .teams-table tr:nth-child(even) td.sorted-column
   betting.stats-table.row-hover.background : .teams-table tr:hover td,.teams-table tr:hover>th
+  betting.stats-table.search-field.font-size : .team-search input
+  betting.stats-table.side-button.font-size : .side-switch button
+  betting.stats-table.side-button.radius : .side-switch button
   betting.stats-table.side-button.text : .side-switch button
   betting.stats-table.side-button-selected.background : .side-switch button[aria-pressed=true]
   betting.stats-table.side-button-selected.text : .side-switch button[aria-pressed=true]
   betting.stats-table.side-buttons.background : .side-switch
   betting.stats-table.side-buttons.border : .side-switch
+  betting.stats-table.side-buttons.border-width : .side-switch
+  betting.stats-table.side-buttons.radius : .side-switch
   betting.stats-table.sidebar.border-bottom : body:has(.bet-stats) aside
+  betting.stats-table.sidebar.border-bottom-width-above-901px : body:has(.bet-stats) aside
+  betting.stats-table.sidebar-link.font-size-above-901px : body:has(.bet-stats) aside a
+  betting.stats-table.sort-arrow.font-size : .teams-table .sort-arrow
   betting.stats-table.sort-arrow.text : .teams-table .sort-arrow
   betting.stats-table.sorted-column.background : .teams-table td.sorted-column
   betting.stats-table.status-dot.background : .live-status::before
+  betting.stats-table.status-dot.radius : .live-status::before
   betting.stats-table.status-dot-live.background : .live-status[data-live=live]::before
   betting.stats-table.status-dot-loading.background : .live-status[data-live=loading]::before
   betting.stats-table.status-dot-partial.background : .live-status[data-live=partial]::before,.live-status[data-live=cached]::before
+  betting.stats-table.status-line.font-size : .live-status
   betting.stats-table.status-line.text : .live-status
+  betting.stats-table.table.font-size : .teams-table
   betting.stats-table.table-frame.background : .stats-scroll
   betting.stats-table.table-frame.border : .stats-scroll
+  betting.stats-table.table-frame.border-width : .stats-scroll
+  betting.stats-table.table-frame.radius : .stats-scroll
   betting.stats-table.team-badge.background : .club-mark
+  betting.stats-table.team-badge.font-size : .club-mark
+  betting.stats-table.team-badge.radius : .club-mark
   betting.stats-table.team-badge.text : .club-mark
   betting.stats-table.team-cell.background : .teams-table tr>th:first-child
+  betting.stats-table.team-cell.font-size : .teams-table tr>th:first-child
   betting.stats-table.trend-down.text : .trend.down
   betting.stats-table.trend-up.text : .trend.up
+  betting.stats-table.value.font-size : .stat-cell
   betting.stats-table.value.text : .stat-cell
   betting.stats-table.value-on-hover.text : .stat-cell:hover,.stat-cell:focus-visible
+  betting.stats-table.window-button.font-size : .period-switch button
+  betting.stats-table.window-button.radius : .period-switch button
   betting.stats-table.window-button.text : .period-switch button
   betting.stats-table.window-button-selected.background : .period-switch button[aria-pressed=true]
   betting.stats-table.window-button-selected.text : .period-switch button[aria-pressed=true]
   betting.stats-table.window-buttons.border : .period-switch
+  betting.stats-table.window-buttons.border-width : .period-switch
+  betting.stats-table.window-buttons.radius : .period-switch
   fantasy.charts-gallery.average.line : .fc-avg
   fantasy.charts-gallery.axis.line : (set by a script)
+  fantasy.charts-gallery.axis-numbers.font-size : .fc-tick
   fantasy.charts-gallery.axis-numbers.text : .fc-tick
+  fantasy.charts-gallery.axis-title.font-size : .fc-ax
   fantasy.charts-gallery.axis-title.text : .fc-ax
   fantasy.charts-gallery.chart-card.background : .fc-card
   fantasy.charts-gallery.chart-card.border : .fc-card
+  fantasy.charts-gallery.chart-card.border-width : .fc-card
+  fantasy.charts-gallery.chart-card.radius : .fc-card
   fantasy.charts-gallery.chart-card.text : .fc-card
   fantasy.charts-gallery.chart-card-focused.outline : .fc-card:focus-visible
+  fantasy.charts-gallery.chart-card-focused.outline-offset : .fc-card:focus-visible
+  fantasy.charts-gallery.chart-card-focused.outline-width : .fc-card:focus-visible
   fantasy.charts-gallery.chart-card-hovered.border : .fc-card:hover
+  fantasy.charts-gallery.chart-note.font-size : .fc-note
   fantasy.charts-gallery.chart-note.text : .fc-note
+  fantasy.charts-gallery.chart-subtitle.font-size : .fc-card-sub
   fantasy.charts-gallery.chart-subtitle.text : .fc-card-sub
+  fantasy.charts-gallery.chart-title.font-size : .fc-card-title
   fantasy.charts-gallery.diagonal.line : (set by a script)
+  fantasy.charts-gallery.enlarged-chart-subtitle.font-size : .fc-mhead h2 small
   fantasy.charts-gallery.enlarged-chart-subtitle.text : .fc-mhead h2 small
+  fantasy.charts-gallery.enlarged-chart-title.font-size : .fc-mhead h2
+  fantasy.charts-gallery.enlarged-chart-title.font-size-below-650px : .fc-mhead h2
   fantasy.charts-gallery.point.border : .fc-pt circle
   fantasy.charts-gallery.point.fill : .fc-pt circle
   fantasy.charts-gallery.point-hovered.border : .fc-pt circle:hover,.fc-pt circle:focus-visible
   fantasy.charts-gallery.point-hovered.fill : .fc-pt:hover circle,.fc-pt:focus circle
+  fantasy.charts-gallery.point-label.font-size : .fc-pt text
   fantasy.charts-gallery.point-label.text : .fc-pt text
+  fantasy.charts-gallery.team-label.font-size : .fc-pl
   fantasy.charts-gallery.team-label.outline : .fc-pl
+  fantasy.player-card.box-scores-cell-note.font-size : .fw-with td small
   fantasy.player-card.box-scores-cell-note.text : .fw-with td small
   fantasy.player-card.box-scores-first-column.background : .fw-boxscores th:first-child,.fw-boxscores td:first-child
   fantasy.player-card.box-scores-first-column.shadow : .fw-boxscores th:first-child,.fw-boxscores td:first-child
+  fantasy.player-card.box-scores-first-column.shadow-size-below-650px : .fw-boxscores th:first-child,.fw-boxscores td:first-child
+  fantasy.player-card.box-scores-header.font-size : .fw-with thead th
   fantasy.player-card.box-scores-header.text : .fw-with thead th
+  fantasy.player-card.box-scores-header-button.radius : .fw-with th button
   fantasy.player-card.box-scores-header-button.text : .fw-with th button
   fantasy.player-card.box-scores-header-button-focused.outline : .fw-with th button:focus-visible
+  fantasy.player-card.box-scores-header-button-focused.outline-width : .fw-with th button:focus-visible
+  fantasy.player-card.box-scores-header-note.font-size : .fw-with th button small
   fantasy.player-card.box-scores-header-note.text : .fw-with th button small
   fantasy.player-card.box-scores-row.border-top : .fw-with th,.fw-with td
+  fantasy.player-card.box-scores-row.border-top-width : .fw-with th,.fw-with td
   fantasy.player-card.box-scores-row-highlighted.background : .fw-with tr.on
+  fantasy.player-card.box-scores-table-body.font-size : .fw-with table
   fantasy.player-card.close-and-next-button.background : .fw-close,.fw-next
+  fantasy.player-card.close-and-next-button.border-width : .fw-close,.fw-next
+  fantasy.player-card.close-and-next-button.font-size : .fw-close
+  fantasy.player-card.close-and-next-button.font-size-2 : .fw-next
+  fantasy.player-card.close-and-next-button.radius : .fw-close,.fw-next
   fantasy.player-card.close-and-next-button.text : .fw-close,.fw-next
   fantasy.player-card.close-and-next-button-hovered.border : .fw-next:hover,.fw-next:focus-visible
+  fantasy.player-card.controls-games-played.font-size : .fw-card-controls>b
+  fantasy.player-card.controls-games-played.font-size-below-650px : .fw-card-controls>b
+  fantasy.player-card.header-kicker.font-size : .fw-identity small
   fantasy.player-card.header-kicker.text : .fw-identity small
+  fantasy.player-card.header-name.font-size : .fw-identity h2
+  fantasy.player-card.header-name.font-size-below-650px : .fw-identity h2
+  fantasy.player-card.header-team.font-size : .fw-identity p
   fantasy.player-card.large-tile.border : .fw-pgrid .fw-m-lg
+  fantasy.player-card.large-tile-label.font-size : .fw-pgrid .fw-m-lg span
   fantasy.player-card.large-tile-label.text : .fw-pgrid .fw-m-lg span
+  fantasy.player-card.large-tile-value.font-size : .fw-pgrid .fw-m-lg strong
+  fantasy.player-card.large-tile-value.font-size-below-650px : .fw-pgrid .fw-m-lg strong
+  fantasy.player-card.legend.font-size : .fw-leg
   fantasy.player-card.legend.text : .fw-leg
   fantasy.player-card.legend-band.background : .fw-k-b
   fantasy.player-card.legend-game-dot.background : .fw-k-g
+  fantasy.player-card.legend-game-dot.radius : .fw-k-g
   fantasy.player-card.legend-rolling-line.background : .fw-k-r
+  fantasy.player-card.legend-rolling-line.radius : .fw-k-r
   fantasy.player-card.legend-season-line.border-top : .fw-k-s
+  fantasy.player-card.legend-season-line.border-top-width : .fw-k-s
   fantasy.player-card.radar-axes.line : (set by a script)
   fantasy.player-card.radar-comparison.fill : (set by a script)
   fantasy.player-card.radar-comparison.line : (set by a script)
@@ -618,20 +961,38 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   fantasy.player-card.radar-player.line : (set by a script)
   fantasy.player-card.radar-rings.line : (set by a script)
   fantasy.player-card.radar-zero-ring.line : (set by a script)
+  fantasy.player-card.rank-label.font-size : .fw-rank
+  fantasy.player-card.section-title.font-size : .fw-section-title span
   fantasy.player-card.section-title.text : .fw-section-title span
+  fantasy.player-card.section-title-text.font-size : .fw-section-title h3
   fantasy.player-card.section-title-value.text : .fw-section-title>b
+  fantasy.player-card.shot-chart-note.font-size : .fw-shots .pc-note
+  fantasy.player-card.small-sample-marker.font-size : .fw-pgrid .fw-metric small em
+  fantasy.player-card.small-sample-note.font-size : .fw-small
   fantasy.player-card.small-sample-note.text : .fw-small
+  fantasy.player-card.small-tile-value.font-size : .fw-pgrid .fw-m-sm strong
+  fantasy.player-card.small-tile-value.font-size-below-650px : .fw-pgrid .fw-m-sm strong
   fantasy.player-card.summary-box.background : .fw-ibox
   fantasy.player-card.summary-box.border : .fw-ibox
+  fantasy.player-card.summary-box.border-width : .fw-ibox
+  fantasy.player-card.summary-box.radius : .fw-ibox
+  fantasy.player-card.summary-box-label.font-size : .fw-ibox span
   fantasy.player-card.summary-box-label.text : .fw-ibox span
+  fantasy.player-card.summary-box-note.font-size : .fw-ibox small
   fantasy.player-card.summary-box-note.text : .fw-ibox small
+  fantasy.player-card.summary-box-value.font-size : .fw-ibox strong
   fantasy.player-card.summary-box-value.text : .fw-ibox strong
   fantasy.player-card.tile.background : .fw-metric
   fantasy.player-card.tile.border : .fw-metric
+  fantasy.player-card.tile.border-width : .fw-metric
+  fantasy.player-card.tile.radius : .fw-metric
   fantasy.player-card.tile.text : .fw-metric
   fantasy.player-card.tile-accent-text.text : .fw-metric i
+  fantasy.player-card.tile-label.font-size : .fw-metric span,.fw-metric small
   fantasy.player-card.tile-label.text : .fw-metric span,.fw-metric small
+  fantasy.player-card.tile-note.font-size : .fw-pgrid .fw-metric small
   fantasy.player-card.tile-note.text : .fw-pgrid .fw-metric small
+  fantasy.player-card.tile-rank.font-size : .lx-grid .fw-rank
   fantasy.player-card.tile-rank.text : .lx-grid .fw-rank
   fantasy.player-card.tile-rank-average.text : .fw-metric strong.eval-avg
   fantasy.player-card.tile-rank-bad.text : .fw-metric strong.eval-bad
@@ -639,48 +1000,73 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   fantasy.player-card.tile-rank-neutral.text : .fw-metric strong.eval-neutral
   fantasy.player-card.tile-selected.border : .fw-metric[aria-pressed=true]
   fantasy.player-card.tile-selected.shadow : .fw-metric[aria-pressed=true]
+  fantasy.player-card.tile-selected.shadow-size : .fw-metric[aria-pressed=true]
+  fantasy.player-card.tile-side-label.font-size : .lx-grid .fw-metric i.lx-sl
   fantasy.player-card.tile-side-label.text : .lx-grid .fw-metric i.lx-sl
+  fantasy.player-card.tile-unit.font-size : .fw-pgrid .fw-metric em
   fantasy.player-card.tile-unit.text : .fw-pgrid .fw-metric em
+  fantasy.player-card.tile-value.font-size : .fw-metric strong
+  fantasy.player-card.tile-value.font-size-below-650px : .fw-metric strong
   fantasy.player-card.trend-axis.line : (set by a script)
+  fantasy.player-card.trend-difference-label.font-size : .fw-diff
   fantasy.player-card.trend-dot.fill : (set by a script)
   fantasy.player-card.trend-dot-outside-window.fill : (set by a script)
   fantasy.player-card.trend-game.line : (set by a script)
   fantasy.player-card.trend-grid.line : .fw-gl
+  fantasy.player-card.trend-labels.font-size : .fw-curve text,.fw-radar text
   fantasy.player-card.trend-labels.text : .fw-curve text,.fw-radar text
   fantasy.player-card.trend-league-band.fill : .fw-band
   fantasy.player-card.trend-rolling.line : (set by a script)
   fantasy.player-card.trend-season.line : .fw-ref
   fantasy.player-card.visual-section.border-top : .fw-visual
+  fantasy.player-card.visual-section.border-top-width : .fw-visual
   fantasy.player-card.window.background : .fw-dialog
   fantasy.player-card.window.border : .fw-dialog
+  fantasy.player-card.window.border-width : .fw-dialog
+  fantasy.player-card.window.radius : .fw-dialog
   fantasy.player-card.window.text : .fw-dialog
   fantasy.player-card.window-backdrop.background : .fw-dialog::backdrop
   fantasy.shot-chart.assist-button-selected.background : .sz-au button[aria-pressed=true]
   fantasy.shot-chart.assist-button-selected.border : .sz-au button[aria-pressed=true]
   fantasy.shot-chart.assist-button-selected.text : .sz-au button[aria-pressed=true]
   fantasy.shot-chart.buttons-divider.background : .sz-sep
+  fantasy.shot-chart.controls-title.font-size : .sz-head h3
   fantasy.shot-chart.court.background : .sz-court.pc-court
+  fantasy.shot-chart.court.radius : .sz-court.pc-court
   fantasy.shot-chart.court-markings.line : (set by a script)
   fantasy.shot-chart.court-outline.line : (set by a script)
+  fantasy.shot-chart.explanation.font-size : .sz-mode
   fantasy.shot-chart.explanation.text : .sz-mode
   fantasy.shot-chart.hexagon.border : .sz-hex polygon
   fantasy.shot-chart.highlighted-shot.border : .sz-hl
   fantasy.shot-chart.highlighted-shot.fill : .sz-hl
   fantasy.shot-chart.made-shot.fill : .sz-made
   fantasy.shot-chart.missed-shot.line : .sz-miss
+  fantasy.shot-chart.note.font-size : .pc-note
   fantasy.shot-chart.note.text : .pc-note
   fantasy.shot-chart.popup.background : .sz-pop
   fantasy.shot-chart.popup.border : .sz-pop
+  fantasy.shot-chart.popup.border-width : .sz-pop
+  fantasy.shot-chart.popup.font-size : .sz-pop
+  fantasy.shot-chart.popup.radius : .sz-pop
   fantasy.shot-chart.popup.shadow : .sz-pop
+  fantasy.shot-chart.popup.shadow-size : .sz-pop
   fantasy.shot-chart.popup-change-line.border-top : .sz-pop-d
+  fantasy.shot-chart.popup-change-line.border-top-width : .sz-pop-d
   fantasy.shot-chart.popup-label.text : .sz-pop-row span
+  fantasy.shot-chart.popup-note.font-size : .sz-pop small
   fantasy.shot-chart.popup-note.text : .sz-pop small
   fantasy.shot-chart.popup-selected-row.background : .sz-pop-sel
+  fantasy.shot-chart.popup-selected-row.radius : .sz-pop-sel
   fantasy.shot-chart.popup-selected-text.text : .sz-pop-sel span,.sz-pop-sel b
+  fantasy.shot-chart.popup-title.font-size : .sz-pop strong
   fantasy.shot-chart.second-chance-button-selected.background : .sz-au button[data-sc-btn][aria-pressed=true]
   fantasy.shot-chart.second-chance-button-selected.border : .sz-au button[data-sc-btn][aria-pressed=true]
   fantasy.shot-chart.second-chance-button-selected.text : .sz-au button[data-sc-btn][aria-pressed=true]
   fantasy.shot-chart.view-button.border : .sz-switch button
+  fantasy.shot-chart.view-button.border-width : .sz-switch button
+  fantasy.shot-chart.view-button.font-size : .sz-switch button
+  fantasy.shot-chart.view-button.radius : .sz-switch button
   fantasy.shot-chart.view-button.text : .sz-switch button
   fantasy.shot-chart.view-button-selected.background : .sz-switch button[aria-pressed=true]
   fantasy.shot-chart.view-button-selected.border : .sz-switch button[aria-pressed=true]
@@ -690,45 +1076,75 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   fantasy.shot-chart.zone-good.color : .sz-hex polygon.g3  |  .sz-label rect.g3
   fantasy.shot-chart.zone-label.background : .sz-label rect
   fantasy.shot-chart.zone-label-assist-box.border : .sz-label rect.sz-au-r
+  fantasy.shot-chart.zone-label-rank.font-size : .sz-label .sz-zone-rank
   fantasy.shot-chart.zone-label-rank.text : .sz-label .sz-zone-rank
+  fantasy.shot-chart.zone-label-text.font-size : .sz-label text
   fantasy.shot-chart.zone-label-text.text : .sz-label text
   fantasy.shot-chart.zone-no-shots.color : .sz-label rect.g-empty
   fantasy.shot-chart.zone-unknown.color : .sz-hex polygon.g-none  |  .sz-label rect.g-none
   fantasy.shot-chart.zone-very-bad.color : .sz-hex polygon.g0  |  .sz-label rect.g0
   fantasy.shot-chart.zone-very-good.color : .sz-hex polygon.g4  |  .sz-label rect.g4
   fantasy.stat-table.buttons-focused.outline : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
+  fantasy.stat-table.buttons-focused.outline-offset : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
+  fantasy.stat-table.buttons-focused.outline-width : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.cell.border : .fw-t th,.fw-t td
+  fantasy.stat-table.cell.border-width : .fw-t th,.fw-t td
+  fantasy.stat-table.combined-rank-note.font-size : .fw-tinfo
   fantasy.stat-table.combined-rank-note.text : .fw-tinfo
   fantasy.stat-table.empty-note.text : .fw-empty
   fantasy.stat-table.filter-button.border : .fw-filter-btn
+  fantasy.stat-table.filter-button.border-width : .fw-filter-btn
   fantasy.stat-table.filters-panel.background : .fw-filters
   fantasy.stat-table.filters-panel.border : .fw-filters
+  fantasy.stat-table.filters-panel.border-width : .fw-filters
+  fantasy.stat-table.filters-panel.radius : .fw-filters
   fantasy.stat-table.filters-panel.shadow : .fw-filters
+  fantasy.stat-table.filters-panel.shadow-size : .fw-filters
   fantasy.stat-table.first-column.shadow : .fw-t th:first-child
+  fantasy.stat-table.first-column.shadow-size : .fw-t th:first-child
   fantasy.stat-table.first-column-body.background : .fw-t tbody th:first-child
+  fantasy.stat-table.first-column-team-and-position.font-size : .fw-t th:first-child .fw-who
   fantasy.stat-table.first-column-team-and-position.text : .fw-t th:first-child .fw-who
   fantasy.stat-table.header.background : .fw-t thead
+  fantasy.stat-table.header-cell.font-size : .fw-t thead th
   fantasy.stat-table.header-first-cell.background : .fw-t thead th:first-child
   fantasy.stat-table.header-selected.text : .fw-t thead button[data-sel]
+  fantasy.stat-table.header-sort-arrow.font-size : .fw-t th[aria-sort=ascending] button::after,.fw-t th[aria-sort=descending] button::after
   fantasy.stat-table.header-sorted.background : .fw-t thead th.fw-sorted
+  fantasy.stat-table.heading-title.font-size : .fw-heading h1
   fantasy.stat-table.hover-popup.background : .fw-tooltip
   fantasy.stat-table.hover-popup.border : .fw-tooltip
+  fantasy.stat-table.hover-popup.border-width : .fw-tooltip
+  fantasy.stat-table.hover-popup.radius : .fw-tooltip
   fantasy.stat-table.hover-popup.shadow : .fw-tooltip
+  fantasy.stat-table.hover-popup.shadow-size : .fw-tooltip
+  fantasy.stat-table.hover-popup-legend.font-size : .fw-tooltip .fw-leg
   fantasy.stat-table.hover-popup-value.text : .fw-tooltip p
   fantasy.stat-table.league-average-row.background-base : .fw-t .fw-average,.fw-t .fw-average th:first-child
   fantasy.stat-table.league-average-row.background-tint : .fw-t .fw-average,.fw-t .fw-average th:first-child
   fantasy.stat-table.league-average-row.text : .fw-t .fw-average,.fw-t .fw-average th:first-child
+  fantasy.stat-table.method-note.font-size : .fw-method
   fantasy.stat-table.method-note.text : .fw-method
   fantasy.stat-table.name-hovered.text : .fw-name:hover
   fantasy.stat-table.rank-chip.background : .fw-t .fw-rk
+  fantasy.stat-table.rank-chip.font-size : .fw-t .fw-rk
+  fantasy.stat-table.rank-chip.radius : .fw-t .fw-rk
   fantasy.stat-table.rank-chip.text : .fw-t .fw-rk
   fantasy.stat-table.sorted-column.background : .fw-t td.fw-sorted
+  fantasy.stat-table.status-and-footer.font-size : .fw-heading [role=status],.fw-foot
   fantasy.stat-table.status-and-footer.text : .fw-heading [role=status],.fw-foot
+  fantasy.stat-table.switch-button.font-size : .fw-switch button,.fw-filter-btn
+  fantasy.stat-table.switch-button.radius : .fw-switch button,.fw-filter-btn
   fantasy.stat-table.switch-button.text : .fw-switch button,.fw-filter-btn
   fantasy.stat-table.switch-button-selected.background : .fw-switch [aria-pressed=true],.fw-switch [aria-selected=true]
   fantasy.stat-table.switch-button-selected.text : .fw-switch [aria-pressed=true],.fw-switch [aria-selected=true]
   fantasy.stat-table.switch-buttons.border : .fw-switch
+  fantasy.stat-table.switch-buttons.border-width : .fw-switch
+  fantasy.stat-table.switch-buttons.radius : .fw-switch
+  fantasy.stat-table.table.font-size : .fw-t
   fantasy.stat-table.table-frame.border : .fw-table-wrap
+  fantasy.stat-table.table-frame.border-width : .fw-table-wrap
+  fantasy.stat-table.table-frame.radius : .fw-table-wrap
   fantasy.stat-table.value-bad.text : .fw-v.bad
   fantasy.stat-table.value-good.text : .fw-v.good
 */

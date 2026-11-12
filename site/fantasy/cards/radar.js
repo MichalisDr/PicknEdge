@@ -1,6 +1,7 @@
 /* Radars of the cards: the player's Net Production Radar (with Net / Gross, per game / per 100 and a comparison player) and the team's Opponent Production Radar. */
 import { esc } from '../../core/html.js';
 import { fnum } from '../../core/format.js';
+import { size } from '../../core/sizes.js';
 
 const TEAM_RADAR = [['2p', '2P'], ['3p', '3P'], ['ft', 'FT'], ['ast', 'AST'], ['dreb', 'DREB'], ['oreb', 'OREB'], ['blk', 'BLK'], ['stl', 'STL']];
 const RADAR = [['ft', 'FT'], ['2p', '2P'], ['3p', '3P'], ['ast', 'AST−TOV'], ['dreb', 'DREB'], ['oreb', 'OREB'], ['stlblk', 'STL+BLK'], ['fd', 'FD−FC']];
@@ -8,10 +9,10 @@ const RSCALE = { game: { lo: -3, hi: 15, step: 3, suffix: '_g', label: 'Net PIR 
 
 /* Radar geometry shared by the player and team radars. axes = [[label, value, otherValue?]], frac maps a value to 0..1 of the radius. */
 function radarSvg(axes, frac, rings, labelOf) {
-  const n = axes.length, cx = 250, cy = 195, R = 135, pt = (i, f) => [cx + Math.sin(i * 2 * Math.PI / n) * R * f, cy - Math.cos(i * 2 * Math.PI / n) * R * f];
+  const n = axes.length, cx = size('fantasy.player-card.radar.center-x'), cy = size('fantasy.player-card.radar.center-y'), R = size('fantasy.player-card.radar.radius'), pt = (i, f) => [cx + Math.sin(i * 2 * Math.PI / n) * R * f, cy - Math.cos(i * 2 * Math.PI / n) * R * f];
   const poly = f => axes.map((_, i) => pt(i, f).join(',')).join(' '), shape = (k, who) => `<polygon points="${axes.map((a, i) => pt(i, Number.isFinite(a[k]) ? frac(a[k]) : 0).join(',')).join(' ')}" fill="var(--fantasy-player-card-radar-${who}-fill)" stroke="var(--fantasy-player-card-radar-${who}-line)" stroke-width="2"/>`;
   const two = axes.some(a => a.length > 2);
-  return `<svg viewBox="0 0 500 395" role="img" aria-label="Net contribution by category">${rings.map(v => `<polygon points="${poly(frac(v))}" fill="none" stroke="${v === 0 ? 'var(--fantasy-player-card-radar-zero-ring-line)' : 'var(--fantasy-player-card-radar-rings-line)'}"/><text x="257" y="${(cy - R * frac(v)).toFixed(0)}">${labelOf(v)}</text>`).join('')}${axes.map((_, i) => `<path d="M${cx} ${cy}L${pt(i, 1).join(' ')}" stroke="var(--fantasy-player-card-radar-axes-line)"/>`).join('')}${two ? shape(2, 'comparison') : ''}${shape(1, 'player')}${axes.map((a, i) => { const [x, y] = pt(i, 1.23); return `<g><text x="${x}" y="${y - 4}" text-anchor="middle">${a[0]}</text><text x="${x}" y="${y + 13}" text-anchor="middle">${fnum(a[1])}</text>${two ? `<text x="${x}" y="${y + 26}" text-anchor="middle">${fnum(a[2])}</text>` : ''}</g>`; }).join('')}</svg>`;
+  return `<svg viewBox="0 0 ${size('fantasy.player-card.radar.plot-width')} ${size('fantasy.player-card.radar.plot-height')}" role="img" aria-label="Net contribution by category">${rings.map(v => `<polygon points="${poly(frac(v))}" fill="none" stroke="${v === 0 ? 'var(--fantasy-player-card-radar-zero-ring-line)' : 'var(--fantasy-player-card-radar-rings-line)'}"/><text x="257" y="${(cy - R * frac(v)).toFixed(0)}">${labelOf(v)}</text>`).join('')}${axes.map((_, i) => `<path d="M${cx} ${cy}L${pt(i, 1).join(' ')}" stroke="var(--fantasy-player-card-radar-axes-line)"/>`).join('')}${two ? shape(2, 'comparison') : ''}${shape(1, 'player')}${axes.map((a, i) => { const [x, y] = pt(i, 1.23); return `<g><text x="${x}" y="${y - 4}" text-anchor="middle">${a[0]}</text><text x="${x}" y="${y + 13}" text-anchor="middle">${fnum(a[1])}</text>${two ? `<text x="${x}" y="${y + 26}" text-anchor="middle">${fnum(a[2])}</text>` : ''}</g>`; }).join('')}</svg>`;
 }
 export function radar(cs, view, byId, roster, cmpView) {
   const sc = RSCALE[cs.radar], frac = v => Math.min(1, Math.max(0, (v - sc.lo) / (sc.hi - sc.lo)));

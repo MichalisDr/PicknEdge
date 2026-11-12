@@ -181,23 +181,42 @@
    "page": {
     "badge": {
      "border": "{semantic.line}",
+     "border-width": "1px",
+     "font-size": "12px",
+     "radius": "30px",
      "text": "{semantic.accent}"
     },
     "body": {
      "background": "{semantic.bg}",
+     "font-size": "15px",
      "text": "{semantic.text}"
     },
     "eyebrow": {
+     "font-size": "11px",
      "text": "{semantic.muted}"
+    },
+    "interactive-elements": {
+     "outline-offset": "4px"
     },
     "paragraph": {
      "text": "{semantic.muted}"
+    },
+    "section-title": {
+     "font-size": "16px"
+    },
+    "subtitle": {
+     "font-size": "21px"
+    },
+    "title": {
+     "font-size": "clamp(28px,3.2vw,46px)"
     }
    },
    "research": {
     "button": {
      "background": "{palette.slate-16}",
      "border": "{semantic.line}",
+     "border-width": "1px",
+     "radius": "7px",
      "text": "{semantic.white}"
     },
     "button-main": {
@@ -206,36 +225,50 @@
     },
     "card": {
      "background": "{semantic.panel}",
-     "border": "{semantic.line}"
+     "border": "{semantic.line}",
+     "border-width": "1px",
+     "radius": "12px"
     },
     "card-big-number": {
+     "font-size": "30px",
      "text": "{semantic.accent}"
     },
     "empty-note": {
      "border": "{palette.slate-27}",
+     "border-width": "1px",
+     "radius": "10px",
      "text": "{semantic.muted}"
     },
     "footer": {
      "border-top": "{semantic.line}",
+     "border-top-width": "1px",
+     "font-size": "12px",
      "text": "{semantic.muted}"
     },
     "form-field": {
      "background": "{palette.blue-08}",
      "border": "{palette.slate-27}",
+     "border-width": "1px",
+     "radius": "6px",
      "text": "{semantic.white}"
     },
     "form-label": {
+     "font-size": "13px",
      "text": "{semantic.muted}"
     },
     "muted-text": {
+     "font-size": "13px",
      "text": "{semantic.muted}"
     },
     "notice": {
      "background": "{palette.green-11}",
      "border-left": "{semantic.accent}",
+     "border-left-width": "3px",
+     "font-size": "13px",
      "text": "{palette.green-80}"
     },
     "overview-card-label": {
+     "font-size": "12px",
      "text": "{semantic.accent}"
     },
     "overview-card-link": {
@@ -244,6 +277,8 @@
    },
    "sidebar": {
     "link": {
+     "font-size-below-900px": "13px",
+     "radius": "7px",
      "text": "{semantic.muted}"
     },
     "link-selected": {
@@ -253,16 +288,25 @@
     },
     "note": {
      "border": "{semantic.line}",
+     "border-width": "1px",
+     "font-size": "12px",
      "text": "{semantic.muted}"
     },
     "panel": {
      "border-bottom": "{semantic.line}",
-     "border-right": "{semantic.line}"
+     "border-bottom-width-below-900px": "1px",
+     "border-right": "{semantic.line}",
+     "border-right-width": "1px"
     }
    },
    "top-bar": {
     "bar": {
-     "border-bottom": "{semantic.line}"
+     "border-bottom": "{semantic.line}",
+     "border-bottom-width": "1px"
+    },
+    "logo": {
+     "font-size": "21px",
+     "font-size-below-480px": "17px"
     },
     "logo-and": {
      "text": "{palette.violet-77}"
@@ -276,6 +320,7 @@
      "text-in-fantasy": "{semantic.accent-fantasy}"
     },
     "nav-link": {
+     "border-bottom-width": "3px",
      "text": "{semantic.muted}"
     },
     "nav-link-selected": {
@@ -283,6 +328,7 @@
      "text": "{semantic.white}"
     },
     "tagline": {
+     "font-size": "12px",
      "text": "{semantic.muted}"
     }
    }
@@ -290,16 +336,24 @@
   "betting": {
    "stats-table": {
     "caption": {
+     "font-size": "11px",
+     "font-size-below-600px": "10px",
      "text": "{palette.slate-63}"
     },
     "caption-title": {
+     "font-size": "13px",
      "text": "{palette.slate-89}"
     },
     "category-count": {
      "border": "{palette.slate-26-2}",
+     "border-width": "1px",
+     "font-size": "10px",
+     "radius": "4px",
      "text": "{palette.slate-66-2}"
     },
     "category-tab": {
+     "border-bottom-width": "3px",
+     "font-size": "16px",
      "text": "{palette.slate-64}"
     },
     "category-tab-selected": {
@@ -307,22 +361,31 @@
      "text": "{palette.green-95}"
     },
     "category-tabs": {
-     "border-bottom": "{semantic.line}"
+     "border-bottom": "{semantic.line}",
+     "border-bottom-width": "1px"
     },
     "cell": {
-     "border-bottom": "{palette.slate-20-2}"
+     "border-bottom": "{palette.slate-20-2}",
+     "border-bottom-width": "1px"
     },
     "footer-dot": {
-     "background": "{semantic.accent}"
+     "background": "{semantic.accent}",
+     "radius": "50%"
     },
     "games-column": {
+     "font-size": "11px",
      "text": "{palette.slate-58}"
     },
     "header": {
      "background": "{palette.sky-16}",
+     "font-size": "11px",
      "text": "{palette.slate-73}"
     },
+    "header-button": {
+     "font-size": "11px"
+    },
     "header-note": {
+     "font-size": "8px",
      "text": "{palette.slate-53}"
     },
     "header-sorted": {
@@ -331,7 +394,15 @@
     "header-team-cell": {
      "background": "{palette.sky-16}"
     },
+    "heading-badge": {
+     "font-size-below-600px": "10px"
+    },
+    "heading-title": {
+     "font-size": "34px",
+     "font-size-below-1000px": "28px"
+    },
     "last3-rank": {
+     "font-size": "9px",
      "text": "{palette.slate-57}"
     },
     "last3-rank-down": {
@@ -345,16 +416,22 @@
      "text": "{palette.lime-77}"
     },
     "league-average-note": {
+     "font-size": "9px",
+     "font-size-below-600px": "8px",
      "text": "{palette.lime-64}"
     },
     "league-average-row": {
      "background": "{palette.green-18}",
      "border-bottom": "{palette.lime-49}",
+     "border-bottom-width": "1px",
      "border-top": "{palette.lime-49}",
+     "border-top-width": "1px",
      "text": "{palette.lime-84}"
     },
     "method-note": {
      "border-top": "{semantic.line}",
+     "border-top-width": "1px",
+     "font-size": "12px",
      "text": "{palette.slate-63}"
     },
     "method-title": {
@@ -364,26 +441,41 @@
      "text": "{palette.yellow-65}"
     },
     "player-filter-label": {
+     "font-size": "11px",
      "text": "{palette.slate-63-2}"
+    },
+    "player-filter-select": {
+     "font-size": "12px"
+    },
+    "player-view-button": {
+     "font-size-below-650px": "12px"
     },
     "popup": {
      "background": "{palette.teal-11}",
      "border": "{palette.green-34}",
-     "shadow": "{palette.gray-00-a}"
+     "border-width": "1px",
+     "radius": "9px",
+     "shadow": "{palette.gray-00-a}",
+     "shadow-size": "0 10px 40px"
     },
     "popup-description": {
+     "font-size": "11px",
      "text": "{palette.gray-68}"
     },
     "popup-label": {
+     "font-size": "12px",
      "text": "{palette.green-72}"
     },
     "popup-rank": {
+     "font-size": "12px!important",
      "text": "{palette.lime-84}"
     },
     "popup-title": {
+     "font-size": "12px",
      "text": "{palette.lime-94-2}"
     },
     "popup-value": {
+     "font-size": "24px",
      "text": "{semantic.accent-default}"
     },
     "rank-bad": {
@@ -392,11 +484,16 @@
     },
     "rank-chip": {
      "background": "{palette.slate-16-2}",
+     "font-size": "9px",
+     "radius": "3px",
      "text": "{palette.slate-65-2}"
     },
     "rank-good": {
      "background": "{semantic.eval-good}",
      "text": "{semantic.eval-good}"
+    },
+    "rank-line": {
+     "font-size": "9px"
     },
     "rank-neutral": {
      "background": "{palette.slate-16-2}",
@@ -411,7 +508,12 @@
     "row-hover": {
      "background": "{palette.slate-22-2}"
     },
+    "search-field": {
+     "font-size": "12px"
+    },
     "side-button": {
+     "font-size": "13px",
+     "radius": "5px",
      "text": "{palette.slate-69}"
     },
     "side-button-selected": {
@@ -420,19 +522,27 @@
     },
     "side-buttons": {
      "background": "{palette.sky-11-2}",
-     "border": "{palette.slate-24}"
+     "border": "{palette.slate-24}",
+     "border-width": "1px",
+     "radius": "8px"
     },
     "sidebar": {
-     "border-bottom": "{semantic.line}"
+     "border-bottom": "{semantic.line}",
+     "border-bottom-width-above-901px": "1px"
+    },
+    "sidebar-link": {
+     "font-size-above-901px": "13px"
     },
     "sort-arrow": {
+     "font-size": "11px",
      "text": "{palette.slate-50}"
     },
     "sorted-column": {
      "background": "{palette.sky-17}"
     },
     "status-dot": {
-     "background": "{palette.slate-44}"
+     "background": "{palette.slate-44}",
+     "radius": "50%"
     },
     "status-dot-live": {
      "background": "{semantic.accent}"
@@ -444,18 +554,27 @@
      "background": "{palette.orange-65}"
     },
     "status-line": {
+     "font-size": "12px",
      "text": "{palette.slate-69-2}"
+    },
+    "table": {
+     "font-size": "12px"
     },
     "table-frame": {
      "background": "{semantic.surface-dialog}",
-     "border": "{palette.slate-22}"
+     "border": "{palette.slate-22}",
+     "border-width": "1px",
+     "radius": "9px"
     },
     "team-badge": {
      "background": "{palette.slate-22-3}",
+     "font-size": "10px",
+     "radius": "6px",
      "text": "{palette.slate-68}"
     },
     "team-cell": {
-     "background": "{palette.sky-12}"
+     "background": "{palette.sky-12}",
+     "font-size": "12px"
     },
     "trend-down": {
      "text": "{semantic.eval-bad}"
@@ -464,12 +583,15 @@
      "text": "{semantic.eval-good}"
     },
     "value": {
+     "font-size": "12px",
      "text": "{palette.sky-90}"
     },
     "value-on-hover": {
      "text": "{semantic.accent-default}"
     },
     "window-button": {
+     "font-size": "12px",
+     "radius": "4px",
      "text": "{palette.slate-68-2}"
     },
     "window-button-selected": {
@@ -477,7 +599,9 @@
      "text": "{semantic.white}"
     },
     "window-buttons": {
-     "border": "{palette.slate-26-3}"
+     "border": "{palette.slate-26-3}",
+     "border-width": "1px",
+     "radius": "7px"
     }
    }
   },
@@ -490,33 +614,49 @@
      "line": "{palette.slate-28-2}"
     },
     "axis-numbers": {
+     "font-size": "10px",
      "text": "{palette.slate-58-2}"
     },
     "axis-title": {
+     "font-size": "11.5px",
      "text": "{palette.slate-78-2}"
     },
     "chart-card": {
      "background": "{palette.blue-15}",
      "border": "{palette.slate-24-2}",
+     "border-width": "1px",
+     "radius": "10px",
      "text": "{semantic.text-soft}"
     },
     "chart-card-focused": {
-     "outline": "{semantic.accent-fantasy}"
+     "outline": "{semantic.accent-fantasy}",
+     "outline-offset": "3px",
+     "outline-width": "2px"
     },
     "chart-card-hovered": {
      "border": "{semantic.accent-fantasy}"
     },
     "chart-note": {
+     "font-size": "11px",
      "text": "{semantic.text-muted-2}"
     },
     "chart-subtitle": {
+     "font-size": "11px",
      "text": "{semantic.text-muted-2}"
+    },
+    "chart-title": {
+     "font-size": "14px"
     },
     "diagonal": {
      "line": "{palette.slate-50-2}"
     },
     "enlarged-chart-subtitle": {
+     "font-size": "12px",
      "text": "{semantic.text-muted-2}"
+    },
+    "enlarged-chart-title": {
+     "font-size": "22px",
+     "font-size-below-650px": "18px"
     },
     "point": {
      "border": "{semantic.surface-dialog}",
@@ -527,68 +667,105 @@
      "fill": "{semantic.accent-default}"
     },
     "point-label": {
+     "font-size": "10px",
      "text": "{palette.slate-83}"
     },
     "team-label": {
+     "font-size": "11px",
      "outline": "{semantic.surface-dialog}"
     }
    },
    "player-card": {
     "box-scores-cell-note": {
+     "font-size": "10px",
      "text": "{semantic.text-muted-2}"
     },
     "box-scores-first-column": {
      "background": "{semantic.surface-dialog}",
-     "shadow": "{semantic.border-soft}"
+     "shadow": "{semantic.border-soft}",
+     "shadow-size-below-650px": "1px 0 0"
     },
     "box-scores-header": {
+     "font-size": "11px",
      "text": "{semantic.text-subtle}"
     },
     "box-scores-header-button": {
+     "radius": "4px",
      "text": "{palette.sky-93}"
     },
     "box-scores-header-button-focused": {
-     "outline": "{semantic.accent-fantasy}"
+     "outline": "{semantic.accent-fantasy}",
+     "outline-width": "2px"
     },
     "box-scores-header-note": {
+     "font-size": "10px",
      "text": "{semantic.text-muted-2}"
     },
     "box-scores-row": {
-     "border-top": "{semantic.border-soft}"
+     "border-top": "{semantic.border-soft}",
+     "border-top-width": "1px"
     },
     "box-scores-row-highlighted": {
      "background": "{palette.red-54-a}"
     },
+    "box-scores-table-body": {
+     "font-size": "13px"
+    },
     "close-and-next-button": {
      "background": "{palette.slate-20-3}",
+     "border-width": "1px",
+     "font-size": "22px",
+     "font-size-2": "13px",
+     "radius": "6px",
      "text": "{palette.sky-95}"
     },
     "close-and-next-button-hovered": {
      "border": "{semantic.accent-fantasy}"
     },
+    "controls-games-played": {
+     "font-size": "15px",
+     "font-size-below-650px": "12px"
+    },
     "header-kicker": {
+     "font-size": "10px",
      "text": "{palette.slate-71}"
+    },
+    "header-name": {
+     "font-size": "24px",
+     "font-size-below-650px": "20px"
+    },
+    "header-team": {
+     "font-size": "12px"
     },
     "large-tile": {
      "border": "{palette.slate-32}"
     },
     "large-tile-label": {
+     "font-size": "12px",
      "text": "{semantic.text-soft}"
     },
+    "large-tile-value": {
+     "font-size": "28px",
+     "font-size-below-650px": "26px"
+    },
     "legend": {
+     "font-size": "11px",
      "text": "{semantic.text-subtle}"
     },
     "legend-band": {
      "background": "{palette.slate-62}"
     },
     "legend-game-dot": {
-     "background": "{semantic.accent-fantasy}"
+     "background": "{semantic.accent-fantasy}",
+     "radius": "50%"
     },
     "legend-rolling-line": {
-     "background": "{palette.yellow-63}"
+     "background": "{palette.yellow-63}",
+     "radius": "2px"
     },
     "legend-season-line": {
-     "border-top": "{semantic.text-dim}"
+     "border-top": "{semantic.text-dim}",
+     "border-top-width": "2px"
     },
     "radar-axes": {
      "line": "{palette.slate-26-4}"
@@ -610,43 +787,71 @@
     "radar-zero-ring": {
      "line": "{palette.slate-44-2}"
     },
+    "rank-label": {
+     "font-size": "11px"
+    },
     "section-title": {
+     "font-size": "11px",
      "text": "{semantic.text-subtle}"
+    },
+    "section-title-text": {
+     "font-size": "14px"
     },
     "section-title-value": {
      "text": "{semantic.accent-fantasy-light}"
     },
+    "shot-chart-note": {
+     "font-size": "11px"
+    },
+    "small-sample-marker": {
+     "font-size": "10px"
+    },
     "small-sample-note": {
+     "font-size": "10px",
      "text": "{palette.yellow-63}"
+    },
+    "small-tile-value": {
+     "font-size": "19px",
+     "font-size-below-650px": "19px"
     },
     "summary-box": {
      "background": "{palette.slate-15}",
-     "border": "{semantic.border-soft}"
+     "border": "{semantic.border-soft}",
+     "border-width": "1px",
+     "radius": "10px"
     },
     "summary-box-label": {
+     "font-size": "11px",
      "text": "{semantic.text-subtle}"
     },
     "summary-box-note": {
+     "font-size": "11px",
      "text": "{semantic.text-muted-2}"
     },
     "summary-box-value": {
+     "font-size": "17px",
      "text": "{palette.sky-93}"
     },
     "tile": {
      "background": "{palette.blue-15}",
      "border": "{palette.slate-24-2}",
+     "border-width": "1px",
+     "radius": "9px",
      "text": "{semantic.text-soft}"
     },
     "tile-accent-text": {
      "text": "{semantic.accent-fantasy-light}"
     },
     "tile-label": {
+     "font-size": "11px",
      "text": "{palette.slate-74}"
     },
     "tile-note": {
+     "font-size": "12px",
      "text": "{semantic.text-soft}"
     },
     "tile-rank": {
+     "font-size": "11px",
      "text": "{semantic.muted}"
     },
     "tile-rank-average": {
@@ -663,16 +868,26 @@
     },
     "tile-selected": {
      "border": "{semantic.accent-fantasy}",
-     "shadow": "{semantic.accent-fantasy}"
+     "shadow": "{semantic.accent-fantasy}",
+     "shadow-size": "inset 0 0 0 1px"
     },
     "tile-side-label": {
+     "font-size": "11px",
      "text": "{semantic.muted}"
     },
     "tile-unit": {
+     "font-size": "11px",
      "text": "{palette.slate-74}"
+    },
+    "tile-value": {
+     "font-size": "24px",
+     "font-size-below-650px": "21px"
     },
     "trend-axis": {
      "line": "{palette.slate-28-2}"
+    },
+    "trend-difference-label": {
+     "font-size": "12px"
     },
     "trend-dot": {
      "fill": "{semantic.accent-fantasy}"
@@ -687,6 +902,7 @@
      "line": "{semantic.border-soft}"
     },
     "trend-labels": {
+     "font-size": "11px",
      "text": "{palette.slate-75}"
     },
     "trend-league-band": {
@@ -699,11 +915,14 @@
      "line": "{semantic.text-dim}"
     },
     "visual-section": {
-     "border-top": "{semantic.border-soft}"
+     "border-top": "{semantic.border-soft}",
+     "border-top-width": "1px"
     },
     "window": {
      "background": "{semantic.surface-dialog}",
      "border": "{palette.slate-29}",
+     "border-width": "1px",
+     "radius": "15px",
      "text": "{palette.sky-95}"
     },
     "window-backdrop": {
@@ -719,8 +938,12 @@
     "buttons-divider": {
      "background": "{semantic.border-control}"
     },
+    "controls-title": {
+     "font-size": "12px"
+    },
     "court": {
-     "background": "{semantic.surface-deep}"
+     "background": "{semantic.surface-deep}",
+     "radius": "8px"
     },
     "court-markings": {
      "line": "{palette.slate-56}"
@@ -729,6 +952,7 @@
      "line": "{palette.slate-37}"
     },
     "explanation": {
+     "font-size": "11px",
      "text": "{semantic.accent-fantasy-light}"
     },
     "hexagon": {
@@ -745,27 +969,38 @@
      "line": "{palette.slate-64-3}"
     },
     "note": {
+     "font-size": "11px",
      "text": "{palette.slate-64-2}"
     },
     "popup": {
      "background": "{palette.sky-12-2}",
      "border": "{semantic.border-control}",
-     "shadow": "{palette.gray-00-a-2}"
+     "border-width": "1px",
+     "font-size": "12px",
+     "radius": "8px",
+     "shadow": "{palette.gray-00-a-2}",
+     "shadow-size": "0 6px 18px"
     },
     "popup-change-line": {
-     "border-top": "{palette.sky-21}"
+     "border-top": "{palette.sky-21}",
+     "border-top-width": "1px"
     },
     "popup-label": {
      "text": "{palette.slate-71-2}"
     },
     "popup-note": {
+     "font-size": "11px",
      "text": "{palette.slate-63-2}"
     },
     "popup-selected-row": {
-     "background": "{semantic.accent-fantasy-dark}"
+     "background": "{semantic.accent-fantasy-dark}",
+     "radius": "4px"
     },
     "popup-selected-text": {
      "text": "{semantic.accent-fantasy-light}"
+    },
+    "popup-title": {
+     "font-size": "13px"
     },
     "second-chance-button-selected": {
      "background": "{semantic.accent-fantasy-dark}",
@@ -774,6 +1009,9 @@
     },
     "view-button": {
      "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "font-size": "12px",
+     "radius": "6px",
      "text": "{semantic.text-soft}"
     },
     "view-button-selected": {
@@ -797,9 +1035,11 @@
      "border": "{semantic.accent-fantasy}"
     },
     "zone-label-rank": {
+     "font-size": "6.5px",
      "text": "{semantic.text-dim}"
     },
     "zone-label-text": {
+     "font-size": "8.6px",
      "text": "{palette.sky-96}"
     },
     "zone-no-shots": {
@@ -817,36 +1057,49 @@
    },
    "stat-table": {
     "buttons-focused": {
-     "outline": "{semantic.accent-fantasy}"
+     "outline": "{semantic.accent-fantasy}",
+     "outline-offset": "3px",
+     "outline-width": "2px"
     },
     "cell": {
-     "border": "{semantic.gridline}"
+     "border": "{semantic.gridline}",
+     "border-width": "1px"
     },
     "combined-rank-note": {
+     "font-size": "12px",
      "text": "{semantic.muted}"
     },
     "empty-note": {
      "text": "{palette.slate-72-4}"
     },
     "filter-button": {
-     "border": "{semantic.border-control}"
+     "border": "{semantic.border-control}",
+     "border-width": "1px"
     },
     "filters-panel": {
      "background": "{semantic.surface-dialog}",
      "border": "{palette.slate-29}",
-     "shadow": "{palette.gray-00-a-2}"
+     "border-width": "1px",
+     "radius": "10px",
+     "shadow": "{palette.gray-00-a-2}",
+     "shadow-size": "0 10px 40px"
     },
     "first-column": {
-     "shadow": "{semantic.gridline}"
+     "shadow": "{semantic.gridline}",
+     "shadow-size": "1px 0 0"
     },
     "first-column-body": {
      "background": "{semantic.bg}"
     },
     "first-column-team-and-position": {
+     "font-size": "10px",
      "text": "{semantic.muted}"
     },
     "header": {
      "background": "{semantic.panel}"
+    },
+    "header-cell": {
+     "font-size": "10px"
     },
     "header-first-cell": {
      "background": "{semantic.panel}"
@@ -854,13 +1107,25 @@
     "header-selected": {
      "text": "{semantic.accent}"
     },
+    "header-sort-arrow": {
+     "font-size": "7px"
+    },
     "header-sorted": {
      "background": "{semantic.sorthead}"
+    },
+    "heading-title": {
+     "font-size": "34px"
     },
     "hover-popup": {
      "background": "{semantic.panel}",
      "border": "{semantic.gridline}",
-     "shadow": "{semantic.bg}"
+     "border-width": "1px",
+     "radius": "10px",
+     "shadow": "{semantic.bg}",
+     "shadow-size": "0 10px 30px"
+    },
+    "hover-popup-legend": {
+     "font-size": "10px"
     },
     "hover-popup-value": {
      "text": "{semantic.accent}"
@@ -871,6 +1136,7 @@
      "text": "{semantic.accent}"
     },
     "method-note": {
+     "font-size": "11px",
      "text": "{palette.slate-67}"
     },
     "name-hovered": {
@@ -878,15 +1144,20 @@
     },
     "rank-chip": {
      "background": "{semantic.chip}",
+     "font-size": "10px",
+     "radius": "4px",
      "text": "{semantic.muted}"
     },
     "sorted-column": {
      "background": "{semantic.sortcell}"
     },
     "status-and-footer": {
+     "font-size": "12px",
      "text": "{semantic.text-muted-2}"
     },
     "switch-button": {
+     "font-size": "13px",
+     "radius": "5px",
      "text": "{palette.slate-79}"
     },
     "switch-button-selected": {
@@ -894,10 +1165,17 @@
      "text": "{semantic.white}"
     },
     "switch-buttons": {
-     "border": "{semantic.border-control}"
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px"
+    },
+    "table": {
+     "font-size": "13px"
     },
     "table-frame": {
-     "border": "{semantic.gridline}"
+     "border": "{semantic.gridline}",
+     "border-width": "1px",
+     "radius": "10px"
     },
     "value-bad": {
      "text": "{semantic.eval-bad-text}"
