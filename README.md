@@ -23,7 +23,6 @@ EuroLeague API ──(scripts/fetch)──▶ data/raw ──(scripts/build)─�
 | `scripts/fetch/` | Incremental fetch (retries, throttling, shape checks, atomic writes) and the probe |
 | `scripts/build/` | Raw to clean to `site/data` |
 | `scripts/metrics/` | The metric registry and engine |
-| `scripts/parity/` | Parity gate against the old site (needs the old code: see below) |
 | `site/config/layout.json` | Single source of the Fantasy card metric grids (24 columns, row unit, boxes and tiers); validated by `tests/config` |
 | `site/config/table-layouts.json` | Single source of the four Fantasy tables (columns, groups, labels, sub-lines, default sorts, column widths); validated by `tests/config` |
 | `tests/` | Unit tests: `metrics`, `build` (data side), `core`, `config`, `fantasy` (site), and fixtures |
@@ -78,6 +77,6 @@ Fetching new games needs network access: `node scripts/fetch/run.mjs --concurren
 
 ## The old site and what is deferred
 
-The previous site is preserved by the tag **`old-site-final`** (last commit of the old site on `main`). To roll back, deploy that tag. The old Betting schedule page and its analysis (allowance, beneficiaries, rotation, absences, role shifts) are in that tag for the redesign. The parity gate (`scripts/parity`) compares the new numbers with the old code: check out the tag `parity-reference` as a worktree (`git worktree add ../old-site parity-reference`) and set `OLD_SITE=../old-site`.
+The previous site is preserved by the tag **`old-site-final`** (last commit of the old site on `main`). To roll back, deploy that tag. The old Betting schedule page and its analysis (allowance, beneficiaries, rotation, absences, role shifts) are in that tag for the redesign.
 
 Deferred or removed by decision: the Betting "From the schedule" page and the Tier 2 Betting analysis, Matchup, with/without teammate, NET PIR/USG, Value/CR, the custom window (to be designed as filters), and the players Charts mode (new charts to be designed).
