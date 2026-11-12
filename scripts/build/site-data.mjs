@@ -1,4 +1,4 @@
-// data/clean (+ raw schedule) -> site/data: everything the site reads. Also regenerates docs/METRICS.md.
+// data/clean (+ raw schedule) -> site/data: everything the site reads.
 // Usage: node scripts/build/site-data.mjs [--out site/data]
 // Files: manifest.json, metrics.json, players-<window>.json, teams-<window>.json, roster.json, schedule.json,
 //        games/players.json, games/teams.json, shots/<TEAM>.json, engine/*.mjs (the exact modules the tests cover).
@@ -9,7 +9,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseCsv } from './csv.mjs';
 import { displayName } from './names.mjs';
-import { buildViews, catalog, docsMarkdown, WINDOWS } from './views.mjs';
+import { buildViews, catalog, WINDOWS } from './views.mjs';
 
 const arg = (n, d) => { const i = process.argv.indexOf('--' + n); return i > 0 ? process.argv[i + 1] : d; };
 const repo = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -82,8 +82,6 @@ writeFileSync(join(out, 'manifest.json'), JSON.stringify({
 }, null, 1) + '\n');
 written.push('manifest.json');
 
-mkdirSync(join(repo, 'docs'), { recursive: true });
-writeFileSync(join(repo, 'docs', 'METRICS.md'), docsMarkdown() + '\n');
 
 // ---- size report ----
 let raw = 0, gz = 0;

@@ -1,13 +1,12 @@
 // Eligibility is display-only: computed from the selected window's data and the manifest thresholds; never stored.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 import { parseCsv } from '../../scripts/build/csv.mjs';
 import { buildViews } from '../../scripts/build/views.mjs';
 import { METRICS } from '../../scripts/metrics/registry.mjs';
 
-const { eligible } = createRequire(import.meta.url)('../../site/eligibility.js');
+import { eligible, available, listed } from '../../site/core/eligibility.js';
 const rule = JSON.parse(readFileSync(new URL('../../data/manual/eligibility.json', import.meta.url), 'utf8'));
 
 test('a player below the threshold in one window and above it in another appears and disappears with the window', () => {
@@ -43,7 +42,6 @@ test('views contain every player who played and no eligibility flag', () => {
 });
 
 // ---- availability gate: played at least 1 of the team's last 3 games (the gp of the L3 view), evaluated once for every window ----
-const { available, listed } = createRequire(import.meta.url)('../../site/eligibility.js');
 const csv = f => parseCsv(readFileSync(new URL('../../data/clean/' + f, import.meta.url), 'utf8'));
 const clean = { players: csv('player_games.csv'), teams: csv('team_games.csv'), dim: csv('players.csv') };
 const ids = METRICS.filter(m => m.scope === 'player' && !m.internal).map(m => m.id);

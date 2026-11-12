@@ -1,5 +1,5 @@
 // THE metric registry: every metric is defined here once, as numerator / denominator over clean-table
-// components. No formula lives anywhere else (site/data/metrics.json and docs/METRICS.md are generated from this file).
+// components. No formula lives anywhere else (site/data/metrics.json is generated from this file).
 //
 // Term list = linear combination of components: [[coefficient, name], ...]. A name is a column of the clean
 // table for the metric's scope, or an entry of DERIVED below.
