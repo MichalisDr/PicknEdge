@@ -1,14 +1,13 @@
-/* theme.json -> theme.css. Run `node site/theme/generate.mjs` after editing theme.json (the theme editor's Export button produces theme.json).
-   Layers: palette (raw colours) -> semantic (meaning) -> component (one entry per element and property). Each layer points at the one below by "{layer.name}".
+/* theme.json -> theme.css. Run `node site/theme/generate.mjs` after editing theme.json.
+   Two layers: semantic (the general colours) and component (one entry per element and property). A component entry points at a general colour by "{semantic.name}" or holds a value directly (a colour code, a size).
    Every value becomes a CSS variable on <body>; the style files only ever read variables. */
 
-const refToVar = ref => ref.replace(/^\{(palette|semantic|font)\.([\w-]+)\}$/, (m, layer, name) => `var(--${{ palette: 'palette', semantic: 'color', font: 'font' }[layer]}-${name})`);
+const refToVar = ref => ref.replace(/^\{(semantic|font)\.([\w-]+)\}$/, (m, layer, name) => `var(--${{ semantic: 'color', font: 'font' }[layer]}-${name})`);
 const valueOf = v => (typeof v === 'string' && v.startsWith('{') ? refToVar(v) : v);
 
 /** All variables of a theme as [name, value] pairs, in file order. */
 export function themeVariables(theme) {
   const vars = [];
-  for (const [k, v] of Object.entries(theme.palette)) vars.push([`--palette-${k}`, v]);
   for (const [k, v] of Object.entries(theme.semantic)) if (typeof v === 'string') vars.push([`--color-${k}`, valueOf(v)]);
   for (const [k, v] of Object.entries(theme.font)) vars.push([`--font-${k}`, v]);
   for (const [area, comps] of Object.entries(theme.component))

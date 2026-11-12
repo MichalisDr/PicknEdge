@@ -1,171 +1,34 @@
 {
- "note": "The one place for colours and fonts. palette = raw colours; semantic = what a colour means, built from the palette; component = one entry per styled element and property, each pointing at a semantic colour (or the palette) by default. Change a palette or semantic entry to change everything that points at it; change a component entry to change only that element. Generated into theme.css by theme/generate.mjs.",
- "palette": {
-  "blue-03-a": "#02060dc9",
-  "blue-07": "#0b1018",
-  "blue-08": "#0b121c",
-  "blue-09": "#0c1220",
-  "blue-10": "#0e1724",
-  "blue-14": "#162131",
-  "blue-15": "#182335",
-  "gray-00-a": "#00000088",
-  "gray-00-a-2": "#00000099",
-  "gray-100": "#ffffff",
-  "gray-68": "#a6b6ab",
-  "green-09": "#15200e",
-  "green-09-2": "#13210d",
-  "green-11": "#17221b",
-  "green-17": "#253327",
-  "green-18": "#273924",
-  "green-25": "#3a4d30",
-  "green-34": "#52634a",
-  "green-46": "#38b27f",
-  "green-51": "#3cc878",
-  "green-61": "#39ff88",
-  "green-68": "#8fcdb0",
-  "green-72": "#b0c1b0",
-  "green-80": "#c5d4c5",
-  "green-93": "#dffbe9",
-  "green-95": "#eff5f0",
-  "lime-49": "#819b5e",
-  "lime-64": "#a2b68e",
-  "lime-70": "#b8ee79",
-  "lime-77": "#c7e4a7",
-  "lime-84": "#d7f5b7",
-  "lime-94": "#fbffdf",
-  "lime-94-2": "#eef6e8",
-  "orange-65": "#e7a466",
-  "red-13": "#2e1716",
-  "red-16": "#3a1b19",
-  "red-37": "#7a4a45",
-  "red-54": "#ef3d25",
-  "red-54-a": "#ef3d2518",
-  "red-54-a-2": "#ef3d2525",
-  "red-55": "#d6455d",
-  "red-62": "#eb505f",
-  "red-73": "#e39a8f",
-  "red-74": "#ff8a78",
-  "red-92": "#f6e0e3",
-  "sky-10": "#101925",
-  "sky-11": "#111a26",
-  "sky-11-2": "#111c29",
-  "sky-12": "#111d2b",
-  "sky-12-2": "#111c2b",
-  "sky-13": "#142030",
-  "sky-16": "#1a2737",
-  "sky-17": "#1b2a3b",
-  "sky-20": "#203044",
-  "sky-21": "#223247",
-  "sky-89": "#d9e3ef",
-  "sky-90": "#dce6f1",
-  "sky-90-2": "#dbe5ef",
-  "sky-93": "#e7edf5",
-  "sky-95": "#eef3f8",
-  "sky-96": "#f1f5f9",
-  "slate-15": "#1c2330",
-  "slate-16": "#1b2837",
-  "slate-16-2": "#1c2938",
-  "slate-17": "#1d2a3c",
-  "slate-20": "#263242",
-  "slate-20-2": "#253142",
-  "slate-20-3": "#243143",
-  "slate-21": "#243248",
-  "slate-22": "#293747",
-  "slate-22-2": "#26374a",
-  "slate-22-3": "#26364a",
-  "slate-23": "#2b394b",
-  "slate-24": "#2e3c4b",
-  "slate-24-2": "#2b3a4f",
-  "slate-26": "#324052",
-  "slate-26-2": "#364250",
-  "slate-26-3": "#344052",
-  "slate-26-4": "#344152",
-  "slate-27": "#354255",
-  "slate-28": "#34445a",
-  "slate-28-2": "#3b4655",
-  "slate-29": "#3a485a",
-  "slate-30": "#3a4a60",
-  "slate-32": "#3a4d68",
-  "slate-37": "#4a5b72",
-  "slate-41": "#56667a",
-  "slate-44": "#5f6f82",
-  "slate-44-2": "#5c6e86",
-  "slate-50": "#6a7f94",
-  "slate-50-2": "#6b7c93",
-  "slate-53": "#71849c",
-  "slate-56": "#7a8ba2",
-  "slate-57": "#7c90a6",
-  "slate-58": "#7f93a9",
-  "slate-58-2": "#8191a5",
-  "slate-58-3": "#7f93ab",
-  "slate-62": "#8f9bad",
-  "slate-63": "#8e9eb1",
-  "slate-63-2": "#8ea0b5",
-  "slate-64": "#91a0b4",
-  "slate-64-2": "#91a2b7",
-  "slate-64-3": "#8da0b8",
-  "slate-65": "#94a3b8",
-  "slate-65-2": "#93a6ba",
-  "slate-66": "#94a6bc",
-  "slate-66-2": "#97a9ba",
-  "slate-67": "#97a8bd",
-  "slate-68": "#95adc4",
-  "slate-68-2": "#9bacbf",
-  "slate-69": "#9daec1",
-  "slate-69-2": "#9fb0c2",
-  "slate-70": "#9fb0c6",
-  "slate-71": "#a2b1c6",
-  "slate-71-2": "#a2b4c9",
-  "slate-72": "#a8b6c9",
-  "slate-72-2": "#a6b6c8",
-  "slate-72-3": "#a7b7c8",
-  "slate-72-4": "#a7b7ca",
-  "slate-73": "#a9b8c9",
-  "slate-73-2": "#aeb8c6",
-  "slate-74": "#acbace",
-  "slate-75": "#adbed2",
-  "slate-78": "#b8c6d7",
-  "slate-78-2": "#b7c4d8",
-  "slate-79": "#b8c7da",
-  "slate-79-2": "#bdc7d5",
-  "slate-83": "#c6d2df",
-  "slate-89": "#dbe5ed",
-  "slate-95": "#f0f3f6",
-  "teal-11": "#17231f",
-  "violet-77": "#b48aff",
-  "violet-77-a": "#b48aff22",
-  "yellow-63": "#f2c14e",
-  "yellow-65": "#e7c766"
- },
+ "note": "The one place for colours and fonts, and the appearance sizes (font size, corner radius, border width, shadow size). semantic = the general colours (what a colour means); component = one entry per element and property, named screen.component.part.property. A component entry either points at a general colour, like {semantic.panel}, or holds a colour code directly (#rrggbb or #rrggbbaa); sizes are plain values like 13px. Layout sizes (width, height, margin, padding, gap) are in config/sizes.json. Generated into theme.css by theme/generate.mjs.",
  "semantic": {
-  "bg": "{palette.blue-07}",
-  "panel": "{palette.sky-11}",
-  "line": "{palette.slate-20}",
-  "muted": "{palette.slate-65}",
-  "text": "{palette.slate-95}",
-  "chip": "{palette.slate-17}",
-  "gridline": "{palette.slate-30}",
-  "sorthead": "{palette.slate-21}",
-  "sortcell": "{palette.blue-14}",
-  "eval-good": "{palette.green-93}",
-  "eval-avg": "{palette.lime-94}",
-  "eval-bad": "{palette.red-92}",
-  "eval-good-text": "{palette.green-51}",
-  "eval-bad-text": "{palette.red-62}",
-  "accent-default": "{palette.lime-70}",
-  "accent-fantasy": "{palette.red-54}",
-  "accent-betting": "{palette.green-61}",
-  "white": "{palette.gray-100}",
-  "accent-fantasy-light": "{palette.red-74}",
-  "accent-fantasy-dark": "{palette.red-16}",
-  "text-soft": "{palette.sky-89}",
-  "text-muted-2": "{palette.slate-66}",
-  "text-subtle": "{palette.slate-72}",
-  "text-dim": "{palette.slate-78}",
-  "surface-dialog": "{palette.sky-10}",
-  "surface-deep": "{palette.blue-10}",
-  "border-control": "{palette.slate-26}",
-  "border-soft": "{palette.slate-23}",
+  "bg": "#0b1018",
+  "panel": "#111a26",
+  "line": "#263242",
+  "muted": "#94a3b8",
+  "text": "#f0f3f6",
+  "chip": "#1d2a3c",
+  "gridline": "#3a4a60",
+  "sorthead": "#243248",
+  "sortcell": "#162131",
+  "eval-good": "#dffbe9",
+  "eval-avg": "#fbffdf",
+  "eval-bad": "#f6e0e3",
+  "eval-good-text": "#3cc878",
+  "eval-bad-text": "#eb505f",
+  "accent-default": "#b8ee79",
+  "accent-fantasy": "#ef3d25",
+  "accent-betting": "#39ff88",
+  "white": "#ffffff",
+  "accent-fantasy-light": "#ff8a78",
+  "accent-fantasy-dark": "#3a1b19",
+  "text-soft": "#d9e3ef",
+  "text-muted-2": "#94a6bc",
+  "text-subtle": "#a8b6c9",
+  "text-dim": "#b8c6d7",
+  "surface-dialog": "#101925",
+  "surface-deep": "#0e1724",
+  "border-control": "#324052",
+  "border-soft": "#2b394b",
   "accent": {
    "note": "the accent of the page: default / Fantasy / Betting",
    "default": "{semantic.accent-default}",
@@ -213,7 +76,7 @@
    },
    "research": {
     "button": {
-     "background": "{palette.slate-16}",
+     "background": "#1b2837",
      "border": "{semantic.line}",
      "border-width": "1px",
      "radius": "7px",
@@ -221,7 +84,7 @@
     },
     "button-main": {
      "background": "{semantic.accent}",
-     "text": "{palette.green-09}"
+     "text": "#15200e"
     },
     "card": {
      "background": "{semantic.panel}",
@@ -234,7 +97,7 @@
      "text": "{semantic.accent}"
     },
     "empty-note": {
-     "border": "{palette.slate-27}",
+     "border": "#354255",
      "border-width": "1px",
      "radius": "10px",
      "text": "{semantic.muted}"
@@ -246,8 +109,8 @@
      "text": "{semantic.muted}"
     },
     "form-field": {
-     "background": "{palette.blue-08}",
-     "border": "{palette.slate-27}",
+     "background": "#0b121c",
+     "border": "#354255",
      "border-width": "1px",
      "radius": "6px",
      "text": "{semantic.white}"
@@ -261,11 +124,11 @@
      "text": "{semantic.muted}"
     },
     "notice": {
-     "background": "{palette.green-11}",
+     "background": "#17221b",
      "border-left": "{semantic.accent}",
      "border-left-width": "3px",
      "font-size": "13px",
-     "text": "{palette.green-80}"
+     "text": "#c5d4c5"
     },
     "overview-card-label": {
      "font-size": "12px",
@@ -282,8 +145,8 @@
      "text": "{semantic.muted}"
     },
     "link-selected": {
-     "background": "{palette.green-17}",
-     "background-in-fantasy": "{palette.red-13}",
+     "background": "#253327",
+     "background-in-fantasy": "#2e1716",
      "text": "{semantic.accent}"
     },
     "note": {
@@ -309,7 +172,7 @@
      "font-size-below-480px": "17px"
     },
     "logo-and": {
-     "text": "{palette.violet-77}"
+     "text": "#b48aff"
     },
     "logo-edge": {
      "text-in-betting": "{semantic.accent}",
@@ -338,34 +201,34 @@
     "caption": {
      "font-size": "11px",
      "font-size-below-600px": "10px",
-     "text": "{palette.slate-63}"
+     "text": "#8e9eb1"
     },
     "caption-title": {
      "font-size": "13px",
-     "text": "{palette.slate-89}"
+     "text": "#dbe5ed"
     },
     "category-count": {
-     "border": "{palette.slate-26-2}",
+     "border": "#364250",
      "border-width": "1px",
      "font-size": "10px",
      "radius": "4px",
-     "text": "{palette.slate-66-2}"
+     "text": "#97a9ba"
     },
     "category-tab": {
      "border-bottom-width": "3px",
      "font-size": "16px",
-     "text": "{palette.slate-64}"
+     "text": "#91a0b4"
     },
     "category-tab-selected": {
      "border": "{semantic.accent}",
-     "text": "{palette.green-95}"
+     "text": "#eff5f0"
     },
     "category-tabs": {
      "border-bottom": "{semantic.line}",
      "border-bottom-width": "1px"
     },
     "cell": {
-     "border-bottom": "{palette.slate-20-2}",
+     "border-bottom": "#253142",
      "border-bottom-width": "1px"
     },
     "footer-dot": {
@@ -374,25 +237,25 @@
     },
     "games-column": {
      "font-size": "11px",
-     "text": "{palette.slate-58}"
+     "text": "#7f93a9"
     },
     "header": {
-     "background": "{palette.sky-16}",
+     "background": "#1a2737",
      "font-size": "11px",
-     "text": "{palette.slate-73}"
+     "text": "#a9b8c9"
     },
     "header-button": {
      "font-size": "11px"
     },
     "header-note": {
      "font-size": "8px",
-     "text": "{palette.slate-53}"
+     "text": "#71849c"
     },
     "header-sorted": {
      "text": "{semantic.accent}"
     },
     "header-team-cell": {
-     "background": "{palette.sky-16}"
+     "background": "#1a2737"
     },
     "heading-badge": {
      "font-size-below-600px": "10px"
@@ -403,7 +266,7 @@
     },
     "last3-rank": {
      "font-size": "9px",
-     "text": "{palette.slate-57}"
+     "text": "#7c90a6"
     },
     "last3-rank-down": {
      "text": "{semantic.eval-bad}"
@@ -412,37 +275,37 @@
      "text": "{semantic.eval-good}"
     },
     "league-average-badge": {
-     "background": "{palette.green-25}",
-     "text": "{palette.lime-77}"
+     "background": "#3a4d30",
+     "text": "#c7e4a7"
     },
     "league-average-note": {
      "font-size": "9px",
      "font-size-below-600px": "8px",
-     "text": "{palette.lime-64}"
+     "text": "#a2b68e"
     },
     "league-average-row": {
-     "background": "{palette.green-18}",
-     "border-bottom": "{palette.lime-49}",
+     "background": "#273924",
+     "border-bottom": "#819b5e",
      "border-bottom-width": "1px",
-     "border-top": "{palette.lime-49}",
+     "border-top": "#819b5e",
      "border-top-width": "1px",
-     "text": "{palette.lime-84}"
+     "text": "#d7f5b7"
     },
     "method-note": {
      "border-top": "{semantic.line}",
      "border-top-width": "1px",
      "font-size": "12px",
-     "text": "{palette.slate-63}"
+     "text": "#8e9eb1"
     },
     "method-title": {
-     "text": "{palette.slate-72-2}"
+     "text": "#a6b6c8"
     },
     "missing-data-note": {
-     "text": "{palette.yellow-65}"
+     "text": "#e7c766"
     },
     "player-filter-label": {
      "font-size": "11px",
-     "text": "{palette.slate-63-2}"
+     "text": "#8ea0b5"
     },
     "player-filter-select": {
      "font-size": "12px"
@@ -451,28 +314,28 @@
      "font-size-below-650px": "12px"
     },
     "popup": {
-     "background": "{palette.teal-11}",
-     "border": "{palette.green-34}",
+     "background": "#17231f",
+     "border": "#52634a",
      "border-width": "1px",
      "radius": "9px",
-     "shadow": "{palette.gray-00-a}",
+     "shadow": "#00000088",
      "shadow-size": "0 10px 40px"
     },
     "popup-description": {
      "font-size": "11px",
-     "text": "{palette.gray-68}"
+     "text": "#a6b6ab"
     },
     "popup-label": {
      "font-size": "12px",
-     "text": "{palette.green-72}"
+     "text": "#b0c1b0"
     },
     "popup-rank": {
      "font-size": "12px!important",
-     "text": "{palette.lime-84}"
+     "text": "#d7f5b7"
     },
     "popup-title": {
      "font-size": "12px",
-     "text": "{palette.lime-94-2}"
+     "text": "#eef6e8"
     },
     "popup-value": {
      "font-size": "24px",
@@ -483,10 +346,10 @@
      "text": "{semantic.eval-bad}"
     },
     "rank-chip": {
-     "background": "{palette.slate-16-2}",
+     "background": "#1c2938",
      "font-size": "9px",
      "radius": "3px",
-     "text": "{palette.slate-65-2}"
+     "text": "#93a6ba"
     },
     "rank-good": {
      "background": "{semantic.eval-good}",
@@ -496,17 +359,17 @@
      "font-size": "9px"
     },
     "rank-neutral": {
-     "background": "{palette.slate-16-2}",
-     "text": "{palette.slate-72-3}"
+     "background": "#1c2938",
+     "text": "#a7b7c8"
     },
     "row-even": {
-     "background": "{palette.sky-13}"
+     "background": "#142030"
     },
     "row-even-sorted-column": {
-     "background": "{palette.sky-20}"
+     "background": "#203044"
     },
     "row-hover": {
-     "background": "{palette.slate-22-2}"
+     "background": "#26374a"
     },
     "search-field": {
      "font-size": "12px"
@@ -514,15 +377,15 @@
     "side-button": {
      "font-size": "13px",
      "radius": "5px",
-     "text": "{palette.slate-69}"
+     "text": "#9daec1"
     },
     "side-button-selected": {
      "background": "{semantic.accent-default}",
-     "text": "{palette.green-09-2}"
+     "text": "#13210d"
     },
     "side-buttons": {
-     "background": "{palette.sky-11-2}",
-     "border": "{palette.slate-24}",
+     "background": "#111c29",
+     "border": "#2e3c4b",
      "border-width": "1px",
      "radius": "8px"
     },
@@ -535,45 +398,45 @@
     },
     "sort-arrow": {
      "font-size": "11px",
-     "text": "{palette.slate-50}"
+     "text": "#6a7f94"
     },
     "sorted-column": {
-     "background": "{palette.sky-17}"
+     "background": "#1b2a3b"
     },
     "status-dot": {
-     "background": "{palette.slate-44}",
+     "background": "#5f6f82",
      "radius": "50%"
     },
     "status-dot-live": {
      "background": "{semantic.accent}"
     },
     "status-dot-loading": {
-     "background": "{palette.yellow-65}"
+     "background": "#e7c766"
     },
     "status-dot-partial": {
-     "background": "{palette.orange-65}"
+     "background": "#e7a466"
     },
     "status-line": {
      "font-size": "12px",
-     "text": "{palette.slate-69-2}"
+     "text": "#9fb0c2"
     },
     "table": {
      "font-size": "12px"
     },
     "table-frame": {
      "background": "{semantic.surface-dialog}",
-     "border": "{palette.slate-22}",
+     "border": "#293747",
      "border-width": "1px",
      "radius": "9px"
     },
     "team-badge": {
-     "background": "{palette.slate-22-3}",
+     "background": "#26364a",
      "font-size": "10px",
      "radius": "6px",
-     "text": "{palette.slate-68}"
+     "text": "#95adc4"
     },
     "team-cell": {
-     "background": "{palette.sky-12}",
+     "background": "#111d2b",
      "font-size": "12px"
     },
     "trend-down": {
@@ -584,7 +447,7 @@
     },
     "value": {
      "font-size": "12px",
-     "text": "{palette.sky-90}"
+     "text": "#dce6f1"
     },
     "value-on-hover": {
      "text": "{semantic.accent-default}"
@@ -592,14 +455,14 @@
     "window-button": {
      "font-size": "12px",
      "radius": "4px",
-     "text": "{palette.slate-68-2}"
+     "text": "#9bacbf"
     },
     "window-button-selected": {
-     "background": "{palette.slate-28}",
+     "background": "#34445a",
      "text": "{semantic.white}"
     },
     "window-buttons": {
-     "border": "{palette.slate-26-3}",
+     "border": "#344052",
      "border-width": "1px",
      "radius": "7px"
     }
@@ -608,22 +471,22 @@
   "fantasy": {
    "charts-gallery": {
     "average": {
-     "line": "{palette.slate-70}"
+     "line": "#9fb0c6"
     },
     "axis": {
-     "line": "{palette.slate-28-2}"
+     "line": "#3b4655"
     },
     "axis-numbers": {
      "font-size": "10px",
-     "text": "{palette.slate-58-2}"
+     "text": "#8191a5"
     },
     "axis-title": {
      "font-size": "11.5px",
-     "text": "{palette.slate-78-2}"
+     "text": "#b7c4d8"
     },
     "chart-card": {
-     "background": "{palette.blue-15}",
-     "border": "{palette.slate-24-2}",
+     "background": "#182335",
+     "border": "#2b3a4f",
      "border-width": "1px",
      "radius": "10px",
      "text": "{semantic.text-soft}"
@@ -648,7 +511,7 @@
      "font-size": "14px"
     },
     "diagonal": {
-     "line": "{palette.slate-50-2}"
+     "line": "#6b7c93"
     },
     "enlarged-chart-subtitle": {
      "font-size": "12px",
@@ -660,7 +523,7 @@
     },
     "point": {
      "border": "{semantic.surface-dialog}",
-     "fill": "{palette.slate-58-3}"
+     "fill": "#7f93ab"
     },
     "point-hovered": {
      "border": "{semantic.white}",
@@ -668,7 +531,7 @@
     },
     "point-label": {
      "font-size": "10px",
-     "text": "{palette.slate-83}"
+     "text": "#c6d2df"
     },
     "team-label": {
      "font-size": "11px",
@@ -691,7 +554,7 @@
     },
     "box-scores-header-button": {
      "radius": "4px",
-     "text": "{palette.sky-93}"
+     "text": "#e7edf5"
     },
     "box-scores-header-button-focused": {
      "outline": "{semantic.accent-fantasy}",
@@ -706,18 +569,18 @@
      "border-top-width": "1px"
     },
     "box-scores-row-highlighted": {
-     "background": "{palette.red-54-a}"
+     "background": "#ef3d2518"
     },
     "box-scores-table-body": {
      "font-size": "13px"
     },
     "close-and-next-button": {
-     "background": "{palette.slate-20-3}",
+     "background": "#243143",
      "border-width": "1px",
      "font-size": "22px",
      "font-size-2": "13px",
      "radius": "6px",
-     "text": "{palette.sky-95}"
+     "text": "#eef3f8"
     },
     "close-and-next-button-hovered": {
      "border": "{semantic.accent-fantasy}"
@@ -728,7 +591,7 @@
     },
     "header-kicker": {
      "font-size": "10px",
-     "text": "{palette.slate-71}"
+     "text": "#a2b1c6"
     },
     "header-name": {
      "font-size": "24px",
@@ -738,7 +601,7 @@
      "font-size": "12px"
     },
     "large-tile": {
-     "border": "{palette.slate-32}"
+     "border": "#3a4d68"
     },
     "large-tile-label": {
      "font-size": "12px",
@@ -753,14 +616,14 @@
      "text": "{semantic.text-subtle}"
     },
     "legend-band": {
-     "background": "{palette.slate-62}"
+     "background": "#8f9bad"
     },
     "legend-game-dot": {
      "background": "{semantic.accent-fantasy}",
      "radius": "50%"
     },
     "legend-rolling-line": {
-     "background": "{palette.yellow-63}",
+     "background": "#f2c14e",
      "radius": "2px"
     },
     "legend-season-line": {
@@ -768,24 +631,24 @@
      "border-top-width": "2px"
     },
     "radar-axes": {
-     "line": "{palette.slate-26-4}"
+     "line": "#344152"
     },
     "radar-comparison": {
-     "fill": "{palette.violet-77-a}",
-     "line": "{palette.violet-77}"
+     "fill": "#b48aff22",
+     "line": "#b48aff"
     },
     "radar-labels": {
-     "text": "{palette.slate-78-2}"
+     "text": "#b7c4d8"
     },
     "radar-player": {
-     "fill": "{palette.red-54-a-2}",
+     "fill": "#ef3d2525",
      "line": "{semantic.accent-fantasy}"
     },
     "radar-rings": {
-     "line": "{palette.slate-26-4}"
+     "line": "#344152"
     },
     "radar-zero-ring": {
-     "line": "{palette.slate-44-2}"
+     "line": "#5c6e86"
     },
     "rank-label": {
      "font-size": "11px"
@@ -808,14 +671,14 @@
     },
     "small-sample-note": {
      "font-size": "10px",
-     "text": "{palette.yellow-63}"
+     "text": "#f2c14e"
     },
     "small-tile-value": {
      "font-size": "19px",
      "font-size-below-650px": "19px"
     },
     "summary-box": {
-     "background": "{palette.slate-15}",
+     "background": "#1c2330",
      "border": "{semantic.border-soft}",
      "border-width": "1px",
      "radius": "10px"
@@ -830,11 +693,11 @@
     },
     "summary-box-value": {
      "font-size": "17px",
-     "text": "{palette.sky-93}"
+     "text": "#e7edf5"
     },
     "tile": {
-     "background": "{palette.blue-15}",
-     "border": "{palette.slate-24-2}",
+     "background": "#182335",
+     "border": "#2b3a4f",
      "border-width": "1px",
      "radius": "9px",
      "text": "{semantic.text-soft}"
@@ -844,7 +707,7 @@
     },
     "tile-label": {
      "font-size": "11px",
-     "text": "{palette.slate-74}"
+     "text": "#acbace"
     },
     "tile-note": {
      "font-size": "12px",
@@ -864,7 +727,7 @@
      "text": "{semantic.eval-good}"
     },
     "tile-rank-neutral": {
-     "text": "{palette.slate-79-2}"
+     "text": "#bdc7d5"
     },
     "tile-selected": {
      "border": "{semantic.accent-fantasy}",
@@ -877,14 +740,14 @@
     },
     "tile-unit": {
      "font-size": "11px",
-     "text": "{palette.slate-74}"
+     "text": "#acbace"
     },
     "tile-value": {
      "font-size": "24px",
      "font-size-below-650px": "21px"
     },
     "trend-axis": {
-     "line": "{palette.slate-28-2}"
+     "line": "#3b4655"
     },
     "trend-difference-label": {
      "font-size": "12px"
@@ -893,7 +756,7 @@
      "fill": "{semantic.accent-fantasy}"
     },
     "trend-dot-outside-window": {
-     "fill": "{palette.red-37}"
+     "fill": "#7a4a45"
     },
     "trend-game": {
      "line": "{semantic.accent-fantasy}"
@@ -903,13 +766,13 @@
     },
     "trend-labels": {
      "font-size": "11px",
-     "text": "{palette.slate-75}"
+     "text": "#adbed2"
     },
     "trend-league-band": {
-     "fill": "{palette.slate-62}"
+     "fill": "#8f9bad"
     },
     "trend-rolling": {
-     "line": "{palette.yellow-63}"
+     "line": "#f2c14e"
     },
     "trend-season": {
      "line": "{semantic.text-dim}"
@@ -920,13 +783,13 @@
     },
     "window": {
      "background": "{semantic.surface-dialog}",
-     "border": "{palette.slate-29}",
+     "border": "#3a485a",
      "border-width": "1px",
      "radius": "15px",
-     "text": "{palette.sky-95}"
+     "text": "#eef3f8"
     },
     "window-backdrop": {
-     "background": "{palette.blue-03-a}"
+     "background": "#02060dc9"
     }
    },
    "shot-chart": {
@@ -946,10 +809,10 @@
      "radius": "8px"
     },
     "court-markings": {
-     "line": "{palette.slate-56}"
+     "line": "#7a8ba2"
     },
     "court-outline": {
-     "line": "{palette.slate-37}"
+     "line": "#4a5b72"
     },
     "explanation": {
      "font-size": "11px",
@@ -963,34 +826,34 @@
      "fill": "{semantic.accent-fantasy}"
     },
     "made-shot": {
-     "fill": "{palette.sky-90-2}"
+     "fill": "#dbe5ef"
     },
     "missed-shot": {
-     "line": "{palette.slate-64-3}"
+     "line": "#8da0b8"
     },
     "note": {
      "font-size": "11px",
-     "text": "{palette.slate-64-2}"
+     "text": "#91a2b7"
     },
     "popup": {
-     "background": "{palette.sky-12-2}",
+     "background": "#111c2b",
      "border": "{semantic.border-control}",
      "border-width": "1px",
      "font-size": "12px",
      "radius": "8px",
-     "shadow": "{palette.gray-00-a-2}",
+     "shadow": "#00000099",
      "shadow-size": "0 6px 18px"
     },
     "popup-change-line": {
-     "border-top": "{palette.sky-21}",
+     "border-top": "#223247",
      "border-top-width": "1px"
     },
     "popup-label": {
-     "text": "{palette.slate-71-2}"
+     "text": "#a2b4c9"
     },
     "popup-note": {
      "font-size": "11px",
-     "text": "{palette.slate-63-2}"
+     "text": "#8ea0b5"
     },
     "popup-selected-row": {
      "background": "{semantic.accent-fantasy-dark}",
@@ -1020,13 +883,13 @@
      "text": "{semantic.white}"
     },
     "zone-average": {
-     "color": "{palette.slate-73-2}"
+     "color": "#aeb8c6"
     },
     "zone-bad": {
-     "color": "{palette.red-73}"
+     "color": "#e39a8f"
     },
     "zone-good": {
-     "color": "{palette.green-68}"
+     "color": "#8fcdb0"
     },
     "zone-label": {
      "background": "{semantic.surface-deep}"
@@ -1040,19 +903,19 @@
     },
     "zone-label-text": {
      "font-size": "8.6px",
-     "text": "{palette.sky-96}"
+     "text": "#f1f5f9"
     },
     "zone-no-shots": {
-     "color": "{palette.slate-41}"
+     "color": "#56667a"
     },
     "zone-unknown": {
-     "color": "{palette.slate-73-2}"
+     "color": "#aeb8c6"
     },
     "zone-very-bad": {
-     "color": "{palette.red-55}"
+     "color": "#d6455d"
     },
     "zone-very-good": {
-     "color": "{palette.green-46}"
+     "color": "#38b27f"
     }
    },
    "stat-table": {
@@ -1070,7 +933,7 @@
      "text": "{semantic.muted}"
     },
     "empty-note": {
-     "text": "{palette.slate-72-4}"
+     "text": "#a7b7ca"
     },
     "filter-button": {
      "border": "{semantic.border-control}",
@@ -1078,10 +941,10 @@
     },
     "filters-panel": {
      "background": "{semantic.surface-dialog}",
-     "border": "{palette.slate-29}",
+     "border": "#3a485a",
      "border-width": "1px",
      "radius": "10px",
-     "shadow": "{palette.gray-00-a-2}",
+     "shadow": "#00000099",
      "shadow-size": "0 10px 40px"
     },
     "first-column": {
@@ -1137,7 +1000,7 @@
     },
     "method-note": {
      "font-size": "11px",
-     "text": "{palette.slate-67}"
+     "text": "#97a8bd"
     },
     "name-hovered": {
      "text": "{semantic.accent-fantasy}"
@@ -1158,7 +1021,7 @@
     "switch-button": {
      "font-size": "13px",
      "radius": "5px",
-     "text": "{palette.slate-79}"
+     "text": "#b8c7da"
     },
     "switch-button-selected": {
      "background": "{semantic.accent-fantasy}",

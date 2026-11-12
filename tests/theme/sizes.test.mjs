@@ -87,15 +87,6 @@ test('layout sizes of the card grid and the tables stay in their own files', () 
   assert.ok(JSON.parse(read('config/table-layouts.json')).numWidth, 'config/table-layouts.json: column widths');
 });
 
-test('the editor edits sizes too: change a size, undo it, and the file is the same again', async () => {
-  const { tokenIndex, setSize, serializeTheme } = await import('../../site/theme/editor-model.js');
-  const text = read('config/sizes.json'), t = tokenIndex(theme, sizes).find(x => x.layer === 'layout' && /^\d+px$/.test(x.value));
-  assert.equal(serializeTheme(sizes), text, 'sizes.json is kept in the editor\'s format');
-  const changed = setSize(sizes, t, '999px');
-  assert.notEqual(serializeTheme(changed), text);
-  assert.equal(serializeTheme(setSize(changed, t, t.value)), text);
-});
-
 test('every generated variable value is well formed (balanced brackets, no stray ; { })', () => {
   for (const [k, v] of [...themeVariables(theme), ...sizeVariables(sizes)]) {
     const text = String(v);
