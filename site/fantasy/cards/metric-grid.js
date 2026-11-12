@@ -11,8 +11,7 @@ const unitHtml = t => t ? `<em>${esc(t)}</em>` : '';
 function boxHtml(id, b, view, byId, sel, players) {
   const m = byId[b.metric], c = view.get(id, b.metric), label = b.label || m.label, area = `grid-area:${b.y + 1}/${b.x + 1}/span ${b.h}/span ${b.w}`, size = b.w * b.h;
   const r = players ? null : teamRank(view, b.metric, c.value, m.direction);
-  const tint = r ? `color:${r.color}` : '';
-  const rank = r ? `<b class="fw-rank">#${r.position}</b>` : '';
+    const rank = r ? `<b class="fw-rank">#${r.position}</b>` : '';
   const val = metric => view.get(id, metric);
   const subs = (b.sub || []).map(sb => {
     const sm = byId[sb.metric], sc = val(sb.metric);
@@ -23,7 +22,7 @@ function boxHtml(id, b, view, byId, sel, players) {
   }).join('');
   const subTitle = (b.sub || []).filter(sb => sb.label).map(sb => ' · ' + sb.label + ': ' + byId[sb.metric].description).join('');
   const open = (cls, style, title) => `<button class="fw-metric ${cls}" style="${area}${style ? ';' + style : ''}" data-metric="${b.metric}" aria-pressed="${sel === b.metric}" title="${esc(title)}">`;
-  const value = `<strong style="${tint}">${fmt(c, m)}${Number.isFinite(c.value) ? unitHtml(b.unit) : ''}</strong>`;
+  const value = `<strong${r ? ` class="eval-${r.tone}"` : ''}>${fmt(c, m)}${Number.isFinite(c.value) ? unitHtml(b.unit) : ''}</strong>`;
   const tier = b.tier || (size >= 36 ? 'lg' : size <= 12 ? 'strip' : 'sm');
   if (tier === 'strip') return `${open('fw-m-sm lx-strip', '', m.description + subTitle)}<span>${esc(label)}</span><lx-r>${rank}${value}${subs}</lx-r></button>`;
   return `${open(tier === 'lg' ? 'fw-m-lg' : 'fw-m-sm', '', m.description + subTitle)}<lx-t><span>${esc(label)}</span>${rank}${subs}</lx-t>${value}</button>`;

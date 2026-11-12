@@ -35,7 +35,7 @@ test('one "Shooting" toggle instead of the two-button Profile/Shooting switch; t
 test('no Colours button and no switch: evaluation colours are always on', async () => {
   const { html } = await render({});
   assert.ok(!/Colours|data-colours/.test(html));
-  assert.match(html, /style="color:var\(--eval-(good|bad)-text\)"/, 'values in the best and worst quarter are coloured');
+  assert.match(html, /class="fw-v (good|bad)"/, 'values in the best and worst quarter are coloured');
 });
 
 test('no GP column, no subtitle or credits slot in the first column, no sub-lines in cells', async () => {

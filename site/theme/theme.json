@@ -1,0 +1,916 @@
+{
+ "note": "The one place for colours and fonts. palette = raw colours; semantic = what a colour means, built from the palette; component = one entry per styled element and property, each pointing at a semantic colour (or the palette) by default. Change a palette or semantic entry to change everything that points at it; change a component entry to change only that element. Generated into theme.css by theme/generate.mjs.",
+ "palette": {
+  "blue-03-a": "#02060dc9",
+  "blue-07": "#0b1018",
+  "blue-08": "#0b121c",
+  "blue-09": "#0c1220",
+  "blue-10": "#0e1724",
+  "blue-14": "#162131",
+  "blue-15": "#182335",
+  "gray-00-a": "#00000088",
+  "gray-00-a-2": "#00000099",
+  "gray-100": "#ffffff",
+  "gray-68": "#a6b6ab",
+  "green-09": "#15200e",
+  "green-09-2": "#13210d",
+  "green-11": "#17221b",
+  "green-17": "#253327",
+  "green-18": "#273924",
+  "green-25": "#3a4d30",
+  "green-34": "#52634a",
+  "green-46": "#38b27f",
+  "green-51": "#3cc878",
+  "green-61": "#39ff88",
+  "green-68": "#8fcdb0",
+  "green-72": "#b0c1b0",
+  "green-80": "#c5d4c5",
+  "green-93": "#dffbe9",
+  "green-95": "#eff5f0",
+  "lime-49": "#819b5e",
+  "lime-64": "#a2b68e",
+  "lime-70": "#b8ee79",
+  "lime-77": "#c7e4a7",
+  "lime-84": "#d7f5b7",
+  "lime-94": "#fbffdf",
+  "lime-94-2": "#eef6e8",
+  "orange-65": "#e7a466",
+  "red-13": "#2e1716",
+  "red-16": "#3a1b19",
+  "red-37": "#7a4a45",
+  "red-54": "#ef3d25",
+  "red-54-a": "#ef3d2518",
+  "red-54-a-2": "#ef3d2525",
+  "red-55": "#d6455d",
+  "red-62": "#eb505f",
+  "red-73": "#e39a8f",
+  "red-74": "#ff8a78",
+  "red-92": "#f6e0e3",
+  "sky-10": "#101925",
+  "sky-11": "#111a26",
+  "sky-11-2": "#111c29",
+  "sky-12": "#111d2b",
+  "sky-12-2": "#111c2b",
+  "sky-13": "#142030",
+  "sky-16": "#1a2737",
+  "sky-17": "#1b2a3b",
+  "sky-20": "#203044",
+  "sky-21": "#223247",
+  "sky-89": "#d9e3ef",
+  "sky-90": "#dce6f1",
+  "sky-90-2": "#dbe5ef",
+  "sky-93": "#e7edf5",
+  "sky-95": "#eef3f8",
+  "sky-96": "#f1f5f9",
+  "slate-15": "#1c2330",
+  "slate-16": "#1b2837",
+  "slate-16-2": "#1c2938",
+  "slate-17": "#1d2a3c",
+  "slate-20": "#263242",
+  "slate-20-2": "#253142",
+  "slate-20-3": "#243143",
+  "slate-21": "#243248",
+  "slate-22": "#293747",
+  "slate-22-2": "#26374a",
+  "slate-22-3": "#26364a",
+  "slate-23": "#2b394b",
+  "slate-24": "#2e3c4b",
+  "slate-24-2": "#2b3a4f",
+  "slate-26": "#324052",
+  "slate-26-2": "#364250",
+  "slate-26-3": "#344052",
+  "slate-26-4": "#344152",
+  "slate-27": "#354255",
+  "slate-28": "#34445a",
+  "slate-28-2": "#3b4655",
+  "slate-29": "#3a485a",
+  "slate-30": "#3a4a60",
+  "slate-32": "#3a4d68",
+  "slate-37": "#4a5b72",
+  "slate-41": "#56667a",
+  "slate-44": "#5f6f82",
+  "slate-44-2": "#5c6e86",
+  "slate-50": "#6a7f94",
+  "slate-50-2": "#6b7c93",
+  "slate-53": "#71849c",
+  "slate-56": "#7a8ba2",
+  "slate-57": "#7c90a6",
+  "slate-58": "#7f93a9",
+  "slate-58-2": "#8191a5",
+  "slate-58-3": "#7f93ab",
+  "slate-62": "#8f9bad",
+  "slate-63": "#8e9eb1",
+  "slate-63-2": "#8ea0b5",
+  "slate-64": "#91a0b4",
+  "slate-64-2": "#91a2b7",
+  "slate-64-3": "#8da0b8",
+  "slate-65": "#94a3b8",
+  "slate-65-2": "#93a6ba",
+  "slate-66": "#94a6bc",
+  "slate-66-2": "#97a9ba",
+  "slate-67": "#97a8bd",
+  "slate-68": "#95adc4",
+  "slate-68-2": "#9bacbf",
+  "slate-69": "#9daec1",
+  "slate-69-2": "#9fb0c2",
+  "slate-70": "#9fb0c6",
+  "slate-71": "#a2b1c6",
+  "slate-71-2": "#a2b4c9",
+  "slate-72": "#a8b6c9",
+  "slate-72-2": "#a6b6c8",
+  "slate-72-3": "#a7b7c8",
+  "slate-72-4": "#a7b7ca",
+  "slate-73": "#a9b8c9",
+  "slate-73-2": "#aeb8c6",
+  "slate-74": "#acbace",
+  "slate-75": "#adbed2",
+  "slate-78": "#b8c6d7",
+  "slate-78-2": "#b7c4d8",
+  "slate-79": "#b8c7da",
+  "slate-79-2": "#bdc7d5",
+  "slate-83": "#c6d2df",
+  "slate-89": "#dbe5ed",
+  "slate-95": "#f0f3f6",
+  "teal-11": "#17231f",
+  "violet-77": "#b48aff",
+  "violet-77-a": "#b48aff22",
+  "yellow-63": "#f2c14e",
+  "yellow-65": "#e7c766"
+ },
+ "semantic": {
+  "bg": "{palette.blue-07}",
+  "panel": "{palette.sky-11}",
+  "line": "{palette.slate-20}",
+  "muted": "{palette.slate-65}",
+  "text": "{palette.slate-95}",
+  "chip": "{palette.slate-17}",
+  "gridline": "{palette.slate-30}",
+  "sorthead": "{palette.slate-21}",
+  "sortcell": "{palette.blue-14}",
+  "eval-good": "{palette.green-93}",
+  "eval-avg": "{palette.lime-94}",
+  "eval-bad": "{palette.red-92}",
+  "eval-good-text": "{palette.green-51}",
+  "eval-bad-text": "{palette.red-62}",
+  "accent-default": "{palette.lime-70}",
+  "accent-fantasy": "{palette.red-54}",
+  "accent-betting": "{palette.green-61}",
+  "white": "{palette.gray-100}",
+  "accent-fantasy-light": "{palette.red-74}",
+  "accent-fantasy-dark": "{palette.red-16}",
+  "text-soft": "{palette.sky-89}",
+  "text-muted-2": "{palette.slate-66}",
+  "text-subtle": "{palette.slate-72}",
+  "text-dim": "{palette.slate-78}",
+  "surface-dialog": "{palette.sky-10}",
+  "surface-deep": "{palette.blue-10}",
+  "border-control": "{palette.slate-26}",
+  "border-soft": "{palette.slate-23}",
+  "accent": {
+   "note": "the accent of the page: default / Fantasy / Betting",
+   "default": "{semantic.accent-default}",
+   "fantasy": "{semantic.accent-fantasy}",
+   "betting": "{semantic.accent-betting}"
+  }
+ },
+ "font": {
+  "ui": "'Segoe UI',sans-serif"
+ },
+ "component": {
+  "app": {
+   "shell": {
+    "action-a": {
+     "text": "{semantic.accent}"
+    },
+    "aside-a-active": {
+     "bg": "{palette.green-17}",
+     "bg-2": "{palette.red-13}",
+     "text": "{semantic.accent}"
+    },
+    "aside-a": {
+     "text": "{semantic.muted}"
+    },
+    "aside-note": {
+     "border": "{semantic.line}",
+     "text": "{semantic.muted}"
+    },
+    "aside-small": {
+     "text": "{semantic.muted}"
+    },
+    "aside": {
+     "border-bottom": "{semantic.line}",
+     "border-right": "{semantic.line}"
+    },
+    "brand-b1": {
+     "text": "{semantic.accent-fantasy}",
+     "text-2": "{semantic.white}"
+    },
+    "brand-b2": {
+     "text": "{palette.violet-77}"
+    },
+    "brand-b3": {
+     "text": "{semantic.white}",
+     "text-2": "{semantic.accent}"
+    },
+    "btn-primary": {
+     "bg": "{semantic.accent}",
+     "text": "{palette.green-09}"
+    },
+    "btn": {
+     "bg": "{palette.slate-16}",
+     "border": "{semantic.line}",
+     "text": "{semantic.white}"
+    },
+    "card": {
+     "bg": "{semantic.panel}",
+     "border": "{semantic.line}"
+    },
+    "empty": {
+     "border": "{palette.slate-27}",
+     "text": "{semantic.muted}"
+    },
+    "footer": {
+     "border-top": "{semantic.line}",
+     "text": "{semantic.muted}"
+    },
+    "iframe": {
+     "bg": "{palette.blue-09}",
+     "border": "{semantic.line}"
+    },
+    "input": {
+     "bg": "{palette.blue-08}",
+     "border": "{palette.slate-27}",
+     "text": "{semantic.white}"
+    },
+    "label": {
+     "text": "{semantic.muted}"
+    },
+    "metric": {
+     "text": "{semantic.accent}"
+    },
+    "muted": {
+     "text": "{semantic.muted}"
+    },
+    "nav-a-active": {
+     "border": "{semantic.accent}",
+     "text": "{semantic.white}"
+    },
+    "nav-a": {
+     "text": "{semantic.muted}"
+    },
+    "notice": {
+     "bg": "{palette.green-11}",
+     "border-left": "{semantic.accent}",
+     "text": "{palette.green-80}"
+    },
+    "number": {
+     "text": "{semantic.accent}"
+    },
+    "p": {
+     "text": "{semantic.muted}"
+    },
+    "pill": {
+     "border": "{semantic.line}",
+     "text": "{semantic.accent}"
+    },
+    "root": {
+     "bg": "{semantic.bg}",
+     "text": "{semantic.text}"
+    },
+    "tag": {
+     "text": "{semantic.muted}"
+    },
+    "top": {
+     "border-bottom": "{semantic.line}"
+    }
+   }
+  },
+  "betting": {
+   "players": {
+    "pl-filters-label": {
+     "text": "{palette.slate-63-2}"
+    },
+    "small-miss": {
+     "text": "{palette.yellow-65}"
+    },
+    "trend-down": {
+     "text": "{semantic.eval-bad}"
+    },
+    "trend-up": {
+     "text": "{semantic.eval-good}"
+    }
+   },
+   "stats": {
+    "body-aside": {
+     "border-bottom": "{semantic.line}"
+    },
+    "button-span": {
+     "border": "{palette.slate-26-2}",
+     "text": "{palette.slate-66-2}"
+    },
+    "club-mark": {
+     "bg": "{palette.slate-22-3}",
+     "text": "{palette.slate-68}"
+    },
+    "entity-switch-button-on": {
+     "border": "{semantic.accent}",
+     "text": "{palette.green-95}"
+    },
+    "entity-switch-button": {
+     "text": "{palette.slate-64}"
+    },
+    "entity-switch": {
+     "border-bottom": "{semantic.line}"
+    },
+    "league-average-club-mark": {
+     "bg": "{palette.green-25}",
+     "text": "{palette.lime-77}"
+    },
+    "league-average-stat-cell": {
+     "text": "{palette.lime-84}"
+    },
+    "live-status-before-live-live": {
+     "bg": "{semantic.accent}"
+    },
+    "live-status-before-live-loading": {
+     "bg": "{palette.yellow-65}"
+    },
+    "live-status-before-live-partial": {
+     "bg": "{palette.orange-65}"
+    },
+    "live-status-before": {
+     "bg": "{palette.slate-44}"
+    },
+    "live-status": {
+     "text": "{palette.slate-69-2}"
+    },
+    "period-switch-button-on": {
+     "bg": "{palette.slate-28}",
+     "text": "{semantic.white}"
+    },
+    "period-switch-button": {
+     "text": "{palette.slate-68-2}"
+    },
+    "period-switch": {
+     "border": "{palette.slate-26-3}"
+    },
+    "rk-bad": {
+     "bg": "{semantic.eval-bad}",
+     "text": "{semantic.eval-bad}"
+    },
+    "rk-good": {
+     "bg": "{semantic.eval-good}",
+     "text": "{semantic.eval-good}"
+    },
+    "rk-neutral": {
+     "bg": "{palette.slate-16-2}",
+     "text": "{palette.slate-72-3}"
+    },
+    "rk": {
+     "bg": "{palette.slate-16-2}",
+     "text": "{palette.slate-65-2}"
+    },
+    "rk3-down": {
+     "text": "{semantic.eval-bad}"
+    },
+    "rk3-up": {
+     "text": "{semantic.eval-good}"
+    },
+    "rk3": {
+     "text": "{palette.slate-57}"
+    },
+    "side-switch-button-on": {
+     "bg": "{semantic.accent-default}",
+     "text": "{palette.green-09-2}"
+    },
+    "side-switch-button": {
+     "text": "{palette.slate-69}"
+    },
+    "side-switch": {
+     "bg": "{palette.sky-11-2}",
+     "border": "{palette.slate-24}"
+    },
+    "stat-cell-hover": {
+     "text": "{semantic.accent-default}"
+    },
+    "stat-cell": {
+     "text": "{palette.sky-90}"
+    },
+    "stats-caption-span-first-child": {
+     "text": "{palette.slate-89}"
+    },
+    "stats-caption": {
+     "text": "{palette.slate-63}"
+    },
+    "stats-foot-i": {
+     "bg": "{semantic.accent}"
+    },
+    "stats-method-summary": {
+     "text": "{palette.slate-72-2}"
+    },
+    "stats-method": {
+     "border-top": "{semantic.line}",
+     "text": "{palette.slate-63}"
+    },
+    "stats-scroll": {
+     "bg": "{semantic.surface-dialog}",
+     "border": "{palette.slate-22}"
+    },
+    "stats-tooltip-b": {
+     "text": "{semantic.accent-default}"
+    },
+    "stats-tooltip-p": {
+     "text": "{palette.gray-68}"
+    },
+    "stats-tooltip-span": {
+     "text": "{palette.green-72}"
+    },
+    "stats-tooltip-strong": {
+     "text": "{palette.lime-94-2}"
+    },
+    "stats-tooltip": {
+     "bg": "{palette.teal-11}",
+     "border": "{palette.green-34}",
+     "shadow": "{palette.gray-00-a}"
+    },
+    "teams-table-gp": {
+     "text": "{palette.slate-58}"
+    },
+    "teams-table-sort-arrow": {
+     "text": "{palette.slate-50}"
+    },
+    "teams-table-td-sorted-column": {
+     "bg": "{palette.sky-17}"
+    },
+    "teams-table-th": {
+     "border-bottom": "{palette.slate-20-2}"
+    },
+    "th-button": {
+     "text": "{semantic.accent}"
+    },
+    "th-small": {
+     "text": "{palette.lime-64}"
+    },
+    "thead-club-head": {
+     "bg": "{palette.sky-16}"
+    },
+    "thead-small": {
+     "text": "{palette.slate-53}"
+    },
+    "thead-th": {
+     "bg": "{palette.sky-16}",
+     "text": "{palette.slate-73}"
+    },
+    "tip-rank": {
+     "text": "{palette.lime-84}"
+    },
+    "tr-league-average-td": {
+     "bg": "{palette.green-18}",
+     "border-bottom": "{palette.lime-49}",
+     "border-top": "{palette.lime-49}"
+    },
+    "tr-td-sorted-column": {
+     "bg": "{palette.sky-20}"
+    },
+    "tr-td": {
+     "bg": "{palette.sky-13}",
+     "bg-2": "{palette.slate-22-2}"
+    },
+    "tr-th-first-child": {
+     "bg": "{palette.sky-12}"
+    }
+   }
+  },
+  "fantasy": {
+   "card-grid": {
+    "fw-boxscores-th-first-child": {
+     "bg": "{semantic.surface-dialog}",
+     "shadow": "{semantic.border-soft}"
+    },
+    "fw-metric-i-lx-sl": {
+     "text": "{semantic.muted}"
+    },
+    "lx-grid-fw-rank": {
+     "text": "{semantic.muted}"
+    }
+   },
+   "charts": {
+    "fc-avg": {
+     "stroke": "{palette.slate-70}"
+    },
+    "fc-ax": {
+     "fill": "{palette.slate-78-2}"
+    },
+    "fc-card-focus": {
+     "outline": "{semantic.accent-fantasy}"
+    },
+    "fc-card-hover": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "fc-card-sub": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "fc-card": {
+     "bg": "{palette.blue-15}",
+     "border": "{palette.slate-24-2}",
+     "text": "{semantic.text-soft}"
+    },
+    "fc-note": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "fc-pl": {
+     "fill": "{semantic.text-soft}",
+     "stroke": "{semantic.surface-dialog}"
+    },
+    "fc-pt-circle-hover": {
+     "stroke": "{semantic.white}"
+    },
+    "fc-pt-circle": {
+     "fill": "{semantic.accent-default}",
+     "fill-2": "{palette.slate-58-3}",
+     "stroke": "{semantic.surface-dialog}"
+    },
+    "fc-pt-text": {
+     "fill": "{palette.slate-83}"
+    },
+    "fc-tick": {
+     "fill": "{palette.slate-58-2}"
+    },
+    "h2-small": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "axis": {
+     "stroke": "{palette.slate-28-2}"
+    },
+    "diagonal": {
+     "stroke": "{palette.slate-50-2}"
+    }
+   },
+   "shotchart": {
+    "pc-note": {
+     "text": "{palette.slate-64-2}"
+    },
+    "sz-au-button-on": {
+     "bg": "{semantic.accent-fantasy-dark}",
+     "border": "{semantic.accent-fantasy}",
+     "text": "{semantic.accent-fantasy-light}"
+    },
+    "sz-au-button-sc-btn-on": {
+     "bg": "{semantic.accent-fantasy-dark}",
+     "border": "{semantic.accent-fantasy}",
+     "text": "{semantic.accent-fantasy-light}"
+    },
+    "sz-court-pc-court": {
+     "bg": "{semantic.surface-deep}"
+    },
+    "sz-hex-polygon": {
+     "stroke": "{semantic.surface-deep}"
+    },
+    "sz-hl": {
+     "fill": "{semantic.accent-fantasy}",
+     "stroke": "{semantic.surface-deep}"
+    },
+    "sz-label-rect-sz-au-r": {
+     "stroke": "{semantic.accent-fantasy}"
+    },
+    "sz-label-rect": {
+     "fill": "{semantic.surface-deep}"
+    },
+    "sz-label-sz-zone-rank": {
+     "fill": "{semantic.text-dim}"
+    },
+    "sz-label-text": {
+     "fill": "{palette.sky-96}"
+    },
+    "sz-made": {
+     "fill": "{palette.sky-90-2}"
+    },
+    "sz-miss": {
+     "stroke": "{palette.slate-64-3}"
+    },
+    "sz-mode": {
+     "text": "{semantic.accent-fantasy-light}"
+    },
+    "sz-pop-d": {
+     "border-top": "{palette.sky-21}"
+    },
+    "sz-pop-row-span": {
+     "text": "{palette.slate-71-2}"
+    },
+    "sz-pop-sel-span": {
+     "text": "{semantic.accent-fantasy-light}"
+    },
+    "sz-pop-sel": {
+     "bg": "{semantic.accent-fantasy-dark}"
+    },
+    "sz-pop-small": {
+     "text": "{palette.slate-63-2}"
+    },
+    "sz-pop": {
+     "bg": "{palette.sky-12-2}",
+     "border": "{semantic.border-control}",
+     "shadow": "{palette.gray-00-a-2}"
+    },
+    "sz-sep": {
+     "bg": "{semantic.border-control}"
+    },
+    "sz-switch-button-on": {
+     "bg": "{semantic.accent-fantasy}",
+     "border": "{semantic.accent-fantasy}",
+     "text": "{semantic.white}"
+    },
+    "sz-switch-button": {
+     "border": "{semantic.border-control}",
+     "text": "{semantic.text-soft}"
+    },
+    "grade-very-bad": {
+     "color": "{palette.red-55}"
+    },
+    "grade-bad": {
+     "color": "{palette.red-73}"
+    },
+    "grade-average": {
+     "color": "{palette.slate-73-2}"
+    },
+    "grade-good": {
+     "color": "{palette.green-68}"
+    },
+    "grade-very-good": {
+     "color": "{palette.green-46}"
+    },
+    "grade-none": {
+     "color": "{palette.slate-73-2}"
+    },
+    "grade-empty": {
+     "color": "{palette.slate-41}"
+    },
+    "court-border": {
+     "stroke": "{palette.slate-37}"
+    },
+    "court-line": {
+     "stroke": "{palette.slate-56}"
+    }
+   },
+   "table": {
+    "fw-t-fw-average": {
+     "bg": "{semantic.accent}",
+     "bg-2": "{semantic.bg}",
+     "text": "{semantic.accent}"
+    },
+    "fw-t-fw-rk": {
+     "bg": "{semantic.chip}",
+     "text": "{semantic.muted}"
+    },
+    "fw-t-td-fw-sorted": {
+     "bg": "{semantic.sortcell}"
+    },
+    "fw-t-th-first-child": {
+     "shadow": "{semantic.gridline}"
+    },
+    "fw-t-th": {
+     "border": "{semantic.gridline}"
+    },
+    "fw-t-thead": {
+     "bg": "{semantic.panel}"
+    },
+    "fw-table-wrap": {
+     "border": "{semantic.gridline}"
+    },
+    "fw-tinfo": {
+     "text": "{semantic.muted}"
+    },
+    "fw-tooltip-p": {
+     "text": "{semantic.accent}"
+    },
+    "fw-tooltip": {
+     "bg": "{semantic.panel}",
+     "border": "{semantic.gridline}",
+     "shadow": "{semantic.bg}"
+    },
+    "tbody-th-first-child": {
+     "bg": "{semantic.bg}"
+    },
+    "th-fw-who": {
+     "text": "{semantic.muted}"
+    },
+    "thead-button-sel": {
+     "text": "{semantic.accent}"
+    },
+    "thead-th-first-child": {
+     "bg": "{semantic.panel}"
+    },
+    "thead-th-fw-sorted": {
+     "bg": "{semantic.sorthead}"
+    },
+    "value-good": {
+     "text": "{semantic.eval-good-text}"
+    },
+    "value-bad": {
+     "text": "{semantic.eval-bad-text}"
+    }
+   },
+   "workbench": {
+    "button-small": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "fw-band": {
+     "fill": "{palette.slate-62}"
+    },
+    "fw-close": {
+     "bg": "{palette.slate-20-3}",
+     "text": "{palette.sky-95}"
+    },
+    "fw-curve-text": {
+     "fill": "{palette.slate-75}"
+    },
+    "fw-dialog-backdrop": {
+     "bg": "{palette.blue-03-a}"
+    },
+    "fw-dialog-button-focus": {
+     "outline": "{semantic.accent-fantasy}"
+    },
+    "fw-dialog": {
+     "bg": "{semantic.surface-dialog}",
+     "border": "{palette.slate-29}",
+     "text": "{palette.sky-95}"
+    },
+    "fw-empty": {
+     "text": "{palette.slate-72-4}"
+    },
+    "fw-filter-btn": {
+     "border": "{semantic.border-control}"
+    },
+    "fw-filters": {
+     "bg": "{semantic.surface-dialog}",
+     "border": "{palette.slate-29}",
+     "shadow": "{palette.gray-00-a-2}"
+    },
+    "fw-gl": {
+     "stroke": "{semantic.border-soft}"
+    },
+    "fw-heading-role-status": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "fw-ibox-small": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "fw-ibox-span": {
+     "text": "{semantic.text-subtle}"
+    },
+    "fw-ibox-strong": {
+     "text": "{palette.sky-93}"
+    },
+    "fw-ibox": {
+     "bg": "{palette.slate-15}",
+     "border": "{semantic.border-soft}"
+    },
+    "fw-identity-small": {
+     "text": "{palette.slate-71}"
+    },
+    "fw-k-b": {
+     "bg": "{palette.slate-62}"
+    },
+    "fw-k-g": {
+     "bg": "{semantic.accent-fantasy}"
+    },
+    "fw-k-r": {
+     "bg": "{palette.yellow-63}"
+    },
+    "fw-k-s": {
+     "border-top": "{semantic.text-dim}"
+    },
+    "fw-leg": {
+     "text": "{semantic.text-subtle}"
+    },
+    "fw-m-lg-span": {
+     "text": "{semantic.text-soft}"
+    },
+    "fw-method": {
+     "text": "{palette.slate-67}"
+    },
+    "fw-metric-em": {
+     "text": "{palette.slate-74}"
+    },
+    "fw-metric-i": {
+     "text": "{semantic.accent-fantasy-light}"
+    },
+    "fw-metric-on": {
+     "border": "{semantic.accent-fantasy}",
+     "shadow": "{semantic.accent-fantasy}"
+    },
+    "fw-metric-small": {
+     "text": "{semantic.text-soft}"
+    },
+    "fw-metric-span": {
+     "text": "{palette.slate-74}"
+    },
+    "fw-metric": {
+     "bg": "{palette.blue-15}",
+     "border": "{palette.slate-24-2}",
+     "text": "{semantic.text-soft}"
+    },
+    "fw-name-hover": {
+     "text": "{semantic.accent-fantasy}"
+    },
+    "fw-next-hover": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "fw-pgrid-fw-m-lg": {
+     "border": "{palette.slate-32}"
+    },
+    "fw-radar-text": {
+     "fill": "{palette.slate-78-2}"
+    },
+    "fw-ref": {
+     "stroke": "{semantic.text-dim}"
+    },
+    "fw-section-title-b": {
+     "text": "{semantic.accent-fantasy-light}"
+    },
+    "fw-section-title-span": {
+     "text": "{semantic.text-subtle}"
+    },
+    "fw-small": {
+     "text": "{palette.yellow-63}"
+    },
+    "fw-switch-button": {
+     "text": "{palette.slate-79}"
+    },
+    "fw-switch-on": {
+     "bg": "{semantic.accent-fantasy}",
+     "text": "{semantic.white}"
+    },
+    "fw-switch": {
+     "border": "{semantic.border-control}"
+    },
+    "fw-visual": {
+     "border-top": "{semantic.border-soft}"
+    },
+    "fw-with-th": {
+     "border-top": "{semantic.border-soft}"
+    },
+    "fw-with-tr-on": {
+     "bg": "{palette.red-54-a}"
+    },
+    "td-small": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "th-button-focus": {
+     "outline": "{semantic.accent-fantasy}"
+    },
+    "th-button": {
+     "text": "{palette.sky-93}"
+    },
+    "thead-th": {
+     "text": "{semantic.text-subtle}"
+    }
+   },
+   "card": {
+    "tile-eval-good": {
+     "text": "{semantic.eval-good}"
+    },
+    "tile-eval-avg": {
+     "text": "{semantic.eval-avg}"
+    },
+    "tile-eval-bad": {
+     "text": "{semantic.eval-bad}"
+    },
+    "tile-eval-neutral": {
+     "text": "{palette.slate-79-2}"
+    },
+    "trend-axis": {
+     "stroke": "{palette.slate-28-2}"
+    },
+    "trend-line-game": {
+     "stroke": "{semantic.accent-fantasy}"
+    },
+    "trend-line-roll": {
+     "stroke": "{palette.yellow-63}"
+    },
+    "trend-dot": {
+     "fill": "{semantic.accent-fantasy}"
+    },
+    "trend-dot-outside": {
+     "fill": "{palette.red-37}"
+    },
+    "radar-ring-zero": {
+     "stroke": "{palette.slate-44-2}"
+    },
+    "radar-ring": {
+     "stroke": "{palette.slate-26-4}"
+    },
+    "radar-axis": {
+     "stroke": "{palette.slate-26-4}"
+    },
+    "radar-own": {
+     "stroke": "{semantic.accent-fantasy}",
+     "fill": "{palette.red-54-a-2}"
+    },
+    "radar-compare": {
+     "stroke": "{palette.violet-77}",
+     "fill": "{palette.violet-77-a}"
+    }
+   }
+  }
+ }
+}

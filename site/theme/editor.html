@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pick n Edge · Theme editor</title>
+<link rel="stylesheet" href="theme.css"><link rel="stylesheet" href="editor.css">
+</head><body>
+<header class="ed-bar">
+  <strong>Theme editor</strong>
+  <label>Screen <select id="ed-route"></select></label>
+  <label>Width <select id="ed-width"><option value="1440">1440 px</option><option value="1280">1280 px</option><option value="390">390 px</option></select></label>
+  <label class="ed-check"><input type="checkbox" id="ed-pick" checked> Click an element to edit its colours</label>
+  <span class="ed-gap"></span>
+  <button id="ed-reset" type="button">Reset</button>
+  <button id="ed-export" type="button">Export theme.json</button>
+</header>
+<main class="ed-main">
+  <section class="ed-screen"><iframe id="ed-frame" title="Pick n Edge"></iframe></section>
+  <aside class="ed-side">
+    <h2 id="ed-title">Nothing selected</h2>
+    <p class="ed-hint" id="ed-hint">Turn on "Click an element", then click anything on the screen. Its names and colours appear here. Changing one colour changes only that element and property; changing a general colour (below) changes everything that points at it.</p>
+    <div id="ed-element"></div>
+    <details id="ed-general"><summary>General colours (semantic)</summary><div id="ed-semantic"></div></details>
+    <details><summary>Palette</summary><div id="ed-palette"></div></details>
+    <p class="ed-hint">Export downloads the changed <code>theme.json</code>. Put it in <code>site/theme/</code> and run <code>node site/theme/generate.mjs</code>.</p>
+  </aside>
+</main>
+<script type="module" src="editor.js"></script>
+</body></html>

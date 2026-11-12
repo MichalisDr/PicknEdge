@@ -21,18 +21,18 @@ export function chartHtml(m, st) {
   const team = m.ctx.kind === 'teams', { zones } = m;
   const unknown = zones.reduce((n, z) => n + z.uk, 0), who = team ? ' (opponent baskets)' : '';
   zones.forEach(z => { z.change = m.cmp ? (z.season === null || z.fg === null ? '—' : (Math.abs(z.fg - z.season) < 0.05 ? '0.0' : (z.fg - z.season > 0 ? '↑ ' : '↓ ') + signed(z.fg - z.season)) + ' percentage points vs Season') : null; });
-  const color = z => SZ.levelColor(z.level);
+  const gradeClass = z => SZ.levelClass(z.level);
   const split = (c, k) => c.uk > 0 || c.as + c.un === 0 ? null : m.eng.evaluate(m.eng.byId('share'), [{ n: k === 'a' ? c.as : c.un, of: c.as + c.un }]).value;
   const { cells } = SZ.bin(m.events.map(e => ({ x: e.x, y: e.y, zone: zones.findIndex(z => z.key === e.zone) })));
   const dominant = c => c.zones.reduce((b, n, i) => n > c.zones[b] ? i : b, 0);
   const hexPath = (cx, cy, r) => SZ.hexPts(cx, cy, r).map(([a, b]) => SZ.X(a) + ',' + SZ.Y(b)).join(' ');
-  const hex = cells.map(c => `<polygon points="${hexPath(c.x, c.y, c.radius)}" style="fill:${color(zones[dominant(c)])}" data-n="${c.n}"/>`).join('');
+  const hex = cells.map(c => `<polygon points="${hexPath(c.x, c.y, c.radius)}" class="${gradeClass(zones[dominant(c)])}" data-n="${c.n}"/>`).join('');
   const dot = SZ.DOT_R * SZ.SC, at = e => `cx="${SZ.X(e.x)}" cy="${SZ.Y(e.y)}" r="${dot}"`;
   const shots = m.events.map(e => `<circle class="${e.made ? 'sz-made' : 'sz-miss'}"${e.made && e.second_chance ? ' data-sc="1"' : ''} ${at(e)}/>`).join('');
   const hl = m.events.filter(e => e.made && e.assisted !== null).map(e => `<circle class="sz-hl" data-m="${e.assisted ? 'a' : 'u'}"${e.second_chance ? ' data-sc="1"' : ''} ${at(e)}/>`).join('');
   const labels = zones.map(z => {
     const [lx, ly] = SZ.LABELS[z.i], w = 32, cx = SZ.X(lx), cy = SZ.Y(ly);
-    const rect = (k, h, c) => `<rect data-m="${k}"${c ? ` class="${c}"` : ''} x="${cx - w / 2}" y="${cy - 7}" width="${w}" height="${h}" rx="3"${k === 'fg' ? ` style="stroke:${z.a ? color(z) : '#56667a'}"` : ''}/>`;
+    const rect = (k, h, c) => `<rect data-m="${k}"${c ? ` class="${c}"` : ''} x="${cx - w / 2}" y="${cy - 7}" width="${w}" height="${h}" rx="3"${k === 'fg' ? ` class="${z.a ? gradeClass(z) : 'g-empty'}"` : ''}/>`;
     const text = (k, s) => `<text data-m="${k}" x="${cx}" y="${cy + 3.2}" text-anchor="middle">${s}</text>`;
     return `<g class="sz-label" data-zone="${z.i}"><title>${esc(z.name)}: ${z.m}/${z.a}${z.level !== null ? ' · ' + lvlName(z.level, team) : ''}${z.rank ? ' · defence rank ' + z.rank.rank + '/' + z.rank.n : ''}</title>${rect('fg', z.rank ? 24 : 14)}${text('fg', z.a ? z.fg.toFixed(1) + '%' : '—')}${z.rank ? `<text data-m="fg" class="sz-zone-rank" x="${cx}" y="${cy + 12.5}" text-anchor="middle">#${z.rank.rank} / ${z.rank.n}</text>` : ''}${rect('a', 14, 'sz-au-r')}${text('a', pc(split(z, 'a')))}${rect('u', 14, 'sz-au-r')}${text('u', pc(split(z, 'u')))}</g>`;
   }).join('');

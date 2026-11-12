@@ -17,14 +17,14 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
   }).join('');
   const tint = (c, value, rankInfo) => {
     if (!Number.isFinite(value)) return '';
-    if (c.colour === 'zone') { const lg = view.league(c.metric)?.value; if (!Number.isFinite(lg)) return ''; const d = value - lg; return Math.abs(d) <= TL.zoneNeutralPp ? '' : 'color:var(--eval-' + (d > 0 ? 'good' : 'bad') + '-text)'; }
-    if (c.colour === 'rank') { const qt = TM.quarter(rankInfo); if (!qt) return ''; const good = teams ? qt === 'bottom' : qt === 'top'; return 'color:var(--eval-' + (good ? 'good' : 'bad') + '-text)'; }   // teams: green = favourable for the opposing player
+    if (c.colour === 'zone') { const lg = view.league(c.metric)?.value; if (!Number.isFinite(lg)) return ''; const d = value - lg; return Math.abs(d) <= TL.zoneNeutralPp ? '' : (d > 0 ? ' good' : ' bad'); }
+    if (c.colour === 'rank') { const qt = TM.quarter(rankInfo); if (!qt) return ''; const good = teams ? qt === 'bottom' : qt === 'top'; return good ? ' good' : ' bad'; }   // teams: green = favourable for the opposing player
     return '';
   };
   const cells = (key, avgRow) => cols.map(c => {
     const { m, list } = model.get(c.metric), cell = avgRow ? avg[c.metric] : view.get(key, c.metric), isFew = !avgRow && few(c, key);
     const r = !avgRow && !isFew ? TM.rankOf(list, cell.value, m.direction) : null;
-    const v = isFew ? '<span class="fw-v fw-few">-</span>' : `<span class="fw-v" style="${avgRow ? '' : tint(c, cell.value, r)}">${fmt(cell, m)}</span>`;
+    const v = isFew ? '<span class="fw-v fw-few">-</span>' : `<span class="fw-v${avgRow ? '' : tint(c, cell.value, r)}">${fmt(cell, m)}</span>`;
     return `<td class="${cls(c)}"><span class="fw-cell" ${avgRow ? '' : `data-id="${esc(key)}" data-metric="${c.metric}" ${c.chart ? 'data-chart ' : ''}tabindex="0"`}>${v}${r ? `<i class="fw-rk">#${r.position}</i>` : ''}</span></td>`;
   }).join('');
   const body = rowsShown.map(r => `<tr><th><button class="fw-name" data-open="${esc(r.id)}" title="${esc(r.full)}">${esc(r.name)}</button>${teams ? '' : `<small class="fw-who" title="${esc(roster.teams[r.team] || r.team)}">${esc([teamCode(roster, r.team), r.pos].filter(Boolean).join(' · '))}</small>`}</th>${cells(r.id, false)}</tr>`).join('');

@@ -67,9 +67,9 @@ function teamRanks(made,att,cohort){
   return {rank:1+valid.filter(o=>o.made*v.att<v.made*o.att).length,n:valid.length};
  })]));
 }
-const LEVEL_COLORS=['#d6455d','#e39a8f','#aeb8c6','#8fcdb0','#38b27f'],NEUTRAL='#aeb8c6';
+
 /* Players: very bad red … very good green. Teams (opponent shooting against them): very bad (opponents shoot well) green … very good red. */
-const levelColor=level=>level===null?NEUTRAL:LEVEL_COLORS[level];/* same colour index for teams: opponents shooting well = very bad defence = green; only the name flips */
+const levelClass=level=>level===null?'g-none':'g'+level;/* style class of a grade; teams use the same index: opponents shooting well = very bad defence = green; only the name flips */
 const levelName=(level,team)=>team?LEVEL_NAMES[4-level]:LEVEL_NAMES[level];
 /* Where each zone's FG% label sits (cm), inside the zone. */
 const LABELS=[[0,45],[0,290],[-400,330],[0,548],[400,330],[-480,-20],[480,-20],[-598,501],[0,780],[598,501],[-705,-8],[705,-8]];
@@ -108,6 +108,6 @@ function court(){
   const seg=(d,r0,r1)=>{const [a,b]=polar(dir(d),r0),[c,e]=polar(dir(d),r1);return `M${P(a,b)}L${P(c,e)}`;};
   rays.push(seg(DIAG_DEG,paintExit(DIAG_DEG),edge(DIAG_DEG)),seg(B_DEG,paintExit(B_DEG),ARC),`M${P(sx*CORNER_X,CORNER_Y)}H${X(sx*SIDE)}`);}
  const marks=`M${P(-SIDE,BASELINE)}V${Y(HALF)}H${X(SIDE)}V${Y(BASELINE)}Z M${P(-LANE,BASELINE)}V${Y(FT)}H${X(LANE)}V${Y(BASELINE)} M${P(-RIM_R,RIM_STRIP_Y)}V${Y(0)}A${R(RIM_R)} ${R(RIM_R)} 0 0 0 ${P(RIM_R,0)}V${Y(RIM_STRIP_Y)}Z M${P(-CORNER_X,BASELINE)}V${Y(CORNER_Y)}A${R(ARC)} ${R(ARC)} 0 0 0 ${P(CORNER_X,CORNER_Y)}V${Y(BASELINE)} M${P(-180,FT)}A${R(180)} ${R(180)} 0 0 1 ${P(180,FT)} M${P(-90,-37.5)}H${X(90)}`;
- return `<g class="sz-borders" fill="none" stroke="#4a5b72" stroke-width=".8" stroke-dasharray="3 3"><path d="${rays.join('')}"/></g><g class="sz-lines" fill="none" stroke="#7a8ba2" stroke-width="1"><path d="${marks}"/><circle cx="${X(0)}" cy="${Y(0)}" r="${R(22.5)}"/></g>`;
+ return `<g class="sz-borders" fill="none" stroke="var(--fantasy-shotchart-court-border-stroke)" stroke-width=".8" stroke-dasharray="3 3"><path d="${rays.join('')}"/></g><g class="sz-lines" fill="none" stroke="var(--fantasy-shotchart-court-line-stroke)" stroke-width="1"><path d="${marks}"/><circle cx="${X(0)}" cy="${Y(0)}" r="${R(22.5)}"/></g>`;
 }
-export const ShotZones={BASELINE,LANE,FT,RIM_R,RIM_STRIP_Y,ARC,CORNER_X,CORNER_Y,DIAG_DEG,B_DEG,ZONES,SUBS,MAINS,COUNT,CELL,MAX_R,DOT_R,GAP_CUTS,LEVEL_NAMES,LEVEL_COLORS,NEUTRAL,LABELS,model,grade,teamRanks,levelColor,levelName,VIEW,SC,classify,rollup,cellOf,cellCenter,hexPts,bin,court,X,Y};
+export const ShotZones={BASELINE,LANE,FT,RIM_R,RIM_STRIP_Y,ARC,CORNER_X,CORNER_Y,DIAG_DEG,B_DEG,ZONES,SUBS,MAINS,COUNT,CELL,MAX_R,DOT_R,GAP_CUTS,LEVEL_NAMES,LABELS,model,grade,teamRanks,levelClass,levelName,VIEW,SC,classify,rollup,cellOf,cellCenter,hexPts,bin,court,X,Y};
