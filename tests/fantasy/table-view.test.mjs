@@ -43,7 +43,7 @@ test('no GP column, no subtitle or credits slot in the first column, no sub-line
     const { html, M } = await render({ entity });
     assert.ok(!/fw-gp|>GP<|fw-cr-slot|fw-sub|fw-cov|fw-tm/.test(html), entity);
     assert.ok(!M.cols.some(c => c.metric === 'gp'));
-    assert.match(html, /<th><button class="fw-name"[^>]*>[^<]+<\/button>/);
+    assert.match(html, /<th><div class="fw-namecell"><button class="fw-name"[^>]*>[^<]+<\/button>/);
   }
   const { html } = await render({ entity: 'players' });
   assert.match(html, /<small class="fw-who" title="[^"]*">[A-Z]{3} · [GFC]<\/small>/, 'second line of a player: team code (Euroleague Fantasy code) and position');

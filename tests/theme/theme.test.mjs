@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { buildThemeCss, themeVariables, readStyleSheets } from '../../site/theme/generate.mjs';
-import { sizeVariables } from '../../site/config/generate.mjs';
+import { sizeVariables, arrangementVariables } from '../../site/config/generate.mjs';
 
 
 const SITE = new URL('../../site/', import.meta.url);
@@ -51,7 +51,7 @@ test('the accent is defined once: no style sheet sets --accent', () => {
 
 test('every variable a style sheet or script reads exists in the theme (or is a layout variable)', () => {
   const sizes = JSON.parse(read('config/sizes.json'));
-  const defined = new Set([...themeVariables(theme).map(([k]) => k), ...sizeVariables(sizes).map(([k]) => k), '--color-accent']);
+  const defined = new Set([...themeVariables(theme).map(([k]) => k), ...sizeVariables(sizes).map(([k]) => k), ...arrangementVariables(JSON.parse(read('config/arrangement.json'))).map(([k]) => k), '--color-accent']);
   const layout = new Set(['--rows', '--gap', '--rowsT']);
   for (const f of [...styles, ...scripts.filter(f => !f.startsWith('theme/'))])
     for (const m of read(f).matchAll(/var\((--[\w-]+)/g)) assert.ok(defined.has(m[1]) || layout.has(m[1]) || m[1].endsWith('-'), `${f} reads ${m[1]}`);

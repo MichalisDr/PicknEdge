@@ -2,8 +2,8 @@
    or the shot chart, and the player's box scores. Pure UI over the data layer; the parts live in the files next to this one. */
 import { Data } from '../../core/data.js';
 import * as Windows from '../../core/windows.js';
-import { esc } from '../../core/html.js';
-import { teamCode, teamLogo } from '../../core/teams.js';
+import { teamLogo } from '../../core/teams.js';
+import { headerHtml, controlsHtml } from './card-header.js';
 import { layoutGrid } from './metric-grid.js';
 import { radar, teamRadar } from './radar.js';
 import { trendBlock } from './card-trend.js';
@@ -12,14 +12,6 @@ import { mount as mountShotChart } from '../shotchart/shotchart.js';
 
 let dialog = null, cs = null;   // the open dialog and the state of its card
 /* ---------- dialog ---------- */
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const dayLabel = iso => { const d = new Date(iso); return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()]; };
-/** "vs FBT ↗" (home) or "@ FBT ↗" (away): opens the opponent's team card. Empty when the team has no upcoming game. */
-function nextBtn(next, roster) {
-  if (!next) return '';
-  const label = (next.home ? 'vs ' : '@ ') + esc(teamCode(roster, next.opp)), tip = 'Open ' + (roster.teams[next.opp] || next.oppName || next.opp) + ' card · ' + dayLabel(next.date);
-  return `<button class="fw-next" data-next="${esc(next.opp)}" title="${esc(tip)}" aria-label="${esc(tip)}">${label}<span class="fw-arrow"> ↗</span></button>`;
-}
 async function draw() {
   if (!dialog) return;
   const root = dialog.querySelector('.fw-card'), mine = cs.token = (cs.token || 0) + 1;
@@ -42,8 +34,8 @@ async function draw() {
     else if (cs.mode === 'shooting') visual = '<div class="fw-shots" data-shots></div>';
     else if (players) visual = radar(cs, view, byId, roster, cs.cmp ? await Windows.view('players', cs) : null);
     else visual = teamRadar(cs, view, season);
-    root.innerHTML = `<header class="fw-identity">${logo ? `<img src="${esc(logo)}" alt="">` : ''}<div><small>${players ? 'PLAYER' : 'TEAM'} / FANTASY</small><h2>${esc(name)}</h2><p>${players ? esc(roster.teams[team] || team) + ' · ' + esc(row.pos || '—') : ''}</p></div>${nextBtn(next, roster)}${!players && cs.back ? `<button class="fw-next fw-back" data-back title="Back to ${esc(cs.back.name)}">← ${esc(cs.back.name)}</button>` : ''}</header>
-      <div class="fw-card-controls"><div class="fw-switch" role="group" aria-label="Sample window">${Windows.buttons(cs, 'data-card-window')}</div><b>${gp || 0} GP</b><div class="fw-switch" role="group" aria-label="Card view"><button data-card-view="shooting" aria-pressed="${cs.mode === 'shooting'}">Shooting</button></div></div>
+    root.innerHTML = `${headerHtml({ cs, players, name, team, row, roster, logo, next })}
+      ${controlsHtml({ cs, players, gp })}
       ${!gp && players ? '' : gridHtml}<div class="fw-visual">${visual}</div>${players ? '<div data-box></div>' : ''}`;
     Windows.wire(root, cs, () => { cs.selected = null; draw(); }, 'data-card-window');
     root.querySelector('[data-next]')?.addEventListener('click', e => { const t = e.currentTarget.dataset.next; open('teams', t, { win: cs.win, back: { id: cs.id, name }, previous: cs.previous }); });

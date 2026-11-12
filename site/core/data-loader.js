@@ -78,5 +78,8 @@ export function create({ base, fetch: fetchFn, importer, storage } = {}) {
     return n;
   }
 
-  return { manifest, metrics, view, windowGames, games, shots, roster, schedule, nextGame, engine, status, clearOldCaches, records, decode };
+  /* Credits (cr) and value of a player, from the official EuroLeague Fantasy site: null until that data exists. */
+  const fantasyInfo = () => null;
+
+  return { manifest, metrics, view, fantasyInfo, windowGames, games, shots, roster, schedule, nextGame, engine, status, clearOldCaches, records, decode };
 }

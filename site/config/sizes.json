@@ -650,7 +650,7 @@
     "toolbar": {
      "margin-bottom": "20px"
     },
-    "toolbar-right": {
+    "toolbar-end-group": {
      "gap": "12px",
      "width-below-650px": "100%"
     },

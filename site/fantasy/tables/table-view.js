@@ -4,6 +4,8 @@ import * as TM from '../../core/table-model.js';
 import { esc } from '../../core/html.js';
 import { fmt } from '../../core/format.js';
 import { teamCode } from '../../core/teams.js';
+import { Data } from '../../core/data.js';
+import { drawParts } from '../../core/arrangement.js';
 import { available as chartsAvailable } from '../gallery/charts.js';
 
 export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster, status, shown: rowsShown, firstW, sel, cur, avg, gallery, byId }) {
@@ -27,20 +29,39 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
     const v = isFew ? '<span class="fw-v fw-few">-</span>' : `<span class="fw-v${avgRow ? '' : tint(c, cell.value, r)}">${fmt(cell, m)}</span>`;
     return `<td class="${cls(c)}"><span class="fw-cell" ${avgRow ? '' : `data-id="${esc(key)}" data-metric="${c.metric}" ${c.chart ? 'data-chart ' : ''}tabindex="0"`}>${v}${r ? `<i class="fw-rk">#${r.position}</i>` : ''}</span></td>`;
   }).join('');
-  const body = rowsShown.map(r => `<tr><th><button class="fw-name" data-open="${esc(r.id)}" title="${esc(r.full)}">${esc(r.name)}</button>${teams ? '' : `<small class="fw-who" title="${esc(roster.teams[r.team] || r.team)}">${esc([teamCode(roster, r.team), r.pos].filter(Boolean).join(' · '))}</small>`}</th>${cells(r.id, false)}</tr>`).join('');
+  /* The name cell: its parts, their order and which show come from config/arrangement.json (fantasy.stat-table.name-cell). */
+  const nameCell = r => {
+    const info = teams ? null : Data.fantasyInfo(r.id);
+    return drawParts('fantasy.stat-table.name-cell', {
+      'name': () => `<button class="fw-name" data-open="${esc(r.id)}" title="${esc(r.full)}">${esc(r.name)}</button>`,
+      'team-and-position': () => `<small class="fw-who" title="${esc(roster.teams[r.team] || r.team)}">${esc([teamCode(roster, r.team), r.pos].filter(Boolean).join(' · '))}</small>`,
+      'cr-box': () => info?.cr == null ? '' : `<span class="fw-cr-box">${esc(info.cr)}</span>`,
+      'value-chip': () => info?.value == null ? '' : `<span class="fw-value-chip">${esc(info.value)}</span>`,
+    }, { players: !teams, 'when-data': info !== null }).map(p => p.html).join('');
+  };
+  const body = rowsShown.map(r => `<tr><th><div class="fw-namecell">${nameCell(r)}</div></th>${cells(r.id, false)}</tr>`).join('');
   const filters = !teams && state.filters ? `<div class="fw-filters" role="dialog" aria-label="Filters">
     <label>Team<select data-filter="team"><option value="">All</option>${Object.entries(roster.teams).sort((a, b) => a[1].localeCompare(b[1])).map(([c, n]) => `<option value="${c}" ${c === state.team ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
     <label>MIN ≥<input data-filter="minMin" type="number" min="0" value="${state.minMin}"></label>
     <label>GP ≥<input data-filter="minGp" type="number" min="0" value="${state.minGp}"></label>
     <label class="fw-check"><input data-filter="showAll" type="checkbox" ${state.showAll ? 'checked' : ''}> Show players below the form thresholds</label></div>` : '';
   const info = sel.length ? `<div class="fw-tinfo">Combined rank: ${esc(sel.map(id => cols.find(c => c.metric === id).label).join(' + '))} (mean percentile). Click a header to clear.</div>` : '';
+  /* The toolbar: its parts, their order, which show and which sit at the far end come from config/arrangement.json (fantasy.stat-table.window-row, .toolbar). */
+  const show = { players: !teams, teams, 'charts-available': hasCharts };
+  const windowRow = drawParts('fantasy.stat-table.window-row', { 'window-buttons': () => `<div class="fw-switch" role="group" aria-label="Sample window">${Windows.buttons(state)}</div>` }, show).map(p => p.html).join('');
+  const toolbarParts = drawParts('fantasy.stat-table.toolbar', {
+    'view-button': () => `<div class="fw-switch" role="group" aria-label="Table view"><button data-view-toggle aria-pressed="${state.view === 'shooting'}">Shooting</button></div>`,
+    'position-buttons': () => `<div class="fw-switch" aria-label="Player position">${['ALL', 'G', 'F', 'C'].map(v => `<button data-position="${v}" aria-pressed="${v === state.position}">${v === 'ALL' ? 'All' : v}</button>`).join('')}</div>`,
+    'mode-tabs': () => `<div class="fw-switch" role="tablist">${['table', 'charts'].map(v => `<button data-fwmode="${v}" role="tab" aria-selected="${state.mode === v}">${v === 'table' ? 'Table' : 'Charts'}</button>`).join('')}</div>`,
+    'filters-button': () => `<button class="fw-filter-btn" data-filters aria-expanded="${state.filters}">Filters</button>`,
+    'search': () => `<input type="search" aria-label="Search Fantasy" placeholder="Search…" value="${esc(state.query)}">`,
+  }, show);
+  const toolbar = toolbarParts.filter(p => p.align !== 'end').map(p => p.html).join('') + `<div class="fw-right">${toolbarParts.filter(p => p.align === 'end').map(p => p.html).join('')}</div>`;
   return `<section class="fantasy-stats fw-workbench">
     <div class="fw-heading"><div><div class="eyebrow">FANTASY / ${teams ? 'TEAMS' : 'PLAYERS'}</div><h1>${title}</h1></div><span role="status">${esc(status)}</span></div>
-    <div class="fw-periods"><div class="fw-switch" role="group" aria-label="Sample window">${Windows.buttons(state)}</div></div>
+    <div class="fw-periods">${windowRow}</div>
     <div class="fw-toolbar">
-      <div class="fw-switch" role="group" aria-label="Table view"><button data-view-toggle aria-pressed="${state.view === 'shooting'}">Shooting</button></div>
-      ${teams ? '' : `<div class="fw-switch" aria-label="Player position">${['ALL', 'G', 'F', 'C'].map(v => `<button data-position="${v}" aria-pressed="${v === state.position}">${v === 'ALL' ? 'All' : v}</button>`).join('')}</div>`}
-      <div class="fw-right">${hasCharts ? `<div class="fw-switch" role="tablist">${['table', 'charts'].map(v => `<button data-fwmode="${v}" role="tab" aria-selected="${state.mode === v}">${v === 'table' ? 'Table' : 'Charts'}</button>`).join('')}</div>` : ''}${teams ? '' : `<button class="fw-filter-btn" data-filters aria-expanded="${state.filters}">Filters</button>`}<input type="search" aria-label="Search Fantasy" placeholder="Search…" value="${esc(state.query)}"></div>
+      ${toolbar}
       ${filters}
     </div>
     ${gallery ? '' : info}${gallery}<div class="fw-tooltip" role="tooltip" hidden></div><div class="sz-pop fw-pop" role="status" hidden></div><div class="fw-table-wrap" ${gallery ? 'hidden' : ''}><table class="fw-t" style="min-width:${totalW}px"><colgroup><col style="width:${firstW}px">${cols.map(() => '<col>').join('')}</colgroup><thead><tr><th>${teams ? 'Team' : 'Player'}</th>${header}</tr></thead>

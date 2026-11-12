@@ -11,7 +11,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { buildSizesCss, sizeVariables } from '../../site/config/generate.mjs';
+import { buildSizesCss, sizeVariables, arrangementVariables } from '../../site/config/generate.mjs';
 import { themeVariables } from '../../site/theme/generate.mjs';
 
 const SITE = new URL('../../site/', import.meta.url);
@@ -62,7 +62,7 @@ test('inline styles in scripts are computed geometry only (no literal px)', () =
 });
 
 test('every variable a style sheet reads exists in theme.json or sizes.json (or is set by a script)', () => {
-  const defined = new Set([...themeVariables(theme).map(([k]) => k), ...sizeVariables(sizes).map(([k]) => k), '--color-accent']);
+  const defined = new Set([...themeVariables(theme).map(([k]) => k), ...sizeVariables(sizes).map(([k]) => k), ...arrangementVariables(JSON.parse(read('config/arrangement.json'))).map(([k]) => k), '--color-accent']);
   for (const f of styles) for (const m of read(f).matchAll(/var\((--[\w-]+)/g)) assert.ok(defined.has(m[1]) || ['--rows', '--gap', '--rowsT'].includes(m[1]), `${f} reads ${m[1]}`);
 });
 
