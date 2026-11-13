@@ -1,0 +1,18 @@
+/* The look of the name finder page itself (not of the site): general colours only. */
+*{box-sizing:border-box}
+body{margin:0;background:var(--color-bg);color:var(--color-text);font:14px/1.5 var(--font-ui);height:100vh;display:flex;flex-direction:column}
+.ed-bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--color-line);background:var(--color-panel)}
+.ed-bar label{color:var(--color-muted);font-size:13px}
+.ed-bar select{background:var(--color-bg);color:var(--color-text);border:1px solid var(--color-border-control);border-radius:6px;padding:5px 8px;font:inherit}
+.ed-check{display:flex;align-items:center;gap:6px}
+.ed-main{flex:1;min-height:0;display:grid;grid-template-columns:1fr 420px}
+.ed-screen{overflow:auto;padding:12px;background:var(--color-surface-deep)}
+#ed-frame{display:block;margin:0 auto;height:calc(100% - 4px);min-height:600px;border:1px solid var(--color-line);background:var(--color-bg)}
+.ed-side{overflow:auto;border-left:1px solid var(--color-line);padding:14px 16px;background:var(--color-panel)}
+.ed-side h2{font-size:16px;margin:0 0 6px;overflow-wrap:anywhere}
+.ed-hint{color:var(--color-muted);font-size:12px}
+.ed-row{padding:6px 0;border-bottom:1px solid var(--color-line)}
+.ed-name{font-size:12px;overflow-wrap:anywhere}
+.ed-sub{color:var(--color-muted);font-size:11px;overflow-wrap:anywhere}
+.ed-sub b{color:var(--color-text);font-weight:600}
+@media(max-width:900px){.ed-main{grid-template-columns:1fr}.ed-side{border-left:0;border-top:1px solid var(--color-line)}}

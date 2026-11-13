@@ -1,0 +1,77 @@
+{
+ "note": "Arrangement of three components, with the same names as theme.json and sizes.json (screen.component.part). `parts` is the order in which the parts appear; a part is drawn when its `show` condition holds and it has something to show, so optional parts (cr-box, value-chip) draw nothing while there is no data. `align: end` puts a part in the group at the far end of the row. direction, wrap, align, justify and push of a container, and `self` (own alignment) of a part, become CSS variables in arrangement.css (node site/config/generate.mjs). show: always | players | teams | charts-available | when-data | team-from-player.",
+ "component": {
+  "fantasy": {
+   "stat-table": {
+    "window-row": {
+     "parts": [
+      { "name": "window-buttons", "show": "always" }
+     ]
+    },
+    "toolbar": {
+     "direction": "row",
+     "wrap": "wrap",
+     "align": "center",
+     "justify": "start",
+     "parts": [
+      { "name": "view-button", "show": "always" },
+      { "name": "position-buttons", "show": "players" },
+      { "name": "mode-tabs", "show": "charts-available", "align": "end" },
+      { "name": "filters-button", "show": "players", "align": "end" },
+      { "name": "search", "show": "always", "align": "end" }
+     ]
+    },
+    "toolbar-end-group": {
+     "direction": "row",
+     "wrap": "wrap",
+     "align": "center",
+     "push": "end"
+    },
+    "name-cell": {
+     "direction": "column",
+     "align": "stretch",
+     "parts": [
+      { "name": "name", "show": "always", "self": "start" },
+      { "name": "team-and-position", "show": "players" },
+      { "name": "cr-box", "show": "when-data" },
+      { "name": "value-chip", "show": "when-data" }
+     ]
+    }
+   },
+   "player-card": {
+    "header": {
+     "direction": "row",
+     "wrap": "wrap",
+     "align": "center",
+     "justify": "start",
+     "parts": [
+      { "name": "logo", "show": "always" },
+      { "name": "title", "show": "always" },
+      { "name": "next-game-button", "show": "players" },
+      { "name": "back-button", "show": "team-from-player" },
+      { "name": "cr-box", "show": "when-data" },
+      { "name": "value-chip", "show": "when-data" }
+     ]
+    },
+    "header-title": {
+     "parts": [
+      { "name": "kicker", "show": "always" },
+      { "name": "name", "show": "always" },
+      { "name": "team-line", "show": "always" }
+     ]
+    },
+    "controls": {
+     "direction": "row",
+     "wrap": "wrap",
+     "align": "center",
+     "justify": "space-between",
+     "parts": [
+      { "name": "window-buttons", "show": "always" },
+      { "name": "games-played", "show": "always" },
+      { "name": "view-button", "show": "always" }
+     ]
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pick n Edge · Name finder</title>
+<link rel="stylesheet" href="theme.css"><link rel="stylesheet" href="editor.css">
+</head><body>
+<header class="ed-bar">
+  <strong>Name finder</strong>
+  <label>Screen <select id="ed-route"></select></label>
+  <label>Width <select id="ed-width"><option value="1440">1440 px</option><option value="1280">1280 px</option><option value="390">390 px</option></select></label>
+  <label class="ed-check"><input type="checkbox" id="ed-pick" checked> Click an element to see its names</label>
+</header>
+<main class="ed-main">
+  <section class="ed-screen"><iframe id="ed-frame" title="Pick n Edge"></iframe></section>
+  <aside class="ed-side">
+    <h2 id="ed-title">Nothing selected</h2>
+    <p class="ed-hint" id="ed-hint">Turn on "Click an element", then click anything on the screen. You see the names of its colours, appearance sizes (theme.json) and layout sizes (config/sizes.json), their current values, and the selectors that use them. Say the name in a chat to change that one value.</p>
+    <div id="ed-element"></div>
+  </aside>
+</main>
+<script type="module" src="editor.js"></script>
+</body></html>
