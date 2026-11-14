@@ -37,9 +37,9 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
 
 export function controlsHtml({ cs, players, gp }) {
   const parts = drawParts('fantasy.player-card.controls', {
-    'window-buttons': () => `<div class="fw-switch" role="group" aria-label="Sample window">${Windows.buttons(cs, 'data-card-window')}</div>`,
+    'window-buttons': () => `<div class="fw-switch" role="group" aria-label="Sample window" data-part="fantasy.player-card.window-buttons">${Windows.buttons(cs, 'data-card-window')}</div>`,
     'games-played': () => `<b>${gp || 0} GP</b>`,
-    'view-button': () => `<div class="fw-switch" role="group" aria-label="Card view"><button data-card-view="shooting" aria-pressed="${cs.mode === 'shooting'}">Shooting</button></div>`,
+    'view-button': () => `<div class="fw-switch" role="group" aria-label="Card view" data-part="fantasy.player-card.view-buttons"><button data-card-view="shooting" aria-pressed="${cs.mode === 'shooting'}">Shooting</button></div>`,
   }, { players });
   return `<div class="fw-card-controls">${parts.map(p => p.html).join('')}</div>`;
 }

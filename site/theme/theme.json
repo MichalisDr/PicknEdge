@@ -695,6 +695,20 @@
      "font-size": "17px",
      "text": "#e7edf5"
     },
+    "switch-button": {
+     "font-size": "13px",
+     "radius": "5px",
+     "text": "#b8c7da"
+    },
+    "switch-button-selected": {
+     "background": "{semantic.accent-fantasy}",
+     "text": "{semantic.white}"
+    },
+    "switch-buttons": {
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px"
+    },
     "tile": {
      "background": "#182335",
      "border": "#2b3a4f",
@@ -777,6 +791,20 @@
     "trend-season": {
      "line": "{semantic.text-dim}"
     },
+    "view-button": {
+     "font-size": "13px",
+     "radius": "5px",
+     "text": "#b8c7da"
+    },
+    "view-button-selected": {
+     "background": "{semantic.accent-fantasy}",
+     "text": "{semantic.white}"
+    },
+    "view-buttons": {
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px"
+    },
     "visual-section": {
      "border-top": "{semantic.border-soft}",
      "border-top-width": "1px"
@@ -790,6 +818,20 @@
     },
     "window-backdrop": {
      "background": "#02060dc9"
+    },
+    "window-button": {
+     "font-size": "13px",
+     "radius": "5px",
+     "text": "#b8c7da"
+    },
+    "window-button-selected": {
+     "background": "{semantic.accent-fantasy}",
+     "text": "{semantic.white}"
+    },
+    "window-buttons": {
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px"
     }
    },
    "shot-chart": {
@@ -1045,6 +1087,34 @@
     },
     "value-good": {
      "text": "{semantic.eval-good-text}"
+    },
+    "view-button": {
+     "font-size": "13px",
+     "radius": "5px",
+     "text": "#b8c7da"
+    },
+    "view-button-selected": {
+     "background": "{semantic.accent-fantasy}",
+     "text": "{semantic.white}"
+    },
+    "view-buttons": {
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px"
+    },
+    "window-button": {
+     "font-size": "13px",
+     "radius": "5px",
+     "text": "#b8c7da"
+    },
+    "window-button-selected": {
+     "background": "{semantic.accent-fantasy}",
+     "text": "{semantic.white}"
+    },
+    "window-buttons": {
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px"
     }
    }
   }

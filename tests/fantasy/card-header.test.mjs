@@ -60,7 +60,7 @@ test('GP is in the controls row between the window group and the Shooting group,
   const { root, tick } = setup(null);
   open('players', 'P1', {}); await tick();
   assert.ok(!header(root.innerHTML).includes('GP'));
-  assert.match(controls(root.innerHTML), /aria-label="Sample window">.*?<\/div><b>0 GP<\/b><div class="fw-switch" role="group" aria-label="Card view"/);
+  assert.match(controls(root.innerHTML), /aria-label="Sample window"[^>]*>.*?<\/div><b>0 GP<\/b><div class="fw-switch" role="group" aria-label="Card view"/);
 });
 
 test('player card: "vs FBT ↗" button with tooltip, opens the team card; hidden without an upcoming game', async () => {

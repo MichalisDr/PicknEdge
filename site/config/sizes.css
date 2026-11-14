@@ -207,6 +207,9 @@ body{
 --fantasy-player-card-summary-boxes-grid-template-columns:repeat(3,minmax(0,1fr));
 --fantasy-player-card-summary-boxes-grid-template-columns-below-560px:1fr;
 --fantasy-player-card-summary-boxes-margin:14px 0;
+--fantasy-player-card-switch-button-padding:8px 12px;
+--fantasy-player-card-switch-buttons-gap:4px;
+--fantasy-player-card-switch-buttons-padding:4px;
 --fantasy-player-card-tile-padding:13px;
 --fantasy-player-card-tile-padding-below-650px:10px;
 --fantasy-player-card-tile-grid-grid-template-columns:repeat(24,minmax(0,1fr));
@@ -231,12 +234,18 @@ body{
 --fantasy-player-card-trend-chart-small-plot-height:130;
 --fantasy-player-card-trend-chart-small-plot-width:300;
 --fantasy-player-card-trend-chart-width:100%;
+--fantasy-player-card-view-button-padding:8px 12px;
+--fantasy-player-card-view-buttons-gap:4px;
+--fantasy-player-card-view-buttons-padding:4px;
 --fantasy-player-card-visual-section-margin-top:24px;
 --fantasy-player-card-visual-section-padding-top:18px;
 --fantasy-player-card-window-max-height:92vh;
 --fantasy-player-card-window-padding:26px;
 --fantasy-player-card-window-padding-below-650px:18px;
 --fantasy-player-card-window-width:min(940px,96vw);
+--fantasy-player-card-window-button-padding:8px 12px;
+--fantasy-player-card-window-buttons-gap:4px;
+--fantasy-player-card-window-buttons-padding:4px;
 --fantasy-shot-chart-assist-button-padding-below-480px:6px 8px;
 --fantasy-shot-chart-assist-buttons-max-width:100%;
 --fantasy-shot-chart-buttons-divider-margin:0 4px;
@@ -306,5 +315,11 @@ body{
 --fantasy-stat-table-toolbar-search-field-width:190px;
 --fantasy-stat-table-toolbar-search-field-width-below-650px:100%;
 --fantasy-stat-table-value-cell-gap:2px;
+--fantasy-stat-table-view-button-padding:8px 12px;
+--fantasy-stat-table-view-buttons-gap:4px;
+--fantasy-stat-table-view-buttons-padding:4px;
+--fantasy-stat-table-window-button-padding:8px 12px;
+--fantasy-stat-table-window-buttons-gap:4px;
+--fantasy-stat-table-window-buttons-padding:4px;
 --fantasy-stat-table-window-row-margin-bottom:12px
 }
