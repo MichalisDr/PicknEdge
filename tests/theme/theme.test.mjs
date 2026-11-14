@@ -17,7 +17,7 @@ const walk = (dir, ext, out = []) => {
 };
 const themeText = read('theme/theme.json'), theme = JSON.parse(themeText);
 const components = t => Object.entries(t.component).flatMap(([a, cs]) => Object.entries(cs).flatMap(([c, ps]) => Object.entries(ps).flatMap(([p, props]) => Object.entries(props).map(([k, value]) => ({ key: `${a}.${c}.${p}.${k}`, cssVar: `--${a}-${c}-${p}-${k}`, value })))));
-const styles = walk('', ['.css']).filter(f => f !== 'theme/theme.css'), scripts = walk('', ['.js']);
+const styles = walk('', ['.css']).filter(f => f !== 'theme/theme.css'), scripts = walk('', ['.js']), icons = walk('assets/icons/', ['.svg']);
 const COLOUR = /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/;   // in scripts: hex and rgb(a) / hsl(a)
 const NAMED = /(?<![-\w])(?:white|black|red|green|blue|gray|grey|orange|yellow|purple|pink)(?![-\w])/;   // in style sheets: also colour names
 const strip = s => s.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -29,6 +29,11 @@ test('theme.css is exactly what theme.json generates', async () => {
 test('no raw colours in any style sheet or script (only variables from the theme)', () => {
   for (const f of styles) assert.ok(!COLOUR.test(strip(read(f))) && !NAMED.test(strip(read(f)).replace(/white-space/g, '')), f + ' has a raw colour');
   for (const f of scripts) assert.ok(!COLOUR.test(strip(read(f)).replace(/^\s*\/\/.*$/gm, '')), f + ' has a raw colour');
+  for (const f of icons) assert.ok(!COLOUR.test(read(f)) && !NAMED.test(read(f).replace(/<!--[\s\S]*?-->/g, '')), f + ' has a raw colour: icons use currentColor only');
+});
+
+test('icons: every SVG in assets/icons colours itself with currentColor (or none), nothing else', () => {
+  for (const f of icons) for (const m of read(f).matchAll(/\b(fill|stroke|color|stop-color)\s*[=:]\s*["']?([^"';\s>]+)/g)) assert.ok(['currentColor', 'none', 'inherit'].includes(m[2]), `${f}: ${m[1]}=${m[2]}`);
 });
 
 test('no raw fonts: families come from the theme', () => {
