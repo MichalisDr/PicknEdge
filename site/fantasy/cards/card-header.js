@@ -58,7 +58,7 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
     'header-actions': () => actionsHtml({ cs, next, roster }, show),
     'cr-box': () => info?.cr == null ? '' : `<span class="fw-cr-box">${esc(info.cr)}</span>`,
     'value-chip': () => info?.value == null ? '' : `<span class="fw-value-chip">${esc(info.value)}</span>`,
-    'value-sparkline': () => sparklineHtml(info?.sparkline),
+    'value-sparkline': () => sparklineHtml(info?.valueSeries),
   }, show);
   return `<header class="fw-identity">${parts.map(p => p.html).join('')}</header>`;
 }
