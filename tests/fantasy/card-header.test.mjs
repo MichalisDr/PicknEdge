@@ -30,13 +30,15 @@ test('next game: earliest confirmed game of the team, home and away; none when n
 /* ---- the card, with stubbed data and a fake DOM ---- */
 const root = { innerHTML: '', buttons: {},
   querySelector(sel) {
+    if (sel === '[data-close-slot]') return this.innerHTML.includes('data-close-slot') ? { replaceWith: el => { assert.equal(el, closeBtn); closeAt.where = 'header'; } } : null;
     const m = sel.match(/^\[(data-next|data-back)\]$/);
     if (!m || !this.innerHTML.includes(m[1])) return null;
     const dataset = { next: (this.innerHTML.match(/data-next="([^"]*)"/) || [])[1] };
     return (this.buttons[m[1]] = { dataset, addEventListener: (t, f) => { this.buttons[m[1]].fire = () => f({ currentTarget: { dataset } }); } });
   },
   querySelectorAll: () => [], textContent: '' };
-const dlg = { className: '', querySelector: s => (s === '.fw-card' ? root : {}), showModal() {}, close() {}, remove() {} };
+const closeBtn = {}, closeAt = { where: 'dialog' };   // the single Close button, and where it sits
+const dlg = { className: '', querySelector: s => (s === '.fw-card' ? root : s === '.fw-close' ? closeBtn : {}), prepend: el => { assert.equal(el, closeBtn); closeAt.where = 'dialog'; }, showModal() {}, close() {}, remove() {} };
 globalThis.document = { createElement: () => dlg, body: { append() {} }, activeElement: null };
 globalThis.window = { addEventListener() {} };
 globalThis.fetch = async () => ({ ok: true, json: async () => ({ cols: 24, layouts: { 'team.profile': { rows: 1, boxes: [], lines: [] } } }) });
@@ -60,7 +62,7 @@ test('GP is in the controls row between the window group and the Shooting group,
   const { root, tick } = setup(null);
   open('players', 'P1', {}); await tick();
   assert.ok(!header(root.innerHTML).includes('GP'));
-  assert.match(controls(root.innerHTML), /aria-label="Sample window">.*?<\/div><b>0 GP<\/b><div class="fw-switch" role="group" aria-label="Card view"/);
+  assert.match(controls(root.innerHTML), /aria-label="Sample window"[^>]*>.*?<\/div><b>0 GP<\/b><div class="fw-switch" role="group" aria-label="Card view"/);
 });
 
 test('player card: "vs FBT ↗" button with tooltip, opens the team card; hidden without an upcoming game', async () => {
@@ -99,4 +101,40 @@ test('the button class is styled: the stylesheet has rules for the next / back b
   const css = siteFile('theme/fantasy/workbench.css');
   assert.match(css, /\.fw-next[ ,{:]/);
   assert.match(css, /\.fw-next \.fw-arrow\{/);
+});
+
+test('a card opens in the mode it is given (profile by default); next opponent and Back keep working from it', async () => {
+  const pressed = html => /data-card-view="shooting" aria-pressed="(true|false)"/.exec(html)[1];
+  const a = setup(GAME);
+  open('players', 'P1', {}); await a.tick();
+  assert.equal(pressed(a.root.innerHTML), 'false', 'profile when no mode is supplied');
+  const b = setup(GAME);
+  open('players', 'P1', { win: 'l5', mode: 'shooting' }); await b.tick();
+  assert.equal(pressed(b.root.innerHTML), 'true');
+  assert.match(b.root.innerHTML, /data-card-window="l5" aria-pressed="true"/, 'the window is kept together with the mode');
+  b.root.buttons['data-next'].fire(); await b.tick();
+  assert.ok(b.root.innerHTML.includes('TEAM / FANTASY') && b.root.innerHTML.includes('data-back'));
+  b.root.buttons['data-back'].fire(); await b.tick();
+  assert.ok(b.root.innerHTML.includes('PLAYER / FANTASY'));
+  const c = setup(GAME);
+  open('teams', 'DDD', { mode: 'nonsense' }); await c.tick();
+  assert.ok(c.root.innerHTML.includes('TEAM / FANTASY'));
+});
+
+test('Close is one button: in the dialog while loading and when the card fails, in the header actions once drawn; Escape and backdrop click close too', async () => {
+  const { root, tick } = setup(GAME);
+  closeAt.where = 'dialog'; delete closeBtn.onclick;
+  open('players', 'P1', {});
+  assert.equal(closeAt.where, 'dialog', 'while loading');
+  assert.equal(typeof closeBtn.onclick, 'function');
+  await tick();
+  assert.equal(closeAt.where, 'header', 'once the card is drawn');
+  assert.equal(root.innerHTML.split('data-close-slot').length - 1, 1);
+  const failing = setup(GAME);
+  Data.view = async () => { throw new Error('boom'); };
+  closeAt.where = 'dialog'; open('players', 'P1', {}); await failing.tick();
+  assert.match(root.textContent, /Could not load the card/);
+  assert.equal(closeAt.where, 'dialog', 'on an error');
+  assert.equal(typeof dlg.oncancel, 'function'); assert.equal(typeof dlg.onclick, 'function');
+  let prevented = false; dlg.oncancel({ preventDefault() { prevented = true; } }); assert.ok(prevented, 'Escape is handled by the card');
 });

@@ -46,16 +46,33 @@
      "justify": "start",
      "parts": [
       { "name": "logo", "show": "always" },
+      { "name": "header-portrait", "show": "players" },
       { "name": "title", "show": "always" },
+      { "name": "header-actions", "show": "always" },
+      { "name": "cr-box", "show": "when-data" },
+      { "name": "value-chip", "show": "when-data" },
+      { "name": "value-sparkline", "show": "when-data" }
+     ]
+    },
+    "header-portrait": {
+     "parts": [
+      { "name": "header-portrait-fade", "show": "always" }
+     ]
+    },
+    "header-actions": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "parts": [
       { "name": "next-game-button", "show": "players" },
       { "name": "back-button", "show": "team-from-player" },
-      { "name": "cr-box", "show": "when-data" },
-      { "name": "value-chip", "show": "when-data" }
+      { "name": "close-button", "show": "always" }
      ]
     },
     "header-title": {
      "parts": [
       { "name": "kicker", "show": "always" },
+      { "name": "header-given-name", "show": "players" },
       { "name": "name", "show": "always" },
       { "name": "team-line", "show": "always" }
      ]

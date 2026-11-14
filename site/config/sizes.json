@@ -373,6 +373,13 @@
      "margin-bottom": "22px",
      "padding-right": "44px"
     },
+    "header-actions": {
+     "gap": "16px",
+     "gap-below-650px": "10px"
+    },
+    "header-given-name": {
+     "margin": "0 0 2px"
+    },
     "header-logo": {
      "height": "46px",
      "width": "46px",
@@ -380,6 +387,15 @@
     },
     "header-name": {
      "margin": "3px 0"
+    },
+    "header-portrait": {
+     "height": "56px",
+     "position": "relative",
+     "width": "56px"
+    },
+    "header-portrait-fade": {
+     "position": "absolute",
+     "width": "24px"
     },
     "large-tile": {
      "padding": "14px 13px"
@@ -446,6 +462,13 @@
      "grid-template-columns-below-560px": "1fr",
      "margin": "14px 0"
     },
+    "switch-button": {
+     "padding": "8px 12px"
+    },
+    "switch-buttons": {
+     "gap": "4px",
+     "padding": "4px"
+    },
     "tile": {
      "padding": "13px",
      "padding-below-650px": "10px"
@@ -490,6 +513,17 @@
      "small-plot-width": 300,
      "width": "100%"
     },
+    "value-sparkline": {
+     "height": "18px",
+     "width": "48px"
+    },
+    "view-button": {
+     "padding": "8px 12px"
+    },
+    "view-buttons": {
+     "gap": "4px",
+     "padding": "4px"
+    },
     "visual-section": {
      "margin-top": "24px",
      "padding-top": "18px"
@@ -499,6 +533,13 @@
      "padding": "26px",
      "padding-below-650px": "18px",
      "width": "min(940px,96vw)"
+    },
+    "window-button": {
+     "padding": "8px 12px"
+    },
+    "window-buttons": {
+     "gap": "4px",
+     "padding": "4px"
     }
    },
    "shot-chart": {
@@ -660,6 +701,20 @@
     },
     "value-cell": {
      "gap": "2px"
+    },
+    "view-button": {
+     "padding": "8px 12px"
+    },
+    "view-buttons": {
+     "gap": "4px",
+     "padding": "4px"
+    },
+    "window-button": {
+     "padding": "8px 12px"
+    },
+    "window-buttons": {
+     "gap": "4px",
+     "padding": "4px"
     },
     "window-row": {
      "margin-bottom": "12px"

@@ -11,6 +11,21 @@ import { boxScores } from './box-scores.js';
 import { mount as mountShotChart } from '../shotchart/shotchart.js';
 
 let dialog = null, cs = null;   // the open dialog and the state of its card
+/* Close is one button for the whole life of the dialog (Escape, backdrop click and focus return are wired once in open()). It sits in the dialog while the card
+   loads or fails, and moves into the header's action group (the slot the header draws) once the card is drawn; it goes back to the dialog before the card is redrawn. */
+function parkClose() {
+  if (!cs?.docked) return;
+  const close = cs.close, had = document.activeElement === close;
+  dialog.prepend(close); cs.docked = false;
+  if (had) close.focus();
+}
+function dockClose(root) {
+  const slot = root.querySelector('[data-close-slot]');
+  if (!slot) return;
+  const close = cs.close, had = document.activeElement === close;
+  slot.replaceWith(close); cs.docked = true;
+  if (had) close.focus();
+}
 /* ---------- dialog ---------- */
 async function draw() {
   if (!dialog) return;
@@ -21,7 +36,7 @@ async function draw() {
     const next = kind === 'players' && season.row(cs.id) ? await Data.nextGame(season.row(cs.id).team).catch(() => null) : null;
     if (mine !== cs.token || !dialog) return;
     const row = view.row(cs.id) || season.row(cs.id);
-    if (!row) { root.textContent = 'No data available.'; return; }
+    if (!row) { parkClose(); root.textContent = 'No data available.'; return; }
     const players = kind === 'players', gp = players ? view.get(cs.id, 'gp').value : view.row(cs.id)?.games;
     const team = players ? row.team : cs.id, name = players ? roster.players[cs.id]?.name || cs.id : roster.teams[cs.id] || cs.id;
     const logo = teamLogo(roster, team);
@@ -34,9 +49,11 @@ async function draw() {
     else if (cs.mode === 'shooting') visual = '<div class="fw-shots" data-shots></div>';
     else if (players) visual = radar(cs, view, byId, roster, cs.cmp ? await Windows.view('players', cs) : null);
     else visual = teamRadar(cs, view, season);
+    parkClose();
     root.innerHTML = `${headerHtml({ cs, players, name, team, row, roster, logo, next })}
       ${controlsHtml({ cs, players, gp })}
       ${!gp && players ? '' : gridHtml}<div class="fw-visual">${visual}</div>${players ? '<div data-box></div>' : ''}`;
+    dockClose(root);
     Windows.wire(root, cs, () => { cs.selected = null; draw(); }, 'data-card-window');
     root.querySelector('[data-next]')?.addEventListener('click', e => { const t = e.currentTarget.dataset.next; open('teams', t, { win: cs.win, back: { id: cs.id, name }, previous: cs.previous }); });
     root.querySelector('[data-back]')?.addEventListener('click', () => open('players', cs.back.id, { win: cs.win, previous: cs.previous }));
@@ -50,19 +67,21 @@ async function draw() {
     if (shots && (gp || !players)) mountShotChart(shots, { kind, id: cs.id, team, spec: Windows.spec(cs), view, teamsView }, cs.shot);
     const box = root.querySelector('[data-box]');
     if (box && players) boxScores(cs).then(h => { if (mine === cs.token && box.isConnected) box.innerHTML = h; });
-  } catch (e) { root.textContent = 'Could not load the card: ' + e.message; }
+  } catch (e) { parkClose(); root.textContent = 'Could not load the card: ' + e.message; }
 }
 
+/** Open a card. from: { win (sample window, default season), mode ('profile' | 'shooting', default profile), back, previous }. */
 export function open(entity, id, from = {}) {
   close();
   const previous = from.previous || document.activeElement;
-  cs = { entity, id, previous, back: from.back || null, win: from.win || 'season', mode: 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
+  cs = { entity, id, previous, back: from.back || null, win: from.win || 'season', mode: from.mode === 'shooting' ? 'shooting' : 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
   dialog = document.createElement('dialog');
   dialog.className = 'fw-dialog';
   dialog.innerHTML = '<button class="fw-close" aria-label="Close card">×</button><div class="fw-card"><p class="fw-empty" role="status">Loading…</p></div>';
   document.body.append(dialog);
   const done = () => { close(); previous?.focus?.(); };
-  dialog.querySelector('.fw-close').onclick = done;
+  cs.close = dialog.querySelector('.fw-close');
+  cs.close.onclick = done;
   dialog.oncancel = e => { e.preventDefault(); done(); };
   dialog.onclick = e => { if (e.target === dialog) done(); };
   dialog.showModal();

@@ -92,3 +92,36 @@ test('every part named in the config has a name in the same style as theme.json 
   for (const [screen, comps] of Object.entries(ARRANGEMENT.component)) for (const [comp, parts] of Object.entries(comps)) for (const [part, entry] of Object.entries(parts))
     for (const p of entry.parts || []) assert.match(p.name, /^[a-z][a-z-]*$/, `${screen}.${comp}.${part}: ${p.name}`);
 });
+
+test('with no fantasy info (null) there is no cr box, no value chip, no sparkline, in the header and in the table', async () => {
+  assert.equal(Data.fantasyInfo('anyone'), null);
+  const ctx = { cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: { pos: 'G' }, roster: { teams: { AAA: 'Alpha' }, players: {} }, logo: null, next: null };
+  for (const html of [headerHtml(ctx), await table('players'), await table('teams')]) assert.ok(!/fw-cr-box|fw-value-chip|value-sparkline/.test(html));
+});
+
+test('optional header parts (portrait, given name, family name, sparkline) draw nothing without data; the display name and the logo stay', () => {
+  const base = { cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: { pos: 'G' }, logo: 'assets/logos/x.png', next: null };
+  const bare = headerHtml({ ...base, roster: { teams: { AAA: 'Alpha' }, players: { P1: { name: 'Player One' } } } });
+  assert.ok(!/header-portrait|header-given-name|value-sparkline/.test(bare));
+  assert.ok(bare.includes('<h2>Player One</h2>') && bare.includes('<img src="assets/logos/x.png"'), 'display name and team logo fallbacks');
+  const onlyFirst = headerHtml({ ...base, roster: { teams: { AAA: 'Alpha' }, players: { P1: { first: 'Player' } } } });
+  assert.ok(!onlyFirst.includes('header-given-name') && onlyFirst.includes('<h2>Player One</h2>'), 'a given name alone is not used: the names are not derived');
+  const full = headerHtml({ ...base, roster: { teams: { AAA: 'Alpha' }, players: { P1: { first: 'Player', last: 'One', portrait: 'assets/p/1.png' } } } });
+  assert.ok(inOrder(at(full, ['data-part="fantasy.player-card.header-portrait"', 'src="assets/p/1.png"', 'data-part="fantasy.player-card.header-portrait-fade"', 'data-part="fantasy.player-card.header-given-name">Player<', '<h2>One</h2>'])), full);
+  const saved = Data.fantasyInfo; Data.fantasyInfo = () => ({ cr: null, value: 3.1, sparkline: [1, 3, 2] });
+  try { assert.match(headerHtml({ ...base, roster: { teams: {}, players: {} } }), /data-part="fantasy.player-card.value-sparkline"[^>]*><polyline points="0.0,30.0 50.0,0.0 100.0,15.0"/); } finally { Data.fantasyInfo = saved; }
+});
+
+test('header actions: next game, back and Close are one group drawn in the configured order; Close has a single slot', () => {
+  const ctx = { cs: { id: 'P1', mode: 'profile', win: 'season', back: { id: 'P1', name: 'Player One' } }, players: true, name: 'Player One', team: 'AAA', row: { pos: 'G' }, roster: { teams: { AAA: 'Alpha', DDD: 'Delta' }, players: {} }, logo: null, next: { opp: 'DDD', home: true, date: '2026-11-14T18:00:00.000Z' } };
+  const html = headerHtml(ctx);
+  assert.equal(html.split('data-close-slot').length - 1, 1);
+  assert.ok(inOrder(at(html, ['data-part="fantasy.player-card.header-actions"', 'data-next=', 'data-close-slot'])));
+  const saved = JSON.stringify(ARRANGEMENT);
+  try {
+    ARRANGEMENT.component.fantasy['player-card']['header-actions'].parts.reverse();
+    const reversed = headerHtml(ctx);
+    assert.ok(reversed.indexOf('data-close-slot') < reversed.indexOf('data-next='), 'Close moves by config alone');
+    assert.equal(reversed.split('data-close-slot').length - 1, 1);
+  } finally { Object.assign(ARRANGEMENT, JSON.parse(saved)); }
+});

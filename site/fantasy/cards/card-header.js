@@ -15,31 +15,59 @@ function nextBtn(next, roster) {
   return `<button class="fw-next" data-next="${esc(next.opp)}" title="${esc(tip)}" aria-label="${esc(tip)}">${label}<span class="fw-arrow"> ↗</span></button>`;
 }
 
+/** The upper-right actions of the header, in the configured order. Close is the dialog's own single button: card.js puts it into the empty slot drawn here. */
+function actionsHtml({ cs, next, roster }, show) {
+  const parts = drawParts('fantasy.player-card.header-actions', {
+    'next-game-button': () => nextBtn(next, roster),
+    'back-button': () => `<button class="fw-next fw-back" data-back title="Back to ${esc(cs.back.name)}">← ${esc(cs.back.name)}</button>`,
+    'close-button': () => '<span data-close-slot></span>',
+  }, show);
+  return `<div data-part="fantasy.player-card.header-actions">${parts.map(p => p.html).join('')}</div>`;
+}
+
+const PART = 'fantasy.player-card.';
+/** Optional: the player's portrait with a fade over its edge. Nothing when the roster entry has no `portrait`. */
+function portraitHtml(entry, show) {
+  if (!entry?.portrait) return '';
+  const fade = drawParts(PART + 'header-portrait', { 'header-portrait-fade': () => `<span data-part="${PART}header-portrait-fade"></span>` }, show).map(p => p.html).join('');
+  return `<span data-part="${PART}header-portrait"><img src="${esc(entry.portrait)}" alt="">${fade}</span>`;
+}
+/** Optional: a small line of the last values as a line, coloured by the theme key of the element around it. Nothing without at least two numbers. */
+function sparklineHtml(values) {
+  if (!Array.isArray(values) || values.length < 2 || !values.every(Number.isFinite)) return '';
+  const lo = Math.min(...values), span = Math.max(...values) - lo || 1;
+  const points = values.map((v, i) => `${(100 * i / (values.length - 1)).toFixed(1)},${(30 - 30 * (v - lo) / span).toFixed(1)}`).join(' ');
+  return `<svg data-part="${PART}value-sparkline" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="${points}" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/></svg>`;
+}
+
 /** ctx: { cs, players, name, team, row, roster, logo, next } */
 export function headerHtml({ cs, players, name, team, row, roster, logo, next }) {
   const info = players ? Data.fantasyInfo(cs.id) : null;
+  const entry = players ? roster.players?.[cs.id] : null, split = !!(entry?.first && entry?.last);   // given and family name only when both are known
   const show = { players, 'team-from-player': !players && !!cs.back, 'when-data': info !== null };
   const title = drawParts('fantasy.player-card.header-title', {
     'kicker': () => `<small>${players ? 'PLAYER' : 'TEAM'} / FANTASY</small>`,
-    'name': () => `<h2>${esc(name)}</h2>`,
+    'header-given-name': () => (split ? `<span data-part="${PART}header-given-name">${esc(entry.first)}</span>` : ''),
+    'name': () => `<h2>${esc(split ? entry.last : name)}</h2>`,
     'team-line': () => `<p>${players ? esc(roster.teams[team] || team) + ' · ' + esc(row.pos || '—') : ''}</p>`,
   }, show).map(p => p.html).join('');
   const parts = drawParts('fantasy.player-card.header', {
     'logo': () => (logo ? `<img src="${esc(logo)}" alt="">` : ''),
+    'header-portrait': () => portraitHtml(entry, show),
     'title': () => `<div>${title}</div>`,
-    'next-game-button': () => nextBtn(next, roster),
-    'back-button': () => `<button class="fw-next fw-back" data-back title="Back to ${esc(cs.back.name)}">← ${esc(cs.back.name)}</button>`,
+    'header-actions': () => actionsHtml({ cs, next, roster }, show),
     'cr-box': () => info?.cr == null ? '' : `<span class="fw-cr-box">${esc(info.cr)}</span>`,
     'value-chip': () => info?.value == null ? '' : `<span class="fw-value-chip">${esc(info.value)}</span>`,
+    'value-sparkline': () => sparklineHtml(info?.sparkline),
   }, show);
   return `<header class="fw-identity">${parts.map(p => p.html).join('')}</header>`;
 }
 
 export function controlsHtml({ cs, players, gp }) {
   const parts = drawParts('fantasy.player-card.controls', {
-    'window-buttons': () => `<div class="fw-switch" role="group" aria-label="Sample window">${Windows.buttons(cs, 'data-card-window')}</div>`,
+    'window-buttons': () => `<div class="fw-switch" role="group" aria-label="Sample window" data-part="fantasy.player-card.window-buttons">${Windows.buttons(cs, 'data-card-window')}</div>`,
     'games-played': () => `<b>${gp || 0} GP</b>`,
-    'view-button': () => `<div class="fw-switch" role="group" aria-label="Card view"><button data-card-view="shooting" aria-pressed="${cs.mode === 'shooting'}">Shooting</button></div>`,
+    'view-button': () => `<div class="fw-switch" role="group" aria-label="Card view" data-part="fantasy.player-card.view-buttons"><button data-card-view="shooting" aria-pressed="${cs.mode === 'shooting'}">Shooting</button></div>`,
   }, { players });
   return `<div class="fw-card-controls">${parts.map(p => p.html).join('')}</div>`;
 }

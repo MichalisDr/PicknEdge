@@ -48,9 +48,9 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
   const info = sel.length ? `<div class="fw-tinfo">Combined rank: ${esc(sel.map(id => cols.find(c => c.metric === id).label).join(' + '))} (mean percentile). Click a header to clear.</div>` : '';
   /* The toolbar: its parts, their order, which show and which sit at the far end come from config/arrangement.json (fantasy.stat-table.window-row, .toolbar). */
   const show = { players: !teams, teams, 'charts-available': hasCharts };
-  const windowRow = drawParts('fantasy.stat-table.window-row', { 'window-buttons': () => `<div class="fw-switch" role="group" aria-label="Sample window">${Windows.buttons(state)}</div>` }, show).map(p => p.html).join('');
+  const windowRow = drawParts('fantasy.stat-table.window-row', { 'window-buttons': () => `<div class="fw-switch" role="group" aria-label="Sample window" data-part="fantasy.stat-table.window-buttons">${Windows.buttons(state)}</div>` }, show).map(p => p.html).join('');
   const toolbarParts = drawParts('fantasy.stat-table.toolbar', {
-    'view-button': () => `<div class="fw-switch" role="group" aria-label="Table view"><button data-view-toggle aria-pressed="${state.view === 'shooting'}">Shooting</button></div>`,
+    'view-button': () => `<div class="fw-switch" role="group" aria-label="Table view" data-part="fantasy.stat-table.view-buttons"><button data-view-toggle aria-pressed="${state.view === 'shooting'}">Shooting</button></div>`,
     'position-buttons': () => `<div class="fw-switch" aria-label="Player position">${['ALL', 'G', 'F', 'C'].map(v => `<button data-position="${v}" aria-pressed="${v === state.position}">${v === 'ALL' ? 'All' : v}</button>`).join('')}</div>`,
     'mode-tabs': () => `<div class="fw-switch" role="tablist">${['table', 'charts'].map(v => `<button data-fwmode="${v}" role="tab" aria-selected="${state.mode === v}">${v === 'table' ? 'Table' : 'Charts'}</button>`).join('')}</div>`,
     'filters-button': () => `<button class="fw-filter-btn" data-filters aria-expanded="${state.filters}">Filters</button>`,
