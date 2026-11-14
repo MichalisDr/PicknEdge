@@ -373,6 +373,10 @@
      "margin-bottom": "22px",
      "padding-right": "44px"
     },
+    "header-actions": {
+     "gap": "16px",
+     "gap-below-650px": "10px"
+    },
     "header-logo": {
      "height": "46px",
      "width": "46px",

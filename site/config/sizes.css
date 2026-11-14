@@ -172,6 +172,8 @@ body{
 --fantasy-player-card-header-gap-below-650px:10px;
 --fantasy-player-card-header-margin-bottom:22px;
 --fantasy-player-card-header-padding-right:44px;
+--fantasy-player-card-header-actions-gap:16px;
+--fantasy-player-card-header-actions-gap-below-650px:10px;
 --fantasy-player-card-header-logo-height:46px;
 --fantasy-player-card-header-logo-width:46px;
 --fantasy-player-card-header-logo-width-below-650px:35px;

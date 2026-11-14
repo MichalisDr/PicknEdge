@@ -306,6 +306,7 @@ body{
 --fantasy-player-card-close-and-next-button-hovered-border:var(--color-accent-fantasy);
 --fantasy-player-card-controls-games-played-font-size:15px;
 --fantasy-player-card-controls-games-played-font-size-below-650px:12px;
+--fantasy-player-card-header-actions-text:#eef3f8;
 --fantasy-player-card-header-kicker-font-size:10px;
 --fantasy-player-card-header-kicker-text:#a2b1c6;
 --fantasy-player-card-header-name-font-size:24px;
@@ -839,6 +840,7 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   fantasy.player-card.close-and-next-button-hovered.border : .fw-next:hover,.fw-next:focus-visible
   fantasy.player-card.controls-games-played.font-size : .fw-card-controls>b
   fantasy.player-card.controls-games-played.font-size-below-650px : .fw-card-controls>b
+  fantasy.player-card.header-actions.text : [data-part="fantasy.player-card.header-actions"]
   fantasy.player-card.header-kicker.font-size : .fw-identity small
   fantasy.player-card.header-kicker.text : .fw-identity small
   fantasy.player-card.header-name.font-size : .fw-identity h2

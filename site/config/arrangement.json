@@ -47,10 +47,19 @@
      "parts": [
       { "name": "logo", "show": "always" },
       { "name": "title", "show": "always" },
-      { "name": "next-game-button", "show": "players" },
-      { "name": "back-button", "show": "team-from-player" },
+      { "name": "header-actions", "show": "always" },
       { "name": "cr-box", "show": "when-data" },
       { "name": "value-chip", "show": "when-data" }
+     ]
+    },
+    "header-actions": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "parts": [
+      { "name": "next-game-button", "show": "players" },
+      { "name": "back-button", "show": "team-from-player" },
+      { "name": "close-button", "show": "always" }
      ]
     },
     "header-title": {

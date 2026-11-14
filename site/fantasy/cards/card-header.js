@@ -15,6 +15,16 @@ function nextBtn(next, roster) {
   return `<button class="fw-next" data-next="${esc(next.opp)}" title="${esc(tip)}" aria-label="${esc(tip)}">${label}<span class="fw-arrow"> ↗</span></button>`;
 }
 
+/** The upper-right actions of the header, in the configured order. Close is the dialog's own single button: card.js puts it into the empty slot drawn here. */
+function actionsHtml({ cs, next, roster }, show) {
+  const parts = drawParts('fantasy.player-card.header-actions', {
+    'next-game-button': () => nextBtn(next, roster),
+    'back-button': () => `<button class="fw-next fw-back" data-back title="Back to ${esc(cs.back.name)}">← ${esc(cs.back.name)}</button>`,
+    'close-button': () => '<span data-close-slot></span>',
+  }, show);
+  return `<div data-part="fantasy.player-card.header-actions">${parts.map(p => p.html).join('')}</div>`;
+}
+
 /** ctx: { cs, players, name, team, row, roster, logo, next } */
 export function headerHtml({ cs, players, name, team, row, roster, logo, next }) {
   const info = players ? Data.fantasyInfo(cs.id) : null;
@@ -27,8 +37,7 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
   const parts = drawParts('fantasy.player-card.header', {
     'logo': () => (logo ? `<img src="${esc(logo)}" alt="">` : ''),
     'title': () => `<div>${title}</div>`,
-    'next-game-button': () => nextBtn(next, roster),
-    'back-button': () => `<button class="fw-next fw-back" data-back title="Back to ${esc(cs.back.name)}">← ${esc(cs.back.name)}</button>`,
+    'header-actions': () => actionsHtml({ cs, next, roster }, show),
     'cr-box': () => info?.cr == null ? '' : `<span class="fw-cr-box">${esc(info.cr)}</span>`,
     'value-chip': () => info?.value == null ? '' : `<span class="fw-value-chip">${esc(info.value)}</span>`,
   }, show);

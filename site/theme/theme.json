@@ -589,6 +589,9 @@
      "font-size": "15px",
      "font-size-below-650px": "12px"
     },
+    "header-actions": {
+     "text": "#eef3f8"
+    },
     "header-kicker": {
      "font-size": "10px",
      "text": "#a2b1c6"

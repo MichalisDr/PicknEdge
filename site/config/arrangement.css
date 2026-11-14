@@ -15,6 +15,9 @@ body{
 --fantasy-player-card-header-wrap:wrap;
 --fantasy-player-card-header-align:center;
 --fantasy-player-card-header-justify:flex-start;
+--fantasy-player-card-header-actions-direction:row;
+--fantasy-player-card-header-actions-wrap:nowrap;
+--fantasy-player-card-header-actions-align:center;
 --fantasy-player-card-controls-direction:row;
 --fantasy-player-card-controls-wrap:wrap;
 --fantasy-player-card-controls-align:center;
