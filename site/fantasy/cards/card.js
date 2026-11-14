@@ -70,10 +70,11 @@ async function draw() {
   } catch (e) { parkClose(); root.textContent = 'Could not load the card: ' + e.message; }
 }
 
+/** Open a card. from: { win (sample window, default season), mode ('profile' | 'shooting', default profile), back, previous }. */
 export function open(entity, id, from = {}) {
   close();
   const previous = from.previous || document.activeElement;
-  cs = { entity, id, previous, back: from.back || null, win: from.win || 'season', mode: 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
+  cs = { entity, id, previous, back: from.back || null, win: from.win || 'season', mode: from.mode === 'shooting' ? 'shooting' : 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
   dialog = document.createElement('dialog');
   dialog.className = 'fw-dialog';
   dialog.innerHTML = '<button class="fw-close" aria-label="Close card">×</button><div class="fw-card"><p class="fw-empty" role="status">Loading…</p></div>';

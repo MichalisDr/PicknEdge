@@ -100,3 +100,21 @@ test('the button class is styled: the stylesheet has rules for the next / back b
   assert.match(css, /\.fw-next[ ,{:]/);
   assert.match(css, /\.fw-next \.fw-arrow\{/);
 });
+
+test('a card opens in the mode it is given (profile by default); next opponent and Back keep working from it', async () => {
+  const pressed = html => /data-card-view="shooting" aria-pressed="(true|false)"/.exec(html)[1];
+  const a = setup(GAME);
+  open('players', 'P1', {}); await a.tick();
+  assert.equal(pressed(a.root.innerHTML), 'false', 'profile when no mode is supplied');
+  const b = setup(GAME);
+  open('players', 'P1', { win: 'l5', mode: 'shooting' }); await b.tick();
+  assert.equal(pressed(b.root.innerHTML), 'true');
+  assert.match(b.root.innerHTML, /data-card-window="l5" aria-pressed="true"/, 'the window is kept together with the mode');
+  b.root.buttons['data-next'].fire(); await b.tick();
+  assert.ok(b.root.innerHTML.includes('TEAM / FANTASY') && b.root.innerHTML.includes('data-back'));
+  b.root.buttons['data-back'].fire(); await b.tick();
+  assert.ok(b.root.innerHTML.includes('PLAYER / FANTASY'));
+  const c = setup(GAME);
+  open('teams', 'DDD', { mode: 'nonsense' }); await c.tick();
+  assert.ok(c.root.innerHTML.includes('TEAM / FANTASY'));
+});
