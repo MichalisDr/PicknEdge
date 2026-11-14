@@ -108,7 +108,7 @@ test('optional header parts (portrait, given name, family name, sparkline) draw 
   assert.ok(!onlyFirst.includes('header-given-name') && onlyFirst.includes('<h2>Player One</h2>'), 'a given name alone is not used: the names are not derived');
   const full = headerHtml({ ...base, roster: { teams: { AAA: 'Alpha' }, players: { P1: { first: 'Player', last: 'One', portrait: 'assets/p/1.png' } } } });
   assert.ok(inOrder(at(full, ['data-part="fantasy.player-card.header-portrait"', 'src="assets/p/1.png"', 'data-part="fantasy.player-card.header-portrait-fade"', 'data-part="fantasy.player-card.header-given-name">Player<', '<h2>One</h2>'])), full);
-  const saved = Data.fantasyInfo; Data.fantasyInfo = () => ({ cr: null, value: 3.1, sparkline: [1, 3, 2] });
+  const saved = Data.fantasyInfo; Data.fantasyInfo = () => ({ cr: null, value: 3.1, valueSeries: [1, 3, 2] });
   try { assert.match(headerHtml({ ...base, roster: { teams: {}, players: {} } }), /data-part="fantasy.player-card.value-sparkline"[^>]*><polyline points="0.0,30.0 50.0,0.0 100.0,15.0"/); } finally { Data.fantasyInfo = saved; }
 });
 
