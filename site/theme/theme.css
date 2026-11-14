@@ -307,10 +307,16 @@ body{
 --fantasy-player-card-controls-games-played-font-size:15px;
 --fantasy-player-card-controls-games-played-font-size-below-650px:12px;
 --fantasy-player-card-header-actions-text:#eef3f8;
+--fantasy-player-card-header-given-name-font-size:12px;
+--fantasy-player-card-header-given-name-text:var(--color-text-soft);
 --fantasy-player-card-header-kicker-font-size:10px;
 --fantasy-player-card-header-kicker-text:#a2b1c6;
 --fantasy-player-card-header-name-font-size:24px;
 --fantasy-player-card-header-name-font-size-below-650px:20px;
+--fantasy-player-card-header-portrait-border:var(--color-border-soft);
+--fantasy-player-card-header-portrait-border-width:1px;
+--fantasy-player-card-header-portrait-radius:8px;
+--fantasy-player-card-header-portrait-fade-background:var(--color-surface-dialog);
 --fantasy-player-card-header-team-font-size:12px;
 --fantasy-player-card-large-tile-border:#3a4d68;
 --fantasy-player-card-large-tile-label-font-size:12px;
@@ -399,6 +405,8 @@ body{
 --fantasy-player-card-trend-league-band-fill:#8f9bad;
 --fantasy-player-card-trend-rolling-line:#f2c14e;
 --fantasy-player-card-trend-season-line:var(--color-text-dim);
+--fantasy-player-card-value-sparkline-line:var(--color-accent-fantasy);
+--fantasy-player-card-value-sparkline-line-width:1.5px;
 --fantasy-player-card-view-button-font-size:13px;
 --fantasy-player-card-view-button-radius:5px;
 --fantasy-player-card-view-button-text:#b8c7da;
@@ -841,10 +849,16 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   fantasy.player-card.controls-games-played.font-size : .fw-card-controls>b
   fantasy.player-card.controls-games-played.font-size-below-650px : .fw-card-controls>b
   fantasy.player-card.header-actions.text : [data-part="fantasy.player-card.header-actions"]
+  fantasy.player-card.header-given-name.font-size : [data-part="fantasy.player-card.header-given-name"]
+  fantasy.player-card.header-given-name.text : [data-part="fantasy.player-card.header-given-name"]
   fantasy.player-card.header-kicker.font-size : .fw-identity small
   fantasy.player-card.header-kicker.text : .fw-identity small
   fantasy.player-card.header-name.font-size : .fw-identity h2
   fantasy.player-card.header-name.font-size-below-650px : .fw-identity h2
+  fantasy.player-card.header-portrait.border : [data-part="fantasy.player-card.header-portrait"]
+  fantasy.player-card.header-portrait.border-width : [data-part="fantasy.player-card.header-portrait"]
+  fantasy.player-card.header-portrait.radius : [data-part="fantasy.player-card.header-portrait"]
+  fantasy.player-card.header-portrait-fade.background : [data-part="fantasy.player-card.header-portrait-fade"]
   fantasy.player-card.header-team.font-size : .fw-identity p
   fantasy.player-card.large-tile.border : .fw-pgrid .fw-m-lg
   fantasy.player-card.large-tile-label.font-size : .fw-pgrid .fw-m-lg span
@@ -933,6 +947,8 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   fantasy.player-card.trend-league-band.fill : .fw-band
   fantasy.player-card.trend-rolling.line : (set by a script)
   fantasy.player-card.trend-season.line : .fw-ref
+  fantasy.player-card.value-sparkline.line : [data-part="fantasy.player-card.value-sparkline"]
+  fantasy.player-card.value-sparkline.line-width : [data-part="fantasy.player-card.value-sparkline"] polyline
   fantasy.player-card.view-button.font-size : .fw-card [data-part="fantasy.player-card.view-buttons"] button
   fantasy.player-card.view-button.radius : .fw-card [data-part="fantasy.player-card.view-buttons"] button
   fantasy.player-card.view-button.text : .fw-card [data-part="fantasy.player-card.view-buttons"] button

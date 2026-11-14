@@ -46,10 +46,17 @@
      "justify": "start",
      "parts": [
       { "name": "logo", "show": "always" },
+      { "name": "header-portrait", "show": "players" },
       { "name": "title", "show": "always" },
       { "name": "header-actions", "show": "always" },
       { "name": "cr-box", "show": "when-data" },
-      { "name": "value-chip", "show": "when-data" }
+      { "name": "value-chip", "show": "when-data" },
+      { "name": "value-sparkline", "show": "when-data" }
+     ]
+    },
+    "header-portrait": {
+     "parts": [
+      { "name": "header-portrait-fade", "show": "always" }
      ]
     },
     "header-actions": {
@@ -65,6 +72,7 @@
     "header-title": {
      "parts": [
       { "name": "kicker", "show": "always" },
+      { "name": "header-given-name", "show": "players" },
       { "name": "name", "show": "always" },
       { "name": "team-line", "show": "always" }
      ]

@@ -377,6 +377,9 @@
      "gap": "16px",
      "gap-below-650px": "10px"
     },
+    "header-given-name": {
+     "margin": "0 0 2px"
+    },
     "header-logo": {
      "height": "46px",
      "width": "46px",
@@ -384,6 +387,15 @@
     },
     "header-name": {
      "margin": "3px 0"
+    },
+    "header-portrait": {
+     "height": "56px",
+     "position": "relative",
+     "width": "56px"
+    },
+    "header-portrait-fade": {
+     "position": "absolute",
+     "width": "24px"
     },
     "large-tile": {
      "padding": "14px 13px"
@@ -500,6 +512,10 @@
      "small-plot-height": 130,
      "small-plot-width": 300,
      "width": "100%"
+    },
+    "value-sparkline": {
+     "height": "18px",
+     "width": "48px"
     },
     "view-button": {
      "padding": "8px 12px"
