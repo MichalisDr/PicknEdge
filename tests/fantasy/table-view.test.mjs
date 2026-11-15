@@ -44,10 +44,10 @@ test('no GP column, no subtitle or credits slot in the first column, no sub-line
     const { html, M } = await render({ entity });
     assert.ok(!/fw-gp|>GP<|fw-cr-slot|fw-sub|fw-cov|fw-tm/.test(html), entity);
     assert.ok(!M.cols.some(c => c.metric === 'gp'));
-    assert.match(html, /<th><div class="fw-namecell"><button class="fw-name"[^>]*>[^<]+<\/button>/);
+    assert.match(html, entity === 'teams' ? /<th><div class="fw-namecell"><button class="fw-name"[^>]*>[^<]+<\/button>/ : /<th><div data-part="fantasy.stat-table.players-name-cell">.*?<button class="fw-name"/s);
   }
   const { html } = await render({ entity: 'players' });
-  assert.match(html, /<small class="fw-who" title="[^"]*">[A-Z]{3} · [GFC]<\/small>/, 'second line of a player: team code (Euroleague Fantasy code) and position');
+  assert.match(html, /<small class="fw-who" title="[^"]+">[A-Z]{3}<\/small>/, 'second line of a player: only the team code (Euroleague Fantasy code), the full team name as the tooltip');
   assert.ok(!(await render({ entity: 'teams' })).html.includes('fw-who'), 'team rows have no second line');
 });
 
@@ -143,4 +143,49 @@ test('cards opened from the table pages and the chart gallery get the period and
   assert.ok(calls >= 2);
   assert.equal(page.match(/openCard\([^)]*\{ win: state\.win, mode: state\.view \}/g)?.length, calls);
   assert.match(siteFile('fantasy/gallery/gallery-dialog.js'), /openCard\([^)]*\{ win: gal\.dataset\.win, mode: gal\.dataset\.view \}/);
+});
+
+/* ---- Batch 5: the Players name cell ---- */
+const { playerNameCellHtml } = await import('../../site/fantasy/tables/table-name-cell.js');
+const { Data } = await import('../../site/core/data.js');
+const ROW = { id: 'P1', name: 'Player One', full: 'Player One', team: 'AAA', pos: 'G' };
+const ROSTER = (p = {}) => ({ teams: { AAA: 'Alpha Team' }, logoIds: {}, players: { P1: { name: 'Player One', ...p } } });
+
+test('Players name cell: position badge, name above the team code; given name beside the family name', () => {
+  const html = playerNameCellHtml(ROW, ROSTER({ first: 'Player', last: 'One' }), null);
+  assert.ok(html.indexOf('name-cell-position-badge') < html.indexOf('name-cell-identity') && html.indexOf('class="fw-name"') < html.indexOf('class="fw-who"'));
+  assert.match(html, /name-cell-position-badge" title="Position">G<\/span>/);
+  assert.match(html, /<button class="fw-name" data-open="P1" title="Player One"><span data-part="fantasy.stat-table.name-cell-given-name">Player<\/span> <span data-part="fantasy.stat-table.name-cell-family-name">One<\/span><\/button>/, 'same line, same button (opens the card)');
+  assert.match(html, /<small class="fw-who" title="Alpha Team">AAA<\/small>/, 'team code only, full name as the tooltip');
+  assert.ok(!/fw-cr-box|fw-value-chip|name-cell-figures|sparkline/.test(html), 'nothing of the figures while fantasyInfo is null: no group, no spacing');
+});
+
+test('Players name cell: incomplete name parts show the display name intact; no valid position, no badge; no team code, no second line', () => {
+  assert.match(playerNameCellHtml(ROW, ROSTER({ first: 'Player' }), null), /<button class="fw-name"[^>]*>Player One<\/button>/);
+  assert.ok(!playerNameCellHtml({ ...ROW, pos: '' }, ROSTER(), null).includes('position-badge'));
+  assert.ok(!playerNameCellHtml({ ...ROW, pos: 'X' }, ROSTER(), null).includes('position-badge'));
+  assert.ok(!playerNameCellHtml({ ...ROW, team: '' }, ROSTER(), null).includes('fw-who'));
+});
+
+test('Players name cell: CR then Value (chip with its sparkline), 0 is a value, parts are optional', () => {
+  const draw = info => playerNameCellHtml(ROW, ROSTER(), info);
+  const full = draw({ cr: 0, value: 0, valueSeries: [1, 3, 2] });
+  assert.match(full, /<span class="fw-cr-box" data-part="fantasy.stat-table.name-cell-cr-box">0<\/span><span class="fw-value-chip" data-part="fantasy.stat-table.name-cell-value-chip"><span>0<\/span><svg data-part="fantasy.stat-table.name-cell-sparkline"/);
+  assert.ok(full.indexOf('name-cell-identity') < full.indexOf('name-cell-figures') && full.indexOf('name-cell-cr-box') < full.indexOf('name-cell-value-chip'));
+  const crOnly = draw({ cr: 12.5, value: null }); assert.ok(crOnly.includes('fw-cr-box') && !crOnly.includes('fw-value-chip'));
+  const noSpark = draw({ cr: null, value: 3.1, valueSeries: [4] }); assert.ok(noSpark.includes('fw-value-chip') && !noSpark.includes('sparkline') && !noSpark.includes('fw-cr-box'));
+  assert.ok(!draw({ cr: null, value: null }).includes('name-cell-figures'), 'both missing: no group');
+  assert.ok(!draw({}).includes('name-cell-figures'));
+});
+
+test('Teams name cells are unchanged; the first column leaves room for the badge, and for the figures only when some exist', async () => {
+  const teams = await render({ entity: 'teams' });
+  assert.match(teams.html, /<th><div class="fw-namecell"><button class="fw-name" data-open="[^"]+" title="[^"]+">[^<]+<\/button><\/div><\/th>/);
+  const TL = JSON.parse(siteFile('config/table-layouts.json')).firstCol;
+  const w = async entity => (await render({ entity })).M.firstW;
+  const base = Math.min(TL.cap, 0 + 0), teamsW = await w('teams'), playersW = await w('players');
+  assert.ok(playersW >= teamsW, 'Players have at least as much room as Teams');
+  const saved = Data.fantasyInfo; Data.fantasyInfo = () => ({ cr: 1, value: 2 });
+  try { assert.ok((await w('players')) > playersW, 'with figures the column is wider'); } finally { Data.fantasyInfo = saved; }
+  assert.ok(base >= 0 && TL.playersExtra > 0 && TL.figuresExtra > 0);
 });

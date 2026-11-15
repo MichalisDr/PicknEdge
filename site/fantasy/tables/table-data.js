@@ -17,6 +17,9 @@ const leagueCells = (view, ids) => Object.fromEntries(ids.map(id => [id, view.le
 
 /** Everything the table markup needs for the current state, or null when a newer draw has started (isStale()).
     widthsOf(names) = the rendered widths of the first-column texts in px. */
+/** The first column's limits; for Players, room for the position badge and (when any figures exist) the optional CR and Value. */
+const firstCol = (f, teams, rows) => { const extra = teams ? 0 : f.playersExtra + (rows.some(r => Data.fantasyInfo(r.id) !== null) ? f.figuresExtra : 0); return { min: f.min + extra, cap: f.cap + extra, pad: f.pad + extra }; };
+
 export async function loadTable(state, widthsOf, isStale) {
   const teams = state.entity === 'teams';
   const [view, { byId }, roster, manifest, status, TL] = await Promise.all([Windows.view(state.entity, state), Data.metrics(), Data.roster(), Data.manifest(), Data.status(), layoutFile()]);
@@ -54,5 +57,5 @@ export async function loadTable(state, widthsOf, isStale) {
   const byRow = new Map(rows.map(r => [r.id, r]));
   const gallery = state.mode === 'charts' && chartsAvailable(state.entity, state.view) ? await galleryHtml(state.entity, state.view, state, pool.map(r => r.id)) : '';
   if (isStale()) return null;
-  return { view, TL, T, tname, cols, model, few, roster, status, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth(widthsOf([...rows.map(r => r.name), 'League average']), TL.firstCol), sel, cur, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
+  return { view, TL, T, tname, cols, model, few, roster, status, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth(widthsOf([...rows.map(r => r.name), 'League average']), firstCol(TL.firstCol, teams, rows)), sel, cur, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
 }

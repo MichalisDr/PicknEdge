@@ -8,6 +8,7 @@ import { Data } from '../../core/data.js';
 import { drawParts } from '../../core/arrangement.js';
 import { available as chartsAvailable } from '../gallery/charts.js';
 import { playersToolbarHtml } from './table-toolbar.js';
+import { playerNameCellHtml } from './table-name-cell.js';
 
 export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster, status, shown: rowsShown, firstW, sel, cur, avg, gallery, byId }) {
   const teams = state.entity === 'teams', title = teams ? 'Teams' : 'Players', hasCharts = chartsAvailable(state.entity, state.view);
@@ -30,17 +31,11 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
     const v = isFew ? '<span class="fw-v fw-few">-</span>' : `<span class="fw-v${avgRow ? '' : tint(c, cell.value, r)}">${fmt(cell, m)}</span>`;
     return `<td class="${cls(c)}"><span class="fw-cell" ${avgRow ? '' : `data-id="${esc(key)}" data-metric="${c.metric}" ${c.chart ? 'data-chart ' : ''}tabindex="0"`}>${v}${r ? `<i class="fw-rk">#${r.position}</i>` : ''}</span></td>`;
   }).join('');
-  /* The name cell: its parts, their order and which show come from config/arrangement.json (fantasy.stat-table.name-cell). */
-  const nameCell = r => {
-    const info = teams ? null : Data.fantasyInfo(r.id);
-    return drawParts('fantasy.stat-table.name-cell', {
-      'name': () => `<button class="fw-name" data-open="${esc(r.id)}" title="${esc(r.full)}">${esc(r.name)}</button>`,
-      'team-and-position': () => `<small class="fw-who" title="${esc(roster.teams[r.team] || r.team)}">${esc([teamCode(roster, r.team), r.pos].filter(Boolean).join(' · '))}</small>`,
-      'cr-box': () => info?.cr == null ? '' : `<span class="fw-cr-box">${esc(info.cr)}</span>`,
-      'value-chip': () => info?.value == null ? '' : `<span class="fw-value-chip">${esc(info.value)}</span>`,
-    }, { players: !teams, 'when-data': info !== null }).map(p => p.html).join('');
-  };
-  const body = rowsShown.map(r => `<tr><th><div class="fw-namecell">${nameCell(r)}</div></th>${cells(r.id, false)}</tr>`).join('');
+  /* The name cell. Players: position badge, name over team code, CR and Value (table-name-cell.js). Teams: the name alone (fantasy.stat-table.name-cell). */
+  const nameCell = r => (teams
+    ? `<div class="fw-namecell">${drawParts('fantasy.stat-table.name-cell', { 'name': () => `<button class="fw-name" data-open="${esc(r.id)}" title="${esc(r.full)}">${esc(r.name)}</button>` }, { players: false, 'when-data': false }).map(p => p.html).join('')}</div>`
+    : playerNameCellHtml(r, roster, Data.fantasyInfo(r.id)));
+  const body = rowsShown.map(r => `<tr><th>${nameCell(r)}</th>${cells(r.id, false)}</tr>`).join('');
   const filters = !teams && state.filters ? `<div class="fw-filters" role="dialog" aria-label="Filters">
     <label>Team<select data-filter="team"><option value="">All</option>${Object.entries(roster.teams).sort((a, b) => a[1].localeCompare(b[1])).map(([c, n]) => `<option value="${c}" ${c === state.team ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
     <label>MIN ≥<input data-filter="minMin" type="number" min="0" value="${state.minMin}"></label>
