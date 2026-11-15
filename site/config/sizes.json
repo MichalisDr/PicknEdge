@@ -112,6 +112,10 @@
      "padding": "0 4%",
      "padding-below-480px": "0 5%"
     },
+    "coverage": {
+     "max-width": "300px",
+     "max-width-below-480px": "40vw"
+    },
     "nav": {
      "gap": "30px",
      "gap-below-480px": "18px"

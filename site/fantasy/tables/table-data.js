@@ -22,7 +22,7 @@ const firstCol = (f, teams) => { const extra = teams ? 0 : f.playersExtra + f.fi
 
 export async function loadTable(state, widthsOf, isStale) {
   const teams = state.entity === 'teams';
-  const [view, { byId }, roster, manifest, status, TL] = await Promise.all([Windows.view(state.entity, state), Data.metrics(), Data.roster(), Data.manifest(), Data.status(), layoutFile()]);
+  const [view, { byId }, roster, manifest, TL] = await Promise.all([Windows.view(state.entity, state), Data.metrics(), Data.roster(), Data.manifest(), layoutFile()]);
   if (isStale()) return null;
   const tname = state.entity + '.' + state.view, T = TL.tables[tname], cols = T.groups.flat();
   // Availability gate: the gp of the availability window's view (L3 by default); the view is a built file, nothing is stored.
@@ -57,5 +57,5 @@ export async function loadTable(state, widthsOf, isStale) {
   const byRow = new Map(rows.map(r => [r.id, r]));
   const gallery = state.mode === 'charts' && chartsAvailable(state.entity, state.view) ? await galleryHtml(state.entity, state.view, state, pool.map(r => r.id)) : '';
   if (isStale()) return null;
-  return { view, TL, T, tname, cols, model, few, roster, status, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth(widthsOf([...rows.map(r => r.name), 'League average']), firstCol(TL.firstCol, teams)), sel, cur, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
+  return { view, TL, T, tname, cols, model, few, roster, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth(widthsOf([...rows.map(r => r.name), 'League average']), firstCol(TL.firstCol, teams)), sel, cur, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
 }

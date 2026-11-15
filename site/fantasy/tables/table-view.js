@@ -10,7 +10,7 @@ import { available as chartsAvailable } from '../gallery/charts.js';
 import { playersToolbarHtml } from './table-toolbar.js';
 import { playerNameCellHtml } from './table-name-cell.js';
 
-export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster, status, shown: rowsShown, firstW, sel, cur, avg, gallery, byId }) {
+export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster, shown: rowsShown, firstW, sel, cur, avg, gallery, byId }) {
   const teams = state.entity === 'teams', title = teams ? 'Teams' : 'Players', hasCharts = chartsAvailable(state.entity, state.view);
   const totalW = TM.tableWidth(TL, tname, firstW);
   const sortedCols = new Set(sel.length ? sel : [cur.metric]);
@@ -55,7 +55,7 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
   const bars = teams ? `<div class="fw-periods">${windowRow}</div>
     <div class="fw-toolbar">${toolbar}${filters}</div>` : playersToolbarHtml(state, show, filters);
   return `<section class="fantasy-stats fw-workbench">
-    <div class="fw-heading"><div>${teams ? '<div class="eyebrow">FANTASY / TEAMS</div>' : ''}<h1>${title}</h1></div><span role="status">${esc(status)}</span></div>
+    <div class="fw-heading"><div>${teams ? '<div class="eyebrow">FANTASY / TEAMS</div>' : ''}<h1>${title}</h1></div></div>
     ${bars}
     ${gallery ? '' : info}${gallery}<div class="fw-tooltip" role="tooltip" hidden></div><div class="sz-pop fw-pop" role="status" hidden></div><div class="fw-table-wrap" ${gallery ? 'hidden' : ''}><table class="fw-t" style="min-width:${totalW}px"><colgroup><col style="width:${firstW}px">${cols.map(() => '<col>').join('')}</colgroup><thead><tr><th>${teams ? 'Team' : 'Player'}</th>${header}</tr></thead>
       <tbody>${body}<tr class="fw-average"><th title="full league${teams ? '' : ' · all players who played'} · ignores filters">League average</th>${cells(null, true)}</tr></tbody></table></div>

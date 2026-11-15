@@ -1,5 +1,6 @@
 /* Generated from arrangement.json by config/generate.mjs. Do not edit by hand. */
 body{
+--app-top-bar-coverage-margin-left:auto;
 --fantasy-stat-table-toolbar-direction:row;
 --fantasy-stat-table-toolbar-wrap:wrap;
 --fantasy-stat-table-toolbar-align:center;
