@@ -388,17 +388,7 @@ body{
 --fantasy-stat-table-switch-buttons-gap:4px;
 --fantasy-stat-table-switch-buttons-padding:4px;
 --fantasy-stat-table-table-width:100%;
---fantasy-stat-table-toolbar-margin-bottom:20px;
---fantasy-stat-table-toolbar-end-group-gap:12px;
---fantasy-stat-table-toolbar-end-group-width-below-650px:100%;
 --fantasy-stat-table-toolbar-search-field-width:190px;
 --fantasy-stat-table-toolbar-search-field-width-below-650px:100%;
---fantasy-stat-table-value-cell-gap:2px;
---fantasy-stat-table-view-button-padding:8px 12px;
---fantasy-stat-table-view-buttons-gap:4px;
---fantasy-stat-table-view-buttons-padding:4px;
---fantasy-stat-table-window-button-padding:8px 12px;
---fantasy-stat-table-window-buttons-gap:4px;
---fantasy-stat-table-window-buttons-padding:4px;
---fantasy-stat-table-window-row-margin-bottom:12px
+--fantasy-stat-table-value-cell-gap:2px
 }

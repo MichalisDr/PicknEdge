@@ -21,7 +21,6 @@ const arranged = (screen, comp, name) => !!arrangement.component[screen]?.[comp]
 const NEW_PARTS = {
   'fantasy.player-card': [['header-actions', 'header-actions'], ['header-portrait', 'header-portrait'], ['header-portrait-fade', 'header-portrait-fade'], ['header-given-name', 'header-given-name'], ['header-name', 'name'], ['value-sparkline', 'value-sparkline'],
     ['view-button', 'view-button']],
-  'fantasy.stat-table': [['window-buttons', 'window-buttons'], ['view-buttons', 'view-button']],
 };
 
 test('every new part has theme, sizes and arrangement entries', () => {
@@ -35,13 +34,13 @@ test('every new part has theme, sizes and arrangement entries', () => {
   }
 });
 
-test('toolbar and card each have all of: switch, window and view button (container, button, selected button), each with its own keys', () => {
+test('the card has its own switch, window and view button keys; the table keeps only the shared switch keys (the Players / Teams toolbar has players-* keys)', () => {
   for (const kind of ['switch', 'window', 'view']) for (const part of [kind + '-buttons', kind + '-button', kind + '-button-selected']) {
     for (const [json, label] of [[theme, 'theme'], [sizes, 'sizes']]) {
       if (label === 'theme' && part.endsWith('-buttons') && kind !== 'switch') continue;   // on the card the window / view groups are no boxes: gap only (sizes)
       if (label === 'sizes' && part.endsWith('-selected')) continue;   // a selected button only changes colours
-      const a = json.component.fantasy['stat-table'][part], b = json.component.fantasy['player-card'][part];
-      assert.ok(a && b, `${label}: ${part} missing in the toolbar or in the card`);
+      assert.ok(json.component.fantasy['player-card'][part], `${label}: ${part} missing in the card`);
+      assert.equal(!!json.component.fantasy['stat-table'][part], kind === 'switch', `${label}: ${part} in the table`);
     }
   }
 });
@@ -56,7 +55,7 @@ test('toolbar and card switch buttons are driven by different keys: no rule of t
       else { card++; assert.ok(inCard, `a rule outside the card reads the card key ${v[0]}`); }
     }
   }
-  assert.ok(toolbar >= 20 && card >= 20, `both places are styled by their own keys (${toolbar}, ${card})`);
+  assert.ok(toolbar >= 3 && card >= 20, `both places are styled by their own keys (${toolbar}, ${card})`);
 });
 
 test('the markup names its parts: each data-part in a script is the key of a part that exists', () => {

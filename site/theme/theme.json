@@ -1237,34 +1237,6 @@
     },
     "value-good": {
      "text": "{semantic.eval-good-text}"
-    },
-    "view-button": {
-     "font-size": "13px",
-     "radius": "5px",
-     "text": "#b8c7da"
-    },
-    "view-button-selected": {
-     "background": "{semantic.accent-fantasy}",
-     "text": "{semantic.white}"
-    },
-    "view-buttons": {
-     "border": "{semantic.border-control}",
-     "border-width": "1px",
-     "radius": "8px"
-    },
-    "window-button": {
-     "font-size": "13px",
-     "radius": "5px",
-     "text": "#b8c7da"
-    },
-    "window-button-selected": {
-     "background": "{semantic.accent-fantasy}",
-     "text": "{semantic.white}"
-    },
-    "window-buttons": {
-     "border": "{semantic.border-control}",
-     "border-width": "1px",
-     "radius": "8px"
     }
    }
   }

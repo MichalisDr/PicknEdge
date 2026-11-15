@@ -21,13 +21,16 @@ async function render(over) {
   return { M, html: tableHtml(state, M) };
 }
 
-test('one "Shooting" toggle instead of the two-button Profile/Shooting switch; the page opens in Profile', async () => {
-  const profile = await render({});
-  assert.match(profile.html, /data-view-toggle aria-pressed="false">Shooting</);
-  assert.ok(!/data-view="/.test(profile.html));
-  const shooting = await render({ view: 'shooting' });
-  assert.match(shooting.html, /data-view-toggle aria-pressed="true">Shooting</);
-  assert.notDeepEqual(shooting.M.cols.map(c => c.metric), profile.M.cols.map(c => c.metric), 'the toggle switches the columns');
+test('Profile / Shooting are two explicit buttons (Players and Teams); the page opens in Profile', async () => {
+  for (const entity of ['teams', 'players']) {
+    const profile = await render({ entity });
+    assert.match(profile.html, /data-view-set="profile" aria-pressed="true"/);
+    assert.match(profile.html, /data-view-set="shooting" aria-pressed="false"/);
+    assert.ok(!profile.html.includes('data-view-toggle'), 'no single toggle any more');
+    const shooting = await render({ entity, view: 'shooting' });
+    assert.match(shooting.html, /data-view-set="shooting" aria-pressed="true"/);
+    assert.notDeepEqual(shooting.M.cols.map(c => c.metric), profile.M.cols.map(c => c.metric), 'the view switches the columns');
+  }
   state.view = 'shooting';
   mount({ innerHTML: '', isConnected: false }, 'teams');
   assert.equal(state.view, 'profile', 'mounting the page always opens in Profile');
@@ -121,20 +124,36 @@ test('Players toolbar: Profile / Shooting (icon above label), outlined windows, 
   assert.ok(!/>All</.test(html.slice(html.indexOf('players-position-buttons'), html.indexOf('players-search"'))), 'no All button');
 });
 
-test('Players toolbar: no charts for Players today, so no Table / Charts pair and no divider; with charts available the pair follows Profile / Shooting', async () => {
-  const { html } = await render({ entity: 'players' });
-  assert.ok(!html.includes('data-fwmode') && !html.includes('players-view-divider') && html.includes('data-view-set="profile"'));
-  const { playersToolbarHtml } = await import('../../site/fantasy/tables/table-toolbar.js');
-  const withCharts = playersToolbarHtml(state, { players: true, 'charts-available': true });
-  const at = ['data-view-set="profile"', 'players-view-divider', 'data-fwmode="table"', 'data-fwmode="charts"'].map(s => withCharts.indexOf(s));
-  assert.ok(at.every((v, i) => v >= 0 && (!i || v > at[i - 1])), 'Profile / Shooting, divider, Table / Charts');
+test('Table / Charts: none for Players today (no pair, no divider); Teams have charts, so the pair follows Profile / Shooting after a divider; independent of the view', async () => {
+  const players = await render({ entity: 'players' });
+  assert.ok(!players.html.includes('data-fwmode') && !players.html.includes('players-view-divider') && players.html.includes('data-view-set="profile"'));
+  for (const view of ['profile', 'shooting']) {
+    const { html } = await render({ entity: 'teams', view });
+    const at = ['data-view-set="profile"', 'players-view-divider', 'data-fwmode="table"', 'data-fwmode="charts"'].map(s => html.indexOf(s));
+    assert.ok(at.every((v, i) => v >= 0 && (!i || v > at[i - 1])), view + ': Profile / Shooting, divider, Table / Charts');
+  }
+  const { tableToolbarHtml } = await import('../../site/fantasy/tables/table-toolbar.js');
+  const none = tableToolbarHtml(state, { teams: true, 'charts-available': false });
+  assert.ok(!none.includes('data-fwmode') && !none.includes('players-view-divider') && none.includes('data-view-set="shooting"'), 'without charts: Profile / Shooting stay, the pair and the divider go');
+  const withCharts = tableToolbarHtml(state, { players: true, 'charts-available': true });
   assert.match(withCharts, /data-fwmode="table" role="tab" aria-selected="true"><span[^>]*><svg[^>]*>.*?<\/svg><\/span><span>Table<\/span>/s);
 });
 
-test('Teams keep their own toolbar: eyebrow, one Shooting toggle, window row, plain search', async () => {
+test('Teams toolbar: the Players composition without G / F / C and Filters; "Find team"; no eyebrow, no old toolbar; each control once', async () => {
   const { html } = await render({ entity: 'teams' });
-  assert.ok(html.includes('FANTASY / TEAMS') && html.includes('data-view-toggle') && html.includes('class="fw-periods"') && html.includes('placeholder="Search…"'));
-  assert.ok(!html.includes('data-position') && !html.includes('data-filters') && !html.includes('players-'));
+  assert.ok(!html.includes('FANTASY / TEAMS') && !html.includes('class="eyebrow"') && html.includes('<h1>Teams</h1>'));
+  assert.ok(!/class="fw-(toolbar|periods|right|switch)"|data-view-toggle|Search Fantasy|placeholder="Search…"/.test(html), 'the old Teams toolbar and window row are gone');
+  assert.match(html, /<input type="search" aria-label="Find team" placeholder="Find team"/);
+  assert.equal(html.split('aria-label="Sample window"').length - 1, 1, 'the period buttons once');
+  for (const w of ['Season', 'Last 10', 'Last 5', 'Last 3']) assert.ok(html.includes('>' + w + '</button>'), w);
+  assert.equal(html.split('type="search"').length - 1, 1, 'one search field');
+  assert.ok(!html.includes('data-position') && !html.includes('data-filters') && !html.includes('players-position') && !html.includes('players-filters'), 'G/F/C and the funnel are Players only');
+  assert.ok(html.indexOf('data-view-set="profile"') < html.indexOf('aria-label="Sample window"') && html.indexOf('aria-label="Sample window"') < html.indexOf('type="search"'), 'view pair above; periods left; search right');
+});
+test('Teams search keeps matching teams by name; Players keep "Find player"', async () => {
+  const all = (await render({ entity: 'teams' })).M.shown.length, one = (await render({ entity: 'teams', query: (await render({ entity: 'teams' })).M.shown[0].full.slice(0, 4) })).M;
+  assert.ok(one.shown.length >= 1 && one.shown.length < all);
+  assert.match((await render({ entity: 'players' })).html, /aria-label="Find player" placeholder="Find player"/);
 });
 
 test('cards opened from the table pages and the chart gallery get the period and the Profile / Shooting view', () => {
