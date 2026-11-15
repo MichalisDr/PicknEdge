@@ -157,7 +157,7 @@ test('Players name cell: position badge, name above the team code; given name be
   assert.match(html, /name-cell-position-badge" title="Position">G<\/span>/);
   assert.match(html, /<button class="fw-name" data-open="P1" title="Player One"><span data-part="fantasy.stat-table.name-cell-given-name">Player<\/span> <span data-part="fantasy.stat-table.name-cell-family-name">One<\/span><\/button>/, 'same line, same button (opens the card)');
   assert.match(html, /<small class="fw-who" title="Alpha Team">AAA<\/small>/, 'team code only, full name as the tooltip');
-  assert.ok(!/fw-cr-box|fw-value-chip|name-cell-figures|sparkline/.test(html), 'nothing of the figures while fantasyInfo is null: no group, no spacing');
+  assert.match(html, /name-cell-figures">.*cr-box" data-placeholder>—<\/span>.*value-chip" data-placeholder>.*>—<\/span>.*sparkline-placeholder/s, 'while fantasyInfo is null the CR and Value frames are there with dashes, after the identity');
 });
 
 test('Players name cell: incomplete name parts show the display name intact; no valid position, no badge; no team code, no second line', () => {
@@ -167,15 +167,15 @@ test('Players name cell: incomplete name parts show the display name intact; no 
   assert.ok(!playerNameCellHtml({ ...ROW, team: '' }, ROSTER(), null).includes('fw-who'));
 });
 
-test('Players name cell: CR then Value (chip with its sparkline), 0 is a value, parts are optional', () => {
+test('Players name cell: CR then Value (chip with its sparkline), 0 is a value, missing parts show a dash', () => {
   const draw = info => playerNameCellHtml(ROW, ROSTER(), info);
   const full = draw({ cr: 0, value: 0, valueSeries: [1, 3, 2] });
   assert.match(full, /<span class="fw-cr-box" data-part="fantasy.stat-table.name-cell-cr-box">0<\/span><span class="fw-value-chip" data-part="fantasy.stat-table.name-cell-value-chip"><span>0<\/span><svg data-part="fantasy.stat-table.name-cell-sparkline"/);
+  assert.ok(!full.includes('data-placeholder'));
   assert.ok(full.indexOf('name-cell-identity') < full.indexOf('name-cell-figures') && full.indexOf('name-cell-cr-box') < full.indexOf('name-cell-value-chip'));
-  const crOnly = draw({ cr: 12.5, value: null }); assert.ok(crOnly.includes('fw-cr-box') && !crOnly.includes('fw-value-chip'));
-  const noSpark = draw({ cr: null, value: 3.1, valueSeries: [4] }); assert.ok(noSpark.includes('fw-value-chip') && !noSpark.includes('sparkline') && !noSpark.includes('fw-cr-box'));
-  assert.ok(!draw({ cr: null, value: null }).includes('name-cell-figures'), 'both missing: no group');
-  assert.ok(!draw({}).includes('name-cell-figures'));
+  const crOnly = draw({ cr: 12.5, value: null }); assert.ok(crOnly.includes('>12.5</span>') && /value-chip" data-placeholder><span>—<\/span><svg data-part="fantasy.stat-table.name-cell-sparkline-placeholder"/.test(crOnly));
+  const noSpark = draw({ cr: null, value: 3.1, valueSeries: [4] }); assert.ok(noSpark.includes('<span>3.1</span>') && !noSpark.includes('<svg') && /cr-box" data-placeholder>—/.test(noSpark), 'a value without history: no line, as before');
+  for (const none of [{ cr: null, value: null }, {}, null]) { const html = draw(none); assert.ok(/cr-box" data-placeholder>—/.test(html) && /<span>—<\/span><svg data-part="fantasy.stat-table.name-cell-sparkline-placeholder"/.test(html)); }
 });
 
 test('Teams name cells are unchanged; the first column leaves room for the badge, and for the figures only when some exist', async () => {
@@ -185,7 +185,8 @@ test('Teams name cells are unchanged; the first column leaves room for the badge
   const w = async entity => (await render({ entity })).M.firstW;
   const base = Math.min(TL.cap, 0 + 0), teamsW = await w('teams'), playersW = await w('players');
   assert.ok(playersW >= teamsW, 'Players have at least as much room as Teams');
+  assert.ok(playersW >= teamsW + TL.playersExtra + TL.figuresExtra - 1 || playersW === TL.cap + TL.playersExtra + TL.figuresExtra, 'room for the badge and the always-present CR / Value frames');
   const saved = Data.fantasyInfo; Data.fantasyInfo = () => ({ cr: 1, value: 2 });
-  try { assert.ok((await w('players')) > playersW, 'with figures the column is wider'); } finally { Data.fantasyInfo = saved; }
+  try { assert.equal(await w('players'), playersW, 'the frames are there with or without data, so the column does not change'); } finally { Data.fantasyInfo = saved; }
   assert.ok(base >= 0 && TL.playersExtra > 0 && TL.figuresExtra > 0);
 });
