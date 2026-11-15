@@ -6,7 +6,7 @@ import { Data } from '../../core/data.js';
 import { teamCode } from '../../core/teams.js';
 import { drawParts } from '../../core/arrangement.js';
 import { icon } from '../../core/icons.js';
-import { sparklineSvg } from '../../core/sparkline.js';
+import { sparklineSvg, sparklinePlaceholder } from '../../core/sparkline.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const dayLabel = iso => { const d = new Date(iso); return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()]; };
@@ -66,9 +66,9 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
     'logo': () => (logo ? `<img src="${esc(logo)}" alt="" data-part="${PART}header-logo">` : ''),
     'header-portrait': () => portraitHtml(entry, team, show),
     'title': () => `<div>${title}</div>`,
-    'cr-box': () => info?.cr == null ? '' : `<span class="fw-cr-box" data-part="${PART}cr-box">${esc(info.cr)}</span>`,
-    'value-chip': () => info?.value == null ? '' : `<span class="fw-value-chip" data-part="${PART}value-chip">${esc(info.value)}</span>`,
-    'value-sparkline': () => sparklineSvg(info?.valueSeries, `${PART}value-sparkline`),
+    'cr-box': () => (info?.cr == null ? `<span class="fw-cr-box" data-part="${PART}cr-box" data-placeholder>—</span>` : `<span class="fw-cr-box" data-part="${PART}cr-box">${esc(info.cr)}</span>`),   // the frame is always there; "—" without a value
+    'value-chip': () => (info?.value == null ? `<span class="fw-value-chip" data-part="${PART}value-chip" data-placeholder>—</span>` : `<span class="fw-value-chip" data-part="${PART}value-chip">${esc(info.value)}</span>`),
+    'value-sparkline': () => (info?.value == null ? sparklinePlaceholder(`${PART}value-sparkline-placeholder`) : sparklineSvg(info.valueSeries, `${PART}value-sparkline`)),   // no value: the space stays, with a flat muted line
   }, show).map(p => p.html).join('');
   const parts = drawParts('fantasy.player-card.header', {
     'header-identity': () => `<div data-part="${PART}header-identity">${identity}</div>`,

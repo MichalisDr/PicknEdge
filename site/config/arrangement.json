@@ -1,5 +1,5 @@
 {
- "note": "Arrangement of three components, with the same names as theme.json and sizes.json (screen.component.part). `parts` is the order in which the parts appear; a part is drawn when its `show` condition holds and it has something to show, so optional parts (cr-box, value-chip) draw nothing while there is no data. `align: end` puts a part in the group at the far end of the row. direction, wrap, align, justify and push of a container, and `self` (own alignment) of a part, become CSS variables in arrangement.css (node site/config/generate.mjs). show: always | players | teams | charts-available | when-data | team-from-player | logo-fallback (teams, and players without a portrait).",
+ "note": "Arrangement of three components, with the same names as theme.json and sizes.json (screen.component.part). `parts` is the order in which the parts appear; a part is drawn when its `show` condition holds and it has something to show, the CR box and Value chip of Players are always part of the layout (a dash frame without data); setting their `show` to `when-data` again hides them while there is no data. `align: end` puts a part in the group at the far end of the row. direction, wrap, align, justify and push of a container, and `self` (own alignment) of a part, become CSS variables in arrangement.css (node site/config/generate.mjs). show: always | players | teams | charts-available | when-data | team-from-player | logo-fallback (teams, and players without a portrait).",
  "component": {
   "fantasy": {
    "stat-table": {
@@ -125,7 +125,7 @@
      "parts": [
       { "name": "name-cell-position-badge", "show": "players" },
       { "name": "name-cell-identity", "show": "always" },
-      { "name": "name-cell-figures", "show": "when-data" }
+      { "name": "name-cell-figures", "show": "always" }
      ]
     },
     "name-cell-identity": {
@@ -151,8 +151,8 @@
      "align": "center",
      "push": "end",
      "parts": [
-      { "name": "cr-box", "show": "when-data" },
-      { "name": "value-chip", "show": "when-data" }
+      { "name": "cr-box", "show": "always" },
+      { "name": "value-chip", "show": "always" }
      ]
     },
     "name-cell-cr-box": {
@@ -164,7 +164,7 @@
      "align": "center",
      "parts": [
       { "name": "name-cell-value", "show": "always" },
-      { "name": "name-cell-sparkline", "show": "when-data" }
+      { "name": "name-cell-sparkline", "show": "always" }
      ]
     }
    },
@@ -208,9 +208,9 @@
       { "name": "logo", "show": "logo-fallback" },
       { "name": "header-portrait", "show": "players" },
       { "name": "title", "show": "always" },
-      { "name": "cr-box", "show": "when-data" },
-      { "name": "value-chip", "show": "when-data" },
-      { "name": "value-sparkline", "show": "when-data" }
+      { "name": "cr-box", "show": "always" },
+      { "name": "value-chip", "show": "always" },
+      { "name": "value-sparkline", "show": "always" }
      ]
     },
     "header-portrait": {

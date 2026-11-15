@@ -59,16 +59,18 @@ test('changing the order in the config changes the page (toolbar, name cell, car
   } finally { Object.assign(ARRANGEMENT, JSON.parse(saved)); }
 });
 
-test('optional parts (cr box, value chip) draw nothing while there is no data, and appear when there is', async () => {
+test('CR box and Value chip are always drawn on Players (a frame with a dash without data, the values with data); Teams have none', async () => {
   assert.equal(Data.fantasyInfo('anyone'), null);
-  assert.ok(!(await table('players')).includes('fw-cr-box'));
+  const players = await table('players');
+  assert.match(players, /class="fw-cr-box" data-part="fantasy.stat-table.name-cell-cr-box" data-placeholder>—<\/span>/);
+  assert.match(players, /class="fw-value-chip" data-part="fantasy.stat-table.name-cell-value-chip" data-placeholder>/);
   const ctx = { cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: { pos: 'G' }, roster: { teams: { AAA: 'Alpha' } }, logo: null, next: null };
-  assert.ok(!headerHtml(ctx).includes('fw-cr-box'));
+  assert.match(headerHtml(ctx), /class="fw-cr-box" data-part="fantasy.player-card.cr-box" data-placeholder>—<\/span>/);
   const saved = Data.fantasyInfo; Data.fantasyInfo = () => ({ cr: 12.5, value: 3.1 });
   try {
-    assert.ok(headerHtml(ctx).includes('fw-cr-box') && headerHtml(ctx).includes('fw-value-chip'));
+    assert.ok(headerHtml(ctx).includes('>12.5</span>') && headerHtml(ctx).includes('>3.1</span>') && !headerHtml(ctx).includes('data-placeholder'));
     const html = await table('players');
-    assert.ok(html.includes('fw-cr-box') && html.includes('fw-value-chip'));
+    assert.ok(html.includes('>12.5</span>') && html.includes('fw-value-chip') && !html.includes('data-placeholder'));
     assert.ok(!(await table('teams')).includes('fw-cr-box'), 'team rows have no cr box');
   } finally { Data.fantasyInfo = saved; }
 });
@@ -95,16 +97,20 @@ test('every part named in the config has a name in the same style as theme.json 
     for (const p of entry.parts || []) assert.match(p.name, /^[a-z][a-z-]*$/, `${screen}.${comp}.${part}: ${p.name}`);
 });
 
-test('with no fantasy info (null) there is no cr box, no value chip, no sparkline, in the header and in the table', async () => {
+test('with no fantasy info (null) the frames are there with a dash and a flat sparkline line; Teams have none', async () => {
   assert.equal(Data.fantasyInfo('anyone'), null);
   const ctx = { cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: { pos: 'G' }, roster: { teams: { AAA: 'Alpha' }, players: {} }, logo: null, next: null };
-  for (const html of [headerHtml(ctx), await table('players'), await table('teams')]) assert.ok(!/fw-cr-box|fw-value-chip|value-sparkline/.test(html));
+  const header = headerHtml(ctx), table1 = await table('players');
+  for (const html of [header, table1]) assert.ok(/fw-cr-box/.test(html) && /fw-value-chip/.test(html) && /<svg data-part="[^"]*sparkline-placeholder"[^>]*><line /.test(html) && !/<polyline/.test(html), 'frames + flat placeholder line');
+  assert.ok(header.includes('>—</span>'));
+  const teams = await table('teams'); assert.ok(!/fw-cr-box|fw-value-chip|sparkline/.test(teams));
+  assert.ok(!/fw-cr-box|fw-value-chip|sparkline/.test(headerHtml({ ...ctx, players: false, name: 'Alpha' })), 'team cards have none');
 });
 
 test('optional header parts (portrait, given name, family name, sparkline) draw nothing without data; the display name and the logo stay', () => {
   const base = { cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: { pos: 'G' }, logo: 'assets/logos/x.png', next: null };
   const bare = headerHtml({ ...base, roster: { teams: { AAA: 'Alpha' }, players: { P1: { name: 'Player One' } } } });
-  assert.ok(!/header-portrait|header-given-name|value-sparkline/.test(bare));
+  assert.ok(!/header-portrait|header-given-name|<polyline/.test(bare));
   assert.ok(bare.includes('<h2>Player One</h2>') && bare.includes('<img src="assets/logos/x.png"'), 'display name and team logo fallbacks');
   const onlyFirst = headerHtml({ ...base, roster: { teams: { AAA: 'Alpha' }, players: { P1: { first: 'Player' } } } });
   assert.ok(!onlyFirst.includes('header-given-name') && onlyFirst.includes('<h2>Player One</h2>'), 'a given name alone is not used: the names are not derived');
@@ -163,19 +169,21 @@ test('team line: "Position | Team", either alone, nothing when neither', () => {
   assert.equal(headerHtml({ ...PCTX, row: {}, team: '', roster: { teams: {}, players: {} } }).includes('<p>'), false, 'no empty line');
 });
 
-test('cr box, value chip and sparkline: only with real data; a real 0 is valid; nothing at all while fantasyInfo is null', async () => {
+test('cr box, value chip and sparkline: real data replaces the placeholders; a real 0 is a value', async () => {
   const draw = () => headerHtml({ ...PCTX, roster: ROSTER() });
   assert.equal(Data.fantasyInfo('P1'), null);
-  assert.ok(!/cr-box|value-chip|value-sparkline/.test(draw()), 'no empty boxes while the info is null');
+  const empty = draw();
+  assert.ok(inOrder(at(empty, ['<h2>', 'fw-cr-box', 'fw-value-chip', 'value-sparkline-placeholder', 'data-part="fantasy.player-card.header-actions"'])), 'the frames are in the layout without data');
   await withInfo({ cr: 0, value: 0, valueSeries: [0, 0] }, () => {
     const html = draw();
     assert.match(html, /<span class="fw-cr-box" data-part="fantasy.player-card.cr-box">0<\/span>/);
     assert.match(html, /<span class="fw-value-chip" data-part="fantasy.player-card.value-chip">0<\/span>/);
-    assert.ok(inOrder(at(html, ['<h2>', 'fw-cr-box', 'fw-value-chip', 'value-sparkline', 'data-part="fantasy.player-card.header-actions"'])), 'cr, then value chip with its sparkline, after the name');
+    assert.ok(!html.includes('data-placeholder') && !html.includes('placeholder"'), 'a real 0 is not a placeholder');
+    assert.ok(inOrder(at(html, ['<h2>', 'fw-cr-box', 'fw-value-chip', 'data-part="fantasy.player-card.value-sparkline"', 'data-part="fantasy.player-card.header-actions"'])), 'cr, then value chip with its sparkline, after the name');
   });
-  await withInfo({ cr: 12.5, value: null, valueSeries: [4] }, () => { const html = draw(); assert.ok(html.includes('fw-cr-box') && !html.includes('fw-value-chip') && !html.includes('value-sparkline'), 'a chip needs a value; a sparkline needs two numbers'); });
-  await withInfo({ cr: null, value: 3, valueSeries: [1, NaN, 2] }, () => { const html = draw(); assert.ok(!html.includes('fw-cr-box') && html.includes('fw-value-chip') && !html.includes('value-sparkline'), 'invalid numbers draw no sparkline'); });
-  await withInfo({ cr: undefined, value: undefined }, () => assert.ok(!/cr-box|value-chip/.test(draw())));
+  await withInfo({ cr: 12.5, value: null, valueSeries: [4] }, () => { const html = draw(); assert.ok(html.includes('>12.5</span>') && /fw-value-chip" data-part="fantasy.player-card.value-chip" data-placeholder>—/.test(html) && html.includes('value-sparkline-placeholder'), 'no value: the chip shows a dash and the sparkline keeps its space'); });
+  await withInfo({ cr: null, value: 3, valueSeries: [1, NaN, 2] }, () => { const html = draw(); assert.ok(/fw-cr-box" data-part="fantasy.player-card.cr-box" data-placeholder>—/.test(html) && html.includes('>3</span>') && !html.includes('<polyline') && !html.includes('placeholder"'), 'a value with unusable history: no line (as before)'); });
+  await withInfo({ cr: undefined, value: undefined }, () => assert.ok(/cr-box" data-part="[^"]*" data-placeholder>—/.test(draw()) && draw().includes('value-sparkline-placeholder')));
 });
 
 test('the next-game button and Close share one height and radius (the same keys) and sit in one line of the actions group, at the far end', () => {
