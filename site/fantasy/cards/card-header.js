@@ -16,11 +16,12 @@ function nextBtn(next, roster) {
   return `<button class="fw-next" data-next="${esc(next.opp)}" title="${esc(tip)}" aria-label="${esc(tip)}">${label}<span class="fw-arrow"> ↗</span></button>`;
 }
 
+const backBtn = cs => `<button class="fw-next fw-back" data-back title="Back to ${esc(cs.back.name)}">← ${esc(cs.back.name)}</button>`;
 /** The upper-right actions of the header, in the configured order. Close is the dialog's own single button: card.js puts it into the empty slot drawn here. */
 function actionsHtml({ cs, next, roster }, show) {
   const parts = drawParts('fantasy.player-card.header-actions', {
     'next-game-button': () => nextBtn(next, roster),
-    'back-button': () => `<button class="fw-next fw-back" data-back title="Back to ${esc(cs.back.name)}">← ${esc(cs.back.name)}</button>`,
+    'back-button': () => backBtn(cs),
     'close-button': () => '<span data-close-slot></span>',
   }, show);
   return `<div data-part="fantasy.player-card.header-actions">${parts.map(p => p.html).join('')}</div>`;
@@ -43,6 +44,20 @@ function sparklineHtml(values) {
   return `<svg data-part="${PART}value-sparkline" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="${points}" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/></svg>`;
 }
 
+/** Team cards keep the header they had: logo, title, then the actions (Back when opened from a player, Close) as plain items of the header row. */
+function teamHeaderHtml({ cs, title, logo, show }) {
+  const actions = drawParts('fantasy.player-card.header-actions-team', {
+    'back-button': () => backBtn(cs),
+    'close-button': () => '<span data-close-slot></span>',
+  }, show).map(p => p.html).join('');
+  const parts = drawParts('fantasy.player-card.header-team', {
+    'logo': () => (logo ? `<img src="${esc(logo)}" alt="" data-part="${PART}header-logo">` : ''),
+    'title': () => `<div>${title}</div>`,
+    'header-actions-team': () => `<div data-part="${PART}header-actions-team">${actions}</div>`,
+  }, show);
+  return `<header class="fw-identity" data-part="${PART}header-team">${parts.map(p => p.html).join('')}</header>`;
+}
+
 /** ctx: { cs, players, name, team, row, roster, logo, next } */
 export function headerHtml({ cs, players, name, team, row, roster, logo, next }) {
   const info = players ? Data.fantasyInfo(cs.id) : null;
@@ -54,6 +69,7 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
     'name': () => `<h2>${esc(split ? entry.last : name)}</h2>`,
     'team-line': () => { const line = players ? [row?.pos, roster.teams[team] || team].filter(Boolean).join(' | ') : ''; return line ? `<p>${esc(line)}</p>` : ''; },   // "Position | Team"; either alone; nothing when neither
   }, show).map(p => p.html).join('');
+  if (!players) return teamHeaderHtml({ cs, title, logo, show });
   const identity = drawParts('fantasy.player-card.header-identity', {
     'logo': () => (logo ? `<img src="${esc(logo)}" alt="" data-part="${PART}header-logo">` : ''),
     'header-portrait': () => portraitHtml(entry, team, show),
@@ -66,7 +82,7 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
     'header-identity': () => `<div data-part="${PART}header-identity">${identity}</div>`,
     'header-actions': () => actionsHtml({ cs, next, roster }, show),
   }, show);
-  return `<header class="fw-identity">${parts.map(p => p.html).join('')}</header>`;
+  return `<header class="fw-identity" data-part="${PART}header">${parts.map(p => p.html).join('')}</header>`;
 }
 
 /** Icons the controls row draws (core/icons.js loadIcons, before the card is drawn). */

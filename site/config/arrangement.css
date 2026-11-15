@@ -52,6 +52,13 @@ body{
 --fantasy-player-card-header-align:flex-start;
 --fantasy-player-card-header-justify:flex-start;
 --fantasy-player-card-header-header-actions-self:flex-start;
+--fantasy-player-card-header-team-direction:row;
+--fantasy-player-card-header-team-wrap:wrap;
+--fantasy-player-card-header-team-align:center;
+--fantasy-player-card-header-team-justify:flex-start;
+--fantasy-player-card-header-actions-team-direction:row;
+--fantasy-player-card-header-actions-team-wrap:nowrap;
+--fantasy-player-card-header-actions-team-align:center;
 --fantasy-player-card-header-identity-direction:row;
 --fantasy-player-card-header-identity-wrap:wrap;
 --fantasy-player-card-header-identity-align:center;

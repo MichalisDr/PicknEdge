@@ -186,3 +186,14 @@ test('the next-game button and Close share one height and radius (the same keys)
   assert.equal(ARRANGEMENT.component.fantasy['player-card']['header-actions'].align, 'center');
   assert.equal(ARRANGEMENT.component.fantasy['player-card']['header-actions'].push, 'end');
 });
+
+test('team cards keep the header they had: flat header row, own actions wrapper, no truncated Back button', () => {
+  const html = headerHtml({ ...PCTX, players: false, name: 'Alpha Team', cs: { id: 'AAA', back: { id: 'P1', name: 'A Very Long Player Name Indeed' } }, roster: ROSTER() });
+  assert.ok(html.startsWith('<header class="fw-identity" data-part="fantasy.player-card.header-team">'));
+  assert.ok(html.includes('data-part="fantasy.player-card.header-actions-team"') && !html.includes('header-identity') && !html.includes('header-actions"'));
+  assert.ok(inOrder(at(html, ['<img', '<h2>', 'data-back', 'data-close-slot'])));
+  const css = readFileSync(new URL('../../site/theme/fantasy/workbench.css', import.meta.url), 'utf8');
+  const base = css.match(/\.fw-next\{align-self:[^}]*\}/)[0];
+  assert.ok(!/max-width|text-overflow/.test(base), 'the base Back / next button is not truncated; only the player actions group caps it');
+  assert.match(css, /@media\(max-width:650px\)\{\.fw-next\{margin-top:0\}\}/);
+});

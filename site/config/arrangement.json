@@ -133,6 +133,26 @@
       { "name": "header-actions", "show": "always", "self": "start" }
      ]
     },
+    "header-team": {
+     "direction": "row",
+     "wrap": "wrap",
+     "align": "center",
+     "justify": "start",
+     "parts": [
+      { "name": "logo", "show": "always" },
+      { "name": "title", "show": "always" },
+      { "name": "header-actions-team", "show": "always" }
+     ]
+    },
+    "header-actions-team": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "parts": [
+      { "name": "back-button", "show": "team-from-player" },
+      { "name": "close-button", "show": "always" }
+     ]
+    },
     "header-identity": {
      "direction": "row",
      "wrap": "wrap",

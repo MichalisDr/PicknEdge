@@ -600,6 +600,9 @@
     "header-actions": {
      "text": "#eef3f8"
     },
+    "header-actions-team": {
+     "text": "#eef3f8"
+    },
     "header-given-name": {
      "font-size": "12px",
      "text": "{semantic.text-soft}"

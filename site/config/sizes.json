@@ -358,6 +358,7 @@
     },
     "close-and-next-button": {
      "height": "36px",
+     "margin": "-12px 0 0 auto",
      "max-width": "min(160px, 40vw)",
      "padding": "0 12px",
      "position-docked": "static",
@@ -385,6 +386,10 @@
      "gap": "16px",
      "gap-below-650px": "10px"
     },
+    "header-actions-team": {
+     "gap": "16px",
+     "gap-below-650px": "10px"
+    },
     "header-given-name": {
      "margin": "0 0 2px"
     },
@@ -408,6 +413,12 @@
     "header-portrait-fade": {
      "position": "absolute",
      "width": "min(320px, 100%)"
+    },
+    "header-team": {
+     "gap": "16px",
+     "gap-below-650px": "10px",
+     "margin-bottom": "22px",
+     "padding-right": "44px"
     },
     "large-tile": {
      "padding": "14px 13px"

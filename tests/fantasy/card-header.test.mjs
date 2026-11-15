@@ -150,7 +150,7 @@ test('team card: no "TEAM / FANTASY" kicker, the logo (when there is one) and th
   open('teams', 'DDD', {}); await t.tick();
   const h = header(t.root.innerHTML);
   assert.ok(!h.includes('FANTASY') && h.includes('<h2>Delta Team</h2>'));
-  assert.match(h, /^<header class="fw-identity"><div data-part="fantasy.player-card.header-identity"><img src="[^"]*fenerbahce-ulker[^"]*" alt="" data-part="fantasy.player-card.header-logo">/, 'logo to the left of the name');
+  assert.match(h, /^<header class="fw-identity" data-part="fantasy.player-card.header-team"><img src="[^"]*fenerbahce-ulker[^"]*" alt="" data-part="fantasy.player-card.header-logo">/, 'logo to the left of the name');
   const none = setup(null);
   open('teams', 'AAA', {}); await none.tick();
   assert.ok(!header(none.root.innerHTML).includes('<img'), 'no image without a logo');

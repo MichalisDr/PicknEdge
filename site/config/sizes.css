@@ -162,6 +162,7 @@ body{
 --fantasy-player-card-box-scores-table-min-width-below-650px:620px;
 --fantasy-player-card-box-scores-table-body-width:100%;
 --fantasy-player-card-close-and-next-button-height:36px;
+--fantasy-player-card-close-and-next-button-margin:-12px 0 0 auto;
 --fantasy-player-card-close-and-next-button-max-width:min(160px, 40vw);
 --fantasy-player-card-close-and-next-button-padding:0 12px;
 --fantasy-player-card-close-and-next-button-position-docked:static;
@@ -178,6 +179,8 @@ body{
 --fantasy-player-card-header-position:relative;
 --fantasy-player-card-header-actions-gap:16px;
 --fantasy-player-card-header-actions-gap-below-650px:10px;
+--fantasy-player-card-header-actions-team-gap:16px;
+--fantasy-player-card-header-actions-team-gap-below-650px:10px;
 --fantasy-player-card-header-given-name-margin:0 0 2px;
 --fantasy-player-card-header-identity-gap:16px;
 --fantasy-player-card-header-identity-gap-below-650px:10px;
@@ -190,6 +193,10 @@ body{
 --fantasy-player-card-header-portrait-width:84px;
 --fantasy-player-card-header-portrait-fade-position:absolute;
 --fantasy-player-card-header-portrait-fade-width:min(320px, 100%);
+--fantasy-player-card-header-team-gap:16px;
+--fantasy-player-card-header-team-gap-below-650px:10px;
+--fantasy-player-card-header-team-margin-bottom:22px;
+--fantasy-player-card-header-team-padding-right:44px;
 --fantasy-player-card-large-tile-padding:14px 13px;
 --fantasy-player-card-large-tile-in-grid-min-height-in-container-below-780px:76px;
 --fantasy-player-card-large-tile-in-grid-padding-in-container-above-781px:10px 13px;

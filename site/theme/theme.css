@@ -313,6 +313,7 @@ body{
 --fantasy-player-card-cr-box-radius:6px;
 --fantasy-player-card-cr-box-text:var(--color-white);
 --fantasy-player-card-header-actions-text:#eef3f8;
+--fantasy-player-card-header-actions-team-text:#eef3f8;
 --fantasy-player-card-header-given-name-font-size:12px;
 --fantasy-player-card-header-given-name-text:var(--color-text-soft);
 --fantasy-player-card-header-kicker-font-size:10px;
@@ -902,6 +903,7 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   fantasy.player-card.cr-box.radius : [data-part="fantasy.player-card.cr-box"]
   fantasy.player-card.cr-box.text : [data-part="fantasy.player-card.cr-box"]
   fantasy.player-card.header-actions.text : [data-part="fantasy.player-card.header-actions"]
+  fantasy.player-card.header-actions-team.text : [data-part="fantasy.player-card.header-actions-team"]
   fantasy.player-card.header-given-name.font-size : [data-part="fantasy.player-card.header-given-name"]
   fantasy.player-card.header-given-name.text : [data-part="fantasy.player-card.header-given-name"]
   fantasy.player-card.header-kicker.font-size : .fw-identity small
