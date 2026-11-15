@@ -27,11 +27,13 @@ function actionsHtml({ cs, next, roster }, show) {
 }
 
 const PART = 'fantasy.player-card.';
-/** Optional: the player's portrait with a fade over its edge. Nothing when the roster entry has no `portrait`. */
-function portraitHtml(entry, show) {
+/** The fade colour of a team's portrait: the theme key of that team (header-portrait-fade.team-colour-<team>, none filled yet), else the one neutral default key. */
+const fadeColour = team => `--fade-colour:var(--fantasy-player-card-header-portrait-fade-team-colour-${String(team).replace(/[^\w-]/g, '')}, var(--fantasy-player-card-header-portrait-fade-default-colour))`;
+/** Optional: the player's portrait (head and upper torso) with a fade behind it. Nothing when the roster entry has no `portrait`. */
+function portraitHtml(entry, team, show) {
   if (!entry?.portrait) return '';
-  const fade = drawParts(PART + 'header-portrait', { 'header-portrait-fade': () => `<span data-part="${PART}header-portrait-fade"></span>` }, show).map(p => p.html).join('');
-  return `<span data-part="${PART}header-portrait"><img src="${esc(entry.portrait)}" alt="">${fade}</span>`;
+  const fade = drawParts(PART + 'header-portrait', { 'header-portrait-fade': () => `<span data-part="${PART}header-portrait-fade" style="${fadeColour(team)}"></span>` }, show).map(p => p.html).join('');
+  return `<span data-part="${PART}header-portrait">${fade}<img src="${esc(entry.portrait)}" alt=""></span>`;
 }
 /** Optional: a small line of the last values as a line, coloured by the theme key of the element around it. Nothing without at least two numbers. */
 function sparklineHtml(values) {
@@ -45,21 +47,24 @@ function sparklineHtml(values) {
 export function headerHtml({ cs, players, name, team, row, roster, logo, next }) {
   const info = players ? Data.fantasyInfo(cs.id) : null;
   const entry = players ? roster.players?.[cs.id] : null, split = !!(entry?.first && entry?.last);   // given and family name only when both are known
-  const show = { players, 'team-from-player': !players && !!cs.back, 'when-data': info !== null };
+  const show = { players, 'team-from-player': !players && !!cs.back, 'when-data': info !== null, 'logo-fallback': !players || !entry?.portrait };   // the team logo is the fallback for a player without a portrait
   const title = drawParts('fantasy.player-card.header-title', {
     'kicker': () => `<small>${players ? 'PLAYER' : 'TEAM'} / FANTASY</small>`,
     'header-given-name': () => (split ? `<span data-part="${PART}header-given-name">${esc(entry.first)}</span>` : ''),
     'name': () => `<h2>${esc(split ? entry.last : name)}</h2>`,
-    'team-line': () => `<p>${players ? esc(roster.teams[team] || team) + ' · ' + esc(row.pos || '—') : ''}</p>`,
+    'team-line': () => { const line = players ? [row?.pos, roster.teams[team] || team].filter(Boolean).join(' | ') : ''; return line ? `<p>${esc(line)}</p>` : ''; },   // "Position | Team"; either alone; nothing when neither
+  }, show).map(p => p.html).join('');
+  const identity = drawParts('fantasy.player-card.header-identity', {
+    'logo': () => (logo ? `<img src="${esc(logo)}" alt="" data-part="${PART}header-logo">` : ''),
+    'header-portrait': () => portraitHtml(entry, team, show),
+    'title': () => `<div>${title}</div>`,
+    'cr-box': () => info?.cr == null ? '' : `<span class="fw-cr-box" data-part="${PART}cr-box">${esc(info.cr)}</span>`,
+    'value-chip': () => info?.value == null ? '' : `<span class="fw-value-chip" data-part="${PART}value-chip">${esc(info.value)}</span>`,
+    'value-sparkline': () => sparklineHtml(info?.valueSeries),
   }, show).map(p => p.html).join('');
   const parts = drawParts('fantasy.player-card.header', {
-    'logo': () => (logo ? `<img src="${esc(logo)}" alt="">` : ''),
-    'header-portrait': () => portraitHtml(entry, show),
-    'title': () => `<div>${title}</div>`,
+    'header-identity': () => `<div data-part="${PART}header-identity">${identity}</div>`,
     'header-actions': () => actionsHtml({ cs, next, roster }, show),
-    'cr-box': () => info?.cr == null ? '' : `<span class="fw-cr-box">${esc(info.cr)}</span>`,
-    'value-chip': () => info?.value == null ? '' : `<span class="fw-value-chip">${esc(info.value)}</span>`,
-    'value-sparkline': () => sparklineHtml(info?.valueSeries),
   }, show);
   return `<header class="fw-identity">${parts.map(p => p.html).join('')}</header>`;
 }

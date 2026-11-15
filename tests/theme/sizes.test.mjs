@@ -4,7 +4,7 @@
 // Exceptions that stay in the code on purpose:
 //  - media-query breakpoints (@media (max-width: ...)): a variable cannot be used there;
 //  - border and outline STYLE keywords (solid, dashed): only the width is a size;
-//  - values that read layout variables the scripts set on the element (--rows, --gap, --rowsT);
+//  - values that read layout variables the scripts set on the element (--rows, --gap, --rowsT, --fade-colour: the team colour of a portrait fade);
 //  - inline style in scripts: grid placement, column widths and pop-up position, which are computed from data;
 //  - drawing geometry inside the SVG charts (label offsets, tick lengths) and the court (shot-zones.js: real court dimensions in centimetres, hexagon grid);
 //  - zero values, and letter-spacing, line-height, z-index, opacity.
@@ -63,7 +63,7 @@ test('inline styles in scripts are computed geometry only (no literal px)', () =
 
 test('every variable a style sheet reads exists in theme.json or sizes.json (or is set by a script)', () => {
   const defined = new Set([...themeVariables(theme).map(([k]) => k), ...sizeVariables(sizes).map(([k]) => k), ...arrangementVariables(JSON.parse(read('config/arrangement.json'))).map(([k]) => k), '--color-accent']);
-  for (const f of styles) for (const m of read(f).matchAll(/var\((--[\w-]+)/g)) assert.ok(defined.has(m[1]) || ['--rows', '--gap', '--rowsT'].includes(m[1]), `${f} reads ${m[1]}`);
+  for (const f of styles) for (const m of read(f).matchAll(/var\((--[\w-]+)/g)) assert.ok(defined.has(m[1]) || ['--rows', '--gap', '--rowsT', '--fade-colour'].includes(m[1]), `${f} reads ${m[1]}`);
 });
 
 test('theme.json and sizes.json share the names but never a variable', () => {

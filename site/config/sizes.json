@@ -358,8 +358,9 @@
     },
     "close-and-next-button": {
      "height": "36px",
-     "margin": "-12px 0 0 auto",
+     "max-width": "min(160px, 40vw)",
      "padding": "0 12px",
+     "position-docked": "static",
      "right": "16px",
      "top": "14px",
      "width": "36px"
@@ -370,11 +371,15 @@
     "controls-games-played": {
      "margin": "0 16px"
     },
+    "cr-box": {
+     "padding": "3px 9px"
+    },
     "header": {
      "gap": "16px",
      "gap-below-650px": "10px",
      "margin-bottom": "22px",
-     "padding-right": "44px"
+     "padding-right": "0",
+     "position": "relative"
     },
     "header-actions": {
      "gap": "16px",
@@ -382,6 +387,10 @@
     },
     "header-given-name": {
      "margin": "0 0 2px"
+    },
+    "header-identity": {
+     "gap": "16px",
+     "gap-below-650px": "10px"
     },
     "header-logo": {
      "height": "46px",
@@ -392,13 +401,13 @@
      "margin": "3px 0"
     },
     "header-portrait": {
-     "height": "56px",
-     "position": "relative",
-     "width": "56px"
+     "height": "96px",
+     "position": "static",
+     "width": "84px"
     },
     "header-portrait-fade": {
      "position": "absolute",
-     "width": "24px"
+     "width": "min(320px, 100%)"
     },
     "large-tile": {
      "padding": "14px 13px"
@@ -515,6 +524,9 @@
      "small-plot-height": 130,
      "small-plot-width": 300,
      "width": "100%"
+    },
+    "value-chip": {
+     "padding": "3px 10px"
     },
     "value-sparkline": {
      "height": "18px",
