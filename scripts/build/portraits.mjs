@@ -1,5 +1,5 @@
 // Player portraits: the roster's player-level images.headshot -> site/assets/players/<playerId>.webp (300x400, alpha kept).
-// Usage: node scripts/build/portraits.mjs [--season E2026] [--concurrency 2]
+// Manual tool (npm run portraits), not part of the automatic data update. Usage: node scripts/build/portraits.mjs [--season E2026] [--concurrency 2]
 // Every URL comes from the raw roster (data/raw/<season>/roster.json.gz), never built by hand. data/portraits.json records player id -> source URL, so a rerun
 // downloads only the players that are new or whose URL changed (and any whose file is missing). The originals are not kept. `sharp` is a pipeline-only devDependency.
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';

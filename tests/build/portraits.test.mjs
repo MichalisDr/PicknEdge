@@ -46,7 +46,7 @@ test('roster.json: portrait only where the file exists; every recorded portrait 
   }
   for (const id of Object.keys(record)) assert.ok(existsSync(new URL(`site/assets/players/${id}.webp`, ROOT)), id);
   assert.equal(n, Object.keys(record).length);
-  for (const f of readdirSync(new URL('site/assets/players/', ROOT))) assert.ok(f.endsWith('.webp') && statSync(new URL('site/assets/players/' + f, ROOT)).size < 40 * 1024, f);
+  for (const f of readdirSync(new URL('site/assets/players/', ROOT)).filter(f => f !== 'README.md')) assert.ok(f.endsWith('.webp') && statSync(new URL('site/assets/players/' + f, ROOT)).size < 40 * 1024, f);
 });
 
 test('the site never loads the image tool: sharp is for the pipeline only', () => {
