@@ -614,6 +614,10 @@
     "header-actions-team": {
      "text": "#eef3f8"
     },
+    "header-city": {
+     "font-size": "12px",
+     "text": "{semantic.muted}"
+    },
     "header-given-name": {
      "font-size": "12px",
      "text": "{semantic.text-soft}"

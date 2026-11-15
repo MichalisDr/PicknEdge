@@ -1,0 +1,4 @@
+{
+ "note": "Approved English city or locality of each club, for the second line of the team card header. Keys are the stable team catalogue ids of assets/teams.js (barcelona, real-madrid, ...). Each entry: { \"city\": \"Madrid\" } and, only when the display name cannot be split cleanly at the city (for example the city is not a trailing part of it), { \"city\": \"...\", \"club\": \"approved short club name\" }. A team with no entry shows its display name alone, with no second line. Empty until the 20 labels are approved.",
+ "cities": {}
+}

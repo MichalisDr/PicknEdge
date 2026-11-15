@@ -48,3 +48,5 @@ lx-t{display:contents}.lx-grid .fw-metric>strong{order:1}.lx-grid .fw-metric>.fw
 [data-part="fantasy.player-card.value-chip"][data-placeholder]{color:var(--fantasy-player-card-value-chip-placeholder-text)}
 [data-part="fantasy.player-card.value-sparkline-placeholder"]{width:var(--fantasy-player-card-value-sparkline-width);height:var(--fantasy-player-card-value-sparkline-height);color:var(--fantasy-player-card-value-sparkline-placeholder-line)}
 [data-part="fantasy.player-card.value-sparkline-placeholder"] line{stroke-width:var(--fantasy-player-card-value-sparkline-line-width)}
+/* Team card: the approved city under the club name */
+[data-part="fantasy.player-card.header-city"]{margin:var(--fantasy-player-card-header-city-margin);font-size:var(--fantasy-player-card-header-city-font-size);color:var(--fantasy-player-card-header-city-text)}
