@@ -590,7 +590,17 @@
      "font-size-below-650px": "12px",
      "text": "{semantic.text-soft}"
     },
+    "cr-box": {
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "font-size": "13px",
+     "radius": "6px",
+     "text": "{semantic.white}"
+    },
     "header-actions": {
+     "text": "#eef3f8"
+    },
+    "header-actions-team": {
      "text": "#eef3f8"
     },
     "header-given-name": {
@@ -607,11 +617,13 @@
     },
     "header-portrait": {
      "border": "{semantic.border-soft}",
-     "border-width": "1px",
+     "border-width": "0px",
      "radius": "8px"
     },
     "header-portrait-fade": {
-     "background": "{semantic.surface-dialog}"
+     "background": "{semantic.surface-dialog}",
+     "default-colour": "{semantic.border-control}",
+     "opacity": "0.55"
     },
     "header-team": {
      "font-size": "12px"
@@ -806,6 +818,12 @@
     },
     "trend-season": {
      "line": "{semantic.text-dim}"
+    },
+    "value-chip": {
+     "background": "{semantic.chip}",
+     "font-size": "13px",
+     "radius": "12px",
+     "text": "{semantic.text-soft}"
     },
     "value-sparkline": {
      "line": "{semantic.accent-fantasy}",

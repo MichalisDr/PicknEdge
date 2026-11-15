@@ -16,22 +16,25 @@ function nextBtn(next, roster) {
   return `<button class="fw-next" data-next="${esc(next.opp)}" title="${esc(tip)}" aria-label="${esc(tip)}">${label}<span class="fw-arrow"> ↗</span></button>`;
 }
 
+const backBtn = cs => `<button class="fw-next fw-back" data-back title="Back to ${esc(cs.back.name)}">← ${esc(cs.back.name)}</button>`;
 /** The upper-right actions of the header, in the configured order. Close is the dialog's own single button: card.js puts it into the empty slot drawn here. */
 function actionsHtml({ cs, next, roster }, show) {
   const parts = drawParts('fantasy.player-card.header-actions', {
     'next-game-button': () => nextBtn(next, roster),
-    'back-button': () => `<button class="fw-next fw-back" data-back title="Back to ${esc(cs.back.name)}">← ${esc(cs.back.name)}</button>`,
+    'back-button': () => backBtn(cs),
     'close-button': () => '<span data-close-slot></span>',
   }, show);
   return `<div data-part="fantasy.player-card.header-actions">${parts.map(p => p.html).join('')}</div>`;
 }
 
 const PART = 'fantasy.player-card.';
-/** Optional: the player's portrait with a fade over its edge. Nothing when the roster entry has no `portrait`. */
-function portraitHtml(entry, show) {
+/** The fade colour of a team's portrait: the theme key of that team (header-portrait-fade.team-colour-<team>, none filled yet), else the one neutral default key. */
+const fadeColour = team => `--fade-colour:var(--fantasy-player-card-header-portrait-fade-team-colour-${String(team).replace(/[^\w-]/g, '')}, var(--fantasy-player-card-header-portrait-fade-default-colour))`;
+/** Optional: the player's portrait (head and upper torso) with a fade behind it. Nothing when the roster entry has no `portrait`. */
+function portraitHtml(entry, team, show) {
   if (!entry?.portrait) return '';
-  const fade = drawParts(PART + 'header-portrait', { 'header-portrait-fade': () => `<span data-part="${PART}header-portrait-fade"></span>` }, show).map(p => p.html).join('');
-  return `<span data-part="${PART}header-portrait"><img src="${esc(entry.portrait)}" alt="">${fade}</span>`;
+  const fade = drawParts(PART + 'header-portrait', { 'header-portrait-fade': () => `<span data-part="${PART}header-portrait-fade" style="${fadeColour(team)}"></span>` }, show).map(p => p.html).join('');
+  return `<span data-part="${PART}header-portrait">${fade}<img src="${esc(entry.portrait)}" alt=""></span>`;
 }
 /** Optional: a small line of the last values as a line, coloured by the theme key of the element around it. Nothing without at least two numbers. */
 function sparklineHtml(values) {
@@ -41,27 +44,45 @@ function sparklineHtml(values) {
   return `<svg data-part="${PART}value-sparkline" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="${points}" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/></svg>`;
 }
 
+/** Team cards keep the header they had: logo, title, then the actions (Back when opened from a player, Close) as plain items of the header row. */
+function teamHeaderHtml({ cs, title, logo, show }) {
+  const actions = drawParts('fantasy.player-card.header-actions-team', {
+    'back-button': () => backBtn(cs),
+    'close-button': () => '<span data-close-slot></span>',
+  }, show).map(p => p.html).join('');
+  const parts = drawParts('fantasy.player-card.header-team', {
+    'logo': () => (logo ? `<img src="${esc(logo)}" alt="" data-part="${PART}header-logo">` : ''),
+    'title': () => `<div>${title}</div>`,
+    'header-actions-team': () => `<div data-part="${PART}header-actions-team">${actions}</div>`,
+  }, show);
+  return `<header class="fw-identity" data-part="${PART}header-team">${parts.map(p => p.html).join('')}</header>`;
+}
+
 /** ctx: { cs, players, name, team, row, roster, logo, next } */
 export function headerHtml({ cs, players, name, team, row, roster, logo, next }) {
   const info = players ? Data.fantasyInfo(cs.id) : null;
   const entry = players ? roster.players?.[cs.id] : null, split = !!(entry?.first && entry?.last);   // given and family name only when both are known
-  const show = { players, 'team-from-player': !players && !!cs.back, 'when-data': info !== null };
+  const show = { players, 'team-from-player': !players && !!cs.back, 'when-data': info !== null, 'logo-fallback': !players || !entry?.portrait };   // the team logo is the fallback for a player without a portrait
   const title = drawParts('fantasy.player-card.header-title', {
     'kicker': () => `<small>${players ? 'PLAYER' : 'TEAM'} / FANTASY</small>`,
     'header-given-name': () => (split ? `<span data-part="${PART}header-given-name">${esc(entry.first)}</span>` : ''),
     'name': () => `<h2>${esc(split ? entry.last : name)}</h2>`,
-    'team-line': () => `<p>${players ? esc(roster.teams[team] || team) + ' · ' + esc(row.pos || '—') : ''}</p>`,
+    'team-line': () => { const line = players ? [row?.pos, roster.teams[team] || team].filter(Boolean).join(' | ') : ''; return line ? `<p>${esc(line)}</p>` : ''; },   // "Position | Team"; either alone; nothing when neither
+  }, show).map(p => p.html).join('');
+  if (!players) return teamHeaderHtml({ cs, title, logo, show });
+  const identity = drawParts('fantasy.player-card.header-identity', {
+    'logo': () => (logo ? `<img src="${esc(logo)}" alt="" data-part="${PART}header-logo">` : ''),
+    'header-portrait': () => portraitHtml(entry, team, show),
+    'title': () => `<div>${title}</div>`,
+    'cr-box': () => info?.cr == null ? '' : `<span class="fw-cr-box" data-part="${PART}cr-box">${esc(info.cr)}</span>`,
+    'value-chip': () => info?.value == null ? '' : `<span class="fw-value-chip" data-part="${PART}value-chip">${esc(info.value)}</span>`,
+    'value-sparkline': () => sparklineHtml(info?.valueSeries),
   }, show).map(p => p.html).join('');
   const parts = drawParts('fantasy.player-card.header', {
-    'logo': () => (logo ? `<img src="${esc(logo)}" alt="">` : ''),
-    'header-portrait': () => portraitHtml(entry, show),
-    'title': () => `<div>${title}</div>`,
+    'header-identity': () => `<div data-part="${PART}header-identity">${identity}</div>`,
     'header-actions': () => actionsHtml({ cs, next, roster }, show),
-    'cr-box': () => info?.cr == null ? '' : `<span class="fw-cr-box">${esc(info.cr)}</span>`,
-    'value-chip': () => info?.value == null ? '' : `<span class="fw-value-chip">${esc(info.value)}</span>`,
-    'value-sparkline': () => sparklineHtml(info?.valueSeries),
   }, show);
-  return `<header class="fw-identity">${parts.map(p => p.html).join('')}</header>`;
+  return `<header class="fw-identity" data-part="${PART}header">${parts.map(p => p.html).join('')}</header>`;
 }
 
 /** Icons the controls row draws (core/icons.js loadIcons, before the card is drawn). */

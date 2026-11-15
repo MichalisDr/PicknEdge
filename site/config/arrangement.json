@@ -1,5 +1,5 @@
 {
- "note": "Arrangement of three components, with the same names as theme.json and sizes.json (screen.component.part). `parts` is the order in which the parts appear; a part is drawn when its `show` condition holds and it has something to show, so optional parts (cr-box, value-chip) draw nothing while there is no data. `align: end` puts a part in the group at the far end of the row. direction, wrap, align, justify and push of a container, and `self` (own alignment) of a part, become CSS variables in arrangement.css (node site/config/generate.mjs). show: always | players | teams | charts-available | when-data | team-from-player.",
+ "note": "Arrangement of three components, with the same names as theme.json and sizes.json (screen.component.part). `parts` is the order in which the parts appear; a part is drawn when its `show` condition holds and it has something to show, so optional parts (cr-box, value-chip) draw nothing while there is no data. `align: end` puts a part in the group at the far end of the row. direction, wrap, align, justify and push of a container, and `self` (own alignment) of a part, become CSS variables in arrangement.css (node site/config/generate.mjs). show: always | players | teams | charts-available | when-data | team-from-player | logo-fallback (teams, and players without a portrait).",
  "component": {
   "fantasy": {
    "stat-table": {
@@ -125,14 +125,43 @@
    "player-card": {
     "header": {
      "direction": "row",
+     "wrap": "nowrap",
+     "align": "start",
+     "justify": "start",
+     "parts": [
+      { "name": "header-identity", "show": "always" },
+      { "name": "header-actions", "show": "always", "self": "start" }
+     ]
+    },
+    "header-team": {
+     "direction": "row",
      "wrap": "wrap",
      "align": "center",
      "justify": "start",
      "parts": [
       { "name": "logo", "show": "always" },
+      { "name": "title", "show": "always" },
+      { "name": "header-actions-team", "show": "always" }
+     ]
+    },
+    "header-actions-team": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "parts": [
+      { "name": "back-button", "show": "team-from-player" },
+      { "name": "close-button", "show": "always" }
+     ]
+    },
+    "header-identity": {
+     "direction": "row",
+     "wrap": "wrap",
+     "align": "center",
+     "justify": "start",
+     "parts": [
+      { "name": "logo", "show": "logo-fallback" },
       { "name": "header-portrait", "show": "players" },
       { "name": "title", "show": "always" },
-      { "name": "header-actions", "show": "always" },
       { "name": "cr-box", "show": "when-data" },
       { "name": "value-chip", "show": "when-data" },
       { "name": "value-sparkline", "show": "when-data" }
@@ -147,6 +176,7 @@
      "direction": "row",
      "wrap": "nowrap",
      "align": "center",
+     "push": "end",
      "parts": [
       { "name": "next-game-button", "show": "players" },
       { "name": "back-button", "show": "team-from-player" },
