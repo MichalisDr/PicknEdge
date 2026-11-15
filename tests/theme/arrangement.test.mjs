@@ -30,13 +30,13 @@ test('arrangement.css is exactly what arrangement.json generates', () => {
   assert.equal(readFileSync(new URL('config/arrangement.css', SITE), 'utf8'), buildArrangementCss(ARRANGEMENT), 'run: node site/config/generate.mjs');
 });
 
-test('toolbar: parts in the configured order, the end group at the far end, optional parts only when they apply', async () => {
+test('toolbar: parts in the configured order, the right-hand group at the far end, Players-only parts only for Players', async () => {
   const players = await table('players');
   assert.ok(inOrder(at(players, ['data-view-set="profile"', 'aria-label="Sample window"', 'data-position="G"', 'type="search"', 'data-filters'])), 'view pair above; windows left; G/F/C, Find player, Filters at the right');
   assert.ok(!players.includes('data-view-toggle') && !players.includes('FANTASY / PLAYERS') && !players.includes('data-position="ALL"'));
   const teams = await table('teams');
   assert.ok(!teams.includes('data-position') && !teams.includes('data-filters'), 'players-only parts are not drawn for teams');
-  assert.ok(inOrder(at(teams, ['data-view-toggle', 'class="fw-right"', 'type="search"'])));
+  assert.ok(inOrder(at(teams, ['data-view-set="profile"', 'aria-label="Sample window"', 'type="search"'])));
 });
 
 test('changing the order in the config changes the page (toolbar, name cell, card header)', async () => {

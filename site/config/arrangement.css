@@ -1,10 +1,6 @@
 /* Generated from arrangement.json by config/generate.mjs. Do not edit by hand. */
 body{
 --app-top-bar-coverage-margin-left:auto;
---fantasy-stat-table-toolbar-direction:row;
---fantasy-stat-table-toolbar-wrap:wrap;
---fantasy-stat-table-toolbar-align:center;
---fantasy-stat-table-toolbar-justify:flex-start;
 --fantasy-stat-table-players-view-row-direction:row;
 --fantasy-stat-table-players-view-row-wrap:nowrap;
 --fantasy-stat-table-players-view-row-align:center;
@@ -41,10 +37,6 @@ body{
 --fantasy-stat-table-players-filters-button-direction:row;
 --fantasy-stat-table-players-filters-button-align:center;
 --fantasy-stat-table-players-filters-button-justify:center;
---fantasy-stat-table-toolbar-end-group-direction:row;
---fantasy-stat-table-toolbar-end-group-wrap:wrap;
---fantasy-stat-table-toolbar-end-group-align:center;
---fantasy-stat-table-toolbar-end-group-margin-left:auto;
 --fantasy-stat-table-name-cell-direction:column;
 --fantasy-stat-table-name-cell-align:stretch;
 --fantasy-stat-table-name-cell-name-self:flex-start;

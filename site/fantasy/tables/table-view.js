@@ -7,7 +7,7 @@ import { teamCode } from '../../core/teams.js';
 import { Data } from '../../core/data.js';
 import { drawParts } from '../../core/arrangement.js';
 import { available as chartsAvailable } from '../gallery/charts.js';
-import { playersToolbarHtml } from './table-toolbar.js';
+import { tableToolbarHtml } from './table-toolbar.js';
 import { playerNameCellHtml } from './table-name-cell.js';
 
 export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster, shown: rowsShown, firstW, sel, cur, avg, gallery, byId }) {
@@ -42,20 +42,11 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
     <label>GP ≥<input data-filter="minGp" type="number" min="0" value="${state.minGp}"></label>
     <label class="fw-check"><input data-filter="showAll" type="checkbox" ${state.showAll ? 'checked' : ''}> Show players below the form thresholds</label></div>` : '';
   const info = sel.length ? `<div class="fw-tinfo">Combined rank: ${esc(sel.map(id => cols.find(c => c.metric === id).label).join(' + '))} (mean percentile). Click a header to clear.</div>` : '';
-  /* The toolbar: its parts, their order, which show and which sit at the far end come from config/arrangement.json (fantasy.stat-table.window-row, .toolbar for Teams; table-toolbar.js for Players). */
+  /* The toolbar (two rows, Players and Teams): its parts, order and visibility come from config/arrangement.json (fantasy.stat-table.players-view-row, .players-toolbar); see table-toolbar.js. */
   const show = { players: !teams, teams, 'charts-available': hasCharts };
-  const windowRow = drawParts('fantasy.stat-table.window-row', { 'window-buttons': () => `<div class="fw-switch" role="group" aria-label="Sample window" data-part="fantasy.stat-table.window-buttons">${Windows.buttons(state)}</div>` }, show).map(p => p.html).join('');
-  const toolbarParts = drawParts('fantasy.stat-table.toolbar', {
-    'view-button': () => `<div class="fw-switch" role="group" aria-label="Table view" data-part="fantasy.stat-table.view-buttons"><button data-view-toggle aria-pressed="${state.view === 'shooting'}">Shooting</button></div>`,
-    'mode-tabs': () => `<div class="fw-switch" role="tablist">${['table', 'charts'].map(v => `<button data-fwmode="${v}" role="tab" aria-selected="${state.mode === v}">${v === 'table' ? 'Table' : 'Charts'}</button>`).join('')}</div>`,
-    'search': () => `<input type="search" aria-label="Search Fantasy" placeholder="Search…" value="${esc(state.query)}">`,
-  }, show);
-  const toolbar = toolbarParts.filter(p => p.align !== 'end').map(p => p.html).join('') + `<div class="fw-right">${toolbarParts.filter(p => p.align === 'end').map(p => p.html).join('')}</div>`;
-  /* Teams: the window row and the toolbar. Players: the two rows of table-toolbar.js. */
-  const bars = teams ? `<div class="fw-periods">${windowRow}</div>
-    <div class="fw-toolbar">${toolbar}${filters}</div>` : playersToolbarHtml(state, show, filters);
+  const bars = tableToolbarHtml(state, show, filters);
   return `<section class="fantasy-stats fw-workbench">
-    <div class="fw-heading"><div>${teams ? '<div class="eyebrow">FANTASY / TEAMS</div>' : ''}<h1>${title}</h1></div></div>
+    <div class="fw-heading"><div><h1>${title}</h1></div></div>
     ${bars}
     ${gallery ? '' : info}${gallery}<div class="fw-tooltip" role="tooltip" hidden></div><div class="sz-pop fw-pop" role="status" hidden></div><div class="fw-table-wrap" ${gallery ? 'hidden' : ''}><table class="fw-t" style="min-width:${totalW}px"><colgroup><col style="width:${firstW}px">${cols.map(() => '<col>').join('')}</colgroup><thead><tr><th>${teams ? 'Team' : 'Player'}</th>${header}</tr></thead>
       <tbody>${body}<tr class="fw-average"><th title="full league${teams ? '' : ' · all players who played'} · ignores filters">League average</th>${cells(null, true)}</tr></tbody></table></div>

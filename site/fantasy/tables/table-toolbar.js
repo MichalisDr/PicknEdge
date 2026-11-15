@@ -1,5 +1,5 @@
-/* The Players toolbar: an upper row with the Profile / Shooting pair and the Table / Charts pair (icon above label), and a lower row with the sample windows
-   at the left and G / F / C, Find player and Filters grouped at the right. Rows, order, alignment and visibility come from config/arrangement.json
+/* The Players and Teams toolbar (one renderer): an upper row with the Profile / Shooting pair and the Table / Charts pair (icon above label), and a lower row with the sample windows
+   at the left and, grouped at the right, G / F / C and the Filters funnel (Players only) with the search field (Find player / Find team). Rows, order, alignment and visibility come from config/arrangement.json
    (fantasy.stat-table.players-view-row, .players-toolbar, ...); every element has a data-part equal to its theme / sizes / arrangement key.
    The icons are SVG files (assets/icons) drawn with currentColor: they take the colour of the button around them. */
 import * as Windows from '../../core/windows.js';
@@ -21,8 +21,9 @@ function iconButton(kind, attrs, iconName, label) {
   return `<button ${part(`players-${kind}-button`)} ${attrs}>${inner}</button>`;
 }
 
-/** state, show = { players, 'charts-available' }, filtersPanel = the Filters pop-up markup (empty when closed). Returns the two rows. */
-export function playersToolbarHtml(state, show, filtersPanel = '') {
+/** state, show = { players, teams, 'charts-available' }, filtersPanel = the Filters pop-up markup (empty when closed and for Teams). Returns the two rows. */
+export function tableToolbarHtml(state, show, filtersPanel = '') {
+  const label = show.teams ? 'Find team' : 'Find player';
   const draw = {
     'view-button': () => `<div role="group" aria-label="Table view" ${part('players-view-buttons')}>${[['profile', 'profile', 'Profile'], ['shooting', 'target', 'Shooting']]
       .map(([v, ic, label]) => iconButton('view', `data-view-set="${v}" aria-pressed="${state.view === v}"`, ic, label)).join('')}</div>`,
@@ -33,7 +34,7 @@ export function playersToolbarHtml(state, show, filtersPanel = '') {
     'position-buttons': () => `<div role="group" aria-label="Player position" ${part('players-position-buttons')}>${['G', 'F', 'C'].map(v => `<button data-position="${v}" aria-pressed="${state.position.includes(v)}">${v}</button>`).join('')}</div>`,
     'search': () => `<label ${part('players-search')}>${drawParts(`${A}players-search`, {
       'players-search-icon': () => `<span ${part('players-search-icon')} aria-hidden="true">${icon('search')}</span>`,
-      'players-search-field': () => `<input type="search" aria-label="Find player" placeholder="Find player" value="${esc(state.query)}">`,
+      'players-search-field': () => `<input type="search" aria-label="${label}" placeholder="${label}" value="${esc(state.query)}">`,
     }, {}).map(p => p.html).join('')}</label>`,
     'filters-button': () => `<button ${part('players-filters-button')} data-filters aria-expanded="${state.filters}" aria-label="Filters" title="Filters">${drawParts(`${A}players-filters-button`, {
       'players-filters-icon': () => `<span ${part('players-filters-icon')} aria-hidden="true">${icon('funnel')}</span>`,

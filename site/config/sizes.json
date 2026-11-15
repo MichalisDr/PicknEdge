@@ -827,36 +827,12 @@
     "table": {
      "width": "100%"
     },
-    "toolbar": {
-     "margin-bottom": "20px"
-    },
-    "toolbar-end-group": {
-     "gap": "12px",
-     "width-below-650px": "100%"
-    },
     "toolbar-search-field": {
      "width": "190px",
      "width-below-650px": "100%"
     },
     "value-cell": {
      "gap": "2px"
-    },
-    "view-button": {
-     "padding": "8px 12px"
-    },
-    "view-buttons": {
-     "gap": "4px",
-     "padding": "4px"
-    },
-    "window-button": {
-     "padding": "8px 12px"
-    },
-    "window-buttons": {
-     "gap": "4px",
-     "padding": "4px"
-    },
-    "window-row": {
-     "margin-bottom": "12px"
     }
    }
   }

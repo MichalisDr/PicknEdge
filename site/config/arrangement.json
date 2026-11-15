@@ -15,29 +15,13 @@
   },
   "fantasy": {
    "stat-table": {
-    "window-row": {
-     "parts": [
-      { "name": "window-buttons", "show": "always" }
-     ]
-    },
-    "toolbar": {
-     "direction": "row",
-     "wrap": "wrap",
-     "align": "center",
-     "justify": "start",
-     "parts": [
-      { "name": "view-button", "show": "always" },
-      { "name": "mode-tabs", "show": "charts-available", "align": "end" },
-      { "name": "search", "show": "always", "align": "end" }
-     ]
-    },
     "players-view-row": {
      "direction": "row",
      "wrap": "nowrap",
      "align": "center",
      "justify": "end",
      "parts": [
-      { "name": "view-button", "show": "players" },
+      { "name": "view-button", "show": "always" },
       { "name": "players-view-divider", "show": "charts-available" },
       { "name": "mode-tabs", "show": "charts-available" }
      ]
@@ -48,9 +32,9 @@
      "align": "center",
      "justify": "start",
      "parts": [
-      { "name": "window-buttons", "show": "players" },
+      { "name": "window-buttons", "show": "always" },
       { "name": "position-buttons", "show": "players", "align": "end" },
-      { "name": "search", "show": "players", "align": "end" },
+      { "name": "search", "show": "always", "align": "end" },
       { "name": "filters-button", "show": "players", "align": "end" }
      ]
     },
@@ -116,12 +100,6 @@
      "parts": [
       { "name": "players-filters-icon", "show": "always" }
      ]
-    },
-    "toolbar-end-group": {
-     "direction": "row",
-     "wrap": "wrap",
-     "align": "center",
-     "push": "end"
     },
     "name-cell": {
      "direction": "column",
