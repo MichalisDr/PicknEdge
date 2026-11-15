@@ -20,7 +20,7 @@ const arranged = (screen, comp, name) => !!arrangement.component[screen]?.[comp]
 // [theme and sizes part, name in the arrangement]
 const NEW_PARTS = {
   'fantasy.player-card': [['header-actions', 'header-actions'], ['header-portrait', 'header-portrait'], ['header-portrait-fade', 'header-portrait-fade'], ['header-given-name', 'header-given-name'], ['header-name', 'name'], ['value-sparkline', 'value-sparkline'],
-    ['window-buttons', 'window-buttons'], ['view-buttons', 'view-button']],
+    ['view-button', 'view-button']],
   'fantasy.stat-table': [['window-buttons', 'window-buttons'], ['view-buttons', 'view-button']],
 };
 
@@ -35,13 +35,13 @@ test('every new part has theme, sizes and arrangement entries', () => {
   }
 });
 
-test('toolbar and card each have all of: switch, window and view button (container, button, selected button), with the same properties', () => {
+test('toolbar and card each have all of: switch, window and view button (container, button, selected button), each with its own keys', () => {
   for (const kind of ['switch', 'window', 'view']) for (const part of [kind + '-buttons', kind + '-button', kind + '-button-selected']) {
     for (const [json, label] of [[theme, 'theme'], [sizes, 'sizes']]) {
+      if (label === 'theme' && part.endsWith('-buttons') && kind !== 'switch') continue;   // on the card the window / view groups are no boxes: gap only (sizes)
       if (label === 'sizes' && part.endsWith('-selected')) continue;   // a selected button only changes colours
       const a = json.component.fantasy['stat-table'][part], b = json.component.fantasy['player-card'][part];
       assert.ok(a && b, `${label}: ${part} missing in the toolbar or in the card`);
-      assert.deepEqual(Object.keys(b), Object.keys(a), `${label}: ${part}`);
     }
   }
 });
@@ -50,7 +50,7 @@ test('toolbar and card switch buttons are driven by different keys: no rule of t
   const sheets = walk('theme/', ['.css']).filter(f => !/theme\.css$|editor\.css$/.test(f)).map(read);
   let toolbar = 0, card = 0;
   for (const css of sheets) for (const m of css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
-    const inCard = /\.fw-card\b/.test(m[1]);
+    const inCard = /\.fw-card\b|fantasy\.player-card\./.test(m[1]);
     for (const v of m[2].matchAll(/var\(--fantasy-(stat-table|player-card)-((?:switch|window|view)-button[\w-]*)\)/g)) {
       if (v[1] === 'stat-table') { toolbar++; assert.ok(!inCard, `a card rule reads the toolbar key ${v[0]}`); }
       else { card++; assert.ok(inCard, `a rule outside the card reads the card key ${v[0]}`); }

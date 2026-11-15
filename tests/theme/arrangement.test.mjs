@@ -75,7 +75,7 @@ test('optional parts (cr box, value chip) draw nothing while there is no data, a
 
 test('controls row: window buttons, games played, Shooting in the configured order', () => {
   const html = controlsHtml({ cs: { mode: 'profile', win: 'season' }, players: true, gp: 7 });
-  assert.ok(inOrder(at(html, ['aria-label="Sample window"', '<b>7 GP</b>', 'aria-label="Card view"'])));
+  assert.ok(inOrder(at(html, ['aria-label="Sample window"', '7 GP</b>', 'aria-label="Card view"'])));
 });
 
 test('order, direction and alignment of these components are not hard-coded in the style sheets', () => {

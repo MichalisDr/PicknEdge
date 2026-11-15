@@ -53,7 +53,7 @@ function wire() {
   const on = (sel, ev, fn) => host.querySelectorAll(sel).forEach(el => { el[ev] = () => fn(el); });
   Windows.wire(host, state, () => { state.sort = ''; state.sel = []; draw(); });
   on('[data-fwmode]', 'onclick', b => { state.mode = b.dataset.fwmode; draw(); });
-  host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => openCard(state.entity, p.dataset.open, { win: state.win }); });
+  host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => openCard(state.entity, p.dataset.open, { win: state.win, mode: state.view }); });
   on('[data-view-toggle]', 'onclick', () => { state.view = state.view === 'shooting' ? 'profile' : 'shooting'; state.sort = ''; state.sel = []; draw(); });
   on('[data-view-set]', 'onclick', b => { if (state.view === b.dataset.viewSet) return; state.view = b.dataset.viewSet; state.sort = ''; state.sel = []; draw(); });
   on('[data-position]', 'onclick', b => { const p = b.dataset.position; state.position = state.position.includes(p) ? state.position.filter(x => x !== p) : [...state.position, p]; draw(); });
@@ -65,7 +65,7 @@ function wire() {
     state[k] = k === 'team' ? el.value : k === 'showAll' ? el.checked : Math.max(0, Number(el.value) || 0);
     draw();
   });
-  on('[data-open]', 'onclick', b => openCard(state.entity, b.dataset.open, { win: state.win }));
+  on('[data-open]', 'onclick', b => openCard(state.entity, b.dataset.open, { win: state.win, mode: state.view }));
   wirePopups(host, state, shown);
   const search = host.querySelector('input[type=search]');
   search.oninput = e => { state.query = e.target.value; draw().then(() => { const i = host.querySelector('input[type=search]'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }); };

@@ -3,7 +3,8 @@
 import { Data } from '../../core/data.js';
 import * as Windows from '../../core/windows.js';
 import { teamLogo } from '../../core/teams.js';
-import { headerHtml, controlsHtml } from './card-header.js';
+import { headerHtml, controlsHtml, CONTROL_ICONS } from './card-header.js';
+import { loadIcons } from '../../core/icons.js';
 import { layoutGrid } from './metric-grid.js';
 import { radar, teamRadar } from './radar.js';
 import { trendBlock } from './card-trend.js';
@@ -32,7 +33,7 @@ async function draw() {
   const root = dialog.querySelector('.fw-card'), mine = cs.token = (cs.token || 0) + 1;
   const kind = cs.entity;
   try {
-    const [view, season, teamsView, { byId }, roster] = await Promise.all([Windows.view(kind, cs), Data.view(kind, 'season'), Windows.view('teams', cs), Data.metrics(), Data.roster()]);
+    const [view, season, teamsView, { byId }, roster] = await Promise.all([Windows.view(kind, cs), Data.view(kind, 'season'), Windows.view('teams', cs), Data.metrics(), Data.roster(), loadIcons(CONTROL_ICONS)]);
     const next = kind === 'players' && season.row(cs.id) ? await Data.nextGame(season.row(cs.id).team).catch(() => null) : null;
     if (mine !== cs.token || !dialog) return;
     const row = view.row(cs.id) || season.row(cs.id);
@@ -55,9 +56,9 @@ async function draw() {
       ${!gp && players ? '' : gridHtml}<div class="fw-visual">${visual}</div>${players ? '<div data-box></div>' : ''}`;
     dockClose(root);
     Windows.wire(root, cs, () => { cs.selected = null; draw(); }, 'data-card-window');
-    root.querySelector('[data-next]')?.addEventListener('click', e => { const t = e.currentTarget.dataset.next; open('teams', t, { win: cs.win, back: { id: cs.id, name }, previous: cs.previous }); });
-    root.querySelector('[data-back]')?.addEventListener('click', () => open('players', cs.back.id, { win: cs.win, previous: cs.previous }));
-    root.querySelectorAll('[data-card-view]').forEach(b => { b.onclick = () => { cs.mode = cs.mode === 'shooting' ? 'profile' : 'shooting'; cs.selected = null; draw(); }; });
+    root.querySelector('[data-next]')?.addEventListener('click', e => { const t = e.currentTarget.dataset.next; open('teams', t, { win: cs.win, mode: cs.mode, back: { id: cs.id, name }, previous: cs.previous }); });
+    root.querySelector('[data-back]')?.addEventListener('click', () => open('players', cs.back.id, { win: cs.win, mode: cs.mode, previous: cs.previous }));
+    root.querySelectorAll('[data-card-view]').forEach(b => { b.onclick = () => { if (cs.mode === b.dataset.cardView) return; cs.mode = b.dataset.cardView; cs.selected = null; draw(); }; });
     root.querySelectorAll('[data-metric]').forEach(b => { b.onclick = () => { cs.selected = cs.selected === b.dataset.metric ? null : b.dataset.metric; draw(); }; });
     root.querySelectorAll('[data-radar]').forEach(b => { b.onclick = () => { cs.radar = b.dataset.radar; draw(); }; });
     root.querySelectorAll('[data-net]').forEach(b => { b.onclick = () => { cs.net = b.dataset.net; draw(); }; });

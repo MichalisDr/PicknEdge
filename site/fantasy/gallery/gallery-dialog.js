@@ -16,7 +16,7 @@ export function installGalleryDialog({ doc = document, win = window, openCard })
     mine.onclick = e => {
       if (e.target === mine) return done();
       const pt = e.target.closest('.fc-pt[data-open]');
-      if (pt) { close(); openCard(gal.dataset.entity, pt.dataset.open, { win: gal.dataset.win }); }
+      if (pt) { close(); openCard(gal.dataset.entity, pt.dataset.open, { win: gal.dataset.win, mode: gal.dataset.view }); }
     };
     mine.showModal();
   }

@@ -32,5 +32,5 @@ export const siteFile = rel => readFileSync(join(root, '..', rel), 'utf8');
 export async function useIcons() {
   const { loadIcons } = await import('../../site/core/icons.js');
   const { TOOLBAR_ICONS } = await import('../../site/fantasy/tables/table-toolbar.js');
-  await loadIcons(TOOLBAR_ICONS, async name => readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'site', 'assets', 'icons', name + '.svg'), 'utf8'));
+  await loadIcons([...TOOLBAR_ICONS, 'profile', 'target'], async name => readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'site', 'assets', 'icons', name + '.svg'), 'utf8'));
 }

@@ -587,7 +587,8 @@
     },
     "controls-games-played": {
      "font-size": "15px",
-     "font-size-below-650px": "12px"
+     "font-size-below-650px": "12px",
+     "text": "{semantic.text-soft}"
     },
     "header-actions": {
      "text": "#eef3f8"
@@ -811,18 +812,12 @@
      "line-width": "1.5px"
     },
     "view-button": {
-     "font-size": "13px",
-     "radius": "5px",
+     "font-size": "12px",
+     "radius": "8px",
      "text": "#b8c7da"
     },
     "view-button-selected": {
-     "background": "{semantic.accent-fantasy}",
-     "text": "{semantic.white}"
-    },
-    "view-buttons": {
-     "border": "{semantic.border-control}",
-     "border-width": "1px",
-     "radius": "8px"
+     "text": "{semantic.accent-fantasy}"
     },
     "visual-section": {
      "border-top": "{semantic.border-soft}",
@@ -839,18 +834,16 @@
      "background": "#02060dc9"
     },
     "window-button": {
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
      "font-size": "13px",
-     "radius": "5px",
+     "radius": "8px",
      "text": "#b8c7da"
     },
     "window-button-selected": {
      "background": "{semantic.accent-fantasy}",
+     "border": "{semantic.accent-fantasy}",
      "text": "{semantic.white}"
-    },
-    "window-buttons": {
-     "border": "{semantic.border-control}",
-     "border-width": "1px",
-     "radius": "8px"
     }
    },
    "shot-chart": {

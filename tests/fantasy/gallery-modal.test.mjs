@@ -14,7 +14,7 @@ function setup() {
   installGalleryDialog({ doc, win: { addEventListener() {} }, openCard: (...a) => opened.push(a) });
   const part = cls => ({ innerHTML: cls, outerHTML: `<x class="${cls}"/>` });
   const card = { isConnected: true, focused: 0, focus() { this.focused++; },
-    closest: sel => (sel === '.fc-gallery' ? { dataset: { entity: 'teams', win: 'season' } } : sel === '.fc-grid-gallery .fc-card' ? card : null),
+    closest: sel => (sel === '.fc-gallery' ? { dataset: { entity: 'teams', win: 'season', view: 'shooting' } } : sel === '.fc-grid-gallery .fc-card' ? card : null),
     querySelector: sel => part(sel), querySelectorAll: () => [part('fc-note')] };
   return { listeners, body, card, opened };
 }
@@ -52,7 +52,7 @@ test('backdrop click closes; a point click in the dialog opens the player/team c
   listeners.click({ target: card });
   const dlg = body[0];
   dlg.onclick({ target: { closest: sel => (sel === '.fc-pt[data-open]' ? { dataset: { open: 'BAR' } } : null) } });
-  assert.equal(JSON.stringify(opened), JSON.stringify([['teams', 'BAR', { win: 'season' }]]));
+  assert.equal(JSON.stringify(opened), JSON.stringify([['teams', 'BAR', { win: 'season', mode: 'shooting' }]]));
   assert.ok(dlg.removed);
   const s2 = setup();
   s2.listeners.click({ target: s2.card });
