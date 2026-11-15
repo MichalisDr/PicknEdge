@@ -205,3 +205,23 @@ test('team cards keep the header they had: flat header row, own actions wrapper,
   assert.ok(!/max-width|text-overflow/.test(base), 'the base Back / next button is not truncated; only the player actions group caps it');
   assert.match(css, /@media\(max-width:650px\)\{\.fw-next\{margin-top:0\}\}/);
 });
+
+/* ---- Batch 9: the team card city line ---- */
+test('team card: the approved city sits below the club name inside the title; without a city the display name alone; player cards have none', async () => {
+  const { default: CITIES } = await import('../../site/config/team-cities.json', { with: { type: 'json' } });
+  const team = (name = 'Hapoel IBI Tel Aviv') => headerHtml({ cs: { id: 'HTA' }, players: false, name, team: 'HTA', row: {}, logo: 'assets/logos/x.png', next: null, roster: { teams: { HTA: name }, logoIds: { HTA: 'hapoel-tel-aviv' }, players: {} } });
+  const plain = team();
+  assert.ok(plain.includes('<h2>Hapoel IBI Tel Aviv</h2>') && !plain.includes('header-city'), 'no mapping: today\'s header');
+  const saved = JSON.stringify(CITIES.cities);
+  try {
+    CITIES.cities['hapoel-tel-aviv'] = { city: 'Tel Aviv' };
+    const html = team();
+    assert.match(html, /<h2 title="Hapoel IBI Tel Aviv">Hapoel IBI<\/h2><p data-part="fantasy.player-card.header-city">Tel Aviv<\/p>/, 'city once across the two lines, the full name stays as the tooltip');
+    assert.ok(html.indexOf('<img') < html.indexOf('<h2') && html.indexOf('<h2') < html.indexOf('header-city') && html.indexOf('header-city') < html.indexOf('data-close-slot'), 'logo, club, city, then the actions');
+    assert.ok(!html.includes('FANTASY') && !html.includes('GP'));
+    CITIES.cities['hapoel-tel-aviv'] = { city: 'Tel Aviv', club: 'Hapoel' };
+    assert.ok(team().includes('>Hapoel</h2>'));
+    const player = headerHtml({ cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'HTA', row: { pos: 'G' }, logo: null, next: null, roster: { teams: { HTA: 'Hapoel IBI Tel Aviv' }, logoIds: { HTA: 'hapoel-tel-aviv' }, players: { P1: { name: 'Player One' } } } });
+    assert.ok(!player.includes('header-city'), 'player cards have no city line');
+  } finally { for (const k of Object.keys(CITIES.cities)) delete CITIES.cities[k]; Object.assign(CITIES.cities, JSON.parse(saved)); }
+});

@@ -7,6 +7,9 @@ import { teamCode } from '../../core/teams.js';
 import { drawParts } from '../../core/arrangement.js';
 import { icon } from '../../core/icons.js';
 import { sparklineSvg, sparklinePlaceholder } from '../../core/sparkline.js';
+import { teamEntry } from '../../core/teams.js';
+import { teamTitleLines } from '../../core/team-city.js';
+import CITIES from '../../config/team-cities.json' with { type: 'json' };
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const dayLabel = iso => { const d = new Date(iso); return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()]; };
@@ -55,10 +58,12 @@ function teamHeaderHtml({ cs, title, logo, show }) {
 export function headerHtml({ cs, players, name, team, row, roster, logo, next }) {
   const info = players ? Data.fantasyInfo(cs.id) : null;
   const entry = players ? roster.players?.[cs.id] : null, split = !!(entry?.first && entry?.last);   // given and family name only when both are known
-  const show = { players, 'team-from-player': !players && !!cs.back, 'when-data': info !== null, 'logo-fallback': !players || !entry?.portrait };   // the team logo is the fallback for a player without a portrait
+  const lines = players ? null : teamTitleLines(name, CITIES.cities[teamEntry(roster, cs.id)?.id]);   // team cards: club name, and the approved city below it
+  const show = { players, teams: !players, 'team-from-player': !players && !!cs.back, 'when-data': info !== null, 'logo-fallback': !players || !entry?.portrait };   // the team logo is the fallback for a player without a portrait
   const title = drawParts('fantasy.player-card.header-title', {
     'header-given-name': () => (split ? `<span data-part="${PART}header-given-name">${esc(entry.first)}</span>` : ''),
-    'name': () => `<h2>${esc(split ? entry.last : name)}</h2>`,
+    'name': () => `<h2${lines?.city ? ` title="${esc(name)}"` : ''}>${esc(split ? entry.last : lines ? lines.club : name)}</h2>`,
+    'header-city': () => (lines?.city ? `<p data-part="${PART}header-city">${esc(lines.city)}</p>` : ''),
     'team-line': () => { const line = players ? [row?.pos, roster.teams[team] || team].filter(Boolean).join(' | ') : ''; return line ? `<p>${esc(line)}</p>` : ''; },   // "Position | Team"; either alone; nothing when neither
   }, show).map(p => p.html).join('');
   if (!players) return teamHeaderHtml({ cs, title, logo, show });

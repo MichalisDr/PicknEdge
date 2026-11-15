@@ -399,6 +399,9 @@
      "gap": "16px",
      "gap-below-650px": "10px"
     },
+    "header-city": {
+     "margin": "2px 0 0"
+    },
     "header-given-name": {
      "margin": "0 0 2px"
     },
