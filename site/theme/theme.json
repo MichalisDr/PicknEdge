@@ -1073,6 +1073,37 @@
      "font-size": "11px",
      "text": "#97a8bd"
     },
+    "name-cell-cr-box": {
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "font-size": "11px",
+     "radius": "6px",
+     "text": "{semantic.text-soft}"
+    },
+    "name-cell-family-name": {
+     "font-size": "13px",
+     "font-weight": "700"
+    },
+    "name-cell-given-name": {
+     "font-size": "11px",
+     "text": "{semantic.muted}"
+    },
+    "name-cell-position-badge": {
+     "background": "{semantic.chip}",
+     "font-size": "11px",
+     "radius": "6px",
+     "text": "{semantic.text-soft}"
+    },
+    "name-cell-sparkline": {
+     "line": "{semantic.accent-fantasy}",
+     "line-width": "1.5px"
+    },
+    "name-cell-value-chip": {
+     "background": "{semantic.chip}",
+     "font-size": "11px",
+     "radius": "10px",
+     "text": "{semantic.text-soft}"
+    },
     "name-hovered": {
      "text": "{semantic.accent-fantasy}"
     },

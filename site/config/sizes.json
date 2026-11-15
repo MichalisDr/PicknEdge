@@ -707,6 +707,30 @@
     "method-note": {
      "margin": "12px 0"
     },
+    "name-cell-cr-box": {
+     "padding": "1px 6px"
+    },
+    "name-cell-figures": {
+     "gap": "6px"
+    },
+    "name-cell-identity": {
+     "gap": "1px"
+    },
+    "name-cell-name": {
+     "gap": "4px"
+    },
+    "name-cell-position-badge": {
+     "height": "22px",
+     "width": "22px"
+    },
+    "name-cell-sparkline": {
+     "height": "12px",
+     "width": "32px"
+    },
+    "name-cell-value-chip": {
+     "gap": "6px",
+     "padding": "1px 8px"
+    },
     "player-name": {
      "max-width": "100%"
     },
@@ -729,6 +753,9 @@
     "players-mode-icon": {
      "width": "22px",
      "height": "22px"
+    },
+    "players-name-cell": {
+     "gap": "10px"
     },
     "players-position-button": {
      "min-width": "36px",

@@ -46,10 +46,10 @@ test('changing the order in the config changes the page (toolbar, name cell, car
     const reversed = await table('players');
     assert.ok(reversed.indexOf('data-filters') < reversed.indexOf('data-position="G"'), 'the right-hand parts follow the config order');
     ARRANGEMENT.component.fantasy['stat-table']['players-toolbar'].parts = JSON.parse(saved).component.fantasy['stat-table']['players-toolbar'].parts;
-    const nc = ARRANGEMENT.component.fantasy['stat-table']['name-cell'].parts; nc.reverse();
+    const nc = ARRANGEMENT.component.fantasy['stat-table']['name-cell-identity'].parts; nc.reverse();
     const cell = await table('players');
     assert.ok(cell.indexOf('class="fw-who"') < cell.indexOf('class="fw-name"'), 'name cell order follows the config');
-    ARRANGEMENT.component.fantasy['stat-table']['name-cell'].parts = JSON.parse(saved).component.fantasy['stat-table']['name-cell'].parts;
+    ARRANGEMENT.component.fantasy['stat-table']['name-cell-identity'].parts = JSON.parse(saved).component.fantasy['stat-table']['name-cell-identity'].parts;
     const ctx = { cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: { pos: 'G' }, roster: { teams: { AAA: 'Alpha' } }, logo: 'assets/logos/x.png', next: null };
     const before = headerHtml(ctx);
     assert.ok(before.indexOf('<img') < before.indexOf('<h2>'));

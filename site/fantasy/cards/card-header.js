@@ -6,6 +6,7 @@ import { Data } from '../../core/data.js';
 import { teamCode } from '../../core/teams.js';
 import { drawParts } from '../../core/arrangement.js';
 import { icon } from '../../core/icons.js';
+import { sparklineSvg } from '../../core/sparkline.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const dayLabel = iso => { const d = new Date(iso); return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()]; };
@@ -36,14 +37,6 @@ function portraitHtml(entry, team, show) {
   const fade = drawParts(PART + 'header-portrait', { 'header-portrait-fade': () => `<span data-part="${PART}header-portrait-fade" style="${fadeColour(team)}"></span>` }, show).map(p => p.html).join('');
   return `<span data-part="${PART}header-portrait">${fade}<img src="${esc(entry.portrait)}" alt=""></span>`;
 }
-/** Optional: a small line of the last values as a line, coloured by the theme key of the element around it. Nothing without at least two numbers. */
-function sparklineHtml(values) {
-  if (!Array.isArray(values) || values.length < 2 || !values.every(Number.isFinite)) return '';
-  const lo = Math.min(...values), span = Math.max(...values) - lo || 1;
-  const points = values.map((v, i) => `${(100 * i / (values.length - 1)).toFixed(1)},${(30 - 30 * (v - lo) / span).toFixed(1)}`).join(' ');
-  return `<svg data-part="${PART}value-sparkline" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="${points}" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/></svg>`;
-}
-
 /** Team cards keep the header they had: logo, title, then the actions (Back when opened from a player, Close) as plain items of the header row. */
 function teamHeaderHtml({ cs, title, logo, show }) {
   const actions = drawParts('fantasy.player-card.header-actions-team', {
@@ -75,7 +68,7 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
     'title': () => `<div>${title}</div>`,
     'cr-box': () => info?.cr == null ? '' : `<span class="fw-cr-box" data-part="${PART}cr-box">${esc(info.cr)}</span>`,
     'value-chip': () => info?.value == null ? '' : `<span class="fw-value-chip" data-part="${PART}value-chip">${esc(info.value)}</span>`,
-    'value-sparkline': () => sparklineHtml(info?.valueSeries),
+    'value-sparkline': () => sparklineSvg(info?.valueSeries, `${PART}value-sparkline`),
   }, show).map(p => p.html).join('');
   const parts = drawParts('fantasy.player-card.header', {
     'header-identity': () => `<div data-part="${PART}header-identity">${identity}</div>`,

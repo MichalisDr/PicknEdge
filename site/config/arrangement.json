@@ -115,10 +115,56 @@
      "direction": "column",
      "align": "stretch",
      "parts": [
-      { "name": "name", "show": "always", "self": "start" },
-      { "name": "team-and-position", "show": "players" },
+      { "name": "name", "show": "always", "self": "start" }
+     ]
+    },
+    "players-name-cell": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "parts": [
+      { "name": "name-cell-position-badge", "show": "players" },
+      { "name": "name-cell-identity", "show": "always" },
+      { "name": "name-cell-figures", "show": "when-data" }
+     ]
+    },
+    "name-cell-identity": {
+     "direction": "column",
+     "align": "start",
+     "parts": [
+      { "name": "name", "show": "always" },
+      { "name": "team-and-position", "show": "players" }
+     ]
+    },
+    "name-cell-name": {
+     "parts": [
+      { "name": "name-cell-given-name", "show": "players" },
+      { "name": "name-cell-family-name", "show": "players" }
+     ]
+    },
+    "name-cell-position-badge": {
+     "align": "center"
+    },
+    "name-cell-figures": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "push": "end",
+     "parts": [
       { "name": "cr-box", "show": "when-data" },
       { "name": "value-chip", "show": "when-data" }
+     ]
+    },
+    "name-cell-cr-box": {
+     "align": "center"
+    },
+    "name-cell-value-chip": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "parts": [
+      { "name": "name-cell-value", "show": "always" },
+      { "name": "name-cell-sparkline", "show": "when-data" }
      ]
     }
    },
