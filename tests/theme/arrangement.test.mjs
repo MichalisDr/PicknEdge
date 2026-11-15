@@ -5,11 +5,12 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import ARRANGEMENT from '../../site/config/arrangement.json' with { type: 'json' };
 import { buildArrangementCss } from '../../site/config/generate.mjs';
-import { useRealData } from '../helpers/site-data.mjs';
+import { useRealData, useIcons } from '../helpers/site-data.mjs';
 
 globalThis.document = { addEventListener() {}, createElement: () => ({}), body: {} };
 globalThis.window = { addEventListener() {} };
 useRealData();
+await useIcons();
 const { Data } = await import('../../site/core/data.js');
 const { state } = await import('../../site/fantasy/tables/table-state.js');
 const { loadTable } = await import('../../site/fantasy/tables/table-data.js');
@@ -19,7 +20,7 @@ const { headerHtml, controlsHtml } = await import('../../site/fantasy/cards/card
 const SITE = new URL('../../site/', import.meta.url);
 globalThis.fetch = async () => ({ ok: true, json: async () => JSON.parse(readFileSync(new URL('config/table-layouts.json', SITE), 'utf8')) });
 async function table(entity) {
-  Object.assign(state, { entity, view: 'profile', win: 'season', position: 'ALL', query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' });
+  Object.assign(state, { entity, view: 'profile', win: 'season', position: [], query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' });
   return tableHtml(state, await loadTable(state, names => names.map(n => n.length * 8), () => false));
 }
 const at = (html, parts) => parts.map(p => html.indexOf(p));
@@ -31,7 +32,8 @@ test('arrangement.css is exactly what arrangement.json generates', () => {
 
 test('toolbar: parts in the configured order, the end group at the far end, optional parts only when they apply', async () => {
   const players = await table('players');
-  assert.ok(inOrder(at(players, ['aria-label="Sample window"', 'data-view-toggle', 'data-position="ALL"', 'class="fw-right"', 'data-filters', 'type="search"'])));
+  assert.ok(inOrder(at(players, ['data-view-set="profile"', 'aria-label="Sample window"', 'data-position="G"', 'type="search"', 'data-filters'])), 'view pair above; windows left; G/F/C, Find player, Filters at the right');
+  assert.ok(!players.includes('data-view-toggle') && !players.includes('FANTASY / PLAYERS') && !players.includes('data-position="ALL"'));
   const teams = await table('teams');
   assert.ok(!teams.includes('data-position') && !teams.includes('data-filters'), 'players-only parts are not drawn for teams');
   assert.ok(inOrder(at(teams, ['data-view-toggle', 'class="fw-right"', 'type="search"'])));
@@ -40,10 +42,10 @@ test('toolbar: parts in the configured order, the end group at the far end, opti
 test('changing the order in the config changes the page (toolbar, name cell, card header)', async () => {
   const saved = JSON.stringify(ARRANGEMENT);
   try {
-    const tb = ARRANGEMENT.component.fantasy['stat-table'].toolbar.parts; tb.reverse();
+    const tb = ARRANGEMENT.component.fantasy['stat-table']['players-toolbar'].parts; tb.reverse();
     const reversed = await table('players');
-    assert.ok(reversed.indexOf('data-position="ALL"') < reversed.indexOf('data-view-toggle'), 'the start parts follow the config order');
-    ARRANGEMENT.component.fantasy['stat-table'].toolbar.parts = JSON.parse(saved).component.fantasy['stat-table'].toolbar.parts;
+    assert.ok(reversed.indexOf('data-filters') < reversed.indexOf('data-position="G"'), 'the right-hand parts follow the config order');
+    ARRANGEMENT.component.fantasy['stat-table']['players-toolbar'].parts = JSON.parse(saved).component.fantasy['stat-table']['players-toolbar'].parts;
     const nc = ARRANGEMENT.component.fantasy['stat-table']['name-cell'].parts; nc.reverse();
     const cell = await table('players');
     assert.ok(cell.indexOf('class="fw-who"') < cell.indexOf('class="fw-name"'), 'name cell order follows the config');

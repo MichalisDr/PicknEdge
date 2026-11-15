@@ -27,3 +27,10 @@ export function useRealData() {
 
 /** Read a file of the site as text. */
 export const siteFile = rel => readFileSync(join(root, '..', rel), 'utf8');
+
+/** Load the toolbar icons from site/assets/icons (what the page does with fetch). */
+export async function useIcons() {
+  const { loadIcons } = await import('../../site/core/icons.js');
+  const { TOOLBAR_ICONS } = await import('../../site/fantasy/tables/table-toolbar.js');
+  await loadIcons(TOOLBAR_ICONS, async name => readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'site', 'assets', 'icons', name + '.svg'), 'utf8'));
+}

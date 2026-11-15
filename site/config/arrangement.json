@@ -15,10 +15,94 @@
      "justify": "start",
      "parts": [
       { "name": "view-button", "show": "always" },
-      { "name": "position-buttons", "show": "players" },
       { "name": "mode-tabs", "show": "charts-available", "align": "end" },
-      { "name": "filters-button", "show": "players", "align": "end" },
       { "name": "search", "show": "always", "align": "end" }
+     ]
+    },
+    "players-view-row": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "justify": "end",
+     "parts": [
+      { "name": "view-button", "show": "players" },
+      { "name": "players-view-divider", "show": "charts-available" },
+      { "name": "mode-tabs", "show": "charts-available" }
+     ]
+    },
+    "players-toolbar": {
+     "direction": "row",
+     "wrap": "wrap",
+     "align": "center",
+     "justify": "start",
+     "parts": [
+      { "name": "window-buttons", "show": "players" },
+      { "name": "position-buttons", "show": "players", "align": "end" },
+      { "name": "search", "show": "players", "align": "end" },
+      { "name": "filters-button", "show": "players", "align": "end" }
+     ]
+    },
+    "players-toolbar-end-group": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "push": "end"
+    },
+    "players-window-buttons": {
+     "direction": "row",
+     "wrap": "wrap",
+     "align": "center"
+    },
+    "players-position-buttons": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center"
+    },
+    "players-view-buttons": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center"
+    },
+    "players-mode-buttons": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center"
+    },
+    "players-view-button": {
+     "direction": "column",
+     "align": "center",
+     "justify": "center",
+     "parts": [
+      { "name": "players-view-icon", "show": "always" },
+      { "name": "label", "show": "always" }
+     ]
+    },
+    "players-mode-button": {
+     "direction": "column",
+     "align": "center",
+     "justify": "center",
+     "parts": [
+      { "name": "players-mode-icon", "show": "always" },
+      { "name": "label", "show": "always" }
+     ]
+    },
+    "players-view-divider": {
+     "align": "center"
+    },
+    "players-search": {
+     "direction": "row",
+     "align": "center",
+     "parts": [
+      { "name": "players-search-icon", "show": "always" },
+      { "name": "players-search-field", "show": "always" }
+     ]
+    },
+    "players-filters-button": {
+     "direction": "row",
+     "align": "center",
+     "justify": "center",
+     "parts": [
+      { "name": "players-filters-icon", "show": "always" }
      ]
     },
     "toolbar-end-group": {
