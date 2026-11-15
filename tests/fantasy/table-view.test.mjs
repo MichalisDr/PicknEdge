@@ -136,3 +136,11 @@ test('Teams keep their own toolbar: eyebrow, one Shooting toggle, window row, pl
   assert.ok(html.includes('FANTASY / TEAMS') && html.includes('data-view-toggle') && html.includes('class="fw-periods"') && html.includes('placeholder="Search…"'));
   assert.ok(!html.includes('data-position') && !html.includes('data-filters') && !html.includes('players-'));
 });
+
+test('cards opened from the table pages and the chart gallery get the period and the Profile / Shooting view', () => {
+  const page = siteFile('fantasy/tables/table-page.js');
+  const calls = page.match(/openCard\(/g).length;
+  assert.ok(calls >= 2);
+  assert.equal(page.match(/openCard\([^)]*\{ win: state\.win, mode: state\.view \}/g)?.length, calls);
+  assert.match(siteFile('fantasy/gallery/gallery-dialog.js'), /openCard\([^)]*\{ win: gal\.dataset\.win, mode: gal\.dataset\.view \}/);
+});

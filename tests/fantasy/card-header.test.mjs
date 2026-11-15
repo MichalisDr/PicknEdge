@@ -3,7 +3,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { create } from '../../site/core/data-loader.js';
 import { Data } from '../../site/core/data.js';
-import { siteFile } from '../helpers/site-data.mjs';
+import { siteFile, useIcons } from '../helpers/site-data.mjs';
+import { controlsHtml } from '../../site/fantasy/cards/card-header.js';
 
 const game = (code, date, status, h, a) => ({ code, round: code, date, status, phase: 'RS', home: { code: h, name: h + ' name' }, away: { code: a, name: a + ' name' } });
 const SCHEDULE = [
@@ -41,7 +42,8 @@ const closeBtn = {}, closeAt = { where: 'dialog' };   // the single Close button
 const dlg = { className: '', querySelector: s => (s === '.fw-card' ? root : s === '.fw-close' ? closeBtn : {}), prepend: el => { assert.equal(el, closeBtn); closeAt.where = 'dialog'; }, showModal() {}, close() {}, remove() {} };
 globalThis.document = { createElement: () => dlg, body: { append() {} }, activeElement: null };
 globalThis.window = { addEventListener() {} };
-globalThis.fetch = async () => ({ ok: true, json: async () => ({ cols: 24, layouts: { 'team.profile': { rows: 1, boxes: [], lines: [] } } }) });
+globalThis.fetch = async () => ({ ok: true, json: async () => ({ cols: 24, layouts: Object.fromEntries(['team.profile', 'team.shooting', 'player.profile', 'player.shooting'].map(k => [k, { rows: 1, boxes: [], lines: [] }])) }) });
+await useIcons();
 const { open } = await import('../../site/fantasy/cards/card.js');
 
 function setup(next) {
@@ -62,7 +64,7 @@ test('GP is in the controls row between the window group and the Shooting group,
   const { root, tick } = setup(null);
   open('players', 'P1', {}); await tick();
   assert.ok(!header(root.innerHTML).includes('GP'));
-  assert.match(controls(root.innerHTML), /aria-label="Sample window"[^>]*>.*?<\/div><b>0 GP<\/b><div class="fw-switch" role="group" aria-label="Card view"/);
+  assert.match(controls(root.innerHTML), /aria-label="Sample window"[^>]*>.*?<\/div><b data-part="fantasy.player-card.controls-games-played">0 GP<\/b><div role="group" aria-label="Card view"/);
 });
 
 test('player card: "vs FBT ↗" button with tooltip, opens the team card; hidden without an upcoming game', async () => {
@@ -72,7 +74,7 @@ test('player card: "vs FBT ↗" button with tooltip, opens the team card; hidden
   assert.match(h, /<button class="fw-next" data-next="DDD" title="Open Delta Team card · Sat 14 Nov" aria-label="Open Delta Team card · Sat 14 Nov">vs FBT<span class="fw-arrow"> ↗<\/span><\/button>/);
   assert.ok(!h.includes('data-back'));
   root.buttons['data-next'].fire(); await tick();
-  assert.ok(root.innerHTML.includes('TEAM / FANTASY') && root.innerHTML.includes('Delta Team'));
+  assert.ok(!root.innerHTML.includes('TEAM / FANTASY') && root.innerHTML.includes('Delta Team'));
   const none = setup(null);
   open('players', 'P1', {}); await none.tick();
   assert.ok(!none.root.innerHTML.includes('data-next'));
@@ -113,12 +115,12 @@ test('a card opens in the mode it is given (profile by default); next opponent a
   assert.equal(pressed(b.root.innerHTML), 'true');
   assert.match(b.root.innerHTML, /data-card-window="l5" aria-pressed="true"/, 'the window is kept together with the mode');
   b.root.buttons['data-next'].fire(); await b.tick();
-  assert.ok(b.root.innerHTML.includes('TEAM / FANTASY') && b.root.innerHTML.includes('data-back'));
+  assert.ok(!b.root.innerHTML.includes('TEAM / FANTASY') && b.root.innerHTML.includes('Delta Team') && b.root.innerHTML.includes('data-back'));
   b.root.buttons['data-back'].fire(); await b.tick();
   assert.ok(b.root.innerHTML.includes('PLAYER / FANTASY'));
   const c = setup(GAME);
   open('teams', 'DDD', { mode: 'nonsense' }); await c.tick();
-  assert.ok(c.root.innerHTML.includes('TEAM / FANTASY'));
+  assert.ok(!c.root.innerHTML.includes('TEAM / FANTASY') && c.root.innerHTML.includes('Delta Team'));
 });
 
 test('Close is one button: in the dialog while loading and when the card fails, in the header actions once drawn; Escape and backdrop click close too', async () => {
@@ -137,4 +139,44 @@ test('Close is one button: in the dialog while loading and when the card fails, 
   assert.equal(closeAt.where, 'dialog', 'on an error');
   assert.equal(typeof dlg.oncancel, 'function'); assert.equal(typeof dlg.onclick, 'function');
   let prevented = false; dlg.oncancel({ preventDefault() { prevented = true; } }); assert.ok(prevented, 'Escape is handled by the card');
+});
+
+/* ---- Batch 3: team card header, shared controls ---- */
+test('team card: no "TEAM / FANTASY" kicker, the logo (when there is one) and the full team name; player card keeps its kicker', async () => {
+  const p = setup(null);
+  open('players', 'P1', {}); await p.tick();
+  assert.ok(p.root.innerHTML.includes('PLAYER / FANTASY'));
+  const t = setup(null);
+  open('teams', 'DDD', {}); await t.tick();
+  const h = header(t.root.innerHTML);
+  assert.ok(!h.includes('FANTASY') && h.includes('<h2>Delta Team</h2>'));
+  assert.match(h, /^<header class="fw-identity"><img src="[^"]*fenerbahce-ulker[^"]*" alt="">/, 'logo to the left of the name');
+  const none = setup(null);
+  open('teams', 'AAA', {}); await none.tick();
+  assert.ok(!header(none.root.innerHTML).includes('<img'), 'no image without a logo');
+});
+
+test('controls: outlined period buttons at the left, a detached GP readout (players only; "0 GP" for a known zero, none when unknown), Profile and Shooting at the right', () => {
+  const draw = (players, gp, mode = 'profile') => controlsHtml({ cs: { mode, win: 'l5' }, players, gp });
+  const player = draw(true, 0, 'shooting');
+  assert.ok(!player.includes('fw-switch'), 'no shared switch box: each period button has its own outline');
+  assert.match(player, /data-part="fantasy.player-card.window-buttons">.*data-card-window="l5" aria-pressed="true">Last 5<\/button>.*<b data-part="fantasy.player-card.controls-games-played">0 GP<\/b>.*data-part="fantasy.player-card.view-buttons"/s);
+  assert.match(player, /data-card-view="profile" aria-pressed="false"><span data-part="fantasy.player-card.view-icon" aria-hidden="true"><svg [^>]*>.*?<\/svg><\/span><span>Profile<\/span><\/button>/s);
+  assert.match(player, /data-card-view="shooting" aria-pressed="true">.*?<span>Shooting<\/span>/s);
+  assert.ok(!draw(true, undefined).includes('GP</b>') && !draw(true, null).includes('GP</b>'), 'no readout when the count is unavailable');
+  assert.ok(draw(true, 12).includes('>12 GP</b>'));
+  const team = draw(false, 12);
+  assert.ok(!team.includes('GP</b>'), 'team cards show no GP');
+  assert.ok(team.includes('data-card-view="profile"') && team.includes('data-card-view="shooting"') && team.includes('Last 5'), 'the same period and view buttons on team cards');
+});
+
+test('the two view buttons select their mode explicitly and clicking the active one changes nothing', async () => {
+  const { root, tick } = setup(null);
+  const clicks = [];
+  root.querySelectorAll = sel => (sel === '[data-card-view]' ? ['profile', 'shooting'].map(v => ({ dataset: { cardView: v }, set onclick(f) { clicks.push([v, f]); } })) : []);
+  open('players', 'P1', {}); await tick();
+  assert.deepEqual(clicks.map(c => c[0]), ['profile', 'shooting']);
+  clicks[1][1](); await tick();
+  assert.match(root.innerHTML, /data-card-view="shooting" aria-pressed="true"/);
+  clicks.length = 0; await tick();
 });

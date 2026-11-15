@@ -1,10 +1,11 @@
-/* The header (logo, title, next-game and back buttons, optional cr box and value chip) and the controls row (sample window, games played, Shooting) of a card.
+/* The header (logo, title, next-game and back buttons, optional cr box and value chip) and the controls row (sample window, games played, Profile / Shooting) of a card.
    Parts, order and which show come from config/arrangement.json (fantasy.player-card.header, .header-title, .controls); this file only says how to draw each part. */
 import { esc } from '../../core/html.js';
 import * as Windows from '../../core/windows.js';
 import { Data } from '../../core/data.js';
 import { teamCode } from '../../core/teams.js';
 import { drawParts } from '../../core/arrangement.js';
+import { icon } from '../../core/icons.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const dayLabel = iso => { const d = new Date(iso); return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()]; };
@@ -63,11 +64,20 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
   return `<header class="fw-identity">${parts.map(p => p.html).join('')}</header>`;
 }
 
+/** Icons the controls row draws (core/icons.js loadIcons, before the card is drawn). */
+export const CONTROL_ICONS = ['profile', 'target'];
+const VIEWS = [['profile', 'profile', 'Profile'], ['shooting', 'target', 'Shooting']];
+
+/** gp: games played in the selected period, or null / undefined when it is not available (then no readout). Team cards show none. */
 export function controlsHtml({ cs, players, gp }) {
+  const viewButton = ([view, iconName, label]) => `<button data-part="${PART}view-button" data-card-view="${view}" aria-pressed="${cs.mode === view}">${drawParts(PART + 'view-button', {
+    'view-icon': () => `<span data-part="${PART}view-icon" aria-hidden="true">${icon(iconName)}</span>`,
+    label: () => `<span>${label}</span>`,
+  }, {}).map(p => p.html).join('')}</button>`;
   const parts = drawParts('fantasy.player-card.controls', {
-    'window-buttons': () => `<div class="fw-switch" role="group" aria-label="Sample window" data-part="fantasy.player-card.window-buttons">${Windows.buttons(cs, 'data-card-window')}</div>`,
-    'games-played': () => `<b>${gp || 0} GP</b>`,
-    'view-button': () => `<div class="fw-switch" role="group" aria-label="Card view" data-part="fantasy.player-card.view-buttons"><button data-card-view="shooting" aria-pressed="${cs.mode === 'shooting'}">Shooting</button></div>`,
+    'window-buttons': () => `<div role="group" aria-label="Sample window" data-part="${PART}window-buttons">${Windows.buttons(cs, 'data-card-window')}</div>`,
+    'games-played': () => (Number.isFinite(gp) ? `<b data-part="${PART}controls-games-played">${gp} GP</b>` : ''),
+    'view-button': () => `<div role="group" aria-label="Card view" data-part="${PART}view-buttons">${VIEWS.map(viewButton).join('')}</div>`,
   }, { players });
   return `<div class="fw-card-controls">${parts.map(p => p.html).join('')}</div>`;
 }

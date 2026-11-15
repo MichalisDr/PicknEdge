@@ -155,7 +155,7 @@
     },
     "header-title": {
      "parts": [
-      { "name": "kicker", "show": "always" },
+      { "name": "kicker", "show": "players" },
       { "name": "header-given-name", "show": "players" },
       { "name": "name", "show": "always" },
       { "name": "team-line", "show": "always" }
@@ -168,8 +168,31 @@
      "justify": "space-between",
      "parts": [
       { "name": "window-buttons", "show": "always" },
-      { "name": "games-played", "show": "always" },
+      { "name": "games-played", "show": "players" },
       { "name": "view-button", "show": "always" }
+     ]
+    },
+    "window-buttons": {
+     "direction": "row",
+     "wrap": "wrap",
+     "align": "center"
+    },
+    "controls-games-played": {
+     "push": "end"
+    },
+    "view-buttons": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "push": "end"
+    },
+    "view-button": {
+     "direction": "column",
+     "align": "center",
+     "justify": "center",
+     "parts": [
+      { "name": "view-icon", "show": "always" },
+      { "name": "label", "show": "always" }
      ]
     }
    }
