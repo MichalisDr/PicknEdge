@@ -136,7 +136,7 @@ const withInfo = async (info, fn) => { const saved = Data.fantasyInfo; Data.fant
 
 test('player header: portrait, title block, cr, value, and the actions group at the far end', () => {
   const html = headerHtml({ ...PCTX, roster: ROSTER({ first: 'Player', last: 'One', portrait: 'assets/players/P1.webp' }) });
-  assert.ok(inOrder(at(html, ['header-identity', 'header-portrait', 'PLAYER / FANTASY', 'header-given-name', '<h2>One</h2>', '<p>G | Alpha Team</p>', 'header-actions', 'data-next=', 'data-close-slot'])), html);
+  assert.ok(inOrder(at(html, ['header-identity', 'header-portrait', 'header-given-name', '<h2>One</h2>', '<p>G | Alpha Team</p>', 'header-actions', 'data-next=', 'data-close-slot'])), html);
   assert.ok(html.lastIndexOf('header-identity') < html.indexOf('data-part="fantasy.player-card.header-actions"'), 'the actions group is the last part of the header');
 });
 

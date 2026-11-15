@@ -369,7 +369,12 @@
     "controls": {
      "margin-bottom": "22px"
     },
-    "controls-games-played": {
+    "controls-games-played-divider": {
+     "height": "20px",
+     "width": "1px"
+    },
+    "controls-games-played-group": {
+     "gap": "12px",
      "margin": "0 16px"
     },
     "cr-box": {

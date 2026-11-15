@@ -74,7 +74,11 @@ body{
 --fantasy-player-card-window-buttons-direction:row;
 --fantasy-player-card-window-buttons-wrap:wrap;
 --fantasy-player-card-window-buttons-align:center;
---fantasy-player-card-controls-games-played-margin-left:auto;
+--fantasy-player-card-controls-games-played-group-direction:row;
+--fantasy-player-card-controls-games-played-group-wrap:nowrap;
+--fantasy-player-card-controls-games-played-group-align:center;
+--fantasy-player-card-controls-games-played-group-margin-left:auto;
+--fantasy-player-card-controls-games-played-divider-align:center;
 --fantasy-player-card-view-buttons-direction:row;
 --fantasy-player-card-view-buttons-wrap:nowrap;
 --fantasy-player-card-view-buttons-align:center;
