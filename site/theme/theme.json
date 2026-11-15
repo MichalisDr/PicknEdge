@@ -590,6 +590,9 @@
      "font-size-below-650px": "12px",
      "text": "{semantic.text-soft}"
     },
+    "controls-games-played-divider": {
+     "background": "{semantic.border-control}"
+    },
     "cr-box": {
      "border": "{semantic.border-control}",
      "border-width": "1px",
@@ -606,10 +609,6 @@
     "header-given-name": {
      "font-size": "12px",
      "text": "{semantic.text-soft}"
-    },
-    "header-kicker": {
-     "font-size": "10px",
-     "text": "#a2b1c6"
     },
     "header-name": {
      "font-size": "24px",

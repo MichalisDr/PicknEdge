@@ -170,7 +170,10 @@ body{
 --fantasy-player-card-close-and-next-button-top:14px;
 --fantasy-player-card-close-and-next-button-width:36px;
 --fantasy-player-card-controls-margin-bottom:22px;
---fantasy-player-card-controls-games-played-margin:0 16px;
+--fantasy-player-card-controls-games-played-divider-height:20px;
+--fantasy-player-card-controls-games-played-divider-width:1px;
+--fantasy-player-card-controls-games-played-group-gap:12px;
+--fantasy-player-card-controls-games-played-group-margin:0 16px;
 --fantasy-player-card-cr-box-padding:3px 9px;
 --fantasy-player-card-header-gap:16px;
 --fantasy-player-card-header-gap-below-650px:10px;

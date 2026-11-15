@@ -185,7 +185,6 @@
     },
     "header-title": {
      "parts": [
-      { "name": "kicker", "show": "players" },
       { "name": "header-given-name", "show": "players" },
       { "name": "name", "show": "always" },
       { "name": "team-line", "show": "always" }
@@ -207,8 +206,18 @@
      "wrap": "wrap",
      "align": "center"
     },
-    "controls-games-played": {
-     "push": "end"
+    "controls-games-played-group": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "push": "end",
+     "parts": [
+      { "name": "controls-games-played-divider", "show": "players" },
+      { "name": "controls-games-played", "show": "players" }
+     ]
+    },
+    "controls-games-played-divider": {
+     "align": "center"
     },
     "view-buttons": {
      "direction": "row",

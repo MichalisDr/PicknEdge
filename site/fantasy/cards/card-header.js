@@ -64,7 +64,6 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
   const entry = players ? roster.players?.[cs.id] : null, split = !!(entry?.first && entry?.last);   // given and family name only when both are known
   const show = { players, 'team-from-player': !players && !!cs.back, 'when-data': info !== null, 'logo-fallback': !players || !entry?.portrait };   // the team logo is the fallback for a player without a portrait
   const title = drawParts('fantasy.player-card.header-title', {
-    'kicker': () => `<small>${players ? 'PLAYER' : 'TEAM'} / FANTASY</small>`,
     'header-given-name': () => (split ? `<span data-part="${PART}header-given-name">${esc(entry.first)}</span>` : ''),
     'name': () => `<h2>${esc(split ? entry.last : name)}</h2>`,
     'team-line': () => { const line = players ? [row?.pos, roster.teams[team] || team].filter(Boolean).join(' | ') : ''; return line ? `<p>${esc(line)}</p>` : ''; },   // "Position | Team"; either alone; nothing when neither
@@ -89,6 +88,12 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
 export const CONTROL_ICONS = ['profile', 'target'];
 const VIEWS = [['profile', 'profile', 'Profile'], ['shooting', 'target', 'Shooting']];
 
+/** The GP readout with the thin rule before it, as one group. Only for a known count (0 included). */
+const gamesPlayedHtml = (gp, show) => `<div data-part="${PART}controls-games-played-group">${drawParts(PART + 'controls-games-played-group', {
+  'controls-games-played-divider': () => `<span data-part="${PART}controls-games-played-divider" aria-hidden="true"></span>`,
+  'controls-games-played': () => `<b data-part="${PART}controls-games-played">${gp} GP</b>`,
+}, show).map(p => p.html).join('')}</div>`;
+
 /** gp: games played in the selected period, or null / undefined when it is not available (then no readout). Team cards show none. */
 export function controlsHtml({ cs, players, gp }) {
   const viewButton = ([view, iconName, label]) => `<button data-part="${PART}view-button" data-card-view="${view}" aria-pressed="${cs.mode === view}">${drawParts(PART + 'view-button', {
@@ -97,7 +102,7 @@ export function controlsHtml({ cs, players, gp }) {
   }, {}).map(p => p.html).join('')}</button>`;
   const parts = drawParts('fantasy.player-card.controls', {
     'window-buttons': () => `<div role="group" aria-label="Sample window" data-part="${PART}window-buttons">${Windows.buttons(cs, 'data-card-window')}</div>`,
-    'games-played': () => (Number.isFinite(gp) ? `<b data-part="${PART}controls-games-played">${gp} GP</b>` : ''),
+    'games-played': () => (Number.isFinite(gp) ? gamesPlayedHtml(gp, { players }) : ''),   // divider + readout as one group, so they wrap together
     'view-button': () => `<div role="group" aria-label="Card view" data-part="${PART}view-buttons">${VIEWS.map(viewButton).join('')}</div>`,
   }, { players });
   return `<div class="fw-card-controls">${parts.map(p => p.html).join('')}</div>`;

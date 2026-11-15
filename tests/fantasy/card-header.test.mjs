@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { create } from '../../site/core/data-loader.js';
 import { Data } from '../../site/core/data.js';
 import { siteFile, useIcons } from '../helpers/site-data.mjs';
-import { controlsHtml } from '../../site/fantasy/cards/card-header.js';
+import { controlsHtml, headerHtml } from '../../site/fantasy/cards/card-header.js';
 
 const game = (code, date, status, h, a) => ({ code, round: code, date, status, phase: 'RS', home: { code: h, name: h + ' name' }, away: { code: a, name: a + ' name' } });
 const SCHEDULE = [
@@ -58,13 +58,13 @@ function setup(next) {
 }
 const GAME = { code: 2, date: '2026-11-14T18:00:00.000Z', home: true, opp: 'DDD', oppName: 'Delta name' };
 const header = html => html.slice(html.indexOf('<header'), html.indexOf('</header>'));
-const controls = html => html.slice(html.indexOf('fw-card-controls'), html.indexOf('fw-card-controls') + 600);
+const controls = html => html.slice(html.indexOf('fw-card-controls'), html.indexOf('fw-card-controls') + 1000);
 
 test('GP is in the controls row between the window group and the Shooting group, not in the header', async () => {
   const { root, tick } = setup(null);
   open('players', 'P1', {}); await tick();
   assert.ok(!header(root.innerHTML).includes('GP'));
-  assert.match(controls(root.innerHTML), /aria-label="Sample window"[^>]*>.*?<\/div><b data-part="fantasy.player-card.controls-games-played">0 GP<\/b><div role="group" aria-label="Card view"/);
+  assert.match(controls(root.innerHTML), /aria-label="Sample window"[^>]*>.*?<\/div><div data-part="fantasy.player-card.controls-games-played-group"><span data-part="fantasy.player-card.controls-games-played-divider" aria-hidden="true"><\/span><b data-part="fantasy.player-card.controls-games-played">0 GP<\/b><\/div><div role="group" aria-label="Card view"/);
 });
 
 test('player card: "vs FBT ↗" button with tooltip, opens the team card; hidden without an upcoming game', async () => {
@@ -93,7 +93,7 @@ test('team card opened from a player card shows "← Player One" and goes back; 
   assert.match(header(root.innerHTML), /data-back[^>]*>← Player One<\/button>/);
   assert.ok(!header(root.innerHTML).includes('data-next'));
   root.buttons['data-back'].fire(); await tick();
-  assert.ok(root.innerHTML.includes('PLAYER / FANTASY') && root.innerHTML.includes('Player One'));
+  assert.ok(!root.innerHTML.includes('FANTASY') && root.innerHTML.includes('Player One'));
   const t = setup(GAME);
   open('teams', 'DDD', {}); await t.tick();
   assert.ok(!t.root.innerHTML.includes('data-back'));
@@ -117,7 +117,7 @@ test('a card opens in the mode it is given (profile by default); next opponent a
   b.root.buttons['data-next'].fire(); await b.tick();
   assert.ok(!b.root.innerHTML.includes('TEAM / FANTASY') && b.root.innerHTML.includes('Delta Team') && b.root.innerHTML.includes('data-back'));
   b.root.buttons['data-back'].fire(); await b.tick();
-  assert.ok(b.root.innerHTML.includes('PLAYER / FANTASY'));
+  assert.ok(!b.root.innerHTML.includes('FANTASY') && b.root.innerHTML.includes('Player One'));
   const c = setup(GAME);
   open('teams', 'DDD', { mode: 'nonsense' }); await c.tick();
   assert.ok(!c.root.innerHTML.includes('TEAM / FANTASY') && c.root.innerHTML.includes('Delta Team'));
@@ -142,10 +142,10 @@ test('Close is one button: in the dialog while loading and when the card fails, 
 });
 
 /* ---- Batch 3: team card header, shared controls ---- */
-test('team card: no "TEAM / FANTASY" kicker, the logo (when there is one) and the full team name; player card keeps its kicker', async () => {
+test('team card: no "TEAM / FANTASY" kicker, the logo (when there is one) and the full team name; no kicker on player cards either', async () => {
   const p = setup(null);
   open('players', 'P1', {}); await p.tick();
-  assert.ok(p.root.innerHTML.includes('PLAYER / FANTASY'));
+  assert.ok(!p.root.innerHTML.includes('FANTASY') && p.root.innerHTML.includes('<h2>'), 'no kicker on player cards either');
   const t = setup(null);
   open('teams', 'DDD', {}); await t.tick();
   const h = header(t.root.innerHTML);
@@ -179,4 +179,18 @@ test('the two view buttons select their mode explicitly and clicking the active 
   clicks[1][1](); await tick();
   assert.match(root.innerHTML, /data-card-view="shooting" aria-pressed="true"/);
   clicks.length = 0; await tick();
+});
+
+test('GP divider: a thin rule grouped with the GP readout, only for a known count (0 included), never on team cards', () => {
+  const draw = (players, gp) => controlsHtml({ cs: { mode: 'profile', win: 'season' }, players, gp });
+  for (const gp of [0, 7]) assert.match(draw(true, gp), new RegExp(`<div data-part="fantasy.player-card.controls-games-played-group"><span data-part="fantasy.player-card.controls-games-played-divider" aria-hidden="true"></span><b data-part="fantasy.player-card.controls-games-played">${gp} GP</b></div>`));
+  for (const gp of [undefined, null, NaN]) assert.ok(!/controls-games-played/.test(draw(true, gp)), 'no readout and no divider without a count');
+  assert.ok(!/controls-games-played/.test(draw(false, 12)), 'no readout and no divider on team cards');
+});
+
+test('player card: no kicker, the identity starts with the given name or the display name', () => {
+  const html = headerHtml({ cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: { pos: 'G' }, logo: null, next: null, roster: { teams: { AAA: 'Alpha' }, players: { P1: { first: 'Player', last: 'One' } } } });
+  assert.ok(!/<small|FANTASY/.test(html));
+  assert.ok(html.indexOf('header-given-name') < html.indexOf('<h2>'));
+  assert.ok(headerHtml({ cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: {}, logo: null, next: null, roster: { teams: {}, players: {} } }).includes('<h2>Player One</h2>'));
 });
