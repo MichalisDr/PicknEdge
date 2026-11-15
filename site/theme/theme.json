@@ -167,6 +167,11 @@
      "border-bottom": "{semantic.line}",
      "border-bottom-width": "1px"
     },
+    "coverage": {
+     "font-size": "12px",
+     "font-size-below-480px": "11px",
+     "text": "{semantic.muted}"
+    },
     "logo": {
      "font-size": "21px",
      "font-size-below-480px": "17px"

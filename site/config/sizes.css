@@ -51,6 +51,8 @@ body{
 --app-top-bar-bar-height-below-480px:70px;
 --app-top-bar-bar-padding:0 4%;
 --app-top-bar-bar-padding-below-480px:0 5%;
+--app-top-bar-coverage-max-width:300px;
+--app-top-bar-coverage-max-width-below-480px:40vw;
 --app-top-bar-nav-gap:30px;
 --app-top-bar-nav-gap-below-480px:18px;
 --betting-stats-table-caption-gap:16px;

@@ -2,6 +2,8 @@
 import { mount as mountFantasyTables } from '../fantasy/tables/table-page.js';
 import { mount as mountBettingTables } from '../betting/table-page.js';
 import { overview, manual, saved } from '../betting/research.js';
+import { Data } from '../core/data.js';
+import { showCoverage } from './coverage.js';
 
 const content = document.querySelector('#content');
 
@@ -18,6 +20,8 @@ export function render() {
   if (!ROUTES.includes(current)) current = 'fantasy';
   const area = current.startsWith('fantasy') ? 'fantasy' : 'betting';
   document.body.dataset.area = area;
+  const coverage = document.querySelector('[data-part="app.top-bar.coverage"]');
+  if (coverage) { showCoverage(coverage, area, null); if (area === 'fantasy') Data.manifest().then(m => { if (document.body.dataset.area === area) showCoverage(coverage, area, m); }).catch(() => {}); }   // the table page announces its own loading and errors
   document.querySelectorAll('[data-area]').forEach(a => a.classList.toggle('active', a.dataset.area === area));
   document.querySelector('#sidebar').innerHTML = '<small>WORKSPACE</small>' + LINKS[area].map(([id, t]) => `<a href="#${id}" class="${current === id ? 'active' : ''}" ${current === id ? 'aria-current="page"' : ''}>${t}</a>`).join('')
     + (area === 'fantasy' ? '' : '<div class="aside-note">One database.<br>Two ways to analyse.<br><br>From observation to evidence.</div>');

@@ -98,6 +98,9 @@ body{
 --app-sidebar-panel-border-right-width:1px;
 --app-top-bar-bar-border-bottom:var(--color-line);
 --app-top-bar-bar-border-bottom-width:1px;
+--app-top-bar-coverage-font-size:12px;
+--app-top-bar-coverage-font-size-below-480px:11px;
+--app-top-bar-coverage-text:var(--color-muted);
 --app-top-bar-logo-font-size:21px;
 --app-top-bar-logo-font-size-below-480px:17px;
 --app-top-bar-logo-and-text:#b48aff;
@@ -712,6 +715,9 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   app.sidebar.panel.border-right-width : aside
   app.top-bar.bar.border-bottom : .top
   app.top-bar.bar.border-bottom-width : .top
+  app.top-bar.coverage.font-size : [data-part="app.top-bar.coverage"]
+  app.top-bar.coverage.font-size-below-480px : [data-part="app.top-bar.coverage"]
+  app.top-bar.coverage.text : [data-part="app.top-bar.coverage"]
   app.top-bar.logo.font-size : .brand
   app.top-bar.logo.font-size-below-480px : .brand
   app.top-bar.logo-and.text : .brand .b2
@@ -1222,8 +1228,8 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   fantasy.stat-table.rank-chip.radius : .fw-t .fw-rk
   fantasy.stat-table.rank-chip.text : .fw-t .fw-rk
   fantasy.stat-table.sorted-column.background : .fw-t td.fw-sorted
-  fantasy.stat-table.status-and-footer.font-size : .fw-heading [role=status],.fw-foot
-  fantasy.stat-table.status-and-footer.text : .fw-heading [role=status],.fw-foot
+  fantasy.stat-table.status-and-footer.font-size : .fw-foot
+  fantasy.stat-table.status-and-footer.text : .fw-foot
   fantasy.stat-table.switch-button.font-size : .fw-switch button,.fw-filter-btn
   fantasy.stat-table.switch-button.radius : .fw-switch button,.fw-filter-btn
   fantasy.stat-table.switch-button.text : .fw-switch button,.fw-filter-btn
