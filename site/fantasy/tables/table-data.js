@@ -30,7 +30,7 @@ export async function loadTable(state, widthsOf, isStale) {
     return { id, name: teams ? teamLabel(roster, id) : roster.players[id]?.name || r.name || id, full: teams ? roster.teams[id] || id : roster.players[id]?.name || r.name || id, team: r.team, pos: r.pos, gp,
       min: teams ? null : view.get(id, 'min').value, pir: teams ? null : view.get(id, 'pir').value, availGp: avail ? (avail.get(id, 'gp')?.value ?? 0) : null };
   });
-    const pool = teams ? rows : rows.filter(r => Elig.listed(manifest.eligibility, state.win, r, r.availGp, state.showAll) && (state.position === 'ALL' || r.pos === state.position)
+    const pool = teams ? rows : rows.filter(r => Elig.listed(manifest.eligibility, state.win, r, r.availGp, state.showAll) && (!state.position.length || state.position.length >= 3 || state.position.includes(r.pos))
     && r.gp >= state.minGp && (r.min ?? 0) >= state.minMin && (!state.team || r.team === state.team));
   const q = state.query.trim().toLowerCase();
   const list = pool.filter(r => !q || (r.full + ' ' + (roster.teams[r.team] || r.team || '')).toLowerCase().includes(q));

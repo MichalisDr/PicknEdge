@@ -19,7 +19,7 @@ const { headerHtml, controlsHtml } = await import('../../site/fantasy/cards/card
 const SITE = new URL('../../site/', import.meta.url);
 globalThis.fetch = async () => ({ ok: true, json: async () => JSON.parse(readFileSync(new URL('config/table-layouts.json', SITE), 'utf8')) });
 async function table(entity) {
-  Object.assign(state, { entity, view: 'profile', win: 'season', position: 'ALL', query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' });
+  Object.assign(state, { entity, view: 'profile', win: 'season', position: [], query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' });
   return tableHtml(state, await loadTable(state, names => names.map(n => n.length * 8), () => false));
 }
 const at = (html, parts) => parts.map(p => html.indexOf(p));
@@ -31,7 +31,7 @@ test('arrangement.css is exactly what arrangement.json generates', () => {
 
 test('toolbar: parts in the configured order, the end group at the far end, optional parts only when they apply', async () => {
   const players = await table('players');
-  assert.ok(inOrder(at(players, ['aria-label="Sample window"', 'data-view-toggle', 'data-position="ALL"', 'class="fw-right"', 'data-filters', 'type="search"'])));
+  assert.ok(inOrder(at(players, ['aria-label="Sample window"', 'data-view-toggle', 'data-position="G"', 'class="fw-right"', 'data-filters', 'type="search"'])));
   const teams = await table('teams');
   assert.ok(!teams.includes('data-position') && !teams.includes('data-filters'), 'players-only parts are not drawn for teams');
   assert.ok(inOrder(at(teams, ['data-view-toggle', 'class="fw-right"', 'type="search"'])));
@@ -42,7 +42,7 @@ test('changing the order in the config changes the page (toolbar, name cell, car
   try {
     const tb = ARRANGEMENT.component.fantasy['stat-table'].toolbar.parts; tb.reverse();
     const reversed = await table('players');
-    assert.ok(reversed.indexOf('data-position="ALL"') < reversed.indexOf('data-view-toggle'), 'the start parts follow the config order');
+    assert.ok(reversed.indexOf('data-position="G"') < reversed.indexOf('data-view-toggle'), 'the start parts follow the config order');
     ARRANGEMENT.component.fantasy['stat-table'].toolbar.parts = JSON.parse(saved).component.fantasy['stat-table'].toolbar.parts;
     const nc = ARRANGEMENT.component.fantasy['stat-table']['name-cell'].parts; nc.reverse();
     const cell = await table('players');

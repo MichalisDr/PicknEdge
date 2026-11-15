@@ -52,7 +52,7 @@ function wire() {
   on('[data-fwmode]', 'onclick', b => { state.mode = b.dataset.fwmode; draw(); });
   host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => openCard(state.entity, p.dataset.open, { win: state.win }); });
   on('[data-view-toggle]', 'onclick', () => { state.view = state.view === 'shooting' ? 'profile' : 'shooting'; state.sort = ''; state.sel = []; draw(); });
-  on('[data-position]', 'onclick', b => { state.position = b.dataset.position; draw(); });
+  on('[data-position]', 'onclick', b => { const p = b.dataset.position; state.position = state.position.includes(p) ? state.position.filter(x => x !== p) : [...state.position, p]; draw(); });
   headerSort();
   const filters = host.querySelector('[data-filters]');
   if (filters) filters.onclick = () => { state.filters = !state.filters; draw(); };

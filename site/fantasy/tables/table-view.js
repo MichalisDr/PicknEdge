@@ -51,7 +51,7 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
   const windowRow = drawParts('fantasy.stat-table.window-row', { 'window-buttons': () => `<div class="fw-switch" role="group" aria-label="Sample window" data-part="fantasy.stat-table.window-buttons">${Windows.buttons(state)}</div>` }, show).map(p => p.html).join('');
   const toolbarParts = drawParts('fantasy.stat-table.toolbar', {
     'view-button': () => `<div class="fw-switch" role="group" aria-label="Table view" data-part="fantasy.stat-table.view-buttons"><button data-view-toggle aria-pressed="${state.view === 'shooting'}">Shooting</button></div>`,
-    'position-buttons': () => `<div class="fw-switch" aria-label="Player position">${['ALL', 'G', 'F', 'C'].map(v => `<button data-position="${v}" aria-pressed="${v === state.position}">${v === 'ALL' ? 'All' : v}</button>`).join('')}</div>`,
+    'position-buttons': () => `<div class="fw-switch" aria-label="Player position">${['G', 'F', 'C'].map(v => `<button data-position="${v}" aria-pressed="${state.position.includes(v)}">${v}</button>`).join('')}</div>`,
     'mode-tabs': () => `<div class="fw-switch" role="tablist">${['table', 'charts'].map(v => `<button data-fwmode="${v}" role="tab" aria-selected="${state.mode === v}">${v === 'table' ? 'Table' : 'Charts'}</button>`).join('')}</div>`,
     'filters-button': () => `<button class="fw-filter-btn" data-filters aria-expanded="${state.filters}">Filters</button>`,
     'search': () => `<input type="search" aria-label="Search Fantasy" placeholder="Search…" value="${esc(state.query)}">`,

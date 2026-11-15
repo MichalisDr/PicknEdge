@@ -15,7 +15,7 @@ const { mount } = await import('../../site/fantasy/tables/table-page.js');
 globalThis.fetch = async u => ({ ok: true, json: async () => JSON.parse(siteFile('config/table-layouts.json')) });
 const widthsOf = names => names.map(n => n.length * 8);
 async function render(over) {
-  Object.assign(state, { entity: 'teams', view: 'profile', win: 'season', position: 'ALL', query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' }, over);
+  Object.assign(state, { entity: 'teams', view: 'profile', win: 'season', position: [], query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' }, over);
   const M = await loadTable(state, widthsOf, () => false);
   return { M, html: tableHtml(state, M) };
 }
@@ -82,4 +82,25 @@ test('table stylesheet and scripts use theme variables only: no zebra, no raw co
   assert.deepEqual(css.match(/#[0-9a-fA-F]{3,8}\b/g) || [], []);
   const dir = new URL('../../site/fantasy/tables/', import.meta.url);
   for (const f of readdirSync(dir)) assert.deepEqual(readFileSync(new URL(f, dir), 'utf8').match(/#[0-9a-fA-F]{3,8}\b/g) || [], [], f);
+});
+
+test('position buttons are multi-select: any combination, none = everyone, all three = the same as none', async () => {
+  const ids = async position => (await render({ entity: 'players', position })).M.shown.map(r => r.id);
+  const posOf = {}; for (const r of (await render({ entity: 'players', showAll: true })).M.shown) posOf[r.id] = r.pos;
+  const all = await ids([]);
+  assert.ok(all.length > 50);
+  const g = await ids(['G']), f = await ids(['F']), c = await ids(['C']), gf = await ids(['G', 'F']);
+  assert.ok(g.length && f.length && c.length);
+  assert.ok(g.every(id => posOf[id] === 'G') && f.every(id => posOf[id] === 'F') && c.every(id => posOf[id] === 'C'));
+  assert.deepEqual(new Set(gf), new Set([...g, ...f]), 'two positions on = the union');
+  assert.deepEqual(await ids(['G', 'F', 'C']), all, 'all three on shows the same as none');
+  assert.deepEqual(await ids(['C', 'G', 'F']), all);
+});
+
+test('position buttons: G, F, C only (no "All"), each pressed when its position is on', async () => {
+  const { html } = await render({ entity: 'players', position: ['F', 'C'] });
+  assert.ok(!html.includes('data-position="ALL"'));
+  assert.match(html, /data-position="G" aria-pressed="false">G</);
+  assert.match(html, /data-position="F" aria-pressed="true">F</);
+  assert.match(html, /data-position="C" aria-pressed="true">C</);
 });
