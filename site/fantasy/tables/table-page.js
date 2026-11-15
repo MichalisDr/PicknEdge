@@ -8,6 +8,8 @@ import { loadTable } from './table-data.js';
 import { tableHtml, errorHtml, loadingHtml } from './table-view.js';
 import { wirePopups } from './table-popups.js';
 import { open as openCard } from '../cards/card.js';
+import { loadIcons } from '../../core/icons.js';
+import { TOOLBAR_ICONS } from './table-toolbar.js';
 
 let host = null, drawId = 0, shown = null;
 
@@ -20,6 +22,7 @@ async function draw() {
   const mine = ++drawId;
   let M;
   try {
+    await loadIcons(TOOLBAR_ICONS);
     M = await loadTable(state, widthsOf, () => mine !== drawId);
     if (!M) return;
   } catch (e) {
@@ -52,6 +55,7 @@ function wire() {
   on('[data-fwmode]', 'onclick', b => { state.mode = b.dataset.fwmode; draw(); });
   host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => openCard(state.entity, p.dataset.open, { win: state.win }); });
   on('[data-view-toggle]', 'onclick', () => { state.view = state.view === 'shooting' ? 'profile' : 'shooting'; state.sort = ''; state.sel = []; draw(); });
+  on('[data-view-set]', 'onclick', b => { if (state.view === b.dataset.viewSet) return; state.view = b.dataset.viewSet; state.sort = ''; state.sel = []; draw(); });
   on('[data-position]', 'onclick', b => { const p = b.dataset.position; state.position = state.position.includes(p) ? state.position.filter(x => x !== p) : [...state.position, p]; draw(); });
   headerSort();
   const filters = host.querySelector('[data-filters]');

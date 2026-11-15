@@ -675,6 +675,79 @@
     "player-name": {
      "max-width": "100%"
     },
+    "players-filters-button": {
+     "height": "36px",
+     "padding": "0 10px"
+    },
+    "players-filters-icon": {
+     "height": "18px",
+     "width": "18px"
+    },
+    "players-mode-button": {
+     "gap": "4px",
+     "min-width": "68px",
+     "padding": "6px 10px"
+    },
+    "players-mode-buttons": {
+     "gap": "4px"
+    },
+    "players-mode-icon": {
+     "width": "22px",
+     "height": "22px"
+    },
+    "players-position-button": {
+     "min-width": "36px",
+     "padding": "8px 12px"
+    },
+    "players-position-buttons": {
+     "gap": "6px"
+    },
+    "players-search": {
+     "gap": "8px",
+     "height": "36px",
+     "min-width": "110px",
+     "padding": "0 10px"
+    },
+    "players-search-icon": {
+     "height": "16px",
+     "width": "16px"
+    },
+    "players-toolbar": {
+     "gap": "12px",
+     "margin-bottom": "20px",
+     "position": "relative"
+    },
+    "players-toolbar-end-group": {
+     "gap": "12px",
+     "width-below-650px": "100%"
+    },
+    "players-view-button": {
+     "gap": "4px",
+     "min-width": "68px",
+     "padding": "6px 10px"
+    },
+    "players-view-buttons": {
+     "gap": "4px"
+    },
+    "players-view-divider": {
+     "height": "36px",
+     "margin": "0 6px",
+     "width": "1px"
+    },
+    "players-view-icon": {
+     "width": "22px",
+     "height": "22px"
+    },
+    "players-view-row": {
+     "gap": "16px",
+     "margin-bottom": "12px"
+    },
+    "players-window-button": {
+     "padding": "8px 14px"
+    },
+    "players-window-buttons": {
+     "gap": "8px"
+    },
     "rank-chip": {
      "padding": "0 5px"
     },

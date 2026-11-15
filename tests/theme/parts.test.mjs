@@ -71,3 +71,30 @@ test('the markup names its parts: each data-part in a script is the key of a par
   assert.ok(used.length >= 8, 'the new parts are named');
   for (const k of used) assert.ok(known.has(k), `data-part="${k}" is not a key in the theme or sizes`);
 });
+
+// ---- Players toolbar (table-toolbar.js) ----
+test('Players toolbar: every element has a data-part equal to its key, with sizes or theme keys and an arrangement entry', () => {
+  const src = read('fantasy/tables/table-toolbar.js');
+  const keys = new Set([...src.matchAll(/part\('([\w-]+)'\)|part\(`([\w${}-]+)`\)/g)].flatMap(m => m[1] ? [m[1]] : [m[2].replace('${kind}', 'view'), m[2].replace('${kind}', 'mode')]));
+  assert.ok(keys.size >= 15, [...keys].join());
+  for (const k of keys) {
+    assert.ok(has(sizes, 'fantasy', 'stat-table', k) || has(theme, 'fantasy', 'stat-table', k), `${k}: no sizes or theme entry`);
+    assert.ok(arranged('fantasy', 'stat-table', k), `${k}: no arrangement entry`);
+  }
+});
+
+test('Players toolbar: selected states and button looks are theme keys of their own (outlined individually, coral when selected)', () => {
+  const t = theme.component.fantasy['stat-table'];
+  for (const k of ['players-window-button', 'players-position-button']) {
+    assert.ok(t[k].border && t[k]['border-width'] && t[k].radius, k + ' is outlined');
+    assert.equal(t[k + '-selected'].background, '{semantic.accent-fantasy}');
+  }
+  for (const k of ['players-view-button', 'players-mode-button']) assert.equal(t[k + '-selected'].text, '{semantic.accent-fantasy}', k + ': selected icon and label take the Fantasy accent');
+});
+
+test('Players toolbar keys do not touch the shared, card or Teams keys', () => {
+  const css = readFileSync(new URL('theme/fantasy/workbench.css', SITE), 'utf8');
+  const players = css.slice(css.indexOf('/* Players toolbar'));
+  assert.ok(players.length > 500);
+  assert.ok(!/--fantasy-player-card-|--fantasy-stat-table-(switch|window-button|view-button|toolbar-direction|toolbar-end-group)/.test(players), 'only players-* keys (plus the existing search width)');
+});

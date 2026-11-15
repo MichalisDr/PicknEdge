@@ -1066,6 +1066,73 @@
     "name-hovered": {
      "text": "{semantic.accent-fantasy}"
     },
+    "players-filters-button": {
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px",
+     "text": "#b8c7da"
+    },
+    "players-filters-button-selected": {
+     "border": "{semantic.accent-fantasy}",
+     "text": "{semantic.accent-fantasy}"
+    },
+    "players-mode-button": {
+     "font-size": "12px",
+     "radius": "8px",
+     "text": "#b8c7da"
+    },
+    "players-mode-button-selected": {
+     "text": "{semantic.accent-fantasy}"
+    },
+    "players-position-button": {
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px",
+     "text": "#b8c7da",
+     "font-size": "13px"
+    },
+    "players-position-button-selected": {
+     "background": "{semantic.accent-fantasy}",
+     "border": "{semantic.accent-fantasy}",
+     "text": "{semantic.white}"
+    },
+    "players-search": {
+     "background": "#0b121c",
+     "border": "#354255",
+     "border-width": "1px",
+     "radius": "8px",
+     "text": "{semantic.white}",
+     "font-size": "13px"
+    },
+    "players-search-focused": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "players-search-icon": {
+     "text": "{semantic.text-muted-2}"
+    },
+    "players-view-button": {
+     "font-size": "12px",
+     "radius": "8px",
+     "text": "#b8c7da"
+    },
+    "players-view-button-selected": {
+     "text": "{semantic.accent-fantasy}"
+    },
+    "players-view-divider": {
+     "background": "{semantic.border-control}"
+    },
+    "players-window-button": {
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px",
+     "text": "#b8c7da",
+     "font-size": "13px"
+    },
+    "players-window-button-selected": {
+     "background": "{semantic.accent-fantasy}",
+     "border": "{semantic.accent-fantasy}",
+     "text": "{semantic.white}"
+    },
     "rank-chip": {
      "background": "{semantic.chip}",
      "font-size": "10px",

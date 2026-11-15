@@ -2,11 +2,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
-import { useRealData, siteFile } from '../helpers/site-data.mjs';
+import { useRealData, siteFile, useIcons } from '../helpers/site-data.mjs';
 
 globalThis.document = { addEventListener() {}, createElement: () => ({}), body: {} };
 globalThis.window = { addEventListener() {} };
 useRealData();
+await useIcons();
 const { state } = await import('../../site/fantasy/tables/table-state.js');
 const { loadTable } = await import('../../site/fantasy/tables/table-data.js');
 const { tableHtml } = await import('../../site/fantasy/tables/table-view.js');
@@ -103,4 +104,35 @@ test('position buttons: G, F, C only (no "All"), each pressed when its position 
   assert.match(html, /data-position="G" aria-pressed="false">G</);
   assert.match(html, /data-position="F" aria-pressed="true">F</);
   assert.match(html, /data-position="C" aria-pressed="true">C</);
+});
+
+test('Players toolbar: Profile / Shooting (icon above label), outlined windows, G / F / C, "Find player" and a Filters funnel; no eyebrow', async () => {
+  const { html } = await render({ entity: 'players', view: 'shooting' });
+  assert.ok(!html.includes('FANTASY / PLAYERS') && !html.includes('class="eyebrow"'), 'no eyebrow on Players');
+  assert.match(html, /data-view-set="profile" aria-pressed="false"><span data-part="fantasy.stat-table.players-view-icon" aria-hidden="true"><svg [^>]*>.*?<\/svg><\/span><span>Profile<\/span><\/button>/s, 'icon, then label');
+  assert.match(html, /data-view-set="shooting" aria-pressed="true">.*?<span>Shooting<\/span>/s);
+  assert.ok(!html.includes('data-view-toggle'), 'the single Shooting toggle is for Teams');
+  for (const w of ['Season', 'Last 10', 'Last 5', 'Last 3']) assert.ok(html.includes(`>${w}</button>`), w);
+  assert.equal(html.split('aria-label="Sample window"').length - 1, 1, 'the period buttons are drawn once');
+  assert.match(html, /<input type="search" aria-label="Find player" placeholder="Find player"/);
+  assert.match(html, /data-part="fantasy.stat-table.players-search-icon"[^>]*><svg/);
+  assert.match(html, /<button data-part="fantasy.stat-table.players-filters-button" data-filters aria-expanded="false" aria-label="Filters" title="Filters"><span[^>]*><svg/);
+  assert.ok(!/>Filters<\/button>/.test(html), 'the visible label is replaced by the funnel');
+  assert.ok(!/>All</.test(html.slice(html.indexOf('players-position-buttons'), html.indexOf('players-search"'))), 'no All button');
+});
+
+test('Players toolbar: no charts for Players today, so no Table / Charts pair and no divider; with charts available the pair follows Profile / Shooting', async () => {
+  const { html } = await render({ entity: 'players' });
+  assert.ok(!html.includes('data-fwmode') && !html.includes('players-view-divider') && html.includes('data-view-set="profile"'));
+  const { playersToolbarHtml } = await import('../../site/fantasy/tables/table-toolbar.js');
+  const withCharts = playersToolbarHtml(state, { players: true, 'charts-available': true });
+  const at = ['data-view-set="profile"', 'players-view-divider', 'data-fwmode="table"', 'data-fwmode="charts"'].map(s => withCharts.indexOf(s));
+  assert.ok(at.every((v, i) => v >= 0 && (!i || v > at[i - 1])), 'Profile / Shooting, divider, Table / Charts');
+  assert.match(withCharts, /data-fwmode="table" role="tab" aria-selected="true"><span[^>]*><svg[^>]*>.*?<\/svg><\/span><span>Table<\/span>/s);
+});
+
+test('Teams keep their own toolbar: eyebrow, one Shooting toggle, window row, plain search', async () => {
+  const { html } = await render({ entity: 'teams' });
+  assert.ok(html.includes('FANTASY / TEAMS') && html.includes('data-view-toggle') && html.includes('class="fw-periods"') && html.includes('placeholder="Search…"'));
+  assert.ok(!html.includes('data-position') && !html.includes('data-filters') && !html.includes('players-'));
 });
