@@ -149,7 +149,7 @@ test('team card: no "TEAM / FANTASY" kicker, the logo (when there is one) and th
   const t = setup(null);
   open('teams', 'DDD', {}); await t.tick();
   const h = header(t.root.innerHTML);
-  assert.ok(!h.includes('FANTASY') && h.includes('<h2>Delta Team</h2>'));
+  assert.ok(!h.includes('FANTASY') && h.includes('<h2 title="Delta Team">Fenerbahce Beko</h2>') && h.includes('>Istanbul</p>'), 'the approved first line and city; the display name stays as the tooltip');
   assert.match(h, /^<header class="fw-identity" data-part="fantasy.player-card.header-team"><img src="[^"]*fenerbahce-ulker[^"]*" alt="" data-part="fantasy.player-card.header-logo">/, 'logo to the left of the name');
   const none = setup(null);
   open('teams', 'AAA', {}); await none.tick();

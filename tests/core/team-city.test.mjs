@@ -23,8 +23,17 @@ test('an approved club name overrides the split; the original display name is un
   const name = 'Anadolu Efes Istanbul'; teamTitleLines(name, { city: 'Istanbul' }); assert.equal(name, 'Anadolu Efes Istanbul');
 });
 
-test('the mapping file is keyed by catalogue ids only; nothing is invented (empty until the labels are approved)', () => {
-  const ids = new Set(TEAMS.map(t => t.id));
-  for (const [id, e] of Object.entries(CITIES.cities)) { assert.ok(ids.has(id), id + ' is not a catalogue id'); assert.equal(typeof e.city, 'string'); }
-  assert.ok(typeof CITIES.note === 'string');
+test('the approved labels cover every catalogue team exactly once, with no unknown id; entries without a city show the display name only', () => {
+  const ids = TEAMS.map(t => t.id), keys = Object.keys(CITIES.cities);
+  assert.deepEqual(keys.filter(k => !ids.includes(k)), [], 'unknown ids');
+  assert.deepEqual(ids.filter(i => !keys.includes(i)), [], 'catalogue teams without an entry');
+  assert.equal(ids.length, 20); assert.equal(new Set(keys).size, keys.length);
+  for (const [id, e] of Object.entries(CITIES.cities)) {
+    assert.ok(typeof e.club === 'string' && e.club.trim(), id + ': a first line');
+    assert.ok(e.city === undefined || (typeof e.city === 'string' && e.city.trim()), id + ': a city, or none at all');
+    if (e.city === undefined) assert.deepEqual(teamTitleLines('Any Display Name', e), { club: 'Any Display Name', city: null }, id + ': no second line, display name as today');
+    else assert.deepEqual(teamTitleLines('Any Display Name', e), { club: e.club, city: e.city }, id);
+  }
+  assert.deepEqual(Object.keys(CITIES.cities).filter(k => !CITIES.cities[k].city).sort(), ['barcelona', 'dubai', 'paris-basketball', 'real-madrid', 'valencia']);
+  assert.deepEqual(CITIES.cities['kk-crvena-zvezda'], { city: 'Belgrade', club: 'Crvena Zvezda mts' });
 });
