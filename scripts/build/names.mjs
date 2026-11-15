@@ -10,16 +10,16 @@ export function displayName(raw, fixes = {}) {
   return name.replace(/[A-Za-z]+/g, w => fixes[w] || w);
 }
 
-const fold = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z]/g, '');
-
 /**
- * Given and family name from the roster's passportName / passportSurname, for the player card's name parts.
- * Used only when both exist and say the same letters (ignoring case, accents, spaces and punctuation) as the raw "LAST, FIRST" name, part by part;
- * otherwise null and the card keeps the display name. Nothing is split on spaces. name-fixes apply as for the display name.
+ * Given and family name of a player, for the player card's name parts. rawName is the API's own "SURNAME, GIVEN": with exactly one comma and both sides
+ * non-empty, first is the part after the comma and last the part before it, in display form (same capitalising and name-fixes as displayName).
+ * Never split on spaces. Null when the shape is different, or when first + " " + last would not equal the display name (the card then keeps the display name).
  */
-export function nameParts(raw, passportName, passportSurname, fixes = {}) {
-  const [last, first] = String(raw || '').split(/\s*,\s*/);
-  if (!first || !fold(passportName) || !fold(passportSurname)) return null;
-  if (fold(first) !== fold(passportName) || fold(last) !== fold(passportSurname)) return null;
-  return { first: displayName(passportName, fixes), last: displayName(passportSurname, fixes) };
+export function nameParts(raw, fixes = {}) {
+  const sides = String(raw || '').split(',');
+  if (sides.length !== 2) return null;
+  const [last, first] = sides.map(s => s.trim());
+  if (!first || !last) return null;
+  const parts = { first: displayName(first, fixes), last: displayName(last, fixes) };
+  return `${parts.first} ${parts.last}` === displayName(raw, fixes) ? parts : null;
 }

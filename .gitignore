@@ -1,2 +1,3 @@
 .build-tmp/
 site/_gate/
+node_modules/

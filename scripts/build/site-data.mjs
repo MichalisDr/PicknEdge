@@ -36,19 +36,16 @@ put('metrics.json', catalog());
 
 // ---- roster ----
 const fixes = JSON.parse(readFileSync(join(repo, 'data', 'manual', 'name-fixes.json'), 'utf8')).words;
-// passportName / passportSurname of the raw roster, by player id: first / last on a roster entry only when they agree with the raw name (see nameParts)
-const passport = new Map();
-const rosterRaw = join(repo, 'data', 'raw', season, 'roster.json.gz');
-if (existsSync(rosterRaw))
-  for (const list of Object.values(JSON.parse(gunzipSync(readFileSync(rosterRaw))).people)) for (const x of list) if (x.type === 'J' && x.person?.code) passport.set('P' + String(x.person.code).trim(), x.person);
 const names = {};
 for (const t of teams) names[t.team] = t.team_name;
 const lastTeam = {};
 for (const r of [...players].sort(byGame)) lastTeam[r.player_id] = r.team;
+// portrait: only for players whose file exists (scripts/build/portraits.mjs makes them from the roster's own URLs)
+const portrait = id => (existsSync(join(repo, 'site', 'assets', 'players', id + '.webp')) ? { portrait: `assets/players/${id}.webp` } : {});
 put('roster.json', {
   teams: names,
   logoIds: JSON.parse(readFileSync(join(repo, 'data', 'manual', 'team-ids.json'), 'utf8')).ids,
-  players: Object.fromEntries(dim.map(d => [d.player_id, { name: displayName(d.player, fixes), rawName: d.player, ...nameParts(d.player, passport.get(d.player_id)?.passportName, passport.get(d.player_id)?.passportSurname, fixes), team: lastTeam[d.player_id] || d.team, pos: d.position, dorsal: d.dorsal, height: d.height, active: d.active }])),
+  players: Object.fromEntries(dim.map(d => [d.player_id, { name: displayName(d.player, fixes), rawName: d.player, ...nameParts(d.player, fixes), ...portrait(d.player_id), team: lastTeam[d.player_id] || d.team, pos: d.position, dorsal: d.dorsal, height: d.height, active: d.active }])),
 });
 
 // ---- schedule snapshot (fixtures) ----
