@@ -19,7 +19,7 @@ const arranged = (screen, comp, name) => !!arrangement.component[screen]?.[comp]
 
 // [theme and sizes part, name in the arrangement]
 const NEW_PARTS = {
-  'fantasy.player-card': [['header-actions', 'header-actions'], ['header-portrait', 'header-portrait'], ['header-portrait-fade', 'header-portrait-fade'], ['header-given-name', 'header-given-name'], ['header-name', 'name'], ['value-sparkline', 'value-sparkline'],
+  'fantasy.player-card': [['header-actions', 'header-actions'], ['header-portrait-fade', 'header-portrait-fade'], ['header-given-name', 'header-given-name'], ['header-name', 'name'], ['value-sparkline', 'value-sparkline'],
     ['view-button', 'view-button']],
 };
 

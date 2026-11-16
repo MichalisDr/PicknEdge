@@ -75,7 +75,7 @@ test('optional parts (cr box, value chip) draw nothing while there is no data, a
 
 test('controls row: window buttons, games played, Shooting in the configured order', () => {
   const html = controlsHtml({ cs: { mode: 'profile', win: 'season' }, players: true, gp: 7 });
-  assert.ok(inOrder(at(html, ['aria-label="Sample window"', '7 GP</b>', 'aria-label="Card view"'])));
+  assert.ok(inOrder(at(html, ['aria-label="Sample window"', 'controls-games-played-number">7<', 'aria-label="Card view"'])));
 });
 
 test('order, direction and alignment of these components are not hard-coded in the style sheets', () => {
@@ -104,12 +104,12 @@ test('with no fantasy info (null) there is no cr box, no value chip, no sparklin
 test('optional header parts (portrait, given name, family name, sparkline) draw nothing without data; the display name and the logo stay', () => {
   const base = { cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: { pos: 'G' }, logo: 'assets/logos/x.png', next: null };
   const bare = headerHtml({ ...base, roster: { teams: { AAA: 'Alpha' }, players: { P1: { name: 'Player One' } } } });
-  assert.ok(!/header-portrait|header-given-name|value-sparkline/.test(bare));
+  assert.ok(!/header-portrait|header-given-name|<polyline/.test(bare));
   assert.ok(bare.includes('<h2>Player One</h2>') && bare.includes('<img src="assets/logos/x.png"'), 'display name and team logo fallbacks');
   const onlyFirst = headerHtml({ ...base, roster: { teams: { AAA: 'Alpha' }, players: { P1: { first: 'Player' } } } });
   assert.ok(!onlyFirst.includes('header-given-name') && onlyFirst.includes('<h2>Player One</h2>'), 'a given name alone is not used: the names are not derived');
   const full = headerHtml({ ...base, roster: { teams: { AAA: 'Alpha' }, players: { P1: { first: 'Player', last: 'One', portrait: 'assets/p/1.png' } } } });
-  assert.ok(inOrder(at(full, ['data-part="fantasy.player-card.header-portrait"', 'data-part="fantasy.player-card.header-portrait-fade"', 'src="assets/p/1.png"', 'data-part="fantasy.player-card.header-given-name">Player<', '<h2>One</h2>'])), full);
+  assert.ok(inOrder(at(full, ['data-part="fantasy.player-card.header-portrait-fade"', 'data-part="fantasy.player-card.header-portrait"', 'src="assets/p/1.png"', 'data-part="fantasy.player-card.header-given-name">Player<', '<h2>One</h2>'])), full);
   assert.ok(!full.includes('assets/logos/x.png'), 'a player with a portrait shows no team logo');
   const saved = Data.fantasyInfo; Data.fantasyInfo = () => ({ cr: null, value: 3.1, valueSeries: [1, 3, 2] });
   try { assert.match(headerHtml({ ...base, roster: { teams: {}, players: {} } }), /data-part="fantasy.player-card.value-sparkline"[^>]*><polyline points="0.0,13.0 20.0,1.0 40.0,7.0"/); } finally { Data.fantasyInfo = saved; }
@@ -134,10 +134,11 @@ const PCTX = { cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, 
 const ROSTER = (p = {}) => ({ teams: { AAA: 'Alpha Team', DDD: 'Delta' }, players: { P1: { name: 'Player One', ...p } } });
 const withInfo = async (info, fn) => { const saved = Data.fantasyInfo; Data.fantasyInfo = () => info; try { return await fn(); } finally { Data.fantasyInfo = saved; } };
 
-test('player header: portrait, title block, cr, value, and the actions group at the far end', () => {
+test('player header: fade (whole header), portrait, title block, CR then Value, and the actions group in the second column', () => {
   const html = headerHtml({ ...PCTX, roster: ROSTER({ first: 'Player', last: 'One', portrait: 'assets/players/P1.webp' }) });
-  assert.ok(inOrder(at(html, ['header-identity', 'header-portrait', 'header-given-name', '<h2>One</h2>', '<p>G | Alpha Team</p>', 'header-actions', 'data-next=', 'data-close-slot'])), html);
+  assert.ok(inOrder(at(html, ['header-portrait-fade', 'header-identity', 'header-portrait"', 'header-given-name', '<h2>One</h2>', 'team-line-position">G<', 'team-line-divider', 'team-line-team">Alpha Team<', 'header-actions', 'next-game-button', 'data-close-slot'])), html);
   assert.ok(html.lastIndexOf('header-identity') < html.indexOf('data-part="fantasy.player-card.header-actions"'), 'the actions group is the last part of the header');
+  assert.ok(!html.includes('<small') && !html.includes('FANTASY'), 'no kicker');
 });
 
 test('player header: the team logo is only the fallback for a player without a portrait; team cards keep it', () => {
@@ -154,37 +155,38 @@ test('portrait fade: the colour is the team key with the one neutral default as 
   assert.ok(theme['default-colour'], 'the one neutral default colour stays (team entries: tests/theme/team-colours.test.mjs)');
 });
 
-test('team line: "Position | Team", either alone, nothing when neither', () => {
-  const line = (row, roster, team = 'AAA') => (headerHtml({ ...PCTX, row, roster, team }).match(/<p>(.*?)<\/p>/) || [])[1];
-  assert.equal(line({ pos: 'G' }, ROSTER()), 'G | Alpha Team');
-  assert.equal(line({}, ROSTER()), 'Alpha Team');
-  assert.equal(line({ pos: 'F' }, { teams: {}, players: {} }), 'F | AAA', 'the team code stands in for an unknown full name');
-  assert.equal(line({ pos: 'F' }, ROSTER(), ''), 'F');
-  assert.equal(headerHtml({ ...PCTX, row: {}, team: '', roster: { teams: {}, players: {} } }).includes('<p>'), false, 'no empty line');
+test('team line: "Position | Team" as parts (a thin rule between), either alone (no rule), nothing when neither', () => {
+  const html = (row, roster, team = 'AAA') => headerHtml({ ...PCTX, row, roster, team });
+  const line = (row, roster, team) => (html(row, roster, team).match(/<p data-part="fantasy.player-card.team-line">(.*?)<\/p>/) || [])[1];
+  assert.equal(line({ pos: 'G' }, ROSTER()), '<span data-part="fantasy.player-card.team-line-position">G</span><i data-part="fantasy.player-card.team-line-divider" aria-hidden="true"></i><span data-part="fantasy.player-card.team-line-team">Alpha Team</span>');
+  assert.equal(line({}, ROSTER()), '<span data-part="fantasy.player-card.team-line-team">Alpha Team</span>');
+  assert.equal(line({ pos: 'F' }, { teams: {}, players: {} }), '<span data-part="fantasy.player-card.team-line-position">F</span><i data-part="fantasy.player-card.team-line-divider" aria-hidden="true"></i><span data-part="fantasy.player-card.team-line-team">AAA</span>', 'the team code stands in for an unknown full name');
+  assert.equal(line({ pos: 'F' }, ROSTER(), ''), '<span data-part="fantasy.player-card.team-line-position">F</span>');
+  assert.equal(html({}, { teams: {}, players: {} }, '').includes('team-line"'), false, 'no empty line');
 });
 
-test('cr box, value chip and sparkline: only with real data; a real 0 is valid; nothing at all while fantasyInfo is null', async () => {
+test('CR and Value (label + number, the chip with its sparkline): only with real data; a real 0 is valid; nothing at all while fantasyInfo is null', async () => {
   const draw = () => headerHtml({ ...PCTX, roster: ROSTER() });
   assert.equal(Data.fantasyInfo('P1'), null);
-  assert.ok(!/cr-box|value-chip|value-sparkline/.test(draw()), 'no empty boxes while the info is null');
+  assert.ok(!/cr-box|value-chip|value-sparkline|header-figures/.test(draw()), 'no empty boxes while the info is null');
   await withInfo({ cr: 0, value: 0, valueSeries: [0, 0] }, () => {
     const html = draw();
-    assert.match(html, /<span class="fw-cr-box" data-part="fantasy.player-card.cr-box">0<\/span>/);
-    assert.match(html, /<span class="fw-value-chip" data-part="fantasy.player-card.value-chip">0<\/span>/);
-    assert.ok(inOrder(at(html, ['<h2>', 'fw-cr-box', 'fw-value-chip', 'value-sparkline', 'data-part="fantasy.player-card.header-actions"'])), 'cr, then value chip with its sparkline, after the name');
+    assert.match(html, /<span class="fw-cr-box" data-part="fantasy.player-card.cr-box"><span data-part="fantasy.player-card.cr-box-label">CR<\/span><span data-part="fantasy.player-card.cr-box-value">0<\/span><\/span>/);
+    assert.match(html, /<span class="fw-value-chip" data-part="fantasy.player-card.value-chip"><span data-part="fantasy.player-card.value-chip-label">Value<\/span><span data-part="fantasy.player-card.value-chip-value">0<\/span><svg data-part="fantasy.player-card.value-sparkline"/);
+    assert.ok(inOrder(at(html, ['<h2>', 'header-figures', 'cr-box-label', 'value-chip-label', 'value-sparkline', 'data-part="fantasy.player-card.header-actions"'])), 'CR, then Value with its sparkline, after the name');
   });
-  await withInfo({ cr: 12.5, value: null, valueSeries: [4] }, () => { const html = draw(); assert.ok(html.includes('fw-cr-box') && !html.includes('fw-value-chip') && !html.includes('value-sparkline'), 'a chip needs a value; a sparkline needs two numbers'); });
-  await withInfo({ cr: null, value: 3, valueSeries: [1, NaN, 2] }, () => { const html = draw(); assert.ok(!html.includes('fw-cr-box') && html.includes('fw-value-chip') && !html.includes('value-sparkline'), 'invalid numbers draw no sparkline'); });
+  await withInfo({ cr: 12.5, value: null, valueSeries: [4] }, () => { const html = draw(); assert.ok(html.includes('cr-box-value">12.5<') && !html.includes('fw-value-chip') && !html.includes('value-sparkline'), 'a chip needs a value; a sparkline needs two numbers'); });
+  await withInfo({ cr: null, value: 3, valueSeries: [1, NaN, 2] }, () => { const html = draw(); assert.ok(!html.includes('fw-cr-box') && html.includes('value-chip-value">3<') && !html.includes('value-sparkline'), 'invalid numbers draw no sparkline'); });
   await withInfo({ cr: undefined, value: undefined }, () => assert.ok(!/cr-box|value-chip/.test(draw())));
 });
 
-test('the next-game button and Close share one height and radius (the same keys) and sit in one line of the actions group, at the far end', () => {
-  const css = readFileSync(new URL('../../site/theme/fantasy/workbench.css', import.meta.url), 'utf8');
-  assert.match(css, /\.fw-close,\.fw-next\{[^}]*border-radius:var\(--fantasy-player-card-close-and-next-button-radius\)[^}]*height:var\(--fantasy-player-card-close-and-next-button-height\)/);
-  const cardCss = readFileSync(new URL('../../site/theme/fantasy/card-layout.css', import.meta.url), 'utf8');
-  assert.match(cardCss, /header-actions"\]\{display:flex;[^}]*align-items:var\(--fantasy-player-card-header-actions-align\)/);
+test('the next-game button ("vs" and the emblem) and Close sit in one line of the actions group, vertically centred in the second column of the header grid', () => {
+  const css = readFileSync(new URL('../../site/theme/fantasy/card-layout.css', import.meta.url), 'utf8');
+  assert.match(css, /header-actions"\]\{display:flex;[^}]*align-items:var\(--fantasy-player-card-header-actions-align\)/);
+  assert.match(css, /\.fw-close\{box-sizing:border-box;min-width:var\(--fantasy-player-card-close-button-min-width\);min-height:var\(--fantasy-player-card-close-button-min-height\)/);
   assert.equal(ARRANGEMENT.component.fantasy['player-card']['header-actions'].align, 'center');
-  assert.equal(ARRANGEMENT.component.fantasy['player-card']['header-actions'].push, 'end');
+  assert.equal(ARRANGEMENT.component.fantasy['player-card'].header.parts.find(p => p.name === 'header-actions').self, 'center');
+  assert.equal(ARRANGEMENT.component.fantasy['player-card']['header-actions'].push, undefined);
 });
 
 test('team cards keep the header they had: flat header row, own actions wrapper, no truncated Back button', () => {
