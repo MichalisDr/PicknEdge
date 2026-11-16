@@ -61,7 +61,8 @@ test('changing the order in the config changes the page (toolbar, name cell, car
 
 test('optional parts (cr box, value chip) draw nothing while there is no data, and appear when there is', async () => {
   assert.equal(Data.fantasyInfo('anyone'), null);
-  assert.ok(!(await table('players')).includes('fw-cr-box'));
+  const real = Data.fantasyInfo; Data.fantasyInfo = () => null;                       // the real build has credits now: this test is about the case without data
+  try { assert.ok(!(await table('players')).includes('fw-cr-box')); } finally { Data.fantasyInfo = real; }
   const ctx = { cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: { pos: 'G' }, roster: { teams: { AAA: 'Alpha' } }, logo: null, next: null };
   assert.ok(!headerHtml(ctx).includes('fw-cr-box'));
   const saved = Data.fantasyInfo; Data.fantasyInfo = () => ({ cr: 12.5, value: 3.1 });
@@ -98,7 +99,8 @@ test('every part named in the config has a name in the same style as theme.json 
 test('with no fantasy info (null) there is no cr box, no value chip, no sparkline, in the header and in the table', async () => {
   assert.equal(Data.fantasyInfo('anyone'), null);
   const ctx = { cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: { pos: 'G' }, roster: { teams: { AAA: 'Alpha' }, players: {} }, logo: null, next: null };
-  for (const html of [headerHtml(ctx), await table('players'), await table('teams')]) assert.ok(!/fw-cr-box|fw-value-chip|value-sparkline/.test(html));
+  const real = Data.fantasyInfo; Data.fantasyInfo = () => null;                       // the real build has credits now: this test is about the case without data
+  try { for (const html of [headerHtml(ctx), await table('players'), await table('teams')]) assert.ok(!/fw-cr-box|fw-value-chip|value-sparkline/.test(html)); } finally { Data.fantasyInfo = real; }
 });
 
 test('optional header parts (portrait, given name, family name, sparkline) draw nothing without data; the display name and the logo stay', () => {

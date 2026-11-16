@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { parseCsv } from './csv.mjs';
 import { displayName, nameParts } from './names.mjs';
 import { buildViews, catalog, WINDOWS } from './views.mjs';
+import { fantasyForBuild } from './fantasy.mjs';
 
 const arg = (n, d) => { const i = process.argv.indexOf('--' + n); return i > 0 ? process.argv[i + 1] : d; };
 const repo = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -27,19 +28,28 @@ const written = [];
 const put = (name, data) => { writeFileSync(join(out, name), typeof data === 'string' ? data : JSON.stringify(data)); written.push(name); };
 const table = (columns, rows) => ({ columns, rows: rows.map(r => columns.map(c => r[c])) });
 
+// ---- Fantasy credits (data/raw/<season>/fantasy -> cr and the per-round series), matched to our players by name; unmatched are printed, never guessed ----
+const fixes = JSON.parse(readFileSync(join(repo, 'data', 'manual', 'name-fixes.json'), 'utf8')).words;
+const lastTeam = {};
+for (const r of [...players].sort(byGame)) lastTeam[r.player_id] = r.team;
+const fantasy = fantasyForBuild({
+  dir: join(repo, 'data', 'raw', season, 'fantasy'), fixes,
+  teamCodes: JSON.parse(readFileSync(join(repo, 'data', 'manual', 'fantasy-team-codes.json'), 'utf8')).codes,
+  ours: dim.map(d => ({ id: d.player_id, rawName: d.player, team: lastTeam[d.player_id] || d.team, active: d.active })),
+  activeOurs: o => Number(o.active) === 1,
+});
+if (fantasy) for (const line of fantasy.report) console.log(line); else console.log('fantasy: no snapshots stored (data/raw/' + season + '/fantasy): no credits');
+
 // ---- views (Season / L3 / L5 / L10), with league rows ----
-const views = buildViews({ players, teams, dim });
+const views = buildViews({ players, teams, dim, fantasy });
 for (const [w, v] of Object.entries(views)) { put(`players-${w}.json`, v.players); put(`teams-${w}.json`, v.teams); }
 
 // ---- metric catalog ----
 put('metrics.json', catalog());
 
 // ---- roster ----
-const fixes = JSON.parse(readFileSync(join(repo, 'data', 'manual', 'name-fixes.json'), 'utf8')).words;
 const names = {};
 for (const t of teams) names[t.team] = t.team_name;
-const lastTeam = {};
-for (const r of [...players].sort(byGame)) lastTeam[r.player_id] = r.team;
 // portrait: only for players whose file exists (scripts/build/portraits.mjs makes them from the roster's own URLs)
 const portrait = id => (existsSync(join(repo, 'site', 'assets', 'players', id + '.webp')) ? { portrait: `assets/players/${id}.webp` } : {});
 put('roster.json', {

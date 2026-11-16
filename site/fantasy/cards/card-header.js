@@ -71,7 +71,7 @@ function teamHeaderHtml({ cs, title, logo, show }) {
 
 /** ctx: { cs, players, name, team, row, roster, logo, next } */
 export function headerHtml({ cs, players, name, team, row, roster, logo, next }) {
-  const info = players ? Data.fantasyInfo(cs.id) : null;
+  const info = players ? Data.fantasyInfo(cs.id, cs.win) : null;
   const entry = players ? roster.players?.[cs.id] : null, split = !!(entry?.first && entry?.last);   // given and family name only when both are known
   const lines = players ? null : teamTitleLines(name, CITIES.cities[teamEntry(roster, cs.id)?.id]);   // team cards: club name, and the approved city below it
   const show = { players, teams: !players, 'team-from-player': !players && !!cs.back, 'when-data': info !== null, 'logo-fallback': !players || !entry?.portrait, 'has-portrait': !!entry?.portrait };   // the team logo is the fallback for a player without a portrait

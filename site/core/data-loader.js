@@ -32,10 +32,12 @@ export function create({ base, fetch: fetchFn, importer, storage } = {}) {
       row: key => data.rows[key] || null,
       get: (key, id) => { const r = data.rows[key]; return r && id in index ? decode(r.v[index[id]]) : null; },
       league: id => (id in index && data.league ? decode(data.league[index[id]]) : null),
+      fx: key => data.rows[key]?.fx || null,
       leagueOf: (k, id) => (id in index && data.leagues?.[k] ? decode(data.leagues[k][index[id]]) : null),
     };
   }
-  const view = (kind, window) => once(`view:${kind}:${window}`, async () => makeView(kind, window, await need(`${kind}-${window}.json`)));
+  const loaded = new Map();                                             // `${kind}:${window}` -> view, once it has been read (fantasyInfo answers synchronously from these)
+  const view = (kind, window) => once(`view:${kind}:${window}`, async () => { const v = makeView(kind, window, await need(`${kind}-${window}.json`)); loaded.set(`${kind}:${window}`, v); return v; });
 
   /* ---- per-game rows ---- */
   function records(table) {
@@ -78,8 +80,16 @@ export function create({ base, fetch: fetchFn, importer, storage } = {}) {
     return n;
   }
 
-  /* Credits (cr) and value of a player, from the official EuroLeague Fantasy site: null until that data exists. */
-  const fantasyInfo = () => null;
+  /* Credits (cr) and value of a player in a window, from the EuroLeague Fantasy backend (build: scripts/build/fantasy.mjs, formula: registry metric `value`):
+     { cr, crSeries, value, valueSeries } or null when the player has no entry (no match, or the data of that window is not loaded yet: it answers from the
+     already loaded Players view of the window, so the page that shows the figure loads that view first). crSeries / valueSeries: one point per round
+     (index 0 = round 1), null = no credits known at that round. value is null when the player has no game in the window. window defaults to Season, the page's default. */
+  const fantasyInfo = (playerId, window = 'season') => {
+    const view = loaded.get(`players:${window}`), fx = view?.fx(playerId);
+    if (!fx) return null;
+    const v = view.get(playerId, 'value')?.value;
+    return { cr: fx.cr, crSeries: fx.crSeries, value: Number.isFinite(v) ? v : null, valueSeries: fx.valueSeries };
+  };
 
   return { manifest, metrics, view, fantasyInfo, windowGames, games, shots, roster, schedule, nextGame, engine, status, clearOldCaches, records, decode };
 }

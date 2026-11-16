@@ -6,7 +6,7 @@ import { METRICS } from '../../scripts/metrics/registry.mjs';
 
 // One player-game: 30 min; 19 pts (3 FT, 5 two, 2 three); 16 shot attempts (SA); on court for 50 own / 48 opponent possessions.
 const P = { played: 1, sec: 1800, m1: 3, a1: 4, m2: 5, a2: 9, m3: 2, a3: 5, oreb: 1, dreb: 4, ast: 3, stl: 2, blk: 1, tov: 2, blk_against: 1, pf: 3, fd: 5,
-  starter: 1, team_fgm_on: 15, opp_a2_on: 30, sa: 16, team_sa_on: 40, team_tov_on: 10, poss_off_on: 50, poss_def_on: 48, team_oreb_on: 8, team_dreb_on: 20, opp_oreb_on: 10, opp_dreb_on: 25 };
+  starter: 1, cr: 10.5, team_fgm_on: 15, opp_a2_on: 30, sa: 16, team_sa_on: 40, team_tov_on: 10, poss_off_on: 50, poss_def_on: 48, team_oreb_on: 8, team_dreb_on: 20, opp_oreb_on: 10, opp_dreb_on: 25 };
 // PTS = 3 + 10 + 6 = 19; misses = 1 + 4 + 3 = 8; non scoring PIR = (1+4+3+2+1+5) - 3 - 1 - 2 = 10; PIR = 19 - 8 + 10 = 21.
 const approx = (a, b, tol = 1e-9) => assert.ok(Math.abs(a - b) <= tol, `${a} != ${b}`);
 
@@ -35,7 +35,8 @@ for (const [k, v] of Object.entries(RADAR_NET)) {
   PLAYER['rd_' + k + '_g'] = v;
   PLAYER['rd_' + k + '_100'] = k === 'dreb' ? v / 48 * 100 : k === 'stlblk' || k === 'fd' ? v * 200 / (50 + 48) : v / 50 * 100;
 }
-const PLAYER_APPROX = { bc: [8.9267, 1e-3], load: [46.8824, 1e-3], ctov: [8.532, 5e-3] };
+// value = PIR per game / cr = 21 / 10.5
+const PLAYER_APPROX = { value: [2, 1e-9], bc: [8.9267, 1e-3], load: [46.8824, 1e-3], ctov: [8.532, 5e-3] };
 
 // One team-game: 76 pts (12/16 FT, 20/40 two, 8/25 three), 70 possessions; opponent 73 pts, 68 possessions.
 const T = { games: 1, sec: 2400, poss: 70, o_poss: 68, m1: 12, a1: 16, m2: 20, a2: 40, m3: 8, a3: 25, oreb: 9, dreb: 24, ast: 15, stl: 7, tov: 12, blk: 3,

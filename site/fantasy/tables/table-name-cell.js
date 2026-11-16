@@ -9,7 +9,7 @@ import { sparklineSvg, validSeries } from '../../core/sparkline.js';
 const A = 'fantasy.stat-table.';
 const part = key => `data-part="${A}${key}"`;
 
-/** r: the row ({ id, name, full, team, pos }), roster, info: Data.fantasyInfo(id) (null while there is no data). */
+/** r: the row ({ id, name, full, team, pos }), roster, info: Data.fantasyInfo(id, window) (null while there is no data). */
 export function playerNameCellHtml(r, roster, info) {
   const entry = roster.players?.[r.id], split = !!(entry?.first && entry?.last);   // given and family name only when both are known; else the display name intact
   const code = teamCode(roster, r.team), hasCr = info?.cr != null, hasValue = info?.value != null;
