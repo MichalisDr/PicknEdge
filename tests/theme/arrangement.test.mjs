@@ -210,8 +210,12 @@ test('team cards keep the header they had: flat header row, own actions wrapper,
 test('team card: the approved city sits below the club name inside the title; without a city the display name alone; player cards have none', async () => {
   const { default: CITIES } = await import('../../site/config/team-cities.json', { with: { type: 'json' } });
   const team = (name = 'Hapoel IBI Tel Aviv') => headerHtml({ cs: { id: 'HTA' }, players: false, name, team: 'HTA', row: {}, logo: 'assets/logos/x.png', next: null, roster: { teams: { HTA: name }, logoIds: { HTA: 'hapoel-tel-aviv' }, players: {} } });
-  const plain = team();
-  assert.ok(plain.includes('<h2>Hapoel IBI Tel Aviv</h2>') && !plain.includes('header-city'), 'no mapping: today\'s header');
+  const none = headerHtml({ cs: { id: 'BAR' }, players: false, name: 'FC Barcelona', team: 'BAR', row: {}, logo: 'assets/logos/x.png', next: null, roster: { teams: { BAR: 'FC Barcelona' }, logoIds: { BAR: 'barcelona' }, players: {} } });
+  assert.ok(none.includes('<h2>FC Barcelona</h2>') && !none.includes('header-city'), 'a team whose city is none: the display name alone, no second line');
+  const real = team();
+  assert.match(real, /<h2 title="Hapoel IBI Tel Aviv">Hapoel<\/h2><p data-part="fantasy.player-card.header-city">Tel Aviv<\/p>/, 'the approved labels apply');
+  const unknown = headerHtml({ cs: { id: 'ZZZ' }, players: false, name: 'Unknown Club', team: 'ZZZ', row: {}, logo: null, next: null, roster: { teams: { ZZZ: 'Unknown Club' }, logoIds: {}, players: {} } });
+  assert.ok(unknown.includes('<h2>Unknown Club</h2>') && !unknown.includes('header-city'), 'a team outside the catalogue: no mapping, no second line');
   const saved = JSON.stringify(CITIES.cities);
   try {
     CITIES.cities['hapoel-tel-aviv'] = { city: 'Tel Aviv' };

@@ -1,4 +1,80 @@
 {
- "note": "Approved English city or locality of each club, for the second line of the team card header. Keys are the stable team catalogue ids of assets/teams.js (barcelona, real-madrid, ...). Each entry: { \"city\": \"Madrid\" } and, only when the display name cannot be split cleanly at the city (for example the city is not a trailing part of it), { \"city\": \"...\", \"club\": \"approved short club name\" }. A team with no entry shows its display name alone, with no second line. Empty until the 20 labels are approved.",
- "cities": {}
+ "note": "Approved second line of the team card header, by stable team catalogue id (assets/teams.js). Each entry: { \"club\": first line (the short club name to show), \"city\": second line }. An entry without a city (the city is none) shows the display name alone, with no second line, as before. The display name used by lookups and navigation is never changed. Every catalogue id has an entry.",
+ "cities": {
+  "anadolu-efes-istanbul": {
+   "city": "Istanbul",
+   "club": "Anadolu Efes"
+  },
+  "asvel-lyon-villeurbanne": {
+   "city": "Villeurbanne",
+   "club": "LDLC ASVEL"
+  },
+  "barcelona": {
+   "club": "FC Barcelona"
+  },
+  "baskonia": {
+   "city": "Vitoria-Gasteiz",
+   "club": "Cazoo Baskonia"
+  },
+  "bayern-munich": {
+   "city": "Munich",
+   "club": "FC Bayern"
+  },
+  "besiktas": {
+   "city": "Istanbul",
+   "club": "Besiktas Emlakjet"
+  },
+  "dubai": {
+   "club": "Dubai"
+  },
+  "fenerbahce-ulker": {
+   "city": "Istanbul",
+   "club": "Fenerbahce Beko"
+  },
+  "hapoel-tel-aviv": {
+   "city": "Tel Aviv",
+   "club": "Hapoel"
+  },
+  "kk-crvena-zvezda": {
+   "city": "Belgrade",
+   "club": "Crvena Zvezda mts"
+  },
+  "maccabi-tel-aviv": {
+   "city": "Tel Aviv",
+   "club": "Maccabi Playtika"
+  },
+  "milano": {
+   "city": "Milan",
+   "club": "EA7 Emporio Armani"
+  },
+  "olympiacos": {
+   "city": "Piraeus",
+   "club": "Olympiacos"
+  },
+  "panathinaikos": {
+   "city": "Athens",
+   "club": "Panathinaikos"
+  },
+  "paris-basketball": {
+   "club": "Paris Basketball"
+  },
+  "partizan": {
+   "city": "Belgrade",
+   "club": "Partizan Mozzart Bet"
+  },
+  "real-madrid": {
+   "club": "Real Madrid"
+  },
+  "valencia": {
+   "club": "Valencia Basket"
+  },
+  "virtus-bologna": {
+   "city": "Bologna",
+   "club": "Virtus Segafredo"
+  },
+  "zalgiris-kaunas": {
+   "city": "Kaunas",
+   "club": "Zalgiris"
+  }
+ }
 }
