@@ -153,11 +153,11 @@ test('player header: the team logo is only the fallback for a player without a p
   assert.ok(team.includes('src="assets/logos/x.png"') && !team.includes('FANTASY') && !team.includes('header-portrait'));
 });
 
-test('portrait fade: the colour is the team key with the one neutral default as fallback; nothing is invented per team', () => {
+test('portrait fade: the colour is the team key with the one neutral default as fallback; team entries come from the theme', () => {
   const html = headerHtml({ ...PCTX, roster: ROSTER({ portrait: 'assets/players/P1.webp' }) });
   assert.match(html, /data-part="fantasy.player-card.header-portrait-fade" style="--fade-colour:var\(--fantasy-player-card-header-portrait-fade-team-colour-AAA, var\(--fantasy-player-card-header-portrait-fade-default-colour\)\)"/);
   const theme = JSON.parse(readFileSync(new URL('../../site/theme/theme.json', import.meta.url), 'utf8')).component.fantasy['player-card']['header-portrait-fade'];
-  assert.ok(theme['default-colour'] && !Object.keys(theme).some(k => k.startsWith('team-colour-')), 'one default colour, no team colour filled yet');
+  assert.ok(theme['default-colour'], 'the one neutral default colour stays (team entries: tests/theme/team-colours.test.mjs)');
 });
 
 test('team line: "Position | Team", either alone, nothing when neither', () => {

@@ -634,7 +634,23 @@
     "header-portrait-fade": {
      "background": "{semantic.surface-dialog}",
      "default-colour": "{semantic.border-control}",
-     "opacity": "0.55"
+     "opacity": "0.55",
+     "team-colour-ASV": "#929292",
+     "team-colour-BAR": "#023485",
+     "team-colour-BAS": "#0a2240",
+     "team-colour-DUB": "#f6881f",
+     "team-colour-HTA": "#d71920",
+     "team-colour-IST": "#002d74",
+     "team-colour-MAD": "#004996",
+     "team-colour-MIL": "#e1261d",
+     "team-colour-MUN": "#e11837",
+     "team-colour-OLY": "#d1061f",
+     "team-colour-PAM": "#ff6c0e",
+     "team-colour-PAN": "#007135",
+     "team-colour-RED": "#e91d26",
+     "team-colour-TEL": "#fff100",
+     "team-colour-ULK": "#ffed00",
+     "team-colour-ZAL": "#0c6f3e"
     },
     "header-team": {
      "font-size": "12px"

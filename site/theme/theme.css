@@ -331,6 +331,22 @@ body{
 --fantasy-player-card-header-portrait-fade-background:var(--color-surface-dialog);
 --fantasy-player-card-header-portrait-fade-default-colour:var(--color-border-control);
 --fantasy-player-card-header-portrait-fade-opacity:0.55;
+--fantasy-player-card-header-portrait-fade-team-colour-ASV:#929292;
+--fantasy-player-card-header-portrait-fade-team-colour-BAR:#023485;
+--fantasy-player-card-header-portrait-fade-team-colour-BAS:#0a2240;
+--fantasy-player-card-header-portrait-fade-team-colour-DUB:#f6881f;
+--fantasy-player-card-header-portrait-fade-team-colour-HTA:#d71920;
+--fantasy-player-card-header-portrait-fade-team-colour-IST:#002d74;
+--fantasy-player-card-header-portrait-fade-team-colour-MAD:#004996;
+--fantasy-player-card-header-portrait-fade-team-colour-MIL:#e1261d;
+--fantasy-player-card-header-portrait-fade-team-colour-MUN:#e11837;
+--fantasy-player-card-header-portrait-fade-team-colour-OLY:#d1061f;
+--fantasy-player-card-header-portrait-fade-team-colour-PAM:#ff6c0e;
+--fantasy-player-card-header-portrait-fade-team-colour-PAN:#007135;
+--fantasy-player-card-header-portrait-fade-team-colour-RED:#e91d26;
+--fantasy-player-card-header-portrait-fade-team-colour-TEL:#fff100;
+--fantasy-player-card-header-portrait-fade-team-colour-ULK:#ffed00;
+--fantasy-player-card-header-portrait-fade-team-colour-ZAL:#0c6f3e;
 --fantasy-player-card-header-team-font-size:12px;
 --fantasy-player-card-large-tile-border:#3a4d68;
 --fantasy-player-card-large-tile-label-font-size:12px;
@@ -934,6 +950,22 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   fantasy.player-card.header-portrait-fade.background : [data-part="fantasy.player-card.header-portrait-fade"]
   fantasy.player-card.header-portrait-fade.default-colour : (set by a script)
   fantasy.player-card.header-portrait-fade.opacity : [data-part="fantasy.player-card.header-portrait-fade"]
+  fantasy.player-card.header-portrait-fade.team-colour-ASV : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-BAR : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-BAS : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-DUB : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-HTA : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-IST : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-MAD : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-MIL : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-MUN : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-OLY : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-PAM : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-PAN : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-RED : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-TEL : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-ULK : (set by a script)
+  fantasy.player-card.header-portrait-fade.team-colour-ZAL : (set by a script)
   fantasy.player-card.header-team.font-size : .fw-identity p
   fantasy.player-card.large-tile.border : .fw-pgrid .fw-m-lg
   fantasy.player-card.large-tile-label.font-size : .fw-pgrid .fw-m-lg span

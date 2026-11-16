@@ -64,7 +64,7 @@ test('every variable a style sheet or script reads exists in the theme (or is a 
 
 test('nothing unused: every component token is read by a style sheet or a script', () => {
   const code = [...styles, ...scripts.filter(f => !f.startsWith('theme/'))].map(read).join('\n');
-  const unused = components(theme).filter(t => !code.includes(`var(${t.cssVar}`) && !code.includes(t.cssVar.replace(/-radar-(player|comparison)-(fill|line)$/, '-radar-${who}-$2')));
+  const unused = components(theme).filter(t => !code.includes(`var(${t.cssVar}`) && !code.includes(t.cssVar.replace(/-radar-(player|comparison)-(fill|line)$/, '-radar-${who}-$2')) && !(/-team-colour-[\w-]+$/.test(t.cssVar) && code.includes('var(' + t.cssVar.replace(/(-team-colour-)[\w-]+$/, '$1') + '${')));   // team colours are read by name from the team code (card-header.js)
   assert.deepEqual(unused.map(t => t.key), []);
 });
 
