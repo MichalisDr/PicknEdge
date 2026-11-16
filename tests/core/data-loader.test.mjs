@@ -76,7 +76,9 @@ test('windowGames returns the team\'s last N games after the venue filter; the e
   const { D } = loader(), eng = await D.engine();
   for (const k of ['evaluate', 'evaluateAll', 'termValue', 'byId', 'withOpponent', 'zones']) assert.ok(eng[k], k);
   const all = await D.windowGames('ZAL', {}), l3 = await D.windowGames('ZAL', { last: 3 }), home = await D.windowGames('ZAL', { venue: 'home' }), h2 = await D.windowGames('ZAL', { last: 2, venue: 'home' });
-  assert.equal(all.size, 10); assert.equal(l3.size, 3); assert.ok([...l3].every(g => all.has(g)));
+  const zalGames = new Set((await D.games('teams')).filter(r => r.team === 'ZAL').map(r => r.game));
+  assert.ok(zalGames.size >= 3, 'ZAL has played at least 3 games');
+  assert.equal(all.size, zalGames.size); assert.equal(l3.size, 3); assert.ok([...l3].every(g => all.has(g)));
   assert.ok(h2.size === Math.min(2, home.size) && [...h2].every(g => home.has(g)));
   const roster = await D.roster();
   assert.equal(Object.keys(roster.logoIds).length, 20);
