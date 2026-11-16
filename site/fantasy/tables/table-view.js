@@ -39,7 +39,7 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
       'name': () => `<button class="fw-name" data-open="${esc(r.id)}" title="${esc(r.full)}"><span data-part="fantasy.stat-table.name-cell-team-name">${esc(lines.city ? lines.club : r.name)}</span></button>`,
       'name-cell-city': () => (lines.city ? `<small data-part="fantasy.stat-table.name-cell-city">${esc(lines.city)}</small>` : ''),   // no approved city: no second line
     }, { players: false, teams: true, 'when-data': false }).map(p => p.html).join('')}</div>`)(teamTitleLines(r.full, CITIES.cities[teamEntry(roster, r.id)?.id]))
-    : playerNameCellHtml(r, roster, Data.fantasyInfo(r.id)));
+    : playerNameCellHtml(r, roster, Data.fantasyInfo(r.id, state.win)));
   const rowsHtml = rowsShown.map(r => `<tr><th>${nameCell(r)}</th>${cells(r.id, false)}</tr>`);
   const averageHtml = `<tr class="fw-average"><th title="full league${teams ? '' : ' · all players who played'} · ignores filters">League average</th>${cells(null, true)}</tr>`;
   /* League average takes part in the order of the active stat and direction (at the end for a combined rank); without a value for that stat it is not drawn. */

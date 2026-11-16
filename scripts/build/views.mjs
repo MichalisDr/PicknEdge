@@ -2,7 +2,7 @@
 // Library: views (window x entity) and metric catalog. The CLI is scripts/build/site-data.mjs.
 // Window = the team's last N games; a player's window is his rows in his current team's last N games.
 import { METRICS } from '../metrics/registry.mjs';
-import { evaluate, evaluateAll } from '../metrics/engine.mjs';
+import { evaluate, evaluateAll, valueSeries } from '../metrics/engine.mjs';
 import { withOpponent } from '../metrics/join.mjs';
 
 
@@ -11,14 +11,20 @@ const PLAYER_METRICS = METRICS.filter(m => m.scope === 'player' && !m.internal),
 const byGame = (a, b) => a.date_utc.localeCompare(b.date_utc) || a.game - b.game;
 const roundedCell = r => r.value === null ? null : r.used === r.of ? +r.value.toFixed(6) : [+r.value.toFixed(6), r.used, r.of];   // [value, used, of] when coverage is partial
 
-export function buildViews({ players, teams, dim }, { precise = false } = {}) {
+// fantasy (optional): { byPlayer: Map(player id -> {cr, crSeries}) } from scripts/build/fantasy.mjs. A player in it gets the component `cr` on his rows (so the metric `value` has a value)
+// and a block fx = {cr, crSeries, valueSeries} in each window file (index i = round i+1; null = no credits known at that round).
+export function buildViews({ players, teams, dim, fantasy = null }, { precise = false } = {}) {
   const cell = precise ? r => r : roundedCell;                         // precise = full-precision {value, used, of} (parity gate)
   const teamRows = withOpponent(teams);
   const gamesOf = {};                                                 // team -> games, oldest first
   for (const r of [...teams].sort(byGame)) (gamesOf[r.team] ||= []).push(r.game);
   const lastN = (team, n) => new Set(gamesOf[team].slice(-n));
   const byPlayer = {};
-  for (const r of [...players].sort(byGame)) (byPlayer[r.player_id] ||= []).push(r);
+  const fx = fantasy?.byPlayer || new Map();
+  for (const r of [...players].sort(byGame)) (byPlayer[r.player_id] ||= []).push(fx.has(r.player_id) ? { ...r, cr: fx.get(r.player_id).cr } : r);
+  const teamGameList = {};                                            // team -> [{game, round, date_utc}] for the per-round windows
+  for (const r of teams) (teamGameList[r.team] ||= []).push({ game: r.game, round: r.round, date_utc: r.date_utc });
+  const nRounds = Math.max(0, ...teams.map(t => t.round));
   const info = Object.fromEntries(dim.map(d => [d.player_id, d]));
   const views = {};
   for (const [w, n] of Object.entries(WINDOWS)) {
@@ -29,6 +35,10 @@ export function buildViews({ players, teams, dim }, { precise = false } = {}) {
       const rows = list.filter(r => r.team === team && set.has(r.game));
       pAll.push(...rows);
       prows[pid] = { team, name: list.at(-1).player, pos: info[pid]?.position || '', v: PLAYER_METRICS.map(m => cell(evaluate(m, rows))) };
+      if (fx.has(pid)) {
+        const f = fx.get(pid), crSeries = f.crSeries.slice(0, nRounds);
+        prows[pid].fx = { cr: f.cr, crSeries, valueSeries: valueSeries(list.filter(r => r.team === team), teamGameList[team], n, crSeries).map(x => x === null ? null : +x.toFixed(4)) };
+      }
     }
     const trows = {}, byTeam = {};
     for (const team of Object.keys(gamesOf)) {
@@ -42,7 +52,7 @@ export function buildViews({ players, teams, dim }, { precise = false } = {}) {
     }
     const tLeague = evaluateAll(TEAM_METRICS, tAll, tAll);
     views[w] = {
-      players: { window: w, metrics: PLAYER_METRICS.map(m => m.id), league: PLAYER_METRICS.map(m => cell(evaluate(m, pAll))), rows: prows },
+      players: { window: w, fxRounds: fx.size ? Math.min(nRounds, fantasy.lastRound) : 0, metrics: PLAYER_METRICS.map(m => m.id), league: PLAYER_METRICS.map(m => cell(evaluate(m, pAll))), rows: prows },
       teams: { window: w, metrics: TEAM_METRICS.map(m => m.id), league: TEAM_METRICS.map(m => cell(tLeague[m.id])), rows: trows }
     };
   }

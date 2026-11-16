@@ -59,3 +59,18 @@ export function evaluate(m, rows, bench = null) {
 
 /** Value on a single row (used by the build audit). */
 export const rowValue = (m, row) => evaluate(m, [row]).value;
+
+/** valueSeries of one player (the Fantasy sparkline): for each round r (index r-1) the `value` metric over the window as it stood at that round,
+ *  with the credits at that round. A round with no known credits has no point (null); nothing is filled in.
+ *  rows: the player's clean rows for his current team (any order); teamGames: that team's games [{game, round, date_utc}];
+ *  n: window size (Infinity = Season); crSeries: credits after each round, index r-1 (null = unknown).
+ *  The window at round r = the team's last n games played up to round r; only the rows of those games count. */
+export function valueSeries(rows, teamGames, n, crSeries) {
+  const m = byId('value'), order = [...teamGames].sort((a, b) => a.date_utc.localeCompare(b.date_utc) || a.game - b.game);
+  return crSeries.map((cr, i) => {
+    if (cr === null || cr === undefined) return null;
+    const set = new Set(order.filter(g => g.round <= i + 1).slice(-n).map(g => g.game));
+    const v = evaluate(m, rows.filter(r => set.has(r.game)).map(r => ({ ...r, cr }))).value;
+    return v === null ? null : v;
+  });
+}
