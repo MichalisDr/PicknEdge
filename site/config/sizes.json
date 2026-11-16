@@ -692,8 +692,8 @@
    },
    "stat-table": {
     "cell": {
-     "height": "46px",
-     "padding": "5px 4px"
+     "padding": "9px 8px",
+     "height": "auto"
     },
     "cell-button": {
      "padding": "4px 0"
@@ -706,27 +706,30 @@
      "padding": "30px"
     },
     "filters-field": {
-     "max-width": "90px"
+     "margin-top": "5px",
+     "padding": "4px",
+     "width": "100%"
     },
     "filters-panel": {
-     "gap": "16px",
-     "margin-bottom": "20px",
-     "max-width": "min(520px,92vw)",
-     "padding": "14px",
-     "top": "calc(100% + 6px)"
+     "gap": "6px",
+     "padding": "9px",
+     "top": "calc(100% + 6px)",
+     "width": "154px"
     },
     "first-column": {
      "padding": "5px 10px"
     },
     "first-column-team-and-position": {
-     "max-width": "100%"
+     "max-width": "100%",
+     "margin-top": "3px"
     },
     "footer": {
      "padding": "12px 0"
     },
     "header-button": {
-     "padding": "2px 0",
-     "width": "100%"
+     "padding": "0",
+     "width": "100%",
+     "underline-offset": "3px"
     },
     "header-cell": {
      "height": "40px",
@@ -741,7 +744,7 @@
      "margin-bottom": "25px"
     },
     "heading-title": {
-     "margin": "5px 0"
+     "margin": "0"
     },
     "hover-popup": {
      "padding": "12px 14px",
@@ -760,11 +763,15 @@
     "method-note": {
      "margin": "12px 0"
     },
+    "name-cell-city": {
+     "margin-top": "3px"
+    },
     "name-cell-cr-box": {
-     "padding": "1px 6px"
+     "padding": "3px 5px",
+     "min-width": "32px"
     },
     "name-cell-figures": {
-     "gap": "6px"
+     "gap": "5px"
     },
     "name-cell-identity": {
      "gap": "1px"
@@ -773,98 +780,110 @@
      "gap": "4px"
     },
     "name-cell-position-badge": {
-     "height": "22px",
-     "width": "22px"
+     "margin-right": "1px",
+     "min-height": "15px",
+     "min-width": "15px"
     },
     "name-cell-sparkline": {
-     "height": "12px",
-     "width": "32px"
+     "height": "11px",
+     "width": "26px"
     },
     "name-cell-value-chip": {
-     "gap": "6px",
-     "padding": "1px 8px"
+     "gap": "4px",
+     "min-height": "18px",
+     "padding": "2px 5px"
     },
     "player-name": {
      "max-width": "100%"
     },
     "players-filters-button": {
-     "height": "36px",
-     "padding": "0 10px"
+     "min-height": "35px",
+     "padding": "0",
+     "width": "35px"
     },
     "players-filters-icon": {
-     "height": "18px",
-     "width": "18px"
+     "height": "17px",
+     "width": "17px"
     },
     "players-mode-button": {
      "gap": "4px",
-     "min-width": "68px",
-     "padding": "6px 10px"
+     "min-height": "44px",
+     "min-width": "56px",
+     "padding": "3px 4px"
     },
     "players-mode-buttons": {
      "gap": "4px"
     },
     "players-mode-icon": {
-     "width": "22px",
-     "height": "22px"
+     "height": "19px",
+     "width": "19px"
     },
     "players-name-cell": {
-     "gap": "10px"
+     "gap": "5px"
     },
     "players-position-button": {
-     "min-width": "36px",
-     "padding": "8px 12px"
+     "min-height": "35px",
+     "min-width": "32px",
+     "padding": "0 6px"
     },
     "players-position-buttons": {
-     "gap": "6px"
+     "gap": "4px"
     },
     "players-search": {
-     "gap": "8px",
-     "height": "36px",
+     "gap": "7px",
+     "min-height": "33px",
      "min-width": "110px",
-     "padding": "0 10px"
+     "padding": "0 8px"
+    },
+    "players-search-group": {
+     "gap": "7px"
     },
     "players-search-icon": {
-     "height": "16px",
-     "width": "16px"
+     "height": "17px",
+     "width": "17px"
     },
     "players-toolbar": {
-     "gap": "12px",
-     "margin-bottom": "20px",
+     "gap": "8px",
+     "grid-template-columns": "minmax(max-content,1fr) auto minmax(0,215px)",
+     "grid-template-columns-below-650px": "1fr",
+     "margin-bottom": "0",
+     "padding": "3px 0 9px",
      "position": "relative"
-    },
-    "players-toolbar-end-group": {
-     "gap": "12px",
-     "width-below-650px": "100%"
     },
     "players-view-button": {
      "gap": "4px",
-     "min-width": "68px",
-     "padding": "6px 10px"
+     "min-height": "44px",
+     "min-width": "56px",
+     "padding": "3px 4px"
     },
     "players-view-buttons": {
      "gap": "4px"
     },
     "players-view-divider": {
      "height": "36px",
-     "margin": "0 6px",
+     "margin": "0",
      "width": "1px"
     },
     "players-view-icon": {
-     "width": "22px",
-     "height": "22px"
+     "height": "19px",
+     "width": "19px"
     },
     "players-view-row": {
-     "gap": "16px",
-     "margin-bottom": "12px"
+     "gap": "10px",
+     "margin-bottom": "0"
     },
     "players-window-button": {
-     "padding": "8px 14px"
+     "min-height": "31px",
+     "padding": "0 7px"
     },
     "players-window-buttons": {
-     "gap": "8px"
+     "gap": "4px"
     },
     "rank-chip": {
-     "padding": "0 5px"
+     "padding": "0"
+    },
+    "scrollbar": {
+     "height": "7px"
     },
     "switch-button": {
      "padding": "8px 12px"
@@ -874,14 +893,15 @@
      "padding": "4px"
     },
     "table": {
-     "width": "100%"
+     "width": "100%",
+     "min-width": "1000px"
     },
-    "toolbar-search-field": {
-     "width": "190px",
-     "width-below-650px": "100%"
+    "title-row": {
+     "gap": "10px",
+     "margin-bottom": "10px"
     },
     "value-cell": {
-     "gap": "2px"
+     "gap": "3px"
     }
    }
   }

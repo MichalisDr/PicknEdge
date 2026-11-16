@@ -112,7 +112,7 @@ test('optional header parts (portrait, given name, family name, sparkline) draw 
   assert.ok(inOrder(at(full, ['data-part="fantasy.player-card.header-portrait"', 'data-part="fantasy.player-card.header-portrait-fade"', 'src="assets/p/1.png"', 'data-part="fantasy.player-card.header-given-name">Player<', '<h2>One</h2>'])), full);
   assert.ok(!full.includes('assets/logos/x.png'), 'a player with a portrait shows no team logo');
   const saved = Data.fantasyInfo; Data.fantasyInfo = () => ({ cr: null, value: 3.1, valueSeries: [1, 3, 2] });
-  try { assert.match(headerHtml({ ...base, roster: { teams: {}, players: {} } }), /data-part="fantasy.player-card.value-sparkline"[^>]*><polyline points="0.0,30.0 50.0,0.0 100.0,15.0"/); } finally { Data.fantasyInfo = saved; }
+  try { assert.match(headerHtml({ ...base, roster: { teams: {}, players: {} } }), /data-part="fantasy.player-card.value-sparkline"[^>]*><polyline points="0.0,13.0 20.0,1.0 40.0,7.0"/); } finally { Data.fantasyInfo = saved; }
 });
 
 test('header actions: next game, back and Close are one group drawn in the configured order; Close has a single slot', () => {

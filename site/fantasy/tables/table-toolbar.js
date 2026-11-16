@@ -21,17 +21,22 @@ function iconButton(kind, attrs, iconName, label) {
   return `<button ${part(`players-${kind}-button`)} ${attrs}>${inner}</button>`;
 }
 
-/** state, show = { players, teams, 'charts-available' }, filtersPanel = the Filters pop-up markup (empty when closed and for Teams). Returns the two rows. */
-export function tableToolbarHtml(state, show, filtersPanel = '') {
+/** state, show = { players, teams, 'charts-available' }, filtersPanel = the Filters pop-up markup (empty when closed and for Teams), titleHtml = the page title.
+    Returns the title row (title at the left; Profile / Shooting, divider and Table / Charts at the right) and the filter row
+    (periods, G / F / C for Players, and the search group: Find player / Find team and, for Players, the Filters funnel). */
+export function tableToolbarHtml(state, show, filtersPanel = '', titleHtml = '') {
   const label = show.teams ? 'Find team' : 'Find player';
   const draw = {
+    'heading-title': () => titleHtml,
+    'players-view-row': () => `<div ${part('players-view-row')}>${drawParts(`${A}players-view-row`, draw, show).map(p => p.html).join('')}</div>`,
     'view-button': () => `<div role="group" aria-label="Table view" ${part('players-view-buttons')}>${[['profile', 'profile', 'Profile'], ['shooting', 'target', 'Shooting']]
-      .map(([v, ic, label]) => iconButton('view', `data-view-set="${v}" aria-pressed="${state.view === v}"`, ic, label)).join('')}</div>`,
+      .map(([v, ic, text]) => iconButton('view', `data-view-set="${v}" aria-pressed="${state.view === v}"`, ic, text)).join('')}</div>`,
     'players-view-divider': () => `<span ${part('players-view-divider')} aria-hidden="true"></span>`,
     'mode-tabs': () => `<div role="tablist" aria-label="Table or charts" ${part('players-mode-buttons')}>${[['table', 'table', 'Table'], ['charts', 'bar-chart', 'Charts']]
-      .map(([v, ic, label]) => iconButton('mode', `data-fwmode="${v}" role="tab" aria-selected="${state.mode === v}"`, ic, label)).join('')}</div>`,
+      .map(([v, ic, text]) => iconButton('mode', `data-fwmode="${v}" role="tab" aria-selected="${state.mode === v}"`, ic, text)).join('')}</div>`,
     'window-buttons': () => `<div role="group" aria-label="Sample window" ${part('players-window-buttons')}>${Windows.buttons(state)}</div>`,
     'position-buttons': () => `<div role="group" aria-label="Player position" ${part('players-position-buttons')}>${['G', 'F', 'C'].map(v => `<button data-position="${v}" aria-pressed="${state.position.includes(v)}">${v}</button>`).join('')}</div>`,
+    'players-search-group': () => `<div ${part('players-search-group')}>${drawParts(`${A}players-search-group`, draw, show).map(p => p.html).join('')}</div>`,
     'search': () => `<label ${part('players-search')}>${drawParts(`${A}players-search`, {
       'players-search-icon': () => `<span ${part('players-search-icon')} aria-hidden="true">${icon('search')}</span>`,
       'players-search-field': () => `<input type="search" aria-label="${label}" placeholder="${label}" value="${esc(state.query)}">`,
@@ -40,8 +45,6 @@ export function tableToolbarHtml(state, show, filtersPanel = '') {
       'players-filters-icon': () => `<span ${part('players-filters-icon')} aria-hidden="true">${icon('funnel')}</span>`,
     }, {}).map(p => p.html).join('')}</button>`,
   };
-  const viewRow = drawParts(`${A}players-view-row`, draw, show).map(p => p.html).join('');
-  const lower = drawParts(`${A}players-toolbar`, draw, show);
-  return `<div ${part('players-view-row')}>${viewRow}</div>
-    <div ${part('players-toolbar')}>${lower.filter(p => p.align !== 'end').map(p => p.html).join('')}<div ${part('players-toolbar-end-group')}>${lower.filter(p => p.align === 'end').map(p => p.html).join('')}</div>${filtersPanel}</div>`;
+  return `<div ${part('title-row')}>${drawParts(`${A}title-row`, draw, show).map(p => p.html).join('')}</div>
+    <div ${part('players-toolbar')}>${drawParts(`${A}players-toolbar`, draw, show).map(p => p.html).join('')}${filtersPanel}</div>`;
 }

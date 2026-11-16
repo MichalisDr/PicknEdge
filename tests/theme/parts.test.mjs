@@ -93,7 +93,7 @@ test('Players toolbar: selected states and button looks are theme keys of their 
 
 test('Players toolbar keys do not touch the shared, card or Teams keys', () => {
   const css = readFileSync(new URL('theme/fantasy/workbench.css', SITE), 'utf8');
-  const players = css.slice(css.indexOf('/* Players toolbar'));
+  const players = css.slice(css.indexOf('/* Players / Teams toolbar'));
   assert.ok(players.length > 500);
   assert.ok(!/--fantasy-player-card-|--fantasy-stat-table-(switch|window-button|view-button|toolbar-direction|toolbar-end-group)/.test(players), 'only players-* keys (plus the existing search width)');
 });
