@@ -28,6 +28,7 @@ body{
 --color-surface-deep:#0e1724;
 --color-border-control:#324052;
 --color-border-soft:#2b394b;
+--color-accent:var(--color-accent-default);
 --font-ui:'Segoe UI',sans-serif;
 --app-page-badge-border:var(--color-line);
 --app-page-badge-border-width:1px;
@@ -646,7 +647,12 @@ body{
 --fantasy-stat-table-value-bad-text:var(--color-eval-bad-text);
 --fantasy-stat-table-value-good-text:var(--color-eval-good-text)
 }
-body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-accent:var(--color-accent-fantasy)}body[data-area=betting]{--color-accent:var(--color-accent-betting)}
+body[data-area=fantasy]{
+--color-accent:var(--color-accent-fantasy)
+}
+body[data-area=betting]{
+--color-accent:var(--color-accent-betting)
+}
 /* Where each component colour is used (name : selectors of the style sheets)
   app.page.badge.border : .pill
   app.page.badge.border-width : .pill

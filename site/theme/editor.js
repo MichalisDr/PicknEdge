@@ -10,7 +10,7 @@ function collect(file, json) {
   for (const [screen, comps] of Object.entries(json.component))
     for (const [comp, parts] of Object.entries(comps))
       for (const [part, props] of Object.entries(parts))
-        for (const [prop, raw] of Object.entries(props)) tokens.set(`--${screen}-${comp}-${part}-${prop}`, { key: `${screen}.${comp}.${part}.${prop}`, file, raw: String(raw) });
+        for (const [prop, raw] of Object.entries(props)) tokens.set(`--${screen}-${comp}-${part}-${prop}`, { key: `${screen}.${comp}.${part}.${prop}`, file, raw: typeof raw === 'object' && raw ? Object.entries(raw).map(([a, v]) => `${a}: ${v}`).join(' · ') : String(raw) });
 }
 
 async function init() {
