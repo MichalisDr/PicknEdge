@@ -89,7 +89,7 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
   }, { 'when-data': key === 'value-chip' }).map(p => p.html).join('');
   const figures = drawParts('fantasy.player-card.header-figures', {
     'cr-box': () => (info?.cr == null ? '' : `<span class="fw-cr-box" data-part="${PART}cr-box">${figure('CR', info.cr, 'cr-box')}</span>`),
-    'value-chip': () => (info?.value == null ? '' : `<span class="fw-value-chip" data-part="${PART}value-chip">${figure('Value', info.value, 'value-chip')}</span>`),
+    'value-chip': () => (info?.value == null ? '' : `<span class="fw-value-chip" data-part="${PART}value-chip">${figure('Value', Data.formatMetric('value', info.value), 'value-chip')}</span>`),
   }, show).map(p => p.html).join('');
   const identity = drawParts('fantasy.player-card.header-identity', {
     'logo': () => (logo ? `<img src="${esc(logo)}" alt="" data-part="${PART}header-logo">` : ''),

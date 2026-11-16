@@ -98,3 +98,21 @@ test('opponent-production radar excludes team rebounds', async () => {
   const poss = opp.reduce((n, r) => n + r.poss, 0), dreb = opp.reduce((n, r) => n + r.dreb_players, 0);
   assert.ok(Math.abs(t.get('RED', 'rt_dreb_100').value - 100 * dreb / poss) < 1e-5);
 });
+
+test('value is displayed in the registry format (2 decimals, trailing zeros kept) while the stored and sorted numbers stay unrounded; cr keeps its own figure', async () => {
+  const { D } = loader();
+  assert.equal(D.formatMetric('value', 1.389831), '1.389831', 'before the catalog is read: the plain number');
+  await D.metrics();
+  assert.equal(D.formatMetric('value', 1.389831), '1.39');
+  assert.equal(D.formatMetric('value', 2), '2.00', 'zero-trailing decimals are kept: the registry format is toFixed(digits)');
+  assert.equal(D.formatMetric('value', 0), '0.00');
+  assert.equal(D.formatMetric('value', null), '—');
+  assert.equal(D.formatMetric('pir', 23.181818), '23.2', 'every metric uses its own registry digits');
+  // two players that round to the same 2-decimal value keep their true order: the view holds the unrounded numbers
+  const v = await D.view('players', 'season'), ranked = v.keys.map(k => [k, v.get(k, 'value').value]).filter(([, x]) => Number.isFinite(x)).sort((a, b) => b[1] - a[1]);
+  assert.ok(ranked.length > 100);
+  assert.ok(ranked.some(([, x]) => String(x).replace(/^\d+\./, '').length > 2), 'stored values have more than 2 decimals');
+  const ties = ranked.filter((r, i) => i && D.formatMetric('value', r[1]) === D.formatMetric('value', ranked[i - 1][1]) && r[1] !== ranked[i - 1][1]);
+  assert.ok(ties.length > 0, 'there are players who show the same value but differ underneath');
+  for (const [k, x] of ties) { const prev = ranked[ranked.findIndex(r => r[0] === k) - 1]; assert.ok(prev[1] > x, 'true order kept'); }
+});

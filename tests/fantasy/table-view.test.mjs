@@ -189,7 +189,7 @@ test('Players name cell: incomplete name parts show the display name intact; no 
 test('Players name cell: CR then Value (chip with its sparkline), 0 is a value, parts are optional', () => {
   const draw = info => playerNameCellHtml(ROW, ROSTER(), info);
   const full = draw({ cr: 0, value: 0, valueSeries: [1, 3, 2] });
-  assert.match(full, /<span class="fw-cr-box" data-part="fantasy.stat-table.name-cell-cr-box">0<\/span><span class="fw-value-chip" data-part="fantasy.stat-table.name-cell-value-chip"><span>0<\/span><svg data-part="fantasy.stat-table.name-cell-sparkline"/);
+  assert.match(full, /<span class="fw-cr-box" data-part="fantasy.stat-table.name-cell-cr-box">0<\/span><span class="fw-value-chip" data-part="fantasy.stat-table.name-cell-value-chip"><span>0.00<\/span><svg data-part="fantasy.stat-table.name-cell-sparkline"/);
   assert.ok(full.indexOf('name-cell-identity') < full.indexOf('name-cell-figures') && full.indexOf('name-cell-cr-box') < full.indexOf('name-cell-value-chip'));
   const crOnly = draw({ cr: 12.5, value: null }); assert.ok(crOnly.includes('fw-cr-box') && !crOnly.includes('fw-value-chip'));
   const noSpark = draw({ cr: null, value: 3.1, valueSeries: [4] }); assert.ok(noSpark.includes('fw-value-chip') && !noSpark.includes('sparkline') && !noSpark.includes('fw-cr-box'));

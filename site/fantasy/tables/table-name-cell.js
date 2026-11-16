@@ -2,6 +2,7 @@
    Parts, order and visibility come from config/arrangement.json (fantasy.stat-table.players-name-cell and the containers inside it); every element has a
    data-part equal to its theme / sizes key. Teams keep their own cell (table-view.js). */
 import { esc } from '../../core/html.js';
+import { Data } from '../../core/data.js';
 import { teamCode } from '../../core/teams.js';
 import { drawParts } from '../../core/arrangement.js';
 import { sparklineSvg, validSeries } from '../../core/sparkline.js';
@@ -27,7 +28,7 @@ export function playerNameCellHtml(r, roster, info) {
       const figures = drawParts(A + 'name-cell-figures', {
         'cr-box': () => (hasCr ? `<span class="fw-cr-box" ${part('name-cell-cr-box')}>${esc(info.cr)}</span>` : ''),
         'value-chip': () => (hasValue ? `<span class="fw-value-chip" ${part('name-cell-value-chip')}>${drawParts(A + 'name-cell-value-chip', {
-          'name-cell-value': () => `<span>${esc(info.value)}</span>`,
+          'name-cell-value': () => `<span>${esc(Data.formatMetric('value', info.value))}</span>`,
           'name-cell-sparkline': () => sparklineSvg(info.valueSeries, A + 'name-cell-sparkline'),
         }, { 'when-data': validSeries(info.valueSeries) }).map(p => p.html).join('')}</span>` : ''),
       }, show).map(p => p.html).join('');
