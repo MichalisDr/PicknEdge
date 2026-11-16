@@ -29,11 +29,11 @@ const put = (name, data) => { writeFileSync(join(out, name), typeof data === 'st
 const table = (columns, rows) => ({ columns, rows: rows.map(r => columns.map(c => r[c])) });
 
 // ---- Fantasy credits (data/raw/<season>/fantasy -> cr and the per-round series), matched to our players by name; unmatched are printed, never guessed ----
-const fixes = JSON.parse(readFileSync(join(repo, 'data', 'manual', 'name-fixes.json'), 'utf8')).words;
+const nameFixes = JSON.parse(readFileSync(join(repo, 'data', 'manual', 'name-fixes.json'), 'utf8')), fixes = nameFixes.words;
 const lastTeam = {};
 for (const r of [...players].sort(byGame)) lastTeam[r.player_id] = r.team;
 const fantasy = fantasyForBuild({
-  dir: join(repo, 'data', 'raw', season, 'fantasy'), fixes,
+  dir: join(repo, 'data', 'raw', season, 'fantasy'), fixes, manual: nameFixes.fantasy?.names,
   teamCodes: JSON.parse(readFileSync(join(repo, 'data', 'manual', 'fantasy-team-codes.json'), 'utf8')).codes,
   ours: dim.map(d => ({ id: d.player_id, rawName: d.player, team: lastTeam[d.player_id] || d.team, active: d.active })),
   activeOurs: o => Number(o.active) === 1,

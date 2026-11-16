@@ -185,6 +185,25 @@ test('names are matched exactly by team + first initial + family name; the rest 
   assert.equal(matchPlayers([{ fid: 1, name: 'A. Alpha', team: 'XXX', position: 'Guard' }], ours, { teamCodes: {} }).pairs.size, 0, 'an unknown team code matches nobody');
 });
 
+test('a hand-confirmed match wins over the team check (a transfer), only for that player; the rest stays exact and unmatched ones are still listed', async () => {
+  const f = readFantasy(await snapshots()), teamCodes = { AAA: 'AA', BBB: 'BB' };
+  const ours = [{ id: 'P1', rawName: 'ALPHA, ANN', team: 'BB' },     // moved to another team: the exact match would fail
+    { id: 'P2', rawName: 'BETA, BOB', team: 'AA' },                  // also on another team, but NOT in the manual list
+    { id: 'P3', rawName: 'GAMMA, CARL', team: 'AA' }, { id: 'P8', rawName: 'QUUX, QUINN', team: 'BB' }];
+  const none = matchPlayers(f.players, ours, { teamCodes });
+  assert.equal(none.pairs.has('P1'), false, 'without the manual entry the team mismatch leaves him unmatched');
+  const m = matchPlayers(f.players, ours, { teamCodes, manual: { 'A. Alpha': 'Ann Alpha', 'Q. Nobody': 'Quinn Quux' } });
+  assert.equal(m.pairs.get('P1'), 1, 'manual match across teams');
+  assert.equal(m.pairs.has('P2'), false, 'no manual entry: still exact (team differs), not guessed');
+  assert.equal(m.pairs.get('P3'), 3);
+  assert.deepEqual(m.unmatchedFantasy.map(p => p.name).sort(), ['B. Beta', 'Z. Zed']);
+  assert.deepEqual(m.unmatchedOurs.map(o => o.id).sort(), ['P2', 'P8']);
+  assert.deepEqual(m.manualMissing, ['Q. Nobody -> Quinn Quux'], 'a manual entry that finds nobody is reported, not applied');
+  const shared = [...f.players, { fid: 99, name: 'A. Alpha', position: 'Guard', team: 'BBB', cr: 5 }];
+  assert.notEqual(matchPlayers(shared, ours, { teamCodes, manual: { 'A. Alpha': 'Ann Alpha' } }).pairs.get('P1'), 1, 'two Fantasy players share the name: the manual entry is not applied');
+  assert.equal(matchPlayers(shared, ours, { teamCodes, manual: { 'A. Alpha (AAA)': 'Ann Alpha' } }).pairs.get('P1'), 1, 'the Fantasy team code in brackets picks one');
+});
+
 /* ---------- cr, crSeries, value and valueSeries per window ---------- */
 // AA (Alpha, Gamma) and BB (Beta, Quux) play one game per round, rounds 1..4. PIR of a row = m1 (m1 = a1: no misses).
 const game = (g, round, team, opp, home) => ({ season: 'E', game: g, round, date_utc: `2026-10-0${g}T18:00:00Z`, team, opp, home });

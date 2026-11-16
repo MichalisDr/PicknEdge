@@ -1,4 +1,17 @@
 {
   "note": "Display-name corrections applied after capitalising EuroLeague names (which come as 'LAST, FIRST' in capitals). Keys are the capitalised words, values the correct spelling.",
-  "words": { "Leday": "LeDay", "Dibartolomeo": "DiBartolomeo", "Dejulius": "DeJulius", "Mcintyre": "McIntyre" }
+  "words": { "Leday": "LeDay", "Dibartolomeo": "DiBartolomeo", "Dejulius": "DeJulius", "Mcintyre": "McIntyre" },
+  "fantasy": {
+    "note": "Fantasy player name (as the Fantasy backend writes it, plus the Fantasy team code in brackets when two players share it) -> our player's display name, confirmed by hand. Wins over the team check, for these players only; everybody else is matched exactly by team + first initial + surname.",
+    "names": {
+      "W. Baldwin": "Wade Baldwin IV",
+      "K. Baldwin": "Kamar Baldwin",
+      "P. Baldwin Jr": "Patrick Baldwin",
+      "M. Wright (DUB)": "McKinley Wright IV",
+      "A. Bacot": "Armando Bacot Jr.",
+      "C. Silva": "Chris Silva",
+      "T. Washington": "Tyty Washington Jr",
+      "A. Balcerowski": "Olek Balcerowski"
+    }
+  }
 }
