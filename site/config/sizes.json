@@ -8,7 +8,11 @@
     },
     "content": {
      "max-width": "1600px",
-     "padding": "38px 4%",
+     "padding": {
+      "default": "38px 4%",
+      "fantasy": "clamp(16px,2vw,25px) clamp(18px,3vw,36px) clamp(18px,3vw,36px)"
+     },
+     "padding-below-730px": "clamp(16px,2vw,25px) clamp(18px,3vw,36px) clamp(18px,3vw,36px)",
      "padding-below-900px": "25px 4%",
      "width": "100%"
     },
@@ -20,9 +24,16 @@
      "max-width": "760px"
     },
     "layout": {
-     "grid-template-columns": "220px 1fr",
+     "grid-template-columns": {
+      "default": "220px 1fr",
+      "fantasy": "134px 1fr"
+     },
+     "grid-template-columns-below-730px": "1fr",
      "grid-template-columns-below-900px": "1fr",
-     "min-height": "calc(100vh - 82px)"
+     "min-height": {
+      "default": "calc(100vh - 82px)",
+      "fantasy": "calc(100vh - 61px)"
+     }
     },
     "subtitle": {
      "margin": "10px 0"
@@ -89,36 +100,71 @@
    },
    "sidebar": {
     "link": {
-     "margin": "8px 0",
-     "padding": "12px"
+     "margin": {
+      "default": "8px 0",
+      "fantasy": "2px 0"
+     },
+     "padding": {
+      "default": "12px",
+      "fantasy": "9px 12px"
+     }
     },
     "note": {
      "margin-top": "65px",
      "padding": "14px"
     },
     "panel": {
+     "gap-below-730px": "4px",
      "gap-below-900px": "8px",
-     "padding": "30px 18px",
+     "padding": {
+      "default": "30px 18px",
+      "fantasy": "23px 9px"
+     },
+     "padding-below-730px": "7px 4%",
      "padding-below-900px": "10px 4%"
     }
    },
    "top-bar": {
     "bar": {
-     "gap": "40px",
+     "gap": {
+      "default": "40px",
+      "fantasy": "16px"
+     },
      "gap-below-480px": "20px",
+     "gap-below-550px": "7px 12px",
      "gap-below-900px": "22px",
-     "height": "82px",
+     "height": {
+      "default": "82px",
+      "fantasy": "61px"
+     },
      "height-below-480px": "70px",
-     "padding": "0 4%",
-     "padding-below-480px": "0 5%"
+     "min-height-below-550px": "61px",
+     "padding": {
+      "default": "0 4%",
+      "fantasy": "0 clamp(15px,3vw,36px)"
+     },
+     "padding-below-480px": "0 5%",
+     "padding-below-550px": "8px clamp(15px,3vw,36px)"
     },
     "coverage": {
      "max-width": "300px",
-     "max-width-below-480px": "40vw"
+     "max-width-below-480px": "40vw",
+     "width-below-550px": "100%"
     },
     "nav": {
-     "gap": "30px",
-     "gap-below-480px": "18px"
+     "gap": {
+      "default": "30px",
+      "fantasy": "24px"
+     },
+     "gap-below-480px": "18px",
+     "gap-below-550px": "14px",
+     "padding-left": {
+      "default": "0",
+      "fantasy": "12px"
+     }
+    },
+    "nav-link": {
+     "min-height-below-550px": "33px"
     }
    }
   },
