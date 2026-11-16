@@ -62,12 +62,13 @@ body{
 --fantasy-player-card-header-justify:flex-start;
 --fantasy-player-card-header-header-actions-self:center;
 --fantasy-player-card-header-team-direction:row;
---fantasy-player-card-header-team-wrap:wrap;
+--fantasy-player-card-header-team-wrap:nowrap;
 --fantasy-player-card-header-team-align:center;
 --fantasy-player-card-header-team-justify:flex-start;
 --fantasy-player-card-header-actions-team-direction:row;
 --fantasy-player-card-header-actions-team-wrap:nowrap;
 --fantasy-player-card-header-actions-team-align:center;
+--fantasy-player-card-header-actions-team-margin-left:auto;
 --fantasy-player-card-header-identity-direction:row;
 --fantasy-player-card-header-identity-wrap:wrap;
 --fantasy-player-card-header-identity-align:center;
@@ -100,6 +101,10 @@ body{
 --fantasy-player-card-controls-games-played-divider-align:stretch;
 --fantasy-player-card-controls-games-played-direction:row;
 --fantasy-player-card-controls-games-played-align:baseline;
+--fantasy-player-card-view-buttons-team-direction:row;
+--fantasy-player-card-view-buttons-team-wrap:nowrap;
+--fantasy-player-card-view-buttons-team-align:center;
+--fantasy-player-card-view-buttons-team-margin-left:auto;
 --fantasy-player-card-view-buttons-direction:row;
 --fantasy-player-card-view-buttons-wrap:nowrap;
 --fantasy-player-card-view-buttons-align:center;
