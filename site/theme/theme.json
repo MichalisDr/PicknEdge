@@ -1,43 +1,111 @@
 {
  "note": "The one place for colours and fonts, and the appearance sizes (font size, corner radius, border width, shadow size). semantic = the general colours (what a colour means); component = one entry per element and property, named screen.component.part.property. A component entry either points at a general colour, like {semantic.panel}, or holds a colour code directly (#rrggbb or #rrggbbaa); sizes are plain values like 13px. Layout sizes (width, height, margin, padding, gap) are in config/sizes.json. Generated into theme.css by theme/generate.mjs.",
  "semantic": {
-  "bg": "#0b1018",
-  "panel": "#111a26",
-  "line": "#263242",
-  "muted": "#94a3b8",
-  "text": "#f0f3f6",
-  "chip": "#1d2a3c",
-  "gridline": "#3a4a60",
-  "sorthead": "#243248",
-  "sortcell": "#162131",
+  "bg": {
+   "default": "#0b1018",
+   "fantasy": "#09090b"
+  },
+  "panel": {
+   "default": "#111a26",
+   "fantasy": "#0e0e12"
+  },
+  "line": {
+   "default": "#263242",
+   "fantasy": "#26242d"
+  },
+  "muted": {
+   "default": "#94a3b8",
+   "fantasy": "#a9a7b1"
+  },
+  "text": {
+   "default": "#f0f3f6",
+   "fantasy": "#f5f2fb"
+  },
+  "chip": {
+   "default": "#1d2a3c",
+   "fantasy": "#2c2250"
+  },
+  "gridline": {
+   "default": "#3a4a60",
+   "fantasy": "#26242d"
+  },
+  "sorthead": {
+   "default": "#243248",
+   "fantasy": "#e93f29"
+  },
+  "sortcell": {
+   "default": "#162131",
+   "fantasy": "#2c2250"
+  },
   "eval-good": "#dffbe9",
   "eval-avg": "#fbffdf",
   "eval-bad": "#f6e0e3",
   "eval-good-text": "#3cc878",
   "eval-bad-text": "#eb505f",
   "accent-default": "#b8ee79",
-  "accent-fantasy": "#ef3d25",
+  "accent-fantasy": {
+   "default": "#ef3d25",
+   "fantasy": "#e93f29"
+  },
   "accent-betting": "#39ff88",
   "white": "#ffffff",
-  "accent-fantasy-light": "#ff8a78",
-  "accent-fantasy-dark": "#3a1b19",
-  "text-soft": "#d9e3ef",
-  "text-muted-2": "#94a6bc",
-  "text-subtle": "#a8b6c9",
-  "text-dim": "#b8c6d7",
-  "surface-dialog": "#101925",
-  "surface-deep": "#0e1724",
-  "border-control": "#324052",
-  "border-soft": "#2b394b",
+  "accent-fantasy-light": {
+   "default": "#ff8a78",
+   "fantasy": "#ec6a5b"
+  },
+  "accent-fantasy-dark": {
+   "default": "#3a1b19",
+   "fantasy": "#341311"
+  },
+  "text-soft": {
+   "default": "#d9e3ef",
+   "fantasy": "#f5f2fb"
+  },
+  "text-muted-2": {
+   "default": "#94a6bc",
+   "fantasy": "#a9a7b1"
+  },
+  "text-subtle": {
+   "default": "#a8b6c9",
+   "fantasy": "#a9a7b1"
+  },
+  "text-dim": {
+   "default": "#b8c6d7",
+   "fantasy": "#a9a7b1"
+  },
+  "surface-dialog": {
+   "default": "#101925",
+   "fantasy": "#0e0e12"
+  },
+  "surface-deep": {
+   "default": "#0e1724",
+   "fantasy": "#0e0e12"
+  },
+  "border-control": {
+   "default": "#324052",
+   "fantasy": "#534568"
+  },
+  "border-soft": {
+   "default": "#2b394b",
+   "fantasy": "#26242d"
+  },
   "accent": {
    "note": "the accent of the page: default / Fantasy / Betting",
    "default": "{semantic.accent-default}",
    "fantasy": "{semantic.accent-fantasy}",
    "betting": "{semantic.accent-betting}"
-  }
+  },
+  "violet-header": "#19112e",
+  "field": "#100c19",
+  "positive": "#66d6a6",
+  "row-hover": "#ffffff12",
+  "scroll-thumb": "#982c1e"
  },
  "font": {
-  "ui": "'Segoe UI',sans-serif"
+  "ui": {
+   "default": "'Segoe UI',sans-serif",
+   "fantasy": "Inter,system-ui,-apple-system,'Segoe UI',sans-serif"
+  }
  },
  "component": {
   "app": {
@@ -51,7 +119,10 @@
     },
     "body": {
      "background": "{semantic.bg}",
-     "font-size": "15px",
+     "font-size": {
+      "default": "15px",
+      "fantasy": "14px"
+     },
      "text": "{semantic.text}"
     },
     "eyebrow": {
@@ -141,13 +212,31 @@
    "sidebar": {
     "link": {
      "font-size-below-900px": "13px",
-     "radius": "7px",
-     "text": "{semantic.muted}"
+     "radius": {
+      "default": "7px",
+      "fantasy": "5px"
+     },
+     "text": "{semantic.muted}",
+     "font-size": {
+      "default": "15px",
+      "fantasy": "13px"
+     }
+    },
+    "link-hovered": {
+     "background": "{semantic.panel}",
+     "text": "{semantic.text}"
     },
     "link-selected": {
      "background": "#253327",
-     "background-in-fantasy": "#2e1716",
-     "text": "{semantic.accent}"
+     "background-in-fantasy": "{semantic.accent-fantasy-dark}",
+     "text": {
+      "default": "{semantic.accent}",
+      "fantasy": "{semantic.accent-fantasy-light}"
+     },
+     "radius": {
+      "default": "7px",
+      "fantasy": "6px"
+     }
     },
     "note": {
      "border": "{semantic.line}",
@@ -168,7 +257,10 @@
      "border-bottom-width": "1px"
     },
     "coverage": {
-     "font-size": "12px",
+     "font-size": {
+      "default": "12px",
+      "fantasy": "11px"
+     },
      "font-size-below-480px": "11px",
      "text": "{semantic.muted}"
     },
@@ -188,12 +280,22 @@
      "text-in-fantasy": "{semantic.accent-fantasy}"
     },
     "nav-link": {
-     "border-bottom-width": "3px",
-     "text": "{semantic.muted}"
+     "border-bottom-width": {
+      "default": "3px",
+      "fantasy": "2px"
+     },
+     "text": "{semantic.muted}",
+     "font-size": {
+      "default": "15px",
+      "fantasy": "13px"
+     }
     },
     "nav-link-selected": {
      "border": "{semantic.accent}",
-     "text": "{semantic.white}"
+     "text": {
+      "default": "{semantic.white}",
+      "fantasy": "#edf1f7"
+     }
     },
     "tagline": {
      "font-size": "12px",

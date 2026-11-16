@@ -28,6 +28,12 @@ body{
 --color-surface-deep:#0e1724;
 --color-border-control:#324052;
 --color-border-soft:#2b394b;
+--color-accent:var(--color-accent-default);
+--color-violet-header:#19112e;
+--color-field:#100c19;
+--color-positive:#66d6a6;
+--color-row-hover:#ffffff12;
+--color-scroll-thumb:#982c1e;
 --font-ui:'Segoe UI',sans-serif;
 --app-page-badge-border:var(--color-line);
 --app-page-badge-border-width:1px;
@@ -85,9 +91,13 @@ body{
 --app-sidebar-link-font-size-below-900px:13px;
 --app-sidebar-link-radius:7px;
 --app-sidebar-link-text:var(--color-muted);
+--app-sidebar-link-font-size:15px;
+--app-sidebar-link-hovered-background:var(--color-panel);
+--app-sidebar-link-hovered-text:var(--color-text);
 --app-sidebar-link-selected-background:#253327;
---app-sidebar-link-selected-background-in-fantasy:#2e1716;
+--app-sidebar-link-selected-background-in-fantasy:var(--color-accent-fantasy-dark);
 --app-sidebar-link-selected-text:var(--color-accent);
+--app-sidebar-link-selected-radius:7px;
 --app-sidebar-note-border:var(--color-line);
 --app-sidebar-note-border-width:1px;
 --app-sidebar-note-font-size:12px;
@@ -110,6 +120,7 @@ body{
 --app-top-bar-logo-pick-text-in-fantasy:var(--color-accent-fantasy);
 --app-top-bar-nav-link-border-bottom-width:3px;
 --app-top-bar-nav-link-text:var(--color-muted);
+--app-top-bar-nav-link-font-size:15px;
 --app-top-bar-nav-link-selected-border:var(--color-accent);
 --app-top-bar-nav-link-selected-text:var(--color-white);
 --app-top-bar-tagline-font-size:12px;
@@ -646,7 +657,42 @@ body{
 --fantasy-stat-table-value-bad-text:var(--color-eval-bad-text);
 --fantasy-stat-table-value-good-text:var(--color-eval-good-text)
 }
-body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-accent:var(--color-accent-fantasy)}body[data-area=betting]{--color-accent:var(--color-accent-betting)}
+body[data-area=fantasy]{
+--color-bg:#09090b;
+--color-panel:#0e0e12;
+--color-line:#26242d;
+--color-muted:#a9a7b1;
+--color-text:#f5f2fb;
+--color-chip:#2c2250;
+--color-gridline:#26242d;
+--color-sorthead:#e93f29;
+--color-sortcell:#2c2250;
+--color-accent-fantasy:#e93f29;
+--color-accent-fantasy-light:#ec6a5b;
+--color-accent-fantasy-dark:#341311;
+--color-text-soft:#f5f2fb;
+--color-text-muted-2:#a9a7b1;
+--color-text-subtle:#a9a7b1;
+--color-text-dim:#a9a7b1;
+--color-surface-dialog:#0e0e12;
+--color-surface-deep:#0e0e12;
+--color-border-control:#534568;
+--color-border-soft:#26242d;
+--color-accent:var(--color-accent-fantasy);
+--font-ui:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;
+--app-page-body-font-size:14px;
+--app-sidebar-link-radius:5px;
+--app-sidebar-link-font-size:13px;
+--app-sidebar-link-selected-text:var(--color-accent-fantasy-light);
+--app-sidebar-link-selected-radius:6px;
+--app-top-bar-coverage-font-size:11px;
+--app-top-bar-nav-link-border-bottom-width:2px;
+--app-top-bar-nav-link-font-size:13px;
+--app-top-bar-nav-link-selected-text:#edf1f7
+}
+body[data-area=betting]{
+--color-accent:var(--color-accent-betting)
+}
 /* Where each component colour is used (name : selectors of the style sheets)
   app.page.badge.border : .pill
   app.page.badge.border-width : .pill
@@ -701,20 +747,24 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   app.research.overview-card-label.font-size : .number
   app.research.overview-card-label.text : .number
   app.research.overview-card-link.text : .action a
-  app.sidebar.link.font-size-below-900px : aside a
+  app.sidebar.link.font-size-below-900px : body:not([data-area=fantasy]) aside a
   app.sidebar.link.radius : aside a
   app.sidebar.link.text : aside a
+  app.sidebar.link.font-size : aside a
+  app.sidebar.link-hovered.background : body[data-area=fantasy] aside a:hover:not(.active)
+  app.sidebar.link-hovered.text : body[data-area=fantasy] aside a:hover:not(.active)
   app.sidebar.link-selected.background : aside a.active
   app.sidebar.link-selected.background-in-fantasy : body:has(.fantasy-stats) aside a.active
   app.sidebar.link-selected.text : aside a.active
+  app.sidebar.link-selected.radius : aside a.active
   app.sidebar.note.border : .aside-note
   app.sidebar.note.border-width : .aside-note
   app.sidebar.note.font-size : .aside-note
   app.sidebar.note.text : .aside-note
-  app.sidebar.panel.border-bottom : aside
-  app.sidebar.panel.border-bottom-width-below-900px : aside
-  app.sidebar.panel.border-right : aside
-  app.sidebar.panel.border-right-width : aside
+  app.sidebar.panel.border-bottom : body:not([data-area=fantasy]) aside
+  app.sidebar.panel.border-bottom-width-below-900px : body:not([data-area=fantasy]) aside
+  app.sidebar.panel.border-right : aside  |  body[data-area=fantasy] aside
+  app.sidebar.panel.border-right-width : aside  |  body[data-area=fantasy] aside
   app.top-bar.bar.border-bottom : .top
   app.top-bar.bar.border-bottom-width : .top
   app.top-bar.coverage.font-size : [data-part="app.top-bar.coverage"]
@@ -729,6 +779,7 @@ body{--color-accent:var(--color-accent-default)}body[data-area=fantasy]{--color-
   app.top-bar.logo-pick.text-in-fantasy : body[data-area=fantasy] .brand .b1
   app.top-bar.nav-link.border-bottom-width : .top nav a
   app.top-bar.nav-link.text : .top nav a
+  app.top-bar.nav-link.font-size : .top nav a
   app.top-bar.nav-link-selected.border : .top nav a.active
   app.top-bar.nav-link-selected.text : .top nav a.active
   app.top-bar.tagline.font-size : .tag

@@ -3,18 +3,35 @@
    direction, alignment and visibility of three components. Colours, fonts, font sizes, radii, borders and shadows are in theme/theme.json.
    All three files use the same names (screen.component.part.property); each value becomes a CSS variable on <body>. */
 
+/* A size can differ by area of the page: { "default": ..., "fantasy": ..., "betting": ... }. `default` is required (Betting and the unscoped page); the other keys become
+   overrides on body[data-area=fantasy] / body[data-area=betting]. */
+const AREAS = ['fantasy', 'betting'];
+const isAreaValue = v => v !== null && typeof v === 'object' && !Array.isArray(v) && ('default' in v);
+
 /** All variables of a sizes file as [name, value] pairs. */
 export function sizeVariables(sizes) {
   const vars = [];
   for (const [screen, comps] of Object.entries(sizes.component))
     for (const [comp, parts] of Object.entries(comps))
       for (const [part, props] of Object.entries(parts))
-        for (const [prop, v] of Object.entries(props)) vars.push([`--${screen}-${comp}-${part}-${prop}`, v]);
+        for (const [prop, v] of Object.entries(props)) vars.push([`--${screen}-${comp}-${part}-${prop}`, isAreaValue(v) ? v.default : v]);
   return vars;
 }
 
+/** The overrides of the areas: [{ area, name, value }]. */
+export function sizeAreaVariables(sizes) {
+  const out = [];
+  for (const [screen, comps] of Object.entries(sizes.component))
+    for (const [comp, parts] of Object.entries(comps))
+      for (const [part, props] of Object.entries(parts))
+        for (const [prop, v] of Object.entries(props)) if (isAreaValue(v)) for (const area of AREAS) if (area in v) out.push({ area, name: `--${screen}-${comp}-${part}-${prop}`, value: v[area] });
+  return out;
+}
+
 export function buildSizesCss(sizes) {
-  return `/* Generated from sizes.json by config/generate.mjs. Do not edit by hand. */\nbody{\n${sizeVariables(sizes).map(([k, v]) => `${k}:${v}`).join(';\n')}\n}\n`;
+  const over = sizeAreaVariables(sizes);
+  const areas = AREAS.map(area => { const mine = over.filter(o => o.area === area); return mine.length ? `body[data-area=${area}]{\n${mine.map(o => `${o.name}:${o.value}`).join(';\n')}\n}\n` : ''; }).join('');
+  return `/* Generated from sizes.json by config/generate.mjs. Do not edit by hand. */\nbody{\n${sizeVariables(sizes).map(([k, v]) => `${k}:${v}`).join(';\n')}\n}\n${areas}`;
 }
 
 const FLEX = { start: 'flex-start', end: 'flex-end', center: 'center', stretch: 'stretch', 'space-between': 'space-between', row: 'row', column: 'column', wrap: 'wrap', nowrap: 'nowrap' };

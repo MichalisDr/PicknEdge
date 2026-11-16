@@ -3,12 +3,14 @@ body{
 --app-page-badge-padding:6px 12px;
 --app-page-content-max-width:1600px;
 --app-page-content-padding:38px 4%;
+--app-page-content-padding-below-730px:clamp(16px,2vw,25px) clamp(18px,3vw,36px) clamp(18px,3vw,36px);
 --app-page-content-padding-below-900px:25px 4%;
 --app-page-content-width:100%;
 --app-page-heading-area-gap:25px;
 --app-page-heading-area-margin-bottom:30px;
 --app-page-intro-max-width:760px;
 --app-page-layout-grid-template-columns:220px 1fr;
+--app-page-layout-grid-template-columns-below-730px:1fr;
 --app-page-layout-grid-template-columns-below-900px:1fr;
 --app-page-layout-min-height:calc(100vh - 82px);
 --app-page-subtitle-margin:10px 0;
@@ -41,20 +43,29 @@ body{
 --app-sidebar-link-padding:12px;
 --app-sidebar-note-margin-top:65px;
 --app-sidebar-note-padding:14px;
+--app-sidebar-panel-gap-below-730px:4px;
 --app-sidebar-panel-gap-below-900px:8px;
 --app-sidebar-panel-padding:30px 18px;
+--app-sidebar-panel-padding-below-730px:7px 4%;
 --app-sidebar-panel-padding-below-900px:10px 4%;
 --app-top-bar-bar-gap:40px;
 --app-top-bar-bar-gap-below-480px:20px;
+--app-top-bar-bar-gap-below-550px:7px 12px;
 --app-top-bar-bar-gap-below-900px:22px;
 --app-top-bar-bar-height:82px;
 --app-top-bar-bar-height-below-480px:70px;
+--app-top-bar-bar-min-height-below-550px:61px;
 --app-top-bar-bar-padding:0 4%;
 --app-top-bar-bar-padding-below-480px:0 5%;
+--app-top-bar-bar-padding-below-550px:8px clamp(15px,3vw,36px);
 --app-top-bar-coverage-max-width:300px;
 --app-top-bar-coverage-max-width-below-480px:40vw;
+--app-top-bar-coverage-width-below-550px:100%;
 --app-top-bar-nav-gap:30px;
 --app-top-bar-nav-gap-below-480px:18px;
+--app-top-bar-nav-gap-below-550px:14px;
+--app-top-bar-nav-padding-left:0;
+--app-top-bar-nav-link-min-height-below-550px:33px;
 --betting-stats-table-caption-gap:16px;
 --betting-stats-table-caption-margin:14px 0;
 --betting-stats-table-category-count-margin-left:6px;
@@ -392,4 +403,17 @@ body{
 --fantasy-stat-table-toolbar-search-field-width:190px;
 --fantasy-stat-table-toolbar-search-field-width-below-650px:100%;
 --fantasy-stat-table-value-cell-gap:2px
+}
+body[data-area=fantasy]{
+--app-page-content-padding:clamp(16px,2vw,25px) clamp(18px,3vw,36px) clamp(18px,3vw,36px);
+--app-page-layout-grid-template-columns:134px 1fr;
+--app-page-layout-min-height:calc(100vh - 61px);
+--app-sidebar-link-margin:2px 0;
+--app-sidebar-link-padding:9px 12px;
+--app-sidebar-panel-padding:23px 9px;
+--app-top-bar-bar-gap:16px;
+--app-top-bar-bar-height:61px;
+--app-top-bar-bar-padding:0 clamp(15px,3vw,36px);
+--app-top-bar-nav-gap:24px;
+--app-top-bar-nav-padding-left:12px
 }

@@ -16,7 +16,8 @@ const walk = (dir, ext, out = []) => {
   return out;
 };
 const themeText = read('theme/theme.json'), theme = JSON.parse(themeText);
-const components = t => Object.entries(t.component).flatMap(([a, cs]) => Object.entries(cs).flatMap(([c, ps]) => Object.entries(ps).flatMap(([p, props]) => Object.entries(props).map(([k, value]) => ({ key: `${a}.${c}.${p}.${k}`, cssVar: `--${a}-${c}-${p}-${k}`, value })))));
+const flat = value => (value !== null && typeof value === 'object' ? Object.values(value) : [value]);   // a value can differ by area: { default, fantasy, betting }
+const components = t => Object.entries(t.component).flatMap(([a, cs]) => Object.entries(cs).flatMap(([c, ps]) => Object.entries(ps).flatMap(([p, props]) => Object.entries(props).flatMap(([k, value]) => flat(value).map(v => ({ key: `${a}.${c}.${p}.${k}`, cssVar: `--${a}-${c}-${p}-${k}`, value: v }))))));
 const styles = walk('', ['.css']).filter(f => f !== 'theme/theme.css'), scripts = walk('', ['.js']), icons = walk('assets/icons/', ['.svg']);
 const COLOUR = /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/;   // in scripts: hex and rgb(a) / hsl(a)
 const NAMED = /(?<![-\w])(?:white|black|red|green|blue|gray|grey|orange|yellow|purple|pink)(?![-\w])/;   // in style sheets: also colour names
