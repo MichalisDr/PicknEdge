@@ -43,10 +43,5 @@ lx-t{display:contents}.lx-grid .fw-metric>strong{order:1}.lx-grid .fw-metric>.fw
 [data-part="fantasy.player-card.view-button"]{display:flex;flex-direction:var(--fantasy-player-card-view-button-direction);align-items:var(--fantasy-player-card-view-button-align);justify-content:var(--fantasy-player-card-view-button-justify);gap:var(--fantasy-player-card-view-button-gap);min-width:var(--fantasy-player-card-view-button-min-width);padding:var(--fantasy-player-card-view-button-padding);background:transparent;border:0;border-radius:var(--fantasy-player-card-view-button-radius);color:var(--fantasy-player-card-view-button-text);font:inherit;font-size:var(--fantasy-player-card-view-button-font-size);cursor:pointer}
 [data-part="fantasy.player-card.view-button"][aria-pressed=true]{color:var(--fantasy-player-card-view-button-selected-text)}
 [data-part="fantasy.player-card.view-icon"],[data-part="fantasy.player-card.view-icon"] svg{display:block;width:var(--fantasy-player-card-view-icon-width);height:var(--fantasy-player-card-view-icon-height)}
-/* Placeholders (no data): the same frames, only a muted text / line colour of their own. */
-[data-part="fantasy.player-card.cr-box"][data-placeholder]{color:var(--fantasy-player-card-cr-box-placeholder-text)}
-[data-part="fantasy.player-card.value-chip"][data-placeholder]{color:var(--fantasy-player-card-value-chip-placeholder-text)}
-[data-part="fantasy.player-card.value-sparkline-placeholder"]{width:var(--fantasy-player-card-value-sparkline-width);height:var(--fantasy-player-card-value-sparkline-height);color:var(--fantasy-player-card-value-sparkline-placeholder-line)}
-[data-part="fantasy.player-card.value-sparkline-placeholder"] line{stroke-width:var(--fantasy-player-card-value-sparkline-line-width)}
 /* Team card: the approved city under the club name */
 [data-part="fantasy.player-card.header-city"]{margin:var(--fantasy-player-card-header-city-margin);font-size:var(--fantasy-player-card-header-city-font-size);color:var(--fantasy-player-card-header-city-text)}

@@ -17,8 +17,8 @@ const leagueCells = (view, ids) => Object.fromEntries(ids.map(id => [id, view.le
 
 /** Everything the table markup needs for the current state, or null when a newer draw has started (isStale()).
     widthsOf(names) = the rendered widths of the first-column texts in px. */
-/** The first column's limits; for Players, room for the position badge and for the CR and Value frames (always part of the row). */
-const firstCol = (f, teams) => { const extra = teams ? 0 : f.playersExtra + f.figuresExtra; return { min: f.min + extra, cap: f.cap + extra, pad: f.pad + extra }; };
+/** The first column's limits; for Players, room for the position badge and (when any figures exist) the optional CR and Value. */
+const firstCol = (f, teams, rows) => { const extra = teams ? 0 : f.playersExtra + (rows.some(r => Data.fantasyInfo(r.id) !== null) ? f.figuresExtra : 0); return { min: f.min + extra, cap: f.cap + extra, pad: f.pad + extra }; };
 
 export async function loadTable(state, widthsOf, isStale) {
   const teams = state.entity === 'teams';
