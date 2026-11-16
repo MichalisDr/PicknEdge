@@ -34,7 +34,7 @@ const declarations = css => {
 const nonzero = v => /(?<![\w.])[0-9.]*[1-9][0-9.]*/.test(v) || /\b(calc|min|max|clamp)\(/.test(v);
 const LAYOUT = /^(width|height|min-width|max-width|min-height|max-height|margin(-top|-right|-bottom|-left)?|padding(-top|-right|-bottom|-left)?|gap|row-gap|column-gap|top|right|bottom|left|inset|flex-basis|grid-template-columns|grid-template-rows)$/;
 const RADIUS = /^(border-radius|border-(top|bottom)-(left|right)-radius)$/;
-const SET_BY_SCRIPT = /var\(--(rows|gap|rowsT)\)/;
+const SET_BY_SCRIPT = /var\(--(rows|gap|rowsT|table-total)\)/;
 
 test('sizes.css is exactly what sizes.json generates', () => {
   assert.equal(read('config/sizes.css'), buildSizesCss(sizes), 'run: node site/config/generate.mjs');
@@ -63,7 +63,7 @@ test('inline styles in scripts are computed geometry only (no literal px)', () =
 
 test('every variable a style sheet reads exists in theme.json or sizes.json (or is set by a script)', () => {
   const defined = new Set([...themeVariables(theme).map(([k]) => k), ...sizeVariables(sizes).map(([k]) => k), ...arrangementVariables(JSON.parse(read('config/arrangement.json'))).map(([k]) => k), '--color-accent']);
-  for (const f of styles) for (const m of read(f).matchAll(/var\((--[\w-]+)/g)) assert.ok(defined.has(m[1]) || ['--rows', '--gap', '--rowsT', '--fade-colour'].includes(m[1]), `${f} reads ${m[1]}`);
+  for (const f of styles) for (const m of read(f).matchAll(/var\((--[\w-]+)/g)) assert.ok(defined.has(m[1]) || ['--rows', '--gap', '--rowsT', '--fade-colour', '--table-total'].includes(m[1]), `${f} reads ${m[1]}`);
 });
 
 test('theme.json and sizes.json share the names but never a variable', () => {

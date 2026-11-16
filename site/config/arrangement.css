@@ -9,10 +9,13 @@ body{
 --fantasy-stat-table-players-toolbar-wrap:wrap;
 --fantasy-stat-table-players-toolbar-align:center;
 --fantasy-stat-table-players-toolbar-justify:flex-start;
---fantasy-stat-table-players-toolbar-end-group-direction:row;
---fantasy-stat-table-players-toolbar-end-group-wrap:nowrap;
---fantasy-stat-table-players-toolbar-end-group-align:center;
---fantasy-stat-table-players-toolbar-end-group-margin-left:auto;
+--fantasy-stat-table-title-row-direction:row;
+--fantasy-stat-table-title-row-wrap:wrap;
+--fantasy-stat-table-title-row-align:center;
+--fantasy-stat-table-title-row-justify:space-between;
+--fantasy-stat-table-players-search-group-direction:row;
+--fantasy-stat-table-players-search-group-wrap:nowrap;
+--fantasy-stat-table-players-search-group-align:center;
 --fantasy-stat-table-players-window-buttons-direction:row;
 --fantasy-stat-table-players-window-buttons-wrap:wrap;
 --fantasy-stat-table-players-window-buttons-align:center;
@@ -49,7 +52,6 @@ body{
 --fantasy-stat-table-name-cell-figures-direction:row;
 --fantasy-stat-table-name-cell-figures-wrap:nowrap;
 --fantasy-stat-table-name-cell-figures-align:center;
---fantasy-stat-table-name-cell-figures-margin-left:auto;
 --fantasy-stat-table-name-cell-cr-box-align:center;
 --fantasy-stat-table-name-cell-value-chip-direction:row;
 --fantasy-stat-table-name-cell-value-chip-wrap:nowrap;

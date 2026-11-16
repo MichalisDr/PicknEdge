@@ -5,6 +5,6 @@ export const validSeries = values => Array.isArray(values) && values.length >= 2
 export function sparklineSvg(values, part) {
   if (!validSeries(values)) return '';
   const lo = Math.min(...values), span = Math.max(...values) - lo || 1;
-  const points = values.map((v, i) => `${(100 * i / (values.length - 1)).toFixed(1)},${(30 - 30 * (v - lo) / span).toFixed(1)}`).join(' ');
-  return `<svg data-part="${part}" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="${points}" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/></svg>`;
+  const points = values.map((v, i) => `${(40 * i / (values.length - 1)).toFixed(1)},${(13 - 12 * (v - lo) / span).toFixed(1)}`).join(' ');
+  return `<svg data-part="${part}" viewBox="0 0 40 14" preserveAspectRatio="none" aria-hidden="true"><polyline points="${points}" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }

@@ -33,16 +33,28 @@
      "justify": "start",
      "parts": [
       { "name": "window-buttons", "show": "always" },
-      { "name": "position-buttons", "show": "players", "align": "end" },
-      { "name": "search", "show": "always", "align": "end" },
-      { "name": "filters-button", "show": "players", "align": "end" }
+      { "name": "position-buttons", "show": "players" },
+      { "name": "players-search-group", "show": "always" }
      ]
     },
-    "players-toolbar-end-group": {
+    "title-row": {
+     "direction": "row",
+     "wrap": "wrap",
+     "align": "center",
+     "justify": "space-between",
+     "parts": [
+      { "name": "heading-title", "show": "always" },
+      { "name": "players-view-row", "show": "always" }
+     ]
+    },
+    "players-search-group": {
      "direction": "row",
      "wrap": "nowrap",
      "align": "center",
-     "push": "end"
+     "parts": [
+      { "name": "search", "show": "always" },
+      { "name": "filters-button", "show": "players" }
+     ]
     },
     "players-window-buttons": {
      "direction": "row",
@@ -105,7 +117,8 @@
      "direction": "column",
      "align": "stretch",
      "parts": [
-      { "name": "name", "show": "always", "self": "start" }
+      { "name": "name", "show": "always", "self": "start" },
+      { "name": "name-cell-city", "show": "teams" }
      ]
     },
     "players-name-cell": {
@@ -139,7 +152,6 @@
      "direction": "row",
      "wrap": "nowrap",
      "align": "center",
-     "push": "end",
      "parts": [
       { "name": "cr-box", "show": "when-data" },
       { "name": "value-chip", "show": "when-data" }

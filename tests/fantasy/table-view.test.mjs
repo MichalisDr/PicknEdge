@@ -47,7 +47,7 @@ test('no GP column, no subtitle or credits slot in the first column, no sub-line
     const { html, M } = await render({ entity });
     assert.ok(!/fw-gp|>GP<|fw-cr-slot|fw-sub|fw-cov|fw-tm/.test(html), entity);
     assert.ok(!M.cols.some(c => c.metric === 'gp'));
-    assert.match(html, entity === 'teams' ? /<th><div class="fw-namecell"><button class="fw-name"[^>]*>[^<]+<\/button>/ : /<th><div data-part="fantasy.stat-table.players-name-cell">.*?<button class="fw-name"/s);
+    assert.match(html, entity === 'teams' ? /<th><div class="fw-namecell"><button class="fw-name"[^>]*><span data-part="fantasy.stat-table.name-cell-team-name">[^<]+<\/span><\/button>/ : /<th><div data-part="fantasy.stat-table.players-name-cell">.*?<button class="fw-name"/s);
   }
   const { html } = await render({ entity: 'players' });
   assert.match(html, /<small class="fw-who" title="[^"]+">[A-Z]{3}<\/small>/, 'second line of a player: only the team code (Euroleague Fantasy code), the full team name as the tooltip');
@@ -71,7 +71,7 @@ test('the table fills its container: numeric columns share the rest equally abov
   const cols = html.match(/<colgroup>(.*?)<\/colgroup>/)[1];
   assert.match(cols, /^<col style="width:\d+px">(<col>){1,}$/, 'only the first column carries a width');
   assert.equal((cols.match(/<col>/g) || []).length, M.cols.length);
-  assert.match(html, /<table class="fw-t" style="min-width:\d+px">/);
+  assert.match(html, /<table class="fw-t" style="--table-total:\d+px">/);
 });
 
 test('hover and click on a main value: cells carry the entity and metric, charts are offered on the main metrics', async () => {
@@ -141,7 +141,7 @@ test('Table / Charts: none for Players today (no pair, no divider); Teams have c
 
 test('Teams toolbar: the Players composition without G / F / C and Filters; "Find team"; no eyebrow, no old toolbar; each control once', async () => {
   const { html } = await render({ entity: 'teams' });
-  assert.ok(!html.includes('FANTASY / TEAMS') && !html.includes('class="eyebrow"') && html.includes('<h1>Teams</h1>'));
+  assert.ok(!html.includes('FANTASY / TEAMS') && !html.includes('class="eyebrow"') && html.includes('>Teams</h1>'));
   assert.ok(!/class="fw-(toolbar|periods|right|switch)"|data-view-toggle|Search Fantasy|placeholder="Search…"/.test(html), 'the old Teams toolbar and window row are gone');
   assert.match(html, /<input type="search" aria-label="Find team" placeholder="Find team"/);
   assert.equal(html.split('aria-label="Sample window"').length - 1, 1, 'the period buttons once');
@@ -170,13 +170,13 @@ const { Data } = await import('../../site/core/data.js');
 const ROW = { id: 'P1', name: 'Player One', full: 'Player One', team: 'AAA', pos: 'G' };
 const ROSTER = (p = {}) => ({ teams: { AAA: 'Alpha Team' }, logoIds: {}, players: { P1: { name: 'Player One', ...p } } });
 
-test('Players name cell: position badge, name above the team code; given name beside the family name', () => {
+test('Players name cell: position badge, name above the team code; given name beside the family name; CR and Value only with data', () => {
   const html = playerNameCellHtml(ROW, ROSTER({ first: 'Player', last: 'One' }), null);
   assert.ok(html.indexOf('name-cell-position-badge') < html.indexOf('name-cell-identity') && html.indexOf('class="fw-name"') < html.indexOf('class="fw-who"'));
   assert.match(html, /name-cell-position-badge" title="Position">G<\/span>/);
   assert.match(html, /<button class="fw-name" data-open="P1" title="Player One"><span data-part="fantasy.stat-table.name-cell-given-name">Player<\/span> <span data-part="fantasy.stat-table.name-cell-family-name">One<\/span><\/button>/, 'same line, same button (opens the card)');
   assert.match(html, /<small class="fw-who" title="Alpha Team">AAA<\/small>/, 'team code only, full name as the tooltip');
-  assert.ok(!/fw-cr-box|fw-value-chip|name-cell-figures|sparkline/.test(html), 'nothing of the figures while fantasyInfo is null: no group, no spacing');
+  assert.ok(!/fw-cr-box|fw-value-chip|name-cell-figures|sparkline|—/.test(html), 'while fantasyInfo is null the CR and Value slots stay hidden');
 });
 
 test('Players name cell: incomplete name parts show the display name intact; no valid position, no badge; no team code, no second line', () => {
@@ -197,14 +197,13 @@ test('Players name cell: CR then Value (chip with its sparkline), 0 is a value, 
   assert.ok(!draw({}).includes('name-cell-figures'));
 });
 
-test('Teams name cells are unchanged; the first column leaves room for the badge, and for the figures only when some exist', async () => {
+test('Teams name cell: club name, approved city below it (none without a city); the first column is 230 px for both tables', async () => {
   const teams = await render({ entity: 'teams' });
-  assert.match(teams.html, /<th><div class="fw-namecell"><button class="fw-name" data-open="[^"]+" title="[^"]+">[^<]+<\/button><\/div><\/th>/);
+  assert.match(teams.html, /<th><div class="fw-namecell"><button class="fw-name" data-open="[^"]+" title="[^"]+"><span data-part="fantasy.stat-table.name-cell-team-name">[^<]+<\/span><\/button>/);
+  assert.match(teams.html, /data-open="RED"[^>]*><span data-part="fantasy.stat-table.name-cell-team-name">Crvena Zvezda mts<\/span><\/button><small data-part="fantasy.stat-table.name-cell-city">Belgrade<\/small>/, 'a team with an approved city');
+  assert.match(teams.html, /data-open="BAR"[^>]*><span data-part="fantasy.stat-table.name-cell-team-name">[^<]+<\/span><\/button><\/div>/, 'a team without a city: no second line');
+  assert.ok(!teams.html.includes('players-name-cell') && !teams.html.includes('position-badge'), 'no badge, CR or Value on Teams');
   const TL = JSON.parse(siteFile('config/table-layouts.json')).firstCol;
-  const w = async entity => (await render({ entity })).M.firstW;
-  const base = Math.min(TL.cap, 0 + 0), teamsW = await w('teams'), playersW = await w('players');
-  assert.ok(playersW >= teamsW, 'Players have at least as much room as Teams');
-  const saved = Data.fantasyInfo; Data.fantasyInfo = () => ({ cr: 1, value: 2 });
-  try { assert.ok((await w('players')) > playersW, 'with figures the column is wider'); } finally { Data.fantasyInfo = saved; }
-  assert.ok(base >= 0 && TL.playersExtra > 0 && TL.figuresExtra > 0);
+  assert.deepEqual([TL.min, TL.cap], [230, 230]);
+  for (const entity of ['teams', 'players']) assert.equal((await render({ entity })).M.firstW, 230, entity);
 });
