@@ -682,12 +682,11 @@
      "font-size": "13px"
     },
     "close-and-next-button": {
-     "background": "#243143",
+     "background": "{semantic.field}",
      "border-width": "1px",
-     "font-size": "22px",
-     "font-size-2": "13px",
-     "radius": "6px",
-     "text": "#eef3f8"
+     "radius": "5px",
+     "text": "{semantic.text}",
+     "font-size-2": "13px"
     },
     "close-and-next-button-hovered": {
      "border": "{semantic.accent-fantasy}"
@@ -742,7 +741,7 @@
      "text": "{semantic.text}"
     },
     "header-actions-team": {
-     "text": "#eef3f8"
+     "text": "{semantic.text}"
     },
     "header-city": {
      "font-size": "12px",
@@ -781,11 +780,14 @@
      "alpha-end": "0%"
     },
     "header-team": {
-     "font-size": "12px"
+     "background": "{semantic.violet-header}",
+     "border-bottom": "#26242d99",
+     "border-bottom-width": "1px"
     },
     "header-team-name": {
-     "font-size": "24px",
-     "font-size-below-650px": "20px"
+     "font-size": "clamp(20px,2.6vw,24px)",
+     "font-weight": "650",
+     "text": "{semantic.text}"
     },
     "large-tile": {
      "border": "#3a4d68"

@@ -184,7 +184,7 @@
     },
     "header-team": {
      "direction": "row",
-     "wrap": "wrap",
+     "wrap": "nowrap",
      "align": "center",
      "justify": "start",
      "parts": [
@@ -197,6 +197,7 @@
      "direction": "row",
      "wrap": "nowrap",
      "align": "center",
+     "push": "end",
      "parts": [
       { "name": "back-button", "show": "team-from-player" },
       { "name": "close-button", "show": "always" }
@@ -311,6 +312,12 @@
       { "name": "controls-games-played-number", "show": "always" },
       { "name": "controls-games-played-label", "show": "always" }
      ]
+    },
+    "view-buttons-team": {
+     "direction": "row",
+     "wrap": "nowrap",
+     "align": "center",
+     "push": "end"
     },
     "view-buttons": {
      "direction": "row",

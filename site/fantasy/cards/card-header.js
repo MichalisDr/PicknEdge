@@ -63,7 +63,7 @@ function teamHeaderHtml({ cs, title, logo, show }) {
   }, show).map(p => p.html).join('');
   const parts = drawParts('fantasy.player-card.header-team', {
     'logo': () => (logo ? `<img src="${esc(logo)}" alt="" data-part="${PART}header-logo">` : ''),
-    'title': () => `<div>${title}</div>`,
+    'title': () => `<div data-part="${PART}header-title">${title}</div>`,
     'header-actions-team': () => `<div data-part="${PART}header-actions-team">${actions}</div>`,
   }, show);
   return `<header class="fw-identity" data-part="${PART}header-team">${parts.map(p => p.html).join('')}</header>`;
@@ -94,7 +94,7 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
   const identity = drawParts('fantasy.player-card.header-identity', {
     'logo': () => (logo ? `<img src="${esc(logo)}" alt="" data-part="${PART}header-logo">` : ''),
     'header-portrait': () => portraitHtml(entry),
-    'title': () => `<div>${title}</div>`,
+    'title': () => `<div data-part="${PART}header-title">${title}</div>`,
     'header-figures': () => (figures ? `<div data-part="${PART}header-figures">${figures}</div>` : ''),
   }, show).map(p => p.html).join('');
   const parts = drawParts('fantasy.player-card.header', {
@@ -127,7 +127,7 @@ export function controlsHtml({ cs, players, gp }) {
   const parts = drawParts('fantasy.player-card.controls', {
     'window-buttons': () => `<div role="group" aria-label="Sample window" data-part="${PART}window-buttons">${Windows.buttons(cs, 'data-card-window')}</div>`,
     'games-played': () => (Number.isFinite(gp) ? gamesPlayedHtml(gp, { players }) : ''),   // divider + readout as one group, so they wrap together
-    'view-button': () => `<div role="group" aria-label="Card view" data-part="${PART}view-buttons">${VIEWS.map(viewButton).join('')}</div>`,
+    'view-button': () => `<div role="group" aria-label="Card view" data-part="${PART}view-buttons${players ? '' : '-team'}">${VIEWS.map(viewButton).join('')}</div>`,
   }, { players });
   return `<div class="fw-card-controls">${parts.map(p => p.html).join('')}</div>`;
 }

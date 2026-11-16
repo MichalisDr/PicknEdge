@@ -455,11 +455,10 @@
      "gap-below-620px": "6px"
     },
     "header-actions-team": {
-     "gap": "16px",
-     "gap-below-650px": "10px"
+     "gap": "10px"
     },
     "header-city": {
-     "margin": "2px 0 0"
+     "margin": "3px 0 0"
     },
     "header-figures": {
      "gap": "7px",
@@ -475,9 +474,9 @@
      "gap": "7px"
     },
     "header-logo": {
-     "height": "46px",
-     "width": "46px",
-     "width-below-650px": "35px"
+     "height": "48px",
+     "margin-right": "3px",
+     "width": "48px"
     },
     "header-name": {
      "margin": "0"
@@ -496,13 +495,16 @@
      "height-below-500px": "80px"
     },
     "header-team": {
-     "gap": "16px",
-     "gap-below-650px": "10px",
-     "margin-bottom": "22px",
-     "padding-right": "44px"
+     "gap": "8px",
+     "margin": "-20px -20px 12px",
+     "min-height": "80px",
+     "padding": "0 20px"
     },
     "header-team-name": {
-     "margin": "3px 0"
+     "margin": "0"
+    },
+    "header-title": {
+     "min-width": "0"
     },
     "large-tile": {
      "padding": "14px 13px"
@@ -658,6 +660,9 @@
     },
     "view-buttons": {
      "gap": "4px"
+    },
+    "view-buttons-team": {
+     "gap": "8px"
     },
     "view-icon": {
      "height": "19px",
