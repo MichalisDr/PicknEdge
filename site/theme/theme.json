@@ -963,26 +963,30 @@
      "font-size-below-650px": "21px"
     },
     "trend-axis": {
-     "line": "#3b4655"
+     "line": "{semantic.border-control}"
     },
     "trend-bar": {
-     "fill": "#8f9bad"
+     "fill": "{semantic.sortcell}",
+     "stroke": "{semantic.border-control}",
+     "border-width": "1px"
     },
-    "trend-dot": {
-     "fill": "{semantic.accent-fantasy}"
+    "trend-flat": {
+     "line": "{semantic.muted}"
     },
     "trend-game": {
-     "line": "{semantic.accent-fantasy}"
+     "line": "{semantic.muted}",
+     "opacity": "0.35"
     },
     "trend-labels": {
      "font-size": "11px",
-     "text": "#adbed2"
-    },
-    "trend-rolling": {
-     "line": "#f2c14e"
+     "text": "{semantic.muted}"
     },
     "trend-season": {
-     "line": "{semantic.text-dim}"
+     "line": "{semantic.muted}",
+     "opacity": "0.5"
+    },
+    "trend-window": {
+     "line": "{semantic.text}"
     },
     "value-chip": {
      "background": "{semantic.chip}",
@@ -1253,9 +1257,6 @@
      "radius": "10px",
      "shadow": "{semantic.bg}",
      "shadow-size": "0 10px 30px"
-    },
-    "hover-popup-value": {
-     "text": "{semantic.accent}"
     },
     "league-average-row": {
      "background-base": "{semantic.panel}",

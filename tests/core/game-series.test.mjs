@@ -6,7 +6,7 @@ import { useRealData } from '../helpers/site-data.mjs';
 
 useRealData();
 const { Data } = await import('../../site/core/data.js');
-const { loadSeries, buildSeries } = await import('../../site/core/game-series.js');
+const { loadSeries, buildSeries, trendOf, TREND_FLAT_BELOW } = await import('../../site/core/game-series.js');
 const WIN = { l10: 10, l5: 5, l3: 3 };
 
 /** Two players with gaps (they missed team games) and at least 4 games, preferring the most games played. */
@@ -96,4 +96,31 @@ test('Elijah Bryant, PIR: window averages equal the table cells; rolling 5 over 
   assert.ok(Math.abs(shown.at(-1) - (await Data.view('players', 'l5')).get(id, 'pir').value) < 1e-5);
   console.log('  Elijah Bryant PIR: ' + out.join(', ') + ' | rolling 5, last 5 rounds: ' + shown.map(v => v.toFixed(1)).join(', '));
   console.log('  per game (round: PIR): ' + s.points.map(p => 'R' + p.round + ': ' + (p.value === null ? '-' : p.value)).join(', '));
+});
+
+test('trendOf: up, down, flat inside the threshold, lower-is-better swaps the colours, zero values', () => {
+  assert.equal(TREND_FLAT_BELOW, 0.04);
+  assert.deepEqual(['trend', 'tone'].map(k => trendOf([10, 11, 12], 1)[k]), ['up', 'good']);
+  assert.deepEqual(['trend', 'tone'].map(k => trendOf([12, 11, 10], 1)[k]), ['down', 'bad']);
+  assert.deepEqual(['trend', 'tone'].map(k => trendOf([10, 11, 12], -1)[k]), ['up', 'bad']);      // lower is better: a rise is bad
+  assert.deepEqual(['trend', 'tone'].map(k => trendOf([12, 11, 10], -1)[k]), ['down', 'good']);
+  assert.equal(trendOf([100, 103.9], 1).tone, 'flat');                                              // 3.9 / 103.9 < 0.04
+  assert.equal(trendOf([100, 104.5], 1).trend, 'up');                                               // 4.5 / 104.5 > 0.04
+  assert.equal(trendOf([0, 0, 0], 1).tone, 'flat');                                                 // both 0
+  assert.equal(trendOf([0, 5], 1).trend, 'up');                                                     // from 0: change = 1
+  assert.equal(trendOf([-5, 5], 1).trend, 'up');                                                    // sign change: 10 / 5 = 2
+  assert.deepEqual(trendOf([null, 4, null, 5, 6], 1).trend, 'up');                                  // gaps ignored
+  assert.equal(trendOf([1], 1).tone, 'flat');
+  assert.equal(trendOf([1, 9], 0).tone, 'flat');                                                    // no direction, no judgement
+  assert.equal(trendOf([1, 9], 1).token, 'fantasy.stat-table.value-good.text');
+});
+
+test('trend of the shown rolling line: Bryant PIR and a lower-is-better metric', async () => {
+  const roster = await Data.roster(), id = Object.keys(roster.players).find(k => roster.players[k].name === 'Elijah Bryant');
+  const pir = await loadSeries('players', id, 'pir'), a = trendOf(pir.recentRolling(), pir.metric.direction);
+  assert.equal(a.trend, 'down'); assert.equal(a.tone, 'bad');
+  const tov = await loadSeries('players', id, 'tov_g'), b = trendOf(tov.recentRolling(), tov.metric.direction);
+  assert.equal(tov.metric.direction, -1);
+  console.log(`  Bryant PIR rolling ${pir.recentRolling().filter(v => v !== null).map(v => v.toFixed(1)).join(' -> ')}: change ${(a.change * 100).toFixed(1)}%, ${a.trend}, ${a.tone} (${a.token})`);
+  console.log(`  Bryant TOV / game (direction -1) rolling ${tov.recentRolling().filter(v => v !== null).map(v => v.toFixed(1)).join(' -> ')}: change ${(b.change * 100).toFixed(1)}%, ${b.trend}, ${b.tone} (${b.token})`);
 });

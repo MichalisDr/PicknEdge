@@ -63,7 +63,7 @@ export function wirePopups(host, state, shown) {
       if (pinCell || !b.hasAttribute('data-chart')) return;
       const mine = ++token, id = b.dataset.id, metric = b.dataset.metric;
       const view = await Windows.view(state.entity, state);
-      const spark = await hoverSparkline(state.entity, id, metric, view.get(id, metric).value);
+      const spark = await hoverSparkline(state.entity, id, metric, view.get(id, metric).value, Windows.spec(state).last ?? Infinity);
       if (mine !== token || pinCell || !spark) return;
       tip.innerHTML = spark;
       placeTip(tip, b);

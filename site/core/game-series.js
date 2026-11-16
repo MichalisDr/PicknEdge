@@ -5,6 +5,23 @@
 import { Data } from './data.js';
 import { teamCode } from './teams.js';
 
+/** A rolling line whose change from first to last point is smaller than this share (of the larger of the two) is flat. */
+export const TREND_FLAT_BELOW = 0.04;
+/** Theme token of each tone of the rolling line: good / bad reuse the table's value colours, flat is the chart's own. */
+export const TREND_TOKEN = { good: 'fantasy.stat-table.value-good.text', bad: 'fantasy.stat-table.value-bad.text', flat: 'fantasy.player-card.trend-flat.line' };
+
+/** The trend of the rolling line as drawn (nulls ignored): change = (last - first) / max(|first|, |last|), flat below TREND_FLAT_BELOW.
+    direction = the metric's direction from metrics.json (+1 higher is better, -1 lower is better, 0 no judgement): up/down become good/bad
+    (swapped when lower is better); a metric with no direction has no good or bad, so its line is flat-coloured. */
+export function trendOf(rolling, direction) {
+  const v = rolling.filter(Number.isFinite);
+  if (v.length < 2) return { change: 0, trend: 'flat', tone: 'flat', token: TREND_TOKEN.flat };
+  const first = v[0], last = v.at(-1), top = Math.max(Math.abs(first), Math.abs(last)), change = top === 0 ? 0 : (last - first) / top;
+  const trend = Math.abs(change) < TREND_FLAT_BELOW ? 'flat' : change > 0 ? 'up' : 'down';
+  const tone = trend === 'flat' || !direction ? 'flat' : (trend === 'up') === (direction > 0) ? 'good' : 'bad';
+  return { change, trend, tone, token: TREND_TOKEN[tone] };
+}
+
 const order = (a, b) => a.date_utc.localeCompare(b.date_utc) || a.game - b.game;
 const finite = v => (Number.isFinite(v) ? v : null);
 

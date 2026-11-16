@@ -460,14 +460,18 @@ body{
 --fantasy-player-card-tile-unit-text:#acbace;
 --fantasy-player-card-tile-value-font-size:24px;
 --fantasy-player-card-tile-value-font-size-below-650px:21px;
---fantasy-player-card-trend-axis-line:#3b4655;
---fantasy-player-card-trend-bar-fill:#8f9bad;
---fantasy-player-card-trend-dot-fill:var(--color-accent-fantasy);
---fantasy-player-card-trend-game-line:var(--color-accent-fantasy);
+--fantasy-player-card-trend-axis-line:var(--color-border-control);
+--fantasy-player-card-trend-bar-fill:var(--color-sortcell);
+--fantasy-player-card-trend-bar-stroke:var(--color-border-control);
+--fantasy-player-card-trend-bar-border-width:1px;
+--fantasy-player-card-trend-flat-line:var(--color-muted);
+--fantasy-player-card-trend-game-line:var(--color-muted);
+--fantasy-player-card-trend-game-opacity:0.35;
 --fantasy-player-card-trend-labels-font-size:11px;
---fantasy-player-card-trend-labels-text:#adbed2;
---fantasy-player-card-trend-rolling-line:#f2c14e;
---fantasy-player-card-trend-season-line:var(--color-text-dim);
+--fantasy-player-card-trend-labels-text:var(--color-muted);
+--fantasy-player-card-trend-season-line:var(--color-muted);
+--fantasy-player-card-trend-season-opacity:0.5;
+--fantasy-player-card-trend-window-line:var(--color-text);
 --fantasy-player-card-value-chip-background:var(--color-chip);
 --fantasy-player-card-value-chip-radius:4px;
 --fantasy-player-card-value-chip-label-font-size:9px;
@@ -603,7 +607,6 @@ body{
 --fantasy-stat-table-hover-popup-radius:10px;
 --fantasy-stat-table-hover-popup-shadow:var(--color-bg);
 --fantasy-stat-table-hover-popup-shadow-size:0 10px 30px;
---fantasy-stat-table-hover-popup-value-text:var(--color-accent);
 --fantasy-stat-table-league-average-row-background-base:var(--color-panel);
 --fantasy-stat-table-league-average-row-background-tint:var(--color-accent-fantasy);
 --fantasy-stat-table-league-average-row-tint-percent:27%;
@@ -1186,12 +1189,16 @@ body[data-area=betting]{
   fantasy.player-card.tile-value.font-size-below-650px : .fw-metric strong
   fantasy.player-card.trend-axis.line : .fw-axis
   fantasy.player-card.trend-bar.fill : .fw-bar
-  fantasy.player-card.trend-dot.fill : .fw-spark-dot
+  fantasy.player-card.trend-bar.stroke : .fw-bar
+  fantasy.player-card.trend-bar.border-width : .fw-bar
+  fantasy.player-card.trend-flat.line : .fw-spark-dot.flat  |  .fw-roll.flat
   fantasy.player-card.trend-game.line : .fw-spark-game  |  .fw-spark-pt
+  fantasy.player-card.trend-game.opacity : .fw-spark-game  |  .fw-spark-pt
   fantasy.player-card.trend-labels.font-size : .fw-bars text,.fw-radar text  |  .fw-bar-tip
   fantasy.player-card.trend-labels.text : .fw-bars text,.fw-radar text
-  fantasy.player-card.trend-rolling.line : .fw-roll
   fantasy.player-card.trend-season.line : .fw-avg-season
+  fantasy.player-card.trend-season.opacity : .fw-avg-season
+  fantasy.player-card.trend-window.line : .fw-avg
   fantasy.player-card.value-chip.background : [data-part="fantasy.player-card.value-chip"]
   fantasy.player-card.value-chip.radius : [data-part="fantasy.player-card.value-chip"]
   fantasy.player-card.value-chip-label.font-size : [data-part="fantasy.player-card.value-chip-label"]
@@ -1327,7 +1334,6 @@ body[data-area=betting]{
   fantasy.stat-table.hover-popup.radius : .fw-tooltip  |  .fw-bar-tip
   fantasy.stat-table.hover-popup.shadow : .fw-tooltip
   fantasy.stat-table.hover-popup.shadow-size : .fw-tooltip
-  fantasy.stat-table.hover-popup-value.text : .fw-bar-tip
   fantasy.stat-table.league-average-row.background-base : .fw-t .fw-average,.fw-t .fw-average th:first-child  |  .fw-t .fw-average td.fw-sorted
   fantasy.stat-table.league-average-row.background-tint : .fw-t .fw-average,.fw-t .fw-average th:first-child  |  .fw-t .fw-average td.fw-sorted
   fantasy.stat-table.league-average-row.tint-percent : .fw-t .fw-average,.fw-t .fw-average th:first-child
@@ -1442,6 +1448,6 @@ body[data-area=betting]{
   fantasy.stat-table.table-frame.border : .fw-table-wrap
   fantasy.stat-table.table-frame.border-width : .fw-table-wrap
   fantasy.stat-table.table-frame.radius : .fw-table-wrap
-  fantasy.stat-table.value-bad.text : .fw-v.bad
-  fantasy.stat-table.value-good.text : .fw-v.good
+  fantasy.stat-table.value-bad.text : .fw-v.bad  |  .fw-spark-dot.bad  |  .fw-roll.bad
+  fantasy.stat-table.value-good.text : .fw-v.good  |  .fw-spark-dot.good  |  .fw-roll.good
 */
