@@ -63,7 +63,7 @@ export function creditsAfter(fid, fantasy) {
 
 /** Match Fantasy players to ours by exact key: team (via the manual code map) + first initial + family name. No guessing:
  *  a key that is not unique on either side, or a team that disagrees, leaves both sides unmatched and listed. */
-export function matchPlayers(fantasyPlayers, ours, { fixes = {}, teamCodes = {} } = {}) {
+export function matchPlayers(fantasyPlayers, ours, { fixes = {}, teamCodes = {}, manual = {} } = {}) {
   const keyOf = (team, first, last) => `${team}|${norm(first)[0] || ''}|${norm(last)}`;
   const ourKeys = new Map();
   for (const o of ours) {
@@ -80,27 +80,35 @@ export function matchPlayers(fantasyPlayers, ours, { fixes = {}, teamCodes = {} 
     const k = keyOf(team, m[1], m[2]);
     (theirKeys.get(k) || theirKeys.set(k, []).get(k)).push(f);
   }
-  const pairs = new Map(), usedOurs = new Set(), usedTheirs = new Set();
+  const pairs = new Map(), usedOurs = new Set(), usedTheirs = new Set(), manualMissing = [];
+  // hand-confirmed names first: Fantasy name (optionally "Name (FANTASY TEAM CODE)" when two Fantasy players share a name) -> our display name; our team is not checked. Each side must be unique, else the entry is reported and ignored.
+  for (const [fname, ourName] of Object.entries(manual)) {
+    const [, base, tc] = /^(.*?)(?:\s+\(([A-Z]+)\))?$/.exec(fname), fs_ = fantasyPlayers.filter(f => f.name === base && (!tc || f.team === tc)), os = ours.filter(o => displayName(o.rawName, fixes).toLowerCase() === ourName.toLowerCase());
+    if (fs_.length === 1 && os.length === 1 && !usedOurs.has(os[0].id)) { pairs.set(os[0].id, fs_[0].fid); usedOurs.add(os[0].id); usedTheirs.add(fs_[0].fid); }
+    else manualMissing.push(`${fname} -> ${ourName}`);
+  }
   for (const [k, fs] of theirKeys) {
+    if (fs.some(f => usedTheirs.has(f.fid))) continue;
     const os = ourKeys.get(k);
-    if (fs.length === 1 && os?.length === 1) { pairs.set(os[0].id, fs[0].fid); usedOurs.add(os[0].id); usedTheirs.add(fs[0].fid); }
+    if (fs.length === 1 && os?.length === 1 && !usedOurs.has(os[0].id)) { pairs.set(os[0].id, fs[0].fid); usedOurs.add(os[0].id); usedTheirs.add(fs[0].fid); }
   }
   const unmatchedFantasy = fantasyPlayers.filter(f => f.position !== 'Head Coach' && !usedTheirs.has(f.fid));
   const unmatchedOurs = ours.filter(o => !usedOurs.has(o.id));
-  return { pairs, unmatchedFantasy, unmatchedOurs };
+  return { pairs, unmatchedFantasy, unmatchedOurs, manualMissing };
 }
 
 /** { byPlayer: Map(our id -> {cr, crSeries}), lastRound, match, report: [lines] }: crSeries has one entry per Fantasy round. null when nothing is stored. */
-export function fantasyForBuild({ dir, ours, fixes, teamCodes, activeOurs = () => true }) {
+export function fantasyForBuild({ dir, ours, fixes, teamCodes, manual, activeOurs = () => true }) {
   const fantasy = readFantasy(dir);
   if (!fantasy) return null;
-  const match = matchPlayers(fantasy.players, ours, { fixes, teamCodes });
+  const match = matchPlayers(fantasy.players, ours, { fixes, teamCodes, manual });
   const byPlayer = new Map();
   for (const [id, fid] of match.pairs) {
     const crSeries = creditsAfter(fid, fantasy), cr = fantasy.players.find(p => p.fid === fid)?.cr;
     if (Number.isFinite(cr)) byPlayer.set(id, { cr, crSeries });
   }
   const report = [`fantasy: ${fantasy.players.filter(p => p.position !== 'Head Coach').length} Fantasy players, ${match.pairs.size} matched to ours, rounds 1-${fantasy.lastRound}`];
+  if (match.manualMissing.length) report.push(`fantasy: manual match(es) not applied (name not found or not unique): ${match.manualMissing.join('; ')}`);
   const name = f => `${f.name} (${f.team})`;
   if (match.unmatchedFantasy.length) report.push(`fantasy: ${match.unmatchedFantasy.length} Fantasy player(s) with no match in our data (no cr): ${match.unmatchedFantasy.map(name).join('; ')}`);
   const lost = match.unmatchedOurs.filter(o => activeOurs(o));
