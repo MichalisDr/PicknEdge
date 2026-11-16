@@ -237,8 +237,8 @@ body{
 --fantasy-player-card-large-tile-in-grid-padding-in-container-above-781px:10px 13px;
 --fantasy-player-card-legend-gap:4px 14px;
 --fantasy-player-card-legend-margin:6px 0 0;
---fantasy-player-card-legend-band-height:9px;
---fantasy-player-card-legend-band-width:14px;
+--fantasy-player-card-legend-bar-height:9px;
+--fantasy-player-card-legend-bar-width:14px;
 --fantasy-player-card-legend-game-dot-height:8px;
 --fantasy-player-card-legend-game-dot-width:8px;
 --fantasy-player-card-legend-marker-margin-right:5px;
@@ -268,6 +268,7 @@ body{
 --fantasy-player-card-summary-boxes-grid-template-columns:repeat(3,minmax(0,1fr));
 --fantasy-player-card-summary-boxes-grid-template-columns-below-560px:1fr;
 --fantasy-player-card-summary-boxes-margin:14px 0;
+--fantasy-player-card-summary-last-grid-template-columns:repeat(2,minmax(0,1fr));
 --fantasy-player-card-switch-button-padding:8px 12px;
 --fantasy-player-card-switch-buttons-gap:4px;
 --fantasy-player-card-switch-buttons-padding:4px;
@@ -299,6 +300,7 @@ body{
 --fantasy-player-card-trend-chart-small-plot-height:130;
 --fantasy-player-card-trend-chart-small-plot-width:300;
 --fantasy-player-card-trend-chart-width:100%;
+--fantasy-player-card-trend-chart-small-plot-padding:8;
 --fantasy-player-card-value-chip-gap:5px;
 --fantasy-player-card-value-chip-min-height:24px;
 --fantasy-player-card-value-chip-padding:0 7px;

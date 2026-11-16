@@ -804,7 +804,7 @@
      "font-size": "11px",
      "text": "{semantic.text-subtle}"
     },
-    "legend-band": {
+    "legend-bar": {
      "background": "#8f9bad"
     },
     "legend-game-dot": {
@@ -976,27 +976,18 @@
     "trend-axis": {
      "line": "#3b4655"
     },
-    "trend-difference-label": {
-     "font-size": "12px"
+    "trend-bar": {
+     "fill": "#8f9bad"
     },
     "trend-dot": {
      "fill": "{semantic.accent-fantasy}"
     },
-    "trend-dot-outside-window": {
-     "fill": "#7a4a45"
-    },
     "trend-game": {
      "line": "{semantic.accent-fantasy}"
-    },
-    "trend-grid": {
-     "line": "{semantic.border-soft}"
     },
     "trend-labels": {
      "font-size": "11px",
      "text": "#adbed2"
-    },
-    "trend-league-band": {
-     "fill": "#8f9bad"
     },
     "trend-rolling": {
      "line": "#f2c14e"

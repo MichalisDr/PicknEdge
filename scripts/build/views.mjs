@@ -62,5 +62,5 @@ export function buildViews({ players, teams, dim, fantasy = null }, { precise = 
 /* ---------- metric catalog (metrics.json) ---------- */
 export const catalog = () => METRICS.map(m => ({
   id: m.id, label: m.label, scope: m.scope, kind: m.kind, tags: m.tags, description: m.description,
-  direction: m.direction, format: { digits: m.digits, suffix: m.kind === 'pct' ? '%' : '' },
+  direction: m.direction, chartScale: m.chartScale, format: { digits: m.digits, suffix: m.kind === 'pct' ? '%' : '' },
 }));
