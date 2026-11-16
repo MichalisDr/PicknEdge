@@ -174,11 +174,11 @@ test('CR and Value (label + number, the chip with its sparkline): only with real
   await withInfo({ cr: 0, value: 0, valueSeries: [0, 0] }, () => {
     const html = draw();
     assert.match(html, /<span class="fw-cr-box" data-part="fantasy.player-card.cr-box"><span data-part="fantasy.player-card.cr-box-label">CR<\/span><span data-part="fantasy.player-card.cr-box-value">0<\/span><\/span>/);
-    assert.match(html, /<span class="fw-value-chip" data-part="fantasy.player-card.value-chip"><span data-part="fantasy.player-card.value-chip-label">Value<\/span><span data-part="fantasy.player-card.value-chip-value">0<\/span><svg data-part="fantasy.player-card.value-sparkline"/);
+    assert.match(html, /<span class="fw-value-chip" data-part="fantasy.player-card.value-chip"><span data-part="fantasy.player-card.value-chip-label">Value<\/span><span data-part="fantasy.player-card.value-chip-value">0.00<\/span><svg data-part="fantasy.player-card.value-sparkline"/);
     assert.ok(inOrder(at(html, ['<h2>', 'header-figures', 'cr-box-label', 'value-chip-label', 'value-sparkline', 'data-part="fantasy.player-card.header-actions"'])), 'CR, then Value with its sparkline, after the name');
   });
   await withInfo({ cr: 12.5, value: null, valueSeries: [4] }, () => { const html = draw(); assert.ok(html.includes('cr-box-value">12.5<') && !html.includes('fw-value-chip') && !html.includes('value-sparkline'), 'a chip needs a value; a sparkline needs two numbers'); });
-  await withInfo({ cr: null, value: 3, valueSeries: [1, NaN, 2] }, () => { const html = draw(); assert.ok(!html.includes('fw-cr-box') && html.includes('value-chip-value">3<') && !html.includes('value-sparkline'), 'invalid numbers draw no sparkline'); });
+  await withInfo({ cr: null, value: 3, valueSeries: [1, NaN, 2] }, () => { const html = draw(); assert.ok(!html.includes('fw-cr-box') && html.includes('value-chip-value">3.00<') && !html.includes('value-sparkline'), 'invalid numbers draw no sparkline'); });
   await withInfo({ cr: undefined, value: undefined }, () => assert.ok(!/cr-box|value-chip/.test(draw())));
 });
 

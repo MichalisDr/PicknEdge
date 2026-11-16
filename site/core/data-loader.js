@@ -60,7 +60,11 @@ export function create({ base, fetch: fetchFn, importer, storage } = {}) {
     return new Set(rows.slice(-last).map(r => r.game));
   }
   /* ---- small things ---- */
-  const metrics = () => once('metrics', async () => { const list = await need('metrics.json'); return { list, byId: Object.fromEntries(list.map(m => [m.id, m])) }; });
+  let known = null;                                                      // the metric catalog once read: the display format of a metric is defined there (registry digits / suffix)
+  const metrics = () => once('metrics', async () => { const list = await need('metrics.json'); return (known = { list, byId: Object.fromEntries(list.map(m => [m.id, m])) }); });
+  /* A metric value as text, in the registry's format for that metric (digits and suffix); '—' for no value. The number itself is never rounded.
+     Before the catalog has been read it falls back to the plain number. */
+  const formatMetric = (id, v) => !Number.isFinite(v) ? '—' : known?.byId[id] ? v.toFixed(known.byId[id].format.digits) + known.byId[id].format.suffix : String(v);
   const roster = () => need('roster.json');
   const schedule = () => once('schedule', () => need('schedule.json'));
   /* Next game of a team (data code): the confirmed game with the earliest date, or null. */
@@ -91,5 +95,5 @@ export function create({ base, fetch: fetchFn, importer, storage } = {}) {
     return { cr: fx.cr, crSeries: fx.crSeries, value: Number.isFinite(v) ? v : null, valueSeries: fx.valueSeries };
   };
 
-  return { manifest, metrics, view, fantasyInfo, windowGames, games, shots, roster, schedule, nextGame, engine, status, clearOldCaches, records, decode };
+  return { manifest, metrics, formatMetric, view, fantasyInfo, windowGames, games, shots, roster, schedule, nextGame, engine, status, clearOldCaches, records, decode };
 }
