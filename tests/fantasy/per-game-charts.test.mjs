@@ -9,11 +9,16 @@ const { barsChart } = await import('../../site/fantasy/cards/bars-chart.js');
 const { sparkline } = await import('../../site/fantasy/tables/game-sparkline.js');
 const { Data } = await import('../../site/core/data.js');
 
-test('bars chart: one bar and one round label per game, season line and rolling line, no grid lines', async () => {
-  const s = await loadSeries('teams', 'ZAL', 'pace'), html = barsChart(s, s.metric);
+test('bars chart: one bar and one round label per game, rolling 5 on the last 5 rounds, window and season lines with names and values', async () => {
+  const s = await loadSeries('teams', 'ZAL', 'pace'), m = s.metric, v = (await Data.view('teams', 'l5')).get('ZAL', 'pace').value;
+  const html = barsChart(s, m, { windowLabel: 'Last 5', windowValue: v, seasonValue: s.average, isSeason: false });
   assert.equal((html.match(/class="fw-bar"/g) || []).length, s.points.length);
-  assert.equal((html.match(/>R\d+</g) || []).length, s.points.length);
-  assert.ok(html.includes('class="fw-avg"') && html.includes('class="fw-roll"'));
+  assert.equal((html.match(/>R[0-9]+</g) || []).length, s.points.length);
+  assert.equal((html.match(/class="fw-roll" points="([^"]*)"/)[1].split(' ')).length, 5);
+  assert.ok(html.includes(`data-tip="Last 5 ${v.toFixed(1)}"`) && html.includes(`data-tip="Season ${s.average.toFixed(1)}"`));
+  assert.ok(html.includes('fw-avg-season') && !html.includes('Per game'));
+  const season = barsChart(s, m, { windowValue: s.average, seasonValue: s.average, isSeason: true });
+  assert.equal((season.match(/class="fw-ln"/g) || []).length, 1, 'window = Season: one line');
 });
 
 test('bars chart: a player who missed games has fewer bars than slots', async () => {
@@ -25,8 +30,10 @@ test('bars chart: a player who missed games has fewer bars than slots', async ()
   assert.ok(s.points.length > gp[id]);
 });
 
-test('sparkline: faint game line, bold rolling line with the last point marked, dashed season line, no text', async () => {
-  const s = await loadSeries('teams', 'ZAL', 'ortg'), html = sparkline(s, s.metric, 5);
-  assert.ok(html.includes('fw-spark-game') && html.includes('class="fw-roll"') && html.includes('fw-spark-dot') && html.includes('class="fw-avg"'));
-  assert.ok(!/<text/.test(html) && html.includes('Rolling 5'));
+test('sparkline: lines only (faint games, bold rolling 5 with the last point marked, one dashed window line), no title, value or text', async () => {
+  const s = await loadSeries('teams', 'ZAL', 'ortg'), html = sparkline(s, (await Data.view('teams', 'l5')).get('ZAL', 'ortg').value);
+  assert.ok(html.includes('fw-spark-game') && html.includes('fw-spark-dot'));
+  assert.equal((html.match(/class="fw-avg"/g) || []).length, 1);
+  assert.equal((html.match(/class="fw-roll"/g) || []).length, 1);
+  assert.ok(!/<text|<strong|<p>/.test(html) && html.startsWith('<svg'));
 });

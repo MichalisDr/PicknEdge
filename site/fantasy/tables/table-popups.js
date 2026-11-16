@@ -20,6 +20,18 @@ function place(el, cell) {
   el.style.left = Math.max(8, Math.min(innerWidth - w - 8, c.left + c.width / 2 - w / 2)) + 'px';
   el.style.top = top + 'px';
 }
+/* The hover sparkline: above the row, else below it, else beside the cell (right, or left); always inside the viewport. */
+function placeTip(el, cell) {
+  const row = cell.closest('tr').getBoundingClientRect(), c = cell.getBoundingClientRect();
+  el.hidden = false;
+  const w = el.offsetWidth, h = el.offsetHeight, M = 8, fitX = x => Math.max(M, Math.min(innerWidth - w - M, x)), fitY = y => Math.max(M, Math.min(innerHeight - h - M, y));
+  let left = fitX(c.left + c.width / 2 - w / 2), top;
+  if (row.top - h - M >= M) top = row.top - h - M;
+  else if (row.bottom + h + M <= innerHeight - M) top = row.bottom + M;
+  else { top = fitY(row.top + (row.height - h) / 2); left = c.right + M + w <= innerWidth - M ? c.right + M : fitX(c.left - w - M); }
+  el.style.left = left + 'px';
+  el.style.top = top + 'px';
+}
 /* Details of a clicked cell, same rows as the shot chart's zone pop-up. */
 function popHtml(state, shown, cell) {
   const { view, cols, model, few, roster, byId, TL } = shown, id = cell.dataset.id, c = cols.find(x => x.metric === cell.dataset.metric), m = byId[c.metric], v = view.get(id, c.metric);
@@ -40,7 +52,7 @@ function popHtml(state, shown, cell) {
   return out;
 }
 
-/* Hover on a main metric value: that entity's per-game sparkline (title, value, sparkline, legend). Click or tap on any value: pinned pop-out with the details. */
+/* Hover on a main metric value: that entity's per-game sparkline (lines only). Click or tap on any value: pinned pop-out with the details. */
 export function wirePopups(host, state, shown) {
   const tip = host.querySelector('.fw-tooltip'), pop = host.querySelector('.fw-pop');
   let token = 0, pinCell = null;
@@ -50,13 +62,11 @@ export function wirePopups(host, state, shown) {
     const show = async () => {
       if (pinCell || !b.hasAttribute('data-chart')) return;
       const mine = ++token, id = b.dataset.id, metric = b.dataset.metric;
-      const [{ byId }, view] = await Promise.all([Data.metrics(), Windows.view(state.entity, state)]);
-      const m = byId[metric], c = view.get(id, metric), roster = await Data.roster();
-      const name = state.entity === 'teams' ? roster.teams[id] : roster.players[id]?.name;
-      const spark = await hoverSparkline(state.entity, id, metric, state.win);
-      if (mine !== token || pinCell) return;
-      tip.innerHTML = `<strong>${esc(name)} · ${esc(m.label)}</strong><p>${fmt(c, m)}</p>${spark}`;
-      place(tip, b);
+      const view = await Windows.view(state.entity, state);
+      const spark = await hoverSparkline(state.entity, id, metric, view.get(id, metric).value);
+      if (mine !== token || pinCell || !spark) return;
+      tip.innerHTML = spark;
+      placeTip(tip, b);
     };
     b.onmouseenter = show; b.onfocus = show;
     b.onmouseleave = b.onblur = hideTip;

@@ -386,13 +386,8 @@ body{
 --fantasy-player-card-large-tile-value-font-size-below-650px:26px;
 --fantasy-player-card-legend-font-size:11px;
 --fantasy-player-card-legend-text:var(--color-text-subtle);
---fantasy-player-card-legend-bar-background:#8f9bad;
---fantasy-player-card-legend-game-dot-background:var(--color-accent-fantasy);
---fantasy-player-card-legend-game-dot-radius:50%;
 --fantasy-player-card-legend-rolling-line-background:#f2c14e;
 --fantasy-player-card-legend-rolling-line-radius:2px;
---fantasy-player-card-legend-season-line-border-top:var(--color-text-dim);
---fantasy-player-card-legend-season-line-border-top-width:2px;
 --fantasy-player-card-next-game-button-background:transparent;
 --fantasy-player-card-next-game-button-font-size:12px;
 --fantasy-player-card-next-game-button-radius:5px;
@@ -608,7 +603,6 @@ body{
 --fantasy-stat-table-hover-popup-radius:10px;
 --fantasy-stat-table-hover-popup-shadow:var(--color-bg);
 --fantasy-stat-table-hover-popup-shadow-size:0 10px 30px;
---fantasy-stat-table-hover-popup-legend-font-size:10px;
 --fantasy-stat-table-hover-popup-value-text:var(--color-accent);
 --fantasy-stat-table-league-average-row-background-base:var(--color-panel);
 --fantasy-stat-table-league-average-row-background-tint:var(--color-accent-fantasy);
@@ -1116,13 +1110,8 @@ body[data-area=betting]{
   fantasy.player-card.large-tile-value.font-size-below-650px : .fw-pgrid .fw-m-lg strong
   fantasy.player-card.legend.font-size : .fw-leg
   fantasy.player-card.legend.text : .fw-leg
-  fantasy.player-card.legend-bar.background : .fw-k-bar
-  fantasy.player-card.legend-game-dot.background : .fw-k-g
-  fantasy.player-card.legend-game-dot.radius : .fw-k-g
   fantasy.player-card.legend-rolling-line.background : .fw-k-r
   fantasy.player-card.legend-rolling-line.radius : .fw-k-r
-  fantasy.player-card.legend-season-line.border-top : .fw-k-s
-  fantasy.player-card.legend-season-line.border-top-width : .fw-k-s
   fantasy.player-card.next-game-button.background : [data-part="fantasy.player-card.next-game-button"]
   fantasy.player-card.next-game-button.font-size : [data-part="fantasy.player-card.next-game-button"]
   fantasy.player-card.next-game-button.radius : [data-part="fantasy.player-card.next-game-button"]
@@ -1202,7 +1191,7 @@ body[data-area=betting]{
   fantasy.player-card.trend-labels.font-size : .fw-bars text,.fw-radar text  |  .fw-bar-tip
   fantasy.player-card.trend-labels.text : .fw-bars text,.fw-radar text
   fantasy.player-card.trend-rolling.line : .fw-roll
-  fantasy.player-card.trend-season.line : .fw-avg
+  fantasy.player-card.trend-season.line : .fw-avg-season
   fantasy.player-card.value-chip.background : [data-part="fantasy.player-card.value-chip"]
   fantasy.player-card.value-chip.radius : [data-part="fantasy.player-card.value-chip"]
   fantasy.player-card.value-chip-label.font-size : [data-part="fantasy.player-card.value-chip-label"]
@@ -1338,8 +1327,7 @@ body[data-area=betting]{
   fantasy.stat-table.hover-popup.radius : .fw-tooltip  |  .fw-bar-tip
   fantasy.stat-table.hover-popup.shadow : .fw-tooltip
   fantasy.stat-table.hover-popup.shadow-size : .fw-tooltip
-  fantasy.stat-table.hover-popup-legend.font-size : .fw-tooltip .fw-leg
-  fantasy.stat-table.hover-popup-value.text : .fw-tooltip p  |  .fw-bar-tip
+  fantasy.stat-table.hover-popup-value.text : .fw-bar-tip
   fantasy.stat-table.league-average-row.background-base : .fw-t .fw-average,.fw-t .fw-average th:first-child  |  .fw-t .fw-average td.fw-sorted
   fantasy.stat-table.league-average-row.background-tint : .fw-t .fw-average,.fw-t .fw-average th:first-child  |  .fw-t .fw-average td.fw-sorted
   fantasy.stat-table.league-average-row.tint-percent : .fw-t .fw-average,.fw-t .fw-average th:first-child

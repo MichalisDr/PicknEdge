@@ -6,7 +6,7 @@ import { useRealData } from '../helpers/site-data.mjs';
 
 useRealData();
 const { Data } = await import('../../site/core/data.js');
-const { loadSeries, rollLength, buildSeries } = await import('../../site/core/game-series.js');
+const { loadSeries, buildSeries } = await import('../../site/core/game-series.js');
 const WIN = { l10: 10, l5: 5, l3: 3 };
 
 /** Two players with gaps (they missed team games) and at least 4 games, preferring the most games played. */
@@ -19,8 +19,12 @@ async function pickPlayers() {
   return ok.slice(0, 2);
 }
 
-test('rollLength follows the table window: Season 5, Last 10 / 5 / 3', () => {
-  assert.deepEqual(['season', 'l10', 'l5', 'l3'].map(rollLength), [5, 10, 5, 3]);
+test('recentRolling is always rolling 5, over the last 5 rounds only (fewer when fewer exist)', () => {
+  const rows = [1, 2, 3, 4, 5, 6, 7].map(game => ({ game, v: game }));
+  const evaluate = (def, list) => ({ value: list.length ? list.reduce((n, r) => n + r.v, 0) / list.length : null });
+  const roll = n => buildSeries({ slots: Array.from({ length: n }, (_, i) => ({ game: i + 1 })), rows, def: {}, evaluate }).recentRolling();
+  assert.deepEqual(roll(7), [null, null, null, null, 3, 4, 5]);   // the last 5 slots; rounds 1-4 have no rolling 5 yet
+  assert.deepEqual(roll(5), [null, null, null, null, 3]);   // the first point is at round 5
 });
 
 test('a game not played is an empty slot, and rolling has one value per slot (null before n games)', async () => {
@@ -51,8 +55,7 @@ for (const [metric, kind] of [['fg3_made', 'count'], ['ts_pct', 'ratio']]) {
       const s = await loadSeries('players', id, metric), line = [];
       for (const [w, n] of Object.entries(WIN)) {
         const cell = (await Data.view('players', w)).get(id, metric).value;
-        assert.equal(rollLength(w), n);
-        assert.ok(Math.abs(s.rolling(rollLength(w)).at(-1) - cell) < 1e-5, `${id} ${metric} ${w}`);
+        assert.ok(Math.abs(s.rolling(n).at(-1) - cell) < 1e-5, `${id} ${metric} ${w}`);
         assert.ok(Math.abs(s.window(n).value - cell) < 1e-5);
         line.push(`${w} ${cell.toFixed(3)}`);
       }
@@ -67,7 +70,7 @@ test('teams: the last rolling point equals the table cell (Pace, a ratio)', asyn
   assert.ok(s.points.every(p => p.played && Number.isFinite(p.value)));
   for (const [w] of Object.entries(WIN)) {
     const cell = (await Data.view('teams', w)).get('ZAL', 'pace').value;
-    assert.ok(Math.abs(s.rolling(rollLength(w)).at(-1) - cell) < 1e-5, w);
+    assert.ok(Math.abs(s.rolling(WIN[w]).at(-1) - cell) < 1e-5, w);
     line.push(`${w} ${cell.toFixed(3)}`);
   }
   console.log(`  ZAL · pace: last rolling point = cell (${line.join(', ')})`);
@@ -77,4 +80,20 @@ test('the metric config decides the bars scale: counts, PIR and per-100 from zer
   const { byId } = await Data.metrics();
   assert.deepEqual(['pts_g', 'pir', 'pts100', 'ortg'].map(id => byId[id].chartScale), ['zero', 'zero', 'zero', 'zero']);
   assert.deepEqual(['ts_pct', 'efg', 'pace', 'o_efg'].map(id => byId[id].chartScale), ['range', 'range', 'range', 'range']);
+});
+
+test('Elijah Bryant, PIR: window averages equal the table cells; rolling 5 over the last 5 rounds ends on the Last 5 value', async () => {
+  const roster = await Data.roster(), id = Object.keys(roster.players).find(k => roster.players[k].name === 'Elijah Bryant');
+  assert.ok(id, 'Elijah Bryant is in the roster');
+  const s = await loadSeries('players', id, 'pir'), out = [];
+  for (const [w, n] of [['season', Infinity], ['l10', 10], ['l5', 5], ['l3', 3]]) {
+    const cell = (await Data.view('players', w)).get(id, 'pir').value;
+    assert.ok(Math.abs(s.window(n).value - cell) < 1e-5, w);
+    out.push(w + ' ' + cell.toFixed(1));
+  }
+  const roll = s.recentRolling(), shown = roll.filter(v => v !== null);
+  assert.ok(roll.length - roll.findLastIndex(v => v !== null) === 1 && shown.length <= 5);
+  assert.ok(Math.abs(shown.at(-1) - (await Data.view('players', 'l5')).get(id, 'pir').value) < 1e-5);
+  console.log('  Elijah Bryant PIR: ' + out.join(', ') + ' | rolling 5, last 5 rounds: ' + shown.map(v => v.toFixed(1)).join(', '));
+  console.log('  per game (round: PIR): ' + s.points.map(p => 'R' + p.round + ': ' + (p.value === null ? '-' : p.value)).join(', '));
 });

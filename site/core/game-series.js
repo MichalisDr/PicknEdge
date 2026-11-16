@@ -3,15 +3,10 @@
    entity's games inside the team's last N games, computed from the window's totals (never an average of per-game values), the same way the views compute
    a cell, so the last point of a window equals the table cell of that window. No markup here. */
 import { Data } from './data.js';
-import * as Windows from './windows.js';
 import { teamCode } from './teams.js';
 
-const SEASON_ROLL = 5;   // the rolling length when the table shows the whole Season
 const order = (a, b) => a.date_utc.localeCompare(b.date_utc) || a.game - b.game;
 const finite = v => (Number.isFinite(v) ? v : null);
-
-/** Rolling length that goes with a table window: Season 5, Last 10 -> 10, Last 5 -> 5, Last 3 -> 3. */
-export const rollLength = win => Windows.spec({ win }).last ?? SEASON_ROLL;
 
 /** Pure builder. slots: [{ game, round, opponent, home }] oldest first; rows: the entity's game rows (any order); def: registry metric;
     evaluate: the engine's evaluate. Returns the series with its per-game values, rolling lines and window values. */
@@ -27,6 +22,8 @@ export function buildSeries({ slots, rows, def, evaluate }) {
     average: valueOf([...byGame.values()]),
     /** One value per slot: the metric over the entity's games within the team's last n games at that slot; null before n games exist or without a game of the entity. */
     rolling: n => slots.map((_, k) => (k < n - 1 ? null : valueOf(rowsIn(k - n + 1, k)))),
+    /** Rolling 5 for the charts, drawn over the last 5 rounds only: the rolling-5 value of each of the last 5 slots (null elsewhere and before round 5). */
+    recentRolling: () => { const r = slots.map((_, k) => (k < 4 ? null : valueOf(rowsIn(k - 4, k)))); return r.map((v, k) => (k > last - 5 ? v : null)); },
     /** The window of the team's last n games: { value, used, of } = the table cell of that window (`used` games of the entity in the window, `of` team games). */
     window: n => { const from = Math.max(0, last - n + 1), list = rowsIn(from, last); return { value: valueOf(list), used: list.length, of: last - from + 1 }; },
     /** Slot indexes inside the team's last n games. */
