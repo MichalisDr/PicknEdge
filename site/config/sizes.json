@@ -413,70 +413,98 @@
      "padding": "0 12px",
      "position-docked": "static",
      "right": "16px",
-     "top": "14px",
-     "width": "36px"
+     "top": "14px"
+    },
+    "close-button": {
+     "min-height": "36px",
+     "min-height-coarse": "44px",
+     "min-width": "36px",
+     "min-width-coarse": "44px"
     },
     "controls": {
-     "margin-bottom": "22px"
+     "gap": "8px 16px",
+     "gap-below-560px": "6px 8px",
+     "margin-bottom": "22px",
+     "padding-bottom": "8px"
+    },
+    "controls-games-played": {
+     "gap": "4px"
     },
     "controls-games-played-divider": {
-     "height": "20px",
      "width": "1px"
     },
     "controls-games-played-group": {
-     "gap": "12px",
-     "margin": "0 16px"
+     "gap": "11px",
+     "margin": "0 0 0 2px"
     },
     "cr-box": {
-     "padding": "3px 9px"
+     "gap": "5px",
+     "min-height": "24px",
+     "padding": "0 7px"
     },
     "header": {
-     "gap": "16px",
-     "gap-below-650px": "10px",
-     "margin-bottom": "22px",
-     "padding-right": "0",
+     "gap": "clamp(10px,1.6vw,20px)",
+     "grid-template-columns": "minmax(0,1fr) auto",
+     "margin": "-20px -20px 12px",
+     "min-height": "80px",
+     "padding": "0 20px",
      "position": "relative"
     },
     "header-actions": {
-     "gap": "16px",
-     "gap-below-650px": "10px"
+     "gap": "10px",
+     "gap-below-620px": "6px"
     },
     "header-actions-team": {
-     "gap": "16px",
-     "gap-below-650px": "10px"
+     "gap": "10px"
     },
     "header-city": {
-     "margin": "2px 0 0"
+     "margin": "3px 0 0"
+    },
+    "header-figures": {
+     "gap": "7px",
+     "margin-left": "15px",
+     "position": "relative",
+     "top": "-2px"
     },
     "header-given-name": {
-     "margin": "0 0 2px"
+     "margin": "0 0 1px",
+     "margin-below-610px": "0 0 3px"
     },
     "header-identity": {
-     "gap": "16px",
-     "gap-below-650px": "10px"
+     "gap": "7px"
     },
     "header-logo": {
-     "height": "46px",
-     "width": "46px",
-     "width-below-650px": "35px"
+     "height": "48px",
+     "margin-right": "3px",
+     "width": "48px"
     },
     "header-name": {
-     "margin": "3px 0"
+     "margin": "0"
     },
     "header-portrait": {
-     "height": "96px",
-     "position": "static",
-     "width": "84px"
+     "height": "80px",
+     "image-width": "82px",
+     "clip-left": "-20px",
+     "width": "76px",
+     "image-left": "calc(50% - 6px)"
     },
     "header-portrait-fade": {
      "position": "absolute",
-     "width": "min(320px, 100%)"
+     "stop-mid": "53px",
+     "stop-end": "146px",
+     "height-below-500px": "80px"
     },
     "header-team": {
-     "gap": "16px",
-     "gap-below-650px": "10px",
-     "margin-bottom": "22px",
-     "padding-right": "44px"
+     "gap": "8px",
+     "margin": "-20px -20px 12px",
+     "min-height": "80px",
+     "padding": "0 20px"
+    },
+    "header-team-name": {
+     "margin": "0"
+    },
+    "header-title": {
+     "min-width": "0"
     },
     "large-tile": {
      "padding": "14px 13px"
@@ -506,6 +534,15 @@
     },
     "legend-season-line": {
      "width": "16px"
+    },
+    "next-game-button": {
+     "gap": "7px",
+     "min-height": "44px",
+     "padding": "2px 6px"
+    },
+    "next-game-logo": {
+     "height": "38px",
+     "height-below-620px": "32px"
     },
     "radar": {
      "center-x": 250,
@@ -549,6 +586,16 @@
     "switch-buttons": {
      "gap": "4px",
      "padding": "4px"
+    },
+    "team-line": {
+     "gap": "5px",
+     "margin-top": "4px"
+    },
+    "team-line-divider": {
+     "width": "1px"
+    },
+    "team-line-team": {
+     "padding-left": "5px"
     },
     "tile": {
      "padding": "13px",
@@ -595,23 +642,31 @@
      "width": "100%"
     },
     "value-chip": {
-     "padding": "3px 10px"
+     "gap": "5px",
+     "min-height": "24px",
+     "padding": "0 7px"
     },
     "value-sparkline": {
-     "height": "18px",
-     "width": "48px"
+     "height": "9px",
+     "margin-left": "-1px",
+     "width": "25px"
     },
     "view-button": {
      "gap": "4px",
-     "min-width": "68px",
-     "padding": "6px 10px"
+     "min-height": "44px",
+     "min-width": "57px",
+     "min-width-below-560px": "44px",
+     "padding": "3px"
     },
     "view-buttons": {
      "gap": "4px"
     },
+    "view-buttons-team": {
+     "gap": "8px"
+    },
     "view-icon": {
-     "height": "22px",
-     "width": "22px"
+     "height": "19px",
+     "width": "19px"
     },
     "visual-section": {
      "margin-top": "24px",
@@ -619,15 +674,17 @@
     },
     "window": {
      "max-height": "92vh",
-     "padding": "26px",
-     "padding-below-650px": "18px",
-     "width": "min(940px,96vw)"
+     "padding": "20px",
+     "padding-below-650px": "20px",
+     "width": "min(920px,96vw)"
     },
     "window-button": {
-     "padding": "8px 14px"
+     "min-height": "31px",
+     "min-height-coarse": "44px",
+     "padding": "0 7px"
     },
     "window-buttons": {
-     "gap": "8px"
+     "gap": "4px"
     }
    },
    "shot-chart": {

@@ -34,7 +34,7 @@ export function buildSizesCss(sizes) {
   return `/* Generated from sizes.json by config/generate.mjs. Do not edit by hand. */\nbody{\n${sizeVariables(sizes).map(([k, v]) => `${k}:${v}`).join(';\n')}\n}\n${areas}`;
 }
 
-const FLEX = { start: 'flex-start', end: 'flex-end', center: 'center', stretch: 'stretch', 'space-between': 'space-between', row: 'row', column: 'column', wrap: 'wrap', nowrap: 'nowrap' };
+const FLEX = { start: 'flex-start', end: 'flex-end', center: 'center', stretch: 'stretch', baseline: 'baseline', 'space-between': 'space-between', row: 'row', column: 'column', wrap: 'wrap', nowrap: 'nowrap' };
 
 /** The arrangement as CSS variables: direction, wrap, align, justify of a container, and `push: end` (margin-left: auto) of a group. */
 export function arrangementVariables(arrangement) {

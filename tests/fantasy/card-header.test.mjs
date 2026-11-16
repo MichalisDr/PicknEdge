@@ -64,14 +64,14 @@ test('GP is in the controls row between the window group and the Shooting group,
   const { root, tick } = setup(null);
   open('players', 'P1', {}); await tick();
   assert.ok(!header(root.innerHTML).includes('GP'));
-  assert.match(controls(root.innerHTML), /aria-label="Sample window"[^>]*>.*?<\/div><div data-part="fantasy.player-card.controls-games-played-group"><span data-part="fantasy.player-card.controls-games-played-divider" aria-hidden="true"><\/span><b data-part="fantasy.player-card.controls-games-played">0 GP<\/b><\/div><div role="group" aria-label="Card view"/);
+  assert.match(controls(root.innerHTML), /aria-label="Sample window"[^>]*>.*?<\/div><div data-part="fantasy.player-card.controls-games-played-group"><span data-part="fantasy.player-card.controls-games-played-divider" aria-hidden="true"><\/span><b data-part="fantasy.player-card.controls-games-played"><span data-part="fantasy.player-card.controls-games-played-number">0<\/span><span data-part="fantasy.player-card.controls-games-played-label">GP<\/span><\/b><\/div><div role="group" aria-label="Card view"/);
 });
 
 test('player card: "vs FBT ↗" button with tooltip, opens the team card; hidden without an upcoming game', async () => {
   const { root, tick } = setup(GAME);
   open('players', 'P1', {}); await tick();
   const h = header(root.innerHTML);
-  assert.match(h, /<button class="fw-next" data-next="DDD" title="Open Delta Team card · Sat 14 Nov" aria-label="Open Delta Team card · Sat 14 Nov">vs FBT<span class="fw-arrow"> ↗<\/span><\/button>/);
+  assert.match(h, /<button class="fw-vs" data-part="fantasy.player-card.next-game-button" data-next="DDD" title="Open Delta Team card · Sat 14 Nov" aria-label="Open Delta Team card · Sat 14 Nov"><span data-part="fantasy.player-card.next-game-label">vs<\/span><img data-part="fantasy.player-card.next-game-logo" src="[^"]*fenerbahce-ulker[^"]*" alt="" onerror="[^"]*"><span hidden data-part="fantasy.player-card.next-game-label">FBT<\/span><\/button>/, '"vs" and the opponent emblem; the code stands in if the emblem fails');
   assert.ok(!h.includes('data-back'));
   root.buttons['data-next'].fire(); await tick();
   assert.ok(!root.innerHTML.includes('TEAM / FANTASY') && root.innerHTML.includes('Delta Team'));
@@ -83,7 +83,7 @@ test('player card: "vs FBT ↗" button with tooltip, opens the team card; hidden
 test('away game shows "@ FBT"', async () => {
   const { root, tick } = setup({ ...GAME, home: false });
   open('players', 'P1', {}); await tick();
-  assert.match(root.innerHTML, />@ FBT<span/);
+  assert.match(root.innerHTML, /<span data-part="fantasy.player-card.next-game-label">@<\/span><img data-part="fantasy.player-card.next-game-logo"/);
 });
 
 test('team card opened from a player card shows "← Player One" and goes back; opened from a table it does not', async () => {
@@ -160,11 +160,11 @@ test('controls: outlined period buttons at the left, a detached GP readout (play
   const draw = (players, gp, mode = 'profile') => controlsHtml({ cs: { mode, win: 'l5' }, players, gp });
   const player = draw(true, 0, 'shooting');
   assert.ok(!player.includes('fw-switch'), 'no shared switch box: each period button has its own outline');
-  assert.match(player, /data-part="fantasy.player-card.window-buttons">.*data-card-window="l5" aria-pressed="true">Last 5<\/button>.*<b data-part="fantasy.player-card.controls-games-played">0 GP<\/b>.*data-part="fantasy.player-card.view-buttons"/s);
+  assert.match(player, /data-part="fantasy.player-card.window-buttons">.*data-card-window="l5" aria-pressed="true">Last 5<\/button>.*<span data-part="fantasy.player-card.controls-games-played-number">0<\/span><span data-part="fantasy.player-card.controls-games-played-label">GP<\/span>.*data-part="fantasy.player-card.view-buttons"/s);
   assert.match(player, /data-card-view="profile" aria-pressed="false"><span data-part="fantasy.player-card.view-icon" aria-hidden="true"><svg [^>]*>.*?<\/svg><\/span><span>Profile<\/span><\/button>/s);
   assert.match(player, /data-card-view="shooting" aria-pressed="true">.*?<span>Shooting<\/span>/s);
   assert.ok(!draw(true, undefined).includes('GP</b>') && !draw(true, null).includes('GP</b>'), 'no readout when the count is unavailable');
-  assert.ok(draw(true, 12).includes('>12 GP</b>'));
+  assert.ok(draw(true, 12).includes('controls-games-played-number">12<'));
   const team = draw(false, 12);
   assert.ok(!team.includes('GP</b>'), 'team cards show no GP');
   assert.ok(team.includes('data-card-view="profile"') && team.includes('data-card-view="shooting"') && team.includes('Last 5'), 'the same period and view buttons on team cards');
@@ -183,7 +183,7 @@ test('the two view buttons select their mode explicitly and clicking the active 
 
 test('GP divider: a thin rule grouped with the GP readout, only for a known count (0 included), never on team cards', () => {
   const draw = (players, gp) => controlsHtml({ cs: { mode: 'profile', win: 'season' }, players, gp });
-  for (const gp of [0, 7]) assert.match(draw(true, gp), new RegExp(`<div data-part="fantasy.player-card.controls-games-played-group"><span data-part="fantasy.player-card.controls-games-played-divider" aria-hidden="true"></span><b data-part="fantasy.player-card.controls-games-played">${gp} GP</b></div>`));
+  for (const gp of [0, 7]) assert.match(draw(true, gp), new RegExp(`<div data-part="fantasy.player-card.controls-games-played-group"><span data-part="fantasy.player-card.controls-games-played-divider" aria-hidden="true"></span><b data-part="fantasy.player-card.controls-games-played"><span data-part="fantasy.player-card.controls-games-played-number">${gp}</span><span data-part="fantasy.player-card.controls-games-played-label">GP</span></b></div>`));
   for (const gp of [undefined, null, NaN]) assert.ok(!/controls-games-played/.test(draw(true, gp)), 'no readout and no divider without a count');
   assert.ok(!/controls-games-played/.test(draw(false, 12)), 'no readout and no divider on team cards');
 });
