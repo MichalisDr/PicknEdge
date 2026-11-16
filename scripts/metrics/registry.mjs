@@ -13,6 +13,7 @@
 //         ratio   mult x Σnum / Σden (mult given)  count  Σnum
 //         custom  fn(sums) of the window's SUMMED components listed in `needs` (never per-game results)
 //   mult  overrides the kind's multiplier (REB/100 uses 200, Pace uses 1200)
+//   chartScale  how the per-game bars chart scales its axis: 'zero' (bars start at 0, negatives go below; the default) or 'range' (the data range; default for kind pct, set on Pace)
 // Fantasy credits (cr): not a column of the clean tables. The build (scripts/build/site-data.mjs, from the Fantasy pull) puts the player's credits at the
 // latest round on each of his rows as the component `cr`; a player with no Fantasy match has no `cr` and so no value. The per-round credits (crSeries) and the
 // per-round value (valueSeries, engine.mjs) use the same rule as the metric `value` below, with the credits of that round.
@@ -47,7 +48,7 @@ for (const p of ['', 'o_']) for (const q of ['a', 'm']) {
 const F = ['fantasy'], B = ['betting'], FB = ['fantasy', 'betting'];
 const S = n => [[1, n]];                              // single component
 const P = 'player', T = 'team';
-const e = (id, label, scope, kind, num, den, tags, digits, description, extra = {}) => ({ id, label, scope, kind, num, den, tags, digits, description, ...extra });
+const e = (id, label, scope, kind, num, den, tags, digits, description, extra = {}) => ({ id, label, scope, kind, num, den, tags, digits, description, chartScale: kind === 'pct' ? 'range' : 'zero', ...extra });
 
 export const METRICS = [
   // ---------- players: volume ----------
@@ -126,7 +127,7 @@ export const METRICS = [
     { needs: ['ast', 'pts', 'tov', 'm3', 'a3', 'poss_off_on', 'sa'], fn: s => { const l = offensiveLoad(s); return l > 0 ? 100 * (s.tov * 100 / s.poss_off_on) / l : null; } }),
 
   // ---------- teams: pace and ratings ----------
-  e('pace', 'Pace (poss / 40 min)', T, 'ratio', [[1, 'poss'], [1, 'o_poss']], S('sec'), FB, 1, 'Possessions per 40 minutes (average of both teams\' possessions).', { mult: 1200 }),
+  e('pace', 'Pace (poss / 40 min)', T, 'ratio', [[1, 'poss'], [1, 'o_poss']], S('sec'), FB, 1, 'Possessions per 40 minutes (average of both teams\' possessions).', { mult: 1200, chartScale: 'range' }),
   e('ortg', 'ORtg', T, 'per100', S('pts'), S('poss'), B, 1, 'Points scored per 100 own possessions.'),
   e('drtg', 'DRtg', T, 'per100', S('o_pts'), S('o_poss'), FB, 1, 'Points allowed per 100 opponent possessions.'),
   e('t_pts_g', 'PTS / game', T, 'perGame', S('pts'), S('games'), B, 1, 'Points scored per game.'),
@@ -266,7 +267,7 @@ for (const [key, name, terms] of TEAM_RADAR) {
    same window. Groups: rim, rest of paint, mid-range + baseline, corner 3, arc 3. An estimate from zones; it does not include defender pressure. */
 const EXP_GROUPS = [['o_zs_rim', 1], ['o_zs_paint', 1], ['o_zm_mid', 1], ['o_zs_corner', 1.5], ['o_zs_arc', 1.5]];
 METRICS.push({
-  id: 'o_exp_efg', label: 'Opp Expected eFG%', scope: T, kind: 'custom', tags: F, digits: 1, num: null, den: null,
+  id: 'o_exp_efg', label: 'Opp Expected eFG%', scope: T, kind: 'custom', tags: F, digits: 1, chartScale: 'range', num: null, den: null,
   description: 'Zone-based estimate of opponent eFG%: their attempts in each zone group x the league FG% of that group x the eFG weight, over their attempts. Does not include defender pressure.',
   needs: EXP_GROUPS.map(([k]) => k + '_a'), bench: EXP_GROUPS.map(([k]) => k + '_pct'),
   fn: (s, b) => {

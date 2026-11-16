@@ -517,22 +517,11 @@
      "gap": "4px 14px",
      "margin": "6px 0 0"
     },
-    "legend-band": {
-     "height": "9px",
-     "width": "14px"
-    },
-    "legend-game-dot": {
-     "height": "8px",
-     "width": "8px"
-    },
     "legend-marker": {
      "margin-right": "5px"
     },
     "legend-rolling-line": {
      "height": "3px",
-     "width": "16px"
-    },
-    "legend-season-line": {
      "width": "16px"
     },
     "next-game-button": {
@@ -579,6 +568,9 @@
      "grid-template-columns": "repeat(3,minmax(0,1fr))",
      "grid-template-columns-below-560px": "1fr",
      "margin": "14px 0"
+    },
+    "summary-last": {
+     "grid-template-columns": "repeat(2,minmax(0,1fr))"
     },
     "switch-button": {
      "padding": "8px 12px"
@@ -637,9 +629,10 @@
      "margin-top": 30,
      "plot-height": 250,
      "plot-width": 700,
-     "small-plot-height": 130,
-     "small-plot-width": 300,
-     "width": "100%"
+     "small-plot-height": 36,
+     "small-plot-width": 148,
+     "width": "100%",
+     "small-plot-padding": 4
     },
     "value-chip": {
      "gap": "5px",
@@ -804,18 +797,8 @@
      "margin": "0"
     },
     "hover-popup": {
-     "padding": "12px 14px",
-     "width": "min(360px,94vw)"
-    },
-    "hover-popup-chart": {
-     "margin-top": "4px"
-    },
-    "hover-popup-legend": {
-     "gap": "3px 10px",
-     "margin-top": "2px"
-    },
-    "hover-popup-value": {
-     "margin": "2px 0 4px"
+     "padding": "6px",
+     "width": "160px"
     },
     "method-note": {
      "margin": "12px 0"

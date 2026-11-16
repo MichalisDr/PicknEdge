@@ -804,20 +804,9 @@
      "font-size": "11px",
      "text": "{semantic.text-subtle}"
     },
-    "legend-band": {
-     "background": "#8f9bad"
-    },
-    "legend-game-dot": {
-     "background": "{semantic.accent-fantasy}",
-     "radius": "50%"
-    },
     "legend-rolling-line": {
      "background": "#f2c14e",
      "radius": "2px"
-    },
-    "legend-season-line": {
-     "border-top": "{semantic.text-dim}",
-     "border-top-width": "2px"
     },
     "next-game-button": {
      "background": "transparent",
@@ -974,35 +963,30 @@
      "font-size-below-650px": "21px"
     },
     "trend-axis": {
-     "line": "#3b4655"
+     "line": "{semantic.border-control}"
     },
-    "trend-difference-label": {
-     "font-size": "12px"
+    "trend-bar": {
+     "fill": "{semantic.sortcell}",
+     "stroke": "{semantic.border-control}",
+     "border-width": "1px"
     },
-    "trend-dot": {
-     "fill": "{semantic.accent-fantasy}"
-    },
-    "trend-dot-outside-window": {
-     "fill": "#7a4a45"
+    "trend-flat": {
+     "line": "{semantic.muted}"
     },
     "trend-game": {
-     "line": "{semantic.accent-fantasy}"
-    },
-    "trend-grid": {
-     "line": "{semantic.border-soft}"
+     "line": "{semantic.muted}",
+     "opacity": "0.35"
     },
     "trend-labels": {
      "font-size": "11px",
-     "text": "#adbed2"
-    },
-    "trend-league-band": {
-     "fill": "#8f9bad"
-    },
-    "trend-rolling": {
-     "line": "#f2c14e"
+     "text": "{semantic.muted}"
     },
     "trend-season": {
-     "line": "{semantic.text-dim}"
+     "line": "{semantic.muted}",
+     "opacity": "0.5"
+    },
+    "trend-window": {
+     "line": "{semantic.text}"
     },
     "value-chip": {
      "background": "{semantic.chip}",
@@ -1273,12 +1257,6 @@
      "radius": "10px",
      "shadow": "{semantic.bg}",
      "shadow-size": "0 10px 30px"
-    },
-    "hover-popup-legend": {
-     "font-size": "10px"
-    },
-    "hover-popup-value": {
-     "text": "{semantic.accent}"
     },
     "league-average-row": {
      "background-base": "{semantic.panel}",

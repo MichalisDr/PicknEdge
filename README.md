@@ -36,9 +36,9 @@ One folder per purpose; a file does one thing (data, markup or behaviour), named
 |---|---|
 | `index.html` | The only page; loads `theme/` and `app/main.js` |
 | `app/` | Entry point and shell: routes, sidebar |
-| `core/` | Logic with no screen: data loader (`data-loader.js`, `data.js`), windows, eligibility, table model (ranks, order), card stack order, team lookups |
-| `fantasy/tables/` | Players / Teams tables: `table-data.js` (rows, ranks, order), `table-view.js` (markup), `table-page.js` (state, events), `table-popups.js` |
-| `fantasy/cards/` | Player and team cards: `card.js` (dialog), `metric-grid.js`, `radar.js`, `card-trend.js` and `chart.js`, `box-scores.js`, `card-data.js` |
+| `core/` | Logic with no screen: data loader (`data-loader.js`, `data.js`), windows, per-game series (`game-series.js`), eligibility, table model (ranks, order), card stack order, team lookups |
+| `fantasy/tables/` | Players / Teams tables: `table-data.js` (rows, ranks, order), `table-view.js` (markup), `table-page.js` (state, events), `table-popups.js`, `game-sparkline.js` (hover) |
+| `fantasy/cards/` | Player and team cards: `card.js` (dialog), `metric-grid.js`, `radar.js`, `card-trend.js` and `bars-chart.js` (per-game bars), `box-scores.js`, `card-data.js` |
 | `fantasy/shotchart/` | Shot chart: `shot-data.js`, `shot-view.js`, `shotchart.js` (interactions), `shot-zones.js` (court geometry and grading) |
 | `fantasy/gallery/` | Comparative charts: `charts.js` (which charts), `scatter.js`, `gallery.js`, `gallery-dialog.js` |
 | `betting/` | Betting statistics (`table-data.js`, `table-view.js`, `table-page.js`, `columns.js`) and the research pages (`research*.js`) |

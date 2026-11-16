@@ -8,6 +8,7 @@ import { loadIcons } from '../../core/icons.js';
 import { layoutGrid } from './metric-grid.js';
 import { radar, teamRadar } from './radar.js';
 import { trendBlock } from './card-trend.js';
+import { wireBars } from './bars-chart.js';
 import { boxScores } from './box-scores.js';
 import { mount as mountShotChart } from '../shotchart/shotchart.js';
 
@@ -62,6 +63,7 @@ async function draw() {
     root.querySelectorAll('[data-metric]').forEach(b => { b.onclick = () => { cs.selected = cs.selected === b.dataset.metric ? null : b.dataset.metric; draw(); }; });
     root.querySelectorAll('[data-radar]').forEach(b => { b.onclick = () => { cs.radar = b.dataset.radar; draw(); }; });
     root.querySelectorAll('[data-net]').forEach(b => { b.onclick = () => { cs.net = b.dataset.net; draw(); }; });
+    root.querySelectorAll('[data-bars]').forEach(wireBars);
     const cmp = root.querySelector('[data-cmp]');
     if (cmp) cmp.onchange = () => { cs.cmp = cmp.value; draw(); };
     const shots = root.querySelector('[data-shots]');
