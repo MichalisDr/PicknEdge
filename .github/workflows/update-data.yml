@@ -47,9 +47,23 @@ jobs:
         if: ${{ !inputs.probe }}
         run: node scripts/build/site-data.mjs
 
-      - name: "Tests (guard - nothing is committed if they fail)"
+      # Guard: only the tests that validate the data pipeline output (fetch/clean tables, site/data, data-loader,
+      # engine, metrics). UI, theme/CSS, portrait and spec tests are NOT run here: they belong to checks.yml.
+      # This job installs no npm packages (the data build does not use sharp).
+      - name: "Data tests (guard - nothing is committed if they fail)"
         if: ${{ !inputs.probe }}
-        run: node --test "tests/**/*.test.mjs"
+        run: >
+          node --test
+          tests/build/assists.test.mjs
+          tests/build/names.test.mjs
+          tests/build/pbp.test.mjs
+          tests/core/coverage.test.mjs
+          tests/core/data-loader.test.mjs
+          tests/metrics/all-metrics.test.mjs
+          tests/metrics/eligibility.test.mjs
+          tests/metrics/radar-expected.test.mjs
+          tests/metrics/registry.test.mjs
+          tests/metrics/zones.test.mjs
 
       - name: Commit changed data
         id: commit
