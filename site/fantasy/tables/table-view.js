@@ -3,7 +3,9 @@ import * as Windows from '../../core/windows.js';
 import * as TM from '../../core/table-model.js';
 import { esc } from '../../core/html.js';
 import { fmt } from '../../core/format.js';
-import { teamCode } from '../../core/teams.js';
+import { teamCode, teamEntry } from '../../core/teams.js';
+import { teamTitleLines } from '../../core/team-city.js';
+import CITIES from '../../config/team-cities.json' with { type: 'json' };
 import { Data } from '../../core/data.js';
 import { drawParts } from '../../core/arrangement.js';
 import { available as chartsAvailable } from '../gallery/charts.js';
@@ -33,9 +35,21 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
   }).join('');
   /* The name cell. Players: position badge, name over team code, CR and Value (table-name-cell.js). Teams: the name alone (fantasy.stat-table.name-cell). */
   const nameCell = r => (teams
-    ? `<div class="fw-namecell">${drawParts('fantasy.stat-table.name-cell', { 'name': () => `<button class="fw-name" data-open="${esc(r.id)}" title="${esc(r.full)}">${esc(r.name)}</button>` }, { players: false, 'when-data': false }).map(p => p.html).join('')}</div>`
+    ? (lines => `<div class="fw-namecell">${drawParts('fantasy.stat-table.name-cell', {
+      'name': () => `<button class="fw-name" data-open="${esc(r.id)}" title="${esc(r.full)}"><span data-part="fantasy.stat-table.name-cell-team-name">${esc(lines.city ? lines.club : r.name)}</span></button>`,
+      'name-cell-city': () => (lines.city ? `<small data-part="fantasy.stat-table.name-cell-city">${esc(lines.city)}</small>` : ''),   // no approved city: no second line
+    }, { players: false, teams: true, 'when-data': false }).map(p => p.html).join('')}</div>`)(teamTitleLines(r.full, CITIES.cities[teamEntry(roster, r.id)?.id]))
     : playerNameCellHtml(r, roster, Data.fantasyInfo(r.id)));
-  const body = rowsShown.map(r => `<tr><th>${nameCell(r)}</th>${cells(r.id, false)}</tr>`).join('');
+  const rowsHtml = rowsShown.map(r => `<tr><th>${nameCell(r)}</th>${cells(r.id, false)}</tr>`);
+  const averageHtml = `<tr class="fw-average"><th title="full league${teams ? '' : ' · all players who played'} · ignores filters">League average</th>${cells(null, true)}</tr>`;
+  /* League average takes part in the order of the active stat and direction (at the end for a combined rank); without a value for that stat it is not drawn. */
+  let averageAt = rowsHtml.length;
+  if (!sel.length) {
+    const avgValue = avg[cur.metric]?.value;
+    if (!Number.isFinite(avgValue)) averageAt = -1;
+    else { const at = rowsShown.findIndex(r => { const v = view.get(r.id, cur.metric).value; return !Number.isFinite(v) || (cur.dir === 'asc' ? v > avgValue : v < avgValue); }); averageAt = at < 0 ? rowsHtml.length : at; }
+  }
+  const body = averageAt < 0 ? rowsHtml.join('') : [...rowsHtml.slice(0, averageAt), averageHtml, ...rowsHtml.slice(averageAt)].join('');
   const filters = !teams && state.filters ? `<div class="fw-filters" role="dialog" aria-label="Filters">
     <label>Team<select data-filter="team"><option value="">All</option>${Object.entries(roster.teams).sort((a, b) => a[1].localeCompare(b[1])).map(([c, n]) => `<option value="${c}" ${c === state.team ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
     <label>MIN ≥<input data-filter="minMin" type="number" min="0" value="${state.minMin}"></label>
@@ -44,12 +58,12 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
   const info = sel.length ? `<div class="fw-tinfo">Combined rank: ${esc(sel.map(id => cols.find(c => c.metric === id).label).join(' + '))} (mean percentile). Click a header to clear.</div>` : '';
   /* The toolbar (two rows, Players and Teams): its parts, order and visibility come from config/arrangement.json (fantasy.stat-table.players-view-row, .players-toolbar); see table-toolbar.js. */
   const show = { players: !teams, teams, 'charts-available': hasCharts };
-  const bars = tableToolbarHtml(state, show, filters);
+  const bars = tableToolbarHtml(state, show, filters, `<h1 data-part="fantasy.stat-table.heading-title">${title}</h1>`);
+  const tableMarkup = `<table class="fw-t" style="--table-total:${totalW}px"><colgroup><col style="width:${firstW}px">${cols.map(() => '<col>').join('')}</colgroup><thead><tr><th>${teams ? 'Team' : 'Player'}</th>${header}</tr></thead>
+      <tbody>${body}</tbody></table>`;
   return `<section class="fantasy-stats fw-workbench">
-    <div class="fw-heading"><div><h1>${title}</h1></div></div>
     ${bars}
-    ${gallery ? '' : info}${gallery}<div class="fw-tooltip" role="tooltip" hidden></div><div class="sz-pop fw-pop" role="status" hidden></div><div class="fw-table-wrap" ${gallery ? 'hidden' : ''}><table class="fw-t" style="min-width:${totalW}px"><colgroup><col style="width:${firstW}px">${cols.map(() => '<col>').join('')}</colgroup><thead><tr><th>${teams ? 'Team' : 'Player'}</th>${header}</tr></thead>
-      <tbody>${body}<tr class="fw-average"><th title="full league${teams ? '' : ' · all players who played'} · ignores filters">League average</th>${cells(null, true)}</tr></tbody></table></div>
+    ${gallery ? '' : info}${gallery}<div class="fw-tooltip" role="tooltip" hidden></div><div class="sz-pop fw-pop" role="status" hidden></div><div class="fw-table-wrap" ${gallery ? 'hidden' : ''}>${rowsShown.length ? tableMarkup : `<p class="fw-empty" role="status">No matching ${teams ? 'teams' : 'players'}</p>`}</div>
     <div class="fw-foot" ${gallery ? 'hidden' : ''}><span>${rowsShown.length} ${teams ? 'teams' : 'players'} · ${esc(Windows.label(state))}</span>${teams
       ? '<span>#n = rank among the teams (1 = best defence: lowest value, highest for Opp TOV and DREB%; Pace: highest = #1). Text colour: best and worst quarter; green = favourable for the opposing player, red = unfavourable.</span>'
       : '<span>#n = rank among the players shown. Players who missed the last 3 games of their team, or who are below the thresholds of the selected window, are hidden unless you tick the box in Filters. Zone FG% is coloured against the league average (±3 points is neutral); "-" = under 1 attempt per 100 possessions.</span>'}</div>

@@ -17,9 +17,6 @@ const leagueCells = (view, ids) => Object.fromEntries(ids.map(id => [id, view.le
 
 /** Everything the table markup needs for the current state, or null when a newer draw has started (isStale()).
     widthsOf(names) = the rendered widths of the first-column texts in px. */
-/** The first column's limits; for Players, room for the position badge and for the CR and Value frames (always part of the row). */
-const firstCol = (f, teams) => { const extra = teams ? 0 : f.playersExtra + f.figuresExtra; return { min: f.min + extra, cap: f.cap + extra, pad: f.pad + extra }; };
-
 export async function loadTable(state, widthsOf, isStale) {
   const teams = state.entity === 'teams';
   const [view, { byId }, roster, manifest, TL] = await Promise.all([Windows.view(state.entity, state), Data.metrics(), Data.roster(), Data.manifest(), layoutFile()]);
@@ -57,5 +54,5 @@ export async function loadTable(state, widthsOf, isStale) {
   const byRow = new Map(rows.map(r => [r.id, r]));
   const gallery = state.mode === 'charts' && chartsAvailable(state.entity, state.view) ? await galleryHtml(state.entity, state.view, state, pool.map(r => r.id)) : '';
   if (isStale()) return null;
-  return { view, TL, T, tname, cols, model, few, roster, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth(widthsOf([...rows.map(r => r.name), 'League average']), firstCol(TL.firstCol, teams)), sel, cur, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
+  return { view, TL, T, tname, cols, model, few, roster, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth(widthsOf([...rows.map(r => r.name), 'League average']), TL.firstCol), sel, cur, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
 }
