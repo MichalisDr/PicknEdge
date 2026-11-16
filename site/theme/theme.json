@@ -707,9 +707,6 @@
      "radius": "6px",
      "text": "{semantic.white}"
     },
-    "cr-box-placeholder": {
-     "text": "{semantic.text-dim}"
-    },
     "header-actions": {
      "text": "#eef3f8"
     },
@@ -954,15 +951,9 @@
      "radius": "12px",
      "text": "{semantic.text-soft}"
     },
-    "value-chip-placeholder": {
-     "text": "{semantic.text-dim}"
-    },
     "value-sparkline": {
      "line": "{semantic.accent-fantasy}",
      "line-width": "1.5px"
-    },
-    "value-sparkline-placeholder": {
-     "line": "{semantic.text-dim}"
     },
     "view-button": {
      "font-size": "12px",
@@ -1216,9 +1207,6 @@
      "radius": "6px",
      "text": "{semantic.text-soft}"
     },
-    "name-cell-cr-box-placeholder": {
-     "text": "{semantic.text-dim}"
-    },
     "name-cell-family-name": {
      "font-size": "13px",
      "font-weight": "700"
@@ -1237,17 +1225,11 @@
      "line": "{semantic.accent-fantasy}",
      "line-width": "1.5px"
     },
-    "name-cell-sparkline-placeholder": {
-     "line": "{semantic.text-dim}"
-    },
     "name-cell-value-chip": {
      "background": "{semantic.chip}",
      "font-size": "11px",
      "radius": "10px",
      "text": "{semantic.text-soft}"
-    },
-    "name-cell-value-chip-placeholder": {
-     "text": "{semantic.text-dim}"
     },
     "name-hovered": {
      "text": "{semantic.accent-fantasy}"
