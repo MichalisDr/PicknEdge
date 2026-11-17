@@ -814,7 +814,7 @@
      "gap": "5px"
     },
     "name-cell-identity": {
-     "gap": "1px"
+     "gap": "0px"
     },
     "name-cell-position-badge": {
      "margin-right": "1px",
