@@ -10,12 +10,19 @@ import { wirePopups } from './table-popups.js';
 import { open as openCard } from '../cards/card.js';
 import { loadIcons } from '../../core/icons.js';
 import { TOOLBAR_ICONS } from './table-toolbar.js';
+import { fitFirstColumn } from './table-fit.js';
 
 let host = null, drawId = 0, shown = null;
 
 let measureCtx = null;
 const textWidth = (text, font) => { measureCtx ||= document.createElement('canvas').getContext('2d'); measureCtx.font = font; return measureCtx.measureText(text).width; };
 const widthsOf = names => { const font = '700 13px ' + getComputedStyle(document.body).fontFamily; return names.map(n => textWidth(n, font)); };
+
+/* Players: first column from the rows shown, one width per CR / Value slot (table-fit.js). Again when the container or the fonts change. */
+function fit() { if (shown && shown.TL && host?.isConnected && state.entity === 'players') fitFirstColumn(host, { min: shown.TL.firstCol.min, numWidth: shown.TL.numWidth }); }
+let fitFrame = 0;
+window.addEventListener?.('resize', () => { cancelAnimationFrame(fitFrame); fitFrame = requestAnimationFrame(fit); });
+document.fonts?.ready.then(fit);
 
 async function draw() {
   if (!host || !host.isConnected) return;
@@ -32,6 +39,7 @@ async function draw() {
   shown = M;
   host.innerHTML = tableHtml(state, M);
   performance.mark('fantasy-table-ready');   // measured by the Phase 3 gate (time to table)
+  fit();
   wire();
 }
 

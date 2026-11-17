@@ -26,3 +26,10 @@
 /* Teams name cell: club name and the approved city below it */
 [data-part="fantasy.stat-table.name-cell-team-name"]{font-size:var(--fantasy-stat-table-name-cell-team-name-font-size);font-weight:var(--fantasy-stat-table-name-cell-team-name-font-weight);color:var(--fantasy-stat-table-name-cell-team-name-text)}
 [data-part="fantasy.stat-table.name-cell-city"]{display:block;margin-top:var(--fantasy-stat-table-name-cell-city-margin-top);font-size:var(--fantasy-stat-table-name-cell-city-font-size);font-weight:400;line-height:1.2;color:var(--fantasy-stat-table-name-cell-city-text)}
+
+/* Players name cell with real names: the identity takes what the badge and the figures leave; the family name stays whole, only the given name gets the ellipsis. */
+[data-part="fantasy.stat-table.name-cell-identity"]{flex:1 1 auto}
+.fw-t th:first-child .fw-name:has([data-part="fantasy.stat-table.name-cell-given-name"]){display:flex}
+.fw-t th:first-child .fw-name:has([data-part="fantasy.stat-table.name-cell-given-name"]) [data-part="fantasy.stat-table.name-cell-given-name"]{min-width:0;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
+.fw-t th:first-child .fw-name:has([data-part="fantasy.stat-table.name-cell-given-name"]) [data-part="fantasy.stat-table.name-cell-family-name"]{flex:none}
+[data-part="fantasy.stat-table.name-cell-value-chip"]{box-sizing:border-box}

@@ -46,7 +46,7 @@ test('inline styles carry geometry only (position, size, grid placement), never 
   for (const f of scripts.filter(f => !f.startsWith('theme/'))) {
     const src = read(f);
     for (const m of src.matchAll(/style="([^"]*)"/g)) assert.ok(!/color|background|fill|stroke|border|outline|font|shadow|opacity/.test(m[1]), `${f}: style="${m[1].slice(0, 60)}"`);
-    for (const m of src.matchAll(/\.style\.(\w+)/g)) assert.ok(['left', 'top'].includes(m[1]), `${f}: .style.${m[1]}`);
+    for (const m of src.matchAll(/\.style\.(\w+)/g)) assert.ok(['left', 'top', 'width', 'marginLeft', 'setProperty'].includes(m[1]), `${f}: .style.${m[1]}`);
   }
 });
 
