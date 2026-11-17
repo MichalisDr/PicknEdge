@@ -65,8 +65,8 @@ test('table: min 1000 px, first column 230 px, cell padding 9 x 8, header violet
   assert.match(css, /tbody tr:hover>\*\{background-image:linear-gradient/, 'a white overlay on top of the cell background');
 });
 
-test('player and team cells: badge min 15, given 11 / 400 muted, family 13 / 550, team code 11 px with 3 px, rank 10 / 400 plain text, city 11 px with 3 px', () => {
-  assert.deepEqual([sizes['name-cell-position-badge']['min-width'], theme['name-cell-position-badge'].radius, theme['name-cell-position-badge'].text, theme['name-cell-given-name']['font-size'], theme['name-cell-family-name']['font-size'], theme['name-cell-family-name']['font-weight'], theme['first-column-team-and-position']['font-size'], sizes['first-column-team-and-position']['margin-top']], ['15px', '3px', '{semantic.muted}', '11px', '13px', '550', '11px', '3px']);
+test('player and team cells: badge min 15, name 13 / 550, team code 11 px with 3 px, rank 10 / 400 plain text, city 11 px with 3 px', () => {
+  assert.deepEqual([sizes['name-cell-position-badge']['min-width'], theme['name-cell-position-badge'].radius, theme['name-cell-position-badge'].text, theme['name-cell-family-name']['font-size'], theme['name-cell-family-name']['font-weight'], theme['first-column-team-and-position']['font-size'], sizes['first-column-team-and-position']['margin-top']], ['15px', '3px', '{semantic.muted}', '13px', '550', '11px', '3px']);
   assert.deepEqual([theme['rank-chip']['font-size'], theme['rank-chip']['font-weight'], theme['rank-chip'].background, sizes['value-cell'].gap], ['10px', '400', 'transparent', '3px']);
   assert.deepEqual([theme['name-cell-city']['font-size'], sizes['name-cell-city']['margin-top'], theme['name-cell-team-name']['font-weight']], ['11px', '3px', '550']);
   assert.deepEqual([theme['name-cell-value-chip'].text, theme['name-cell-value-chip'].background, sizes['name-cell-sparkline'].width, sizes['name-cell-sparkline'].height, theme['name-cell-sparkline']['line-width']], ['{semantic.positive}', '{semantic.chip}', '26px', '11px', '1.65']);

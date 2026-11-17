@@ -587,7 +587,7 @@ body{
 --fantasy-stat-table-filters-panel-shadow:#00000099;
 --fantasy-stat-table-filters-panel-shadow-size:0 10px 40px;
 --fantasy-stat-table-first-column-shadow:var(--color-gridline);
---fantasy-stat-table-first-column-shadow-size:1px 0 0;
+--fantasy-stat-table-first-column-shadow-size:inset -1px 0 0;
 --fantasy-stat-table-first-column-body-background:var(--color-panel);
 --fantasy-stat-table-first-column-team-and-position-font-size:11px;
 --fantasy-stat-table-first-column-team-and-position-text:var(--color-muted);
@@ -626,8 +626,6 @@ body{
 --fantasy-stat-table-name-cell-family-name-font-size:13px;
 --fantasy-stat-table-name-cell-family-name-font-weight:550;
 --fantasy-stat-table-name-cell-family-name-text:var(--color-text);
---fantasy-stat-table-name-cell-given-name-font-size:11px;
---fantasy-stat-table-name-cell-given-name-text:var(--color-muted);
 --fantasy-stat-table-name-cell-position-badge-background:var(--color-chip);
 --fantasy-stat-table-name-cell-position-badge-font-size:10px;
 --fantasy-stat-table-name-cell-position-badge-radius:3px;
@@ -1353,8 +1351,6 @@ body[data-area=betting]{
   fantasy.stat-table.name-cell-family-name.font-size : [data-part="fantasy.stat-table.name-cell-family-name"]
   fantasy.stat-table.name-cell-family-name.font-weight : [data-part="fantasy.stat-table.name-cell-family-name"]
   fantasy.stat-table.name-cell-family-name.text : [data-part="fantasy.stat-table.name-cell-family-name"]
-  fantasy.stat-table.name-cell-given-name.font-size : [data-part="fantasy.stat-table.name-cell-given-name"]
-  fantasy.stat-table.name-cell-given-name.text : [data-part="fantasy.stat-table.name-cell-given-name"]
   fantasy.stat-table.name-cell-position-badge.background : [data-part="fantasy.stat-table.name-cell-position-badge"]
   fantasy.stat-table.name-cell-position-badge.font-size : [data-part="fantasy.stat-table.name-cell-position-badge"]
   fantasy.stat-table.name-cell-position-badge.radius : [data-part="fantasy.stat-table.name-cell-position-badge"]
@@ -1368,7 +1364,7 @@ body[data-area=betting]{
   fantasy.stat-table.name-cell-value-chip.font-size : [data-part="fantasy.stat-table.name-cell-value-chip"]
   fantasy.stat-table.name-cell-value-chip.radius : [data-part="fantasy.stat-table.name-cell-value-chip"]
   fantasy.stat-table.name-cell-value-chip.text : [data-part="fantasy.stat-table.name-cell-value-chip"]
-  fantasy.stat-table.name-hovered.text : .fw-name:hover  |  .fw-name:hover [data-part="fantasy.stat-table.name-cell-given-name"],.fw-name:hover [data-part="fantasy.stat-table.name-cell-family-name"],.fw-name:focus-visible [data-part="fantasy.stat-table.name-cell-given-name"],.fw-name:focus-visible [data-part="fantasy.stat-table.name-cell-family-name"]
+  fantasy.stat-table.name-hovered.text : .fw-name:hover
   fantasy.stat-table.players-filters-button.background : [data-part="fantasy.stat-table.players-filters-button"]
   fantasy.stat-table.players-filters-button.border : [data-part="fantasy.stat-table.players-filters-button"]
   fantasy.stat-table.players-filters-button.border-width : [data-part="fantasy.stat-table.players-filters-button"]

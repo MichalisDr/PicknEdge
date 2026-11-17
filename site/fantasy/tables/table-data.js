@@ -32,6 +32,9 @@ export async function loadTable(state, widthsOf, isStale) {
   });
     const pool = teams ? rows : rows.filter(r => Elig.listed(manifest.eligibility, state.win, r, r.availGp, state.showAll) && (!state.position.length || state.position.length >= 3 || state.position.includes(r.pos))
     && r.gp >= state.minGp && (r.min ?? 0) >= state.minMin && (!state.team || r.team === state.team));
+  // Next game of every team in the pool (same source as the player card's next-opponent button); a missing schedule only drops line 2's opponent.
+  const nextOf = new Map(teams ? [] : await Promise.all([...new Set(pool.map(r => r.team))].map(async t => [t, await Data.nextGame(t).catch(() => null)])));
+  for (const r of pool) r.next = nextOf.get(r.team) || null;
   const q = state.query.trim().toLowerCase();
   const list = pool.filter(r => !q || (r.full + ' ' + (roster.teams[r.team] || r.team || '')).toLowerCase().includes(q));
   // Cell model per column: value (null for "few shots"), rank among the pool (the rows before the search box).

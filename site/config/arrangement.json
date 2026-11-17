@@ -141,7 +141,6 @@
     },
     "name-cell-name": {
      "parts": [
-      { "name": "name-cell-given-name", "show": "players" },
       { "name": "name-cell-family-name", "show": "players" }
      ]
     },

@@ -51,7 +51,7 @@ test('no GP column, no subtitle or credits slot in the first column, no sub-line
     assert.match(html, entity === 'teams' ? /<th><div class="fw-namecell"><button class="fw-name"[^>]*><span data-part="fantasy.stat-table.name-cell-team-name">[^<]+<\/span><\/button>/ : /<th><div data-part="fantasy.stat-table.players-name-cell">.*?<button class="fw-name"/s);
   }
   const { html } = await render({ entity: 'players' });
-  assert.match(html, /<small class="fw-who" title="[^"]+">[A-Z]{3}<\/small>/, 'second line of a player: only the team code (Euroleague Fantasy code), the full team name as the tooltip');
+  assert.match(html, /<small class="fw-who" title="[^"]+">[A-Z]{3}( (vs|@) [A-Z]{3})?<\/small>/, 'second line of a player: team code, then the next game when there is one (Euroleague Fantasy codes)');
   assert.ok(!(await render({ entity: 'teams' })).html.includes('fw-who'), 'team rows have no second line');
 });
 
@@ -171,11 +171,12 @@ const { Data } = await import('../../site/core/data.js');
 const ROW = { id: 'P1', name: 'Player One', full: 'Player One', team: 'AAA', pos: 'G' };
 const ROSTER = (p = {}) => ({ teams: { AAA: 'Alpha Team' }, logoIds: {}, players: { P1: { name: 'Player One', ...p } } });
 
-test('Players name cell: position badge, name above the team code; given name beside the family name; CR and Value only with data', () => {
+test('Players name cell: position badge, name above the team code; one name element "P. One"; CR and Value only with data', () => {
   const html = playerNameCellHtml(ROW, ROSTER({ first: 'Player', last: 'One' }), null);
   assert.ok(html.indexOf('name-cell-position-badge') < html.indexOf('name-cell-identity') && html.indexOf('class="fw-name"') < html.indexOf('class="fw-who"'));
   assert.match(html, /name-cell-position-badge" title="Position">G<\/span>/);
-  assert.match(html, /<button class="fw-name" data-open="P1" title="Player One"><span data-part="fantasy.stat-table.name-cell-given-name">Player<\/span> <span data-part="fantasy.stat-table.name-cell-family-name">One<\/span><\/button>/, 'same line, same button (opens the card)');
+  assert.match(html, /<button class="fw-name" data-open="P1" title="Player One"><span data-part="fantasy.stat-table.name-cell-family-name">P\. One<\/span><\/button>/, 'initial + family name in one element, one button (opens the card)');
+  assert.ok(!html.includes('given-name'));
   assert.match(html, /<small class="fw-who" title="Alpha Team">AAA<\/small>/, 'team code only, full name as the tooltip');
   assert.ok(!/fw-cr-box|fw-value-chip|name-cell-figures|sparkline|—/.test(html), 'while fantasyInfo is null the CR and Value slots stay hidden');
 });
@@ -251,4 +252,26 @@ test('Reset filters restores every pop-up field and the default rows; position, 
   Object.assign(state, { position: [], query: '', win: 'season' });
   const after = await render({ entity: 'players', filters: false });
   assert.deepEqual(after.M.shown.map(r => r.id), defaults.M.shown.map(r => r.id), 'the table shows the default rows');
+});
+
+test('Players name cell v2: "S. Vezenkov" format in one element; suffixes and compound names intact; single name as is; line 2 = team code + next game', () => {
+  const name = (p, row = ROW) => playerNameCellHtml(row, ROSTER(p), null);
+  assert.match(name({ first: 'Sasha', last: 'Vezenkov' }), /<span data-part="fantasy.stat-table.name-cell-family-name">S\. Vezenkov<\/span>/);
+  assert.match(name({ first: 'Mike', last: 'Wright IV' }), />M\. Wright IV</);
+  assert.match(name({ first: 'Nigel', last: 'Hayes-Davis' }), />N\. Hayes-Davis</);
+  assert.match(name({ first: 'Cory', last: 'Jones' }), />C\. Jones</);
+  assert.match(name({}), /<button class="fw-name"[^>]*>Player One<\/button>/, 'single name as is');
+  assert.ok(name({ first: 'Sasha', last: 'Vezenkov' }).includes('title="Player One"'), 'the full name stays in the button title (search and the card use the full name)');
+  const who = next => /<small class="fw-who"[^>]*>([^<]*)<\/small>/.exec(playerNameCellHtml({ ...ROW, next }, ROSTER({ first: 'P', last: 'One' }), null))[1];
+  assert.equal(who(null), 'AAA', 'no known next game: team code only');
+  assert.match(who({ home: false, opp: 'AAA', oppName: 'X' }), /^AAA @ [A-Z]{3}$/, 'away');
+  assert.match(who({ home: true, opp: 'AAA', oppName: 'X' }), /^AAA vs [A-Z]{3}$/, 'home');
+});
+test('the table rows carry the next game of the team from Data.nextGame (the card\'s source) and line 2 shows it', async () => {
+  const { M, html } = await render({ entity: 'players' });
+  const withNext = M.shown.filter(r => r.next);
+  assert.ok(withNext.length > 0 && withNext.every(r => r.next.opp && typeof r.next.home === 'boolean'));
+  assert.match(html, /<small class="fw-who"[^>]*>[A-Z]{3} (vs|@) [A-Z]{3}<\/small>/);
+  const r = withNext[0], expected = await Data.nextGame(r.team);
+  assert.deepEqual([r.next.opp, r.next.home], [expected.opp, expected.home]);
 });

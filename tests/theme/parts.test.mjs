@@ -101,10 +101,10 @@ test('Players toolbar keys do not touch the shared, card or Teams keys', () => {
 test('Players name cell: every element has a data-part equal to its key, with sizes or theme keys and an arrangement entry', () => {
   const src = read('fantasy/tables/table-name-cell.js');
   const keys = new Set([...src.matchAll(/part\('([\w-]+)'\)/g)].map(m => m[1]));
-  assert.ok(keys.size >= 8, [...keys].join());
+  assert.ok(keys.size >= 7, [...keys].join());
   for (const k of [...keys, 'name-cell-sparkline']) {
     assert.ok(has(sizes, 'fantasy', 'stat-table', k) || has(theme, 'fantasy', 'stat-table', k), `${k}: no sizes or theme entry`);
     assert.ok(arranged('fantasy', 'stat-table', k), `${k}: no arrangement entry`);
   }
-  for (const k of ['name-cell-position-badge', 'name-cell-given-name', 'name-cell-family-name', 'name-cell-cr-box', 'name-cell-value-chip', 'name-cell-sparkline']) assert.ok(has(theme, 'fantasy', 'stat-table', k), k + ' has appearance keys in the theme');
+  for (const k of ['name-cell-position-badge', 'name-cell-family-name', 'name-cell-cr-box', 'name-cell-value-chip', 'name-cell-sparkline']) assert.ok(has(theme, 'fantasy', 'stat-table', k), k + ' has appearance keys in the theme');
 });

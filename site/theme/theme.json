@@ -1214,7 +1214,7 @@
     },
     "first-column": {
      "shadow": "{semantic.gridline}",
-     "shadow-size": "1px 0 0"
+     "shadow-size": "inset -1px 0 0"
     },
     "first-column-body": {
      "background": "{semantic.panel}"
@@ -1286,10 +1286,6 @@
      "font-size": "13px",
      "font-weight": "550",
      "text": "{semantic.text}"
-    },
-    "name-cell-given-name": {
-     "font-size": "11px",
-     "text": "{semantic.muted}"
     },
     "name-cell-position-badge": {
      "background": "{semantic.chip}",

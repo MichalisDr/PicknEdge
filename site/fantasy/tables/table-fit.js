@@ -1,16 +1,13 @@
 /* Players table: sizes the first column from the rows shown and gives the CR and Value slots one width each, so every CR box and value chip sits at the same
    x in every row. Layout only (widths in px); nothing here changes a colour, a font or a value. Teams keep the width of config/table-layouts.json (firstCol).
-   The pure part (fitWidths) takes measured numbers; fitFirstColumn measures the live table and applies the result. */
+   The pure part (fitWidths) takes measured numbers; fitFirstColumn measures the live table and applies the result. Neither name line is ever clipped:
+   the column grows with the widest of them (230 px is the minimum, not the maximum). */
 
-/** m: { pad, rows: [{ badge, identity, family, figures }], crW, valW, gap, min, avail }; every number in px.
-    Returns { first, need, mustHave }: need = the width every row fits in whole; mustHave = the width that keeps every family name whole (given names may shrink below it). */
-export function fitWidths({ pad, rows, crW, valW, gap, min, avail }) {
+/** m: { pad, rows: [{ badge, identity, figures }], crW, valW, gap, min }; every number in px (identity = the wider of the two lines). Returns { first, need }. */
+export function fitWidths({ pad, rows, crW, valW, gap, min }) {
   const figsW = crW + valW + (crW && valW ? gap : 0);
-  const part = (r, name) => r.badge + (r.badge ? gap : 0) + name + (r.figures && figsW ? gap + figsW : 0);
-  const need = Math.max(0, ...rows.map(r => part(r, r.identity))) + pad;
-  const mustHave = Math.max(0, ...rows.map(r => part(r, r.family))) + pad;
-  const first = Math.ceil(Math.max(mustHave, Math.min(Math.max(min, need), Math.max(min, avail))));
-  return { first: Math.max(min, first), need: Math.ceil(need), mustHave: Math.ceil(mustHave) };
+  const need = Math.max(0, ...rows.map(r => r.badge + (r.badge ? gap : 0) + r.identity + (r.figures && figsW ? gap + figsW : 0))) + pad;
+  return { first: Math.max(min, Math.ceil(need)), need: Math.ceil(need) };
 }
 
 const P = 'fantasy.stat-table.';
@@ -24,18 +21,17 @@ export function fitFirstColumn(host, { min, numWidth }) {
   if (!cells.length || !wrap || !wrap.clientWidth) return null;
   const crs = q(table, 'name-cell-cr-box'), chips = q(table, 'name-cell-value-chip');
   for (const e of [...crs, ...chips]) { e.style.width = ''; e.style.marginLeft = ''; }
+  table.querySelector('colgroup col').style.width = '10000px';   // measure the lines unclipped
   const widest = els => Math.max(0, ...els.map(e => Math.ceil(e.getBoundingClientRect().width)));
   const crW = widest(crs), valW = widest(chips);
   const gap = px(getComputedStyle(cells[0]).columnGap);
   const th = table.querySelector('tbody th'), cs = getComputedStyle(th), pad = px(cs.paddingLeft) + px(cs.paddingRight);
   const rows = cells.map(c => {
-    const badge = q(c, 'name-cell-position-badge')[0], given = q(c, 'name-cell-given-name')[0], family = q(c, 'name-cell-family-name')[0], who = c.querySelector('.fw-who');
-    const button = c.querySelector('.fw-name'), whoW = who ? who.scrollWidth : 0;
-    const familyW = family ? family.scrollWidth : button.scrollWidth, givenW = given ? given.scrollWidth + px(getComputedStyle(given).marginRight) : 0;
-    return { badge: badge ? Math.ceil(badge.getBoundingClientRect().width + px(getComputedStyle(badge).marginRight)) : 0, identity: Math.max(givenW + familyW, whoW), family: Math.max(familyW, whoW), figures: !!q(c, 'name-cell-figures').length };
+    const badge = q(c, 'name-cell-position-badge')[0], button = c.querySelector('.fw-name'), who = c.querySelector('.fw-who');
+    return { badge: badge ? Math.ceil(badge.getBoundingClientRect().width + px(getComputedStyle(badge).marginRight)) : 0, identity: Math.max(button.scrollWidth, who ? who.scrollWidth : 0), figures: !!q(c, 'name-cell-figures').length };
   });
   const numCols = table.querySelectorAll('thead th').length - 1;
-  const r = fitWidths({ pad, rows, crW, valW, gap, min, avail: wrap.clientWidth - numCols * numWidth });
+  const r = fitWidths({ pad, rows, crW, valW, gap, min });
   for (const e of crs) e.style.width = crW + 'px';
   for (const e of chips) { e.style.width = valW + 'px'; if (crW && e.previousElementSibling === null) e.style.marginLeft = crW + gap + 'px'; }
   table.querySelector('colgroup col').style.width = r.first + 'px';
