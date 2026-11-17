@@ -42,7 +42,7 @@ export async function loadTable(state, widthsOf, isStale) {
     model.set(c.metric, { c, m, values, list: [...values.values()] });
   }
   const cur = state.sort && cols.some(c => c.metric === state.sort) ? { metric: state.sort, dir: state.dir } : T.defaultSort;
-  const sel = state.sel.filter(id => cols.some(c => c.metric === id));
+  const sel = state.sel.every(id => cols.some(c => c.metric === id)) ? state.sel : [];   // a combined rank with a column the table no longer has falls back to the default sort
   let ordered;
   if (sel.length) {
     const sc = TM.combined(poolIds, sel.map(id => ({ dir: byId[id].direction, values: model.get(id).values })), poolIds);

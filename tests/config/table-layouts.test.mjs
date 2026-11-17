@@ -10,7 +10,7 @@ const byId = Object.fromEntries(METRICS.map(m => [m.id, m]));
 const ZONES = ['rim', 'paint', 'corner', 'arc', 'mid'];                       // Mid-range = the area "Mid" (mid-range plus baseline); no separate Baseline
 const zp = (pre, z) => `${pre}${z === 'mid' ? 'zm' : 'zs'}_${z}_pct`;
 const EXPECT = {
-  'players.profile': [['pir'], ['min', 'usg', 'load', 'tov_pct', 'ctov'], ['pts100', 'ast100', 'reb100'], ['ftr', 'fd100', 'fc100']],
+  'players.profile': [['pir'], ['min', 'usg', 'tov_pct'], ['pts100', 'ast100', 'reb100'], ['ftr', 'fd100', 'fc100']],
   'players.shooting': [['efg', 'fg2_pct', 'fg3_pct', 'ft_pct'], ZONES.map(z => zp('', z))],
   'teams.profile': [['pace', 'drtg'], ['o_efg', 'o_ftr'], ['o_tov100', 'o_ast100', 't_dreb_pct'], ['o_pot100', 'o_fb100', 'o_sc100']],
   'teams.shooting': [['o_efg', 'o_fg2_pct', 'o_fg3_pct'], ZONES.map(z => zp('o_', z))],
@@ -63,7 +63,7 @@ test('neutral columns carry no colour; zone colour only on player zones', () => 
     if (c.colour === 'zone') assert.ok(name === 'players.shooting' && c.few, name);
   }
   const overview = T.tables['players.profile'].groups.flat().filter(c => c.colour).map(c => c.metric);
-  for (const id of ['min', 'usg', 'load', 'ftr']) assert.ok(!overview.includes(id), id);
+  for (const id of ['min', 'usg', 'ftr']) assert.ok(!overview.includes(id), id);
 });
 test('zone columns of the player Shooting table carry the few-shots id of their own zone', () => {
   for (const c of T.tables['players.shooting'].groups[1]) assert.equal(c.few, c.metric.replace('_pct', '_a100'));
