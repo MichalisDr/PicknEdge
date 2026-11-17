@@ -207,3 +207,23 @@ test('Teams name cell: club name, approved city below it (none without a city); 
   assert.deepEqual([TL.min, TL.cap], [230, 230]);
   for (const entity of ['teams', 'players']) assert.equal((await render({ entity })).M.firstW, 230, entity);
 });
+
+test('Players Overview: PIR | MIN USG% TOV% | PTS/100 AST/100 REB/100 | FTr FD/100 FC/100; no Offensive load, no cTOV%, but both metrics stay in the data and the registry', async () => {
+  const { M, html } = await render({ entity: 'players' });
+  assert.deepEqual(M.cols.map(c => c.label), ['PIR', 'MIN', 'USG%', 'TOV%', 'PTS/100', 'AST/100', 'REB/100', 'FTr', 'FD/100', 'FC/100']);
+  assert.ok(!/Offensive load|cTOV%|data-metric="(load|ctov)"|data-sort="(load|ctov)"/.test(html));
+  assert.ok(M.byId.load && M.byId.ctov, 'metrics stay in the registry');
+  assert.ok(M.view.get(M.shown[0].id, 'load') && M.view.get(M.shown[0].id, 'ctov'), 'and in the data');
+  const avg = html.match(/<tr class="fw-average">.*?<\/tr>/s);
+  if (avg) assert.equal((avg[0].match(/<td/g) || []).length, 10, 'League average row has one cell per column');
+});
+test('a sort or a combined rank on a removed column falls back to the default (PIR descending)', async () => {
+  const bySort = await render({ entity: 'players', sort: 'ctov', dir: 'asc' });
+  assert.deepEqual(bySort.M.cur, { metric: 'pir', dir: 'desc' });
+  const combined = await render({ entity: 'players', sel: ['pir', 'load', 'tov_pct'] });
+  assert.deepEqual(combined.M.sel, []);
+  assert.deepEqual(combined.M.cur, { metric: 'pir', dir: 'desc' });
+  assert.ok(!/Combined rank/.test(combined.html));
+  const ok = await render({ entity: 'players', sel: ['pir', 'tov_pct'] });
+  assert.deepEqual(ok.M.sel, ['pir', 'tov_pct']);
+});

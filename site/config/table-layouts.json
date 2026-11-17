@@ -15,9 +15,7 @@
         [
           { "metric": "min", "label": "MIN", "chart": true },
           { "metric": "usg", "label": "USG%", "chart": true },
-          { "metric": "load", "label": "Offensive load", "chart": true },
-          { "metric": "tov_pct", "label": "TOV%", "colour": "rank", "chart": true },
-          { "metric": "ctov", "label": "cTOV%", "colour": "rank", "chart": true }
+          { "metric": "tov_pct", "label": "TOV%", "colour": "rank", "chart": true }
         ],
         [
           { "metric": "pts100", "label": "PTS/100", "colour": "rank", "chart": true },
