@@ -38,3 +38,15 @@ test('the page measures after drawing and sets slot widths; the CSS shrinks only
   assert.match(css, /name-cell-family-name"\]\{flex:none\}/);
   assert.match(readFileSync(new URL('../../site/fantasy/tables/table-page.js', import.meta.url), 'utf8'), /fitFirstColumn/);
 });
+
+test('row hover reaches the sticky first cell: its own background is a colour only (the shorthand would reset the hover overlay), still opaque', () => {
+  const css = readFileSync(new URL('../../site/theme/fantasy/table.css', import.meta.url), 'utf8');
+  assert.match(css, /\.fw-t tbody tr:hover>\*\{background-image:linear-gradient\(/);
+  assert.match(css, /\.fw-t tbody th:first-child\{background-color:var\(--fantasy-stat-table-first-column-body-background\)\}/);
+  assert.ok(!/\.fw-t tbody th:first-child\{background:/.test(css));
+});
+test('the name underline is drawn under the given name and the family name, with a real space between them; focus-visible shows it too', () => {
+  const css = readFileSync(new URL('../../site/theme/fantasy/workbench.css', import.meta.url), 'utf8');
+  for (const p of ['hover', 'focus-visible']) for (const k of ['given', 'family']) assert.ok(css.includes(`.fw-name:${p} [data-part="fantasy.stat-table.name-cell-${k}-name"]`), `${p} ${k}`);
+  assert.ok(css.includes(String.raw`name-cell-family-name"]::before{content:"\00a0"}`));
+});
