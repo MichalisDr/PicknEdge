@@ -6,6 +6,7 @@ import * as Windows from '../../core/windows.js';
 import { esc } from '../../core/html.js';
 import { icon } from '../../core/icons.js';
 import { drawParts } from '../../core/arrangement.js';
+import { filtersActive } from './table-state.js';
 
 const A = 'fantasy.stat-table.';
 const part = key => `data-part="${A}${key}"`;
@@ -41,7 +42,7 @@ export function tableToolbarHtml(state, show, filtersPanel = '', titleHtml = '')
       'players-search-icon': () => `<span ${part('players-search-icon')} aria-hidden="true">${icon('search')}</span>`,
       'players-search-field': () => `<input type="search" aria-label="${label}" placeholder="${label}" value="${esc(state.query)}">`,
     }, {}).map(p => p.html).join('')}</label>`,
-    'filters-button': () => `<button ${part('players-filters-button')} data-filters aria-expanded="${state.filters}" aria-label="Filters" title="Filters">${drawParts(`${A}players-filters-button`, {
+    'filters-button': () => `<button ${part('players-filters-button')} data-filters aria-expanded="${state.filters}" data-active="${state.filters || filtersActive(state)}" aria-label="Filters" title="Filters">${drawParts(`${A}players-filters-button`, {
       'players-filters-icon': () => `<span ${part('players-filters-icon')} aria-hidden="true">${icon('funnel')}</span>`,
     }, {}).map(p => p.html).join('')}</button>`,
   };

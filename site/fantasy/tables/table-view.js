@@ -54,7 +54,8 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
     <label>Team<select data-filter="team"><option value="">All</option>${Object.entries(roster.teams).sort((a, b) => a[1].localeCompare(b[1])).map(([c, n]) => `<option value="${c}" ${c === state.team ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
     <label>MIN ≥<input data-filter="minMin" type="number" min="0" value="${state.minMin}"></label>
     <label>GP ≥<input data-filter="minGp" type="number" min="0" value="${state.minGp}"></label>
-    <label class="fw-check"><input data-filter="showAll" type="checkbox" ${state.showAll ? 'checked' : ''}> Show players below the form thresholds</label></div>` : '';
+    <label class="fw-check"><input data-filter="showAll" type="checkbox" ${state.showAll ? 'checked' : ''}> Show players below the form thresholds</label>
+    <button type="button" class="fw-filter-btn" data-filters-reset>Reset filters</button></div>` : '';
   const info = sel.length ? `<div class="fw-tinfo">Combined rank: ${esc(sel.map(id => cols.find(c => c.metric === id).label).join(' + '))} (mean percentile). Click a header to clear.</div>` : '';
   /* The toolbar (two rows, Players and Teams): its parts, order and visibility come from config/arrangement.json (fantasy.stat-table.players-view-row, .players-toolbar); see table-toolbar.js. */
   const show = { players: !teams, teams, 'charts-available': hasCharts };

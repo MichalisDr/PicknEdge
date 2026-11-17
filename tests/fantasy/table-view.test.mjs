@@ -12,6 +12,7 @@ const { state } = await import('../../site/fantasy/tables/table-state.js');
 const { loadTable } = await import('../../site/fantasy/tables/table-data.js');
 const { tableHtml } = await import('../../site/fantasy/tables/table-view.js');
 const { mount } = await import('../../site/fantasy/tables/table-page.js');
+const { FILTER_DEFAULTS, filtersActive, resetFilters } = await import('../../site/fantasy/tables/table-state.js');
 
 globalThis.fetch = async u => ({ ok: true, json: async () => JSON.parse(siteFile('config/table-layouts.json')) });
 const widthsOf = names => names.map(n => n.length * 8);
@@ -119,7 +120,7 @@ test('Players toolbar: Profile / Shooting (icon above label), outlined windows, 
   assert.equal(html.split('aria-label="Sample window"').length - 1, 1, 'the period buttons are drawn once');
   assert.match(html, /<input type="search" aria-label="Find player" placeholder="Find player"/);
   assert.match(html, /data-part="fantasy.stat-table.players-search-icon"[^>]*><svg/);
-  assert.match(html, /<button data-part="fantasy.stat-table.players-filters-button" data-filters aria-expanded="false" aria-label="Filters" title="Filters"><span[^>]*><svg/);
+  assert.match(html, /<button data-part="fantasy.stat-table.players-filters-button" data-filters aria-expanded="false" data-active="false" aria-label="Filters" title="Filters"><span[^>]*><svg/);
   assert.ok(!/>Filters<\/button>/.test(html), 'the visible label is replaced by the funnel');
   assert.ok(!/>All</.test(html.slice(html.indexOf('players-position-buttons'), html.indexOf('players-search"'))), 'no All button');
 });
@@ -226,4 +227,28 @@ test('a sort or a combined rank on a removed column falls back to the default (P
   assert.ok(!/Combined rank/.test(combined.html));
   const ok = await render({ entity: 'players', sel: ['pir', 'tov_pct'] });
   assert.deepEqual(ok.M.sel, ['pir', 'tov_pct']);
+});
+
+test('Filters funnel: active (orange) while the pop-up is open or any pop-up field is non-default, even with the pop-up closed; normal again after Reset filters', async () => {
+  const active = html => /players-filters-button" data-filters aria-expanded="(true|false)" data-active="(true|false)"/.exec(html).slice(1);
+  assert.deepEqual(active((await render({ entity: 'players' })).html), ['false', 'false'], 'defaults, closed');
+  assert.deepEqual(active((await render({ entity: 'players', filters: true })).html), ['true', 'true'], 'open');
+  for (const over of [{ team: 'BAR' }, { minMin: 10 }, { minGp: 5 }, { showAll: true }]) {
+    assert.deepEqual(active((await render({ entity: 'players', ...over })).html), ['false', 'true'], JSON.stringify(over) + ', closed');
+  }
+  for (const over of [{ position: ['G'] }, { query: 'a' }, { win: 'l5' }]) assert.deepEqual(active((await render({ entity: 'players', ...over })).html), ['false', 'false'], JSON.stringify(over) + ' is not a filter');
+  assert.ok(/data-filters-reset>Reset filters<\/button>/.test((await render({ entity: 'players', filters: true })).html), 'Reset filters at the bottom of the pop-up');
+  assert.match((await render({ entity: 'players', filters: true })).html, /class="fw-filter-btn" data-filters-reset/);
+});
+test('Reset filters restores every pop-up field and the default rows; position, search and window stay; the pop-up stays open', async () => {
+  const defaults = await render({ entity: 'players' });
+  const filtered = await render({ entity: 'players', team: 'ZZZ', minMin: 25, minGp: 8, showAll: true, position: ['G'], query: 'a', win: 'l5', filters: true });
+  assert.notDeepEqual(filtered.M.shown.map(r => r.id), defaults.M.shown.map(r => r.id), 'the non-default filters change the rows');
+  resetFilters(state);
+  for (const [k, v] of Object.entries(FILTER_DEFAULTS)) assert.equal(state[k], v, k);
+  assert.deepEqual([state.position, state.query, state.win, state.filters], [['G'], 'a', 'l5', true]);
+  assert.equal(filtersActive(state), false);
+  Object.assign(state, { position: [], query: '', win: 'season' });
+  const after = await render({ entity: 'players', filters: false });
+  assert.deepEqual(after.M.shown.map(r => r.id), defaults.M.shown.map(r => r.id), 'the table shows the default rows');
 });

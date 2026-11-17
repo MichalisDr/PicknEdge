@@ -3,7 +3,7 @@
 import { Data } from '../../core/data.js';
 import * as Windows from '../../core/windows.js';
 import * as TM from '../../core/table-model.js';
-import { state } from './table-state.js';
+import { state, resetFilters } from './table-state.js';
 import { loadTable } from './table-data.js';
 import { tableHtml, errorHtml, loadingHtml } from './table-view.js';
 import { wirePopups } from './table-popups.js';
@@ -72,6 +72,8 @@ function wire() {
     state[k] = k === 'team' ? el.value : k === 'showAll' ? el.checked : Math.max(0, Number(el.value) || 0);
     draw();
   });
+  const reset = host.querySelector('[data-filters-reset]');
+  if (reset) reset.onclick = e => { e.stopPropagation(); resetFilters(state); draw(); };   // the pop-up stays open; G / F / C, search and window are untouched
   on('[data-open]', 'onclick', b => openCard(state.entity, b.dataset.open, { win: state.win, mode: state.view }));
   wirePopups(host, state, shown);
   const search = host.querySelector('input[type=search]');

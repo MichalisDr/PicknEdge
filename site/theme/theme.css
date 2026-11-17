@@ -1374,10 +1374,10 @@ body[data-area=betting]{
   fantasy.stat-table.players-filters-button.border-width : [data-part="fantasy.stat-table.players-filters-button"]
   fantasy.stat-table.players-filters-button.radius : [data-part="fantasy.stat-table.players-filters-button"]
   fantasy.stat-table.players-filters-button.text : [data-part="fantasy.stat-table.players-filters-button"]
-  fantasy.stat-table.players-filters-button-hovered.background : [data-part="fantasy.stat-table.players-filters-button"]:hover:not([aria-expanded=true])
-  fantasy.stat-table.players-filters-button-selected.background : [data-part="fantasy.stat-table.players-filters-button"][aria-expanded=true]
-  fantasy.stat-table.players-filters-button-selected.border : [data-part="fantasy.stat-table.players-filters-button"][aria-expanded=true]
-  fantasy.stat-table.players-filters-button-selected.text : [data-part="fantasy.stat-table.players-filters-button"][aria-expanded=true]
+  fantasy.stat-table.players-filters-button-hovered.background : [data-part="fantasy.stat-table.players-filters-button"]:hover:not([data-active=true])
+  fantasy.stat-table.players-filters-button-selected.background : [data-part="fantasy.stat-table.players-filters-button"][data-active=true]
+  fantasy.stat-table.players-filters-button-selected.border : [data-part="fantasy.stat-table.players-filters-button"][data-active=true]
+  fantasy.stat-table.players-filters-button-selected.text : [data-part="fantasy.stat-table.players-filters-button"][data-active=true]
   fantasy.stat-table.players-mode-button.font-size : [data-part="fantasy.stat-table.players-mode-button"]
   fantasy.stat-table.players-mode-button.radius : [data-part="fantasy.stat-table.players-mode-button"]
   fantasy.stat-table.players-mode-button.text : [data-part="fantasy.stat-table.players-mode-button"]
