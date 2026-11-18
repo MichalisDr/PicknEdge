@@ -388,13 +388,17 @@
      "plot-height": 480,
      "plot-width": 640,
      "aspect": 0.75,
-     "logo-size": 32,
+     "logo-size": 33,
      "logo-size-narrow": 24,
      "width": "100%",
      "dot-radius": 4
     },
     "chart-notes": {
-     "gap": "4px"
+     "gap": "4px",
+     "margin-top": "10px"
+    },
+    "chart-title": {
+     "padding": "4px 0"
     }
    },
    "player-card": {

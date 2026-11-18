@@ -1,4 +1,4 @@
-/* One comparative scatter chart: the entities of the current view as team logos on round backings, dashed lines for the league values from the view's league row.
+/* One comparative scatter chart: the entities of the current view as team logos (no backing), dashed lines for the league values from the view's league row.
    scatter() returns the card's chart block: a model in data-plot plus a first drawing; plot-wire.js redraws it at the real width (drawScatter) so that sizes and lettering are real pixels.
    Scale and logo separation live in scale.js. A logo is clickable (class fc-pt, data-open) and opens the card; hover / tap shows name and both values. */
 import { esc } from '../../core/html.js';
@@ -59,10 +59,10 @@ export function drawScatter(model, W, narrow, mode = 'thumb', maxH = Infinity) {
   }
   const avg = model.avg ? `<line class="fc-avg" x1="${f(X(model.avg.x))}" x2="${f(X(model.avg.x))}" y1="${f(y0)}" y2="${f(y1)}"/><line class="fc-avg" x1="${f(x0)}" x2="${f(x1)}" y1="${f(Y(model.avg.y))}" y2="${f(Y(model.avg.y))}"/>` : '';
   const diag = model.equal ? `<line class="fc-diag" x1="${f(X(sx.lo))}" y1="${f(Y(sx.lo))}" x2="${f(X(sx.hi))}" y2="${f(Y(sx.hi))}"/>` : '';
-  const dotR = size('fantasy.charts-gallery.plot.dot-radius'), at = full ? separate(model.pts.map(p => ({ x: X(p.a), y: Y(p.b) })), logo + 2) : model.pts.map(p => ({ x: X(p.a), y: Y(p.b) }));   // backing diameter = logo size, +2 px air
-  const r = logo / 2, img = logo * .76;
+  const dotR = size('fantasy.charts-gallery.plot.dot-radius'), at = full ? separate(model.pts.map(p => ({ x: X(p.a), y: Y(p.b) })), logo + 2) : model.pts.map(p => ({ x: X(p.a), y: Y(p.b) }));   // logos are centred on the data point, nothing around them; +2 px air between two
+  const r = logo / 2;
   const dots = model.pts.map((p, i) => {
-    const body = full && p.logo ? `<circle class="fc-bk" r="${r}"/><image href="${esc(p.logo)}" x="${f(-img / 2)}" y="${f(-img / 2)}" width="${f(img)}" height="${f(img)}" preserveAspectRatio="xMidYMid meet"/>`
+    const body = full && p.logo ? `<circle class="fc-hit" r="${r}"/><image href="${esc(p.logo)}" x="${f(-r)}" y="${f(-r)}" width="${logo}" height="${logo}" preserveAspectRatio="xMidYMid meet"/>`
       : `<circle class="fc-hit" r="${dotR + 5}"/><circle class="fc-dot" r="${dotR}"/>${full ? `<text class="fc-pl" x="8" y="4">${esc(p.id)}</text>` : ''}`;
     return `<g class="fc-pt" data-open="${esc(p.id)}" data-x="${f(at[i].x)}" data-y="${f(at[i].y - (full && p.logo ? r : dotR))}" data-tip="${esc(p.tip)}" tabindex="0" role="img" aria-label="${esc(p.tip)}" transform="translate(${f(at[i].x)} ${f(at[i].y)})">${body}</g>`;
   }).join('');

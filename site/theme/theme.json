@@ -589,9 +589,9 @@
      "text": "{semantic.text-muted-2}"
     },
     "axis-title": {
-     "font-size": "13px",
-     "font-size-below-650px": "12px",
-     "text": "{semantic.text-subtle}"
+     "font-size": "14px",
+     "font-size-below-650px": "13px",
+     "text": "{semantic.text}"
     },
     "chart-card": {
      "background": "{semantic.panel}",
@@ -635,11 +635,6 @@
     "enlarged-chart-title": {
      "font-size": "22px",
      "font-size-below-650px": "18px"
-    },
-    "logo-backing": {
-     "background": "{semantic.panel}",
-     "border": "{semantic.border-control}",
-     "border-width": "1px"
     },
     "point": {
      "border": "{semantic.surface-dialog}",

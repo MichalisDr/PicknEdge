@@ -266,9 +266,9 @@ body{
 --fantasy-charts-gallery-axis-numbers-font-size:12px;
 --fantasy-charts-gallery-axis-numbers-font-size-below-650px:11px;
 --fantasy-charts-gallery-axis-numbers-text:var(--color-text-muted-2);
---fantasy-charts-gallery-axis-title-font-size:13px;
---fantasy-charts-gallery-axis-title-font-size-below-650px:12px;
---fantasy-charts-gallery-axis-title-text:var(--color-text-subtle);
+--fantasy-charts-gallery-axis-title-font-size:14px;
+--fantasy-charts-gallery-axis-title-font-size-below-650px:13px;
+--fantasy-charts-gallery-axis-title-text:var(--color-text);
 --fantasy-charts-gallery-chart-card-background:var(--color-panel);
 --fantasy-charts-gallery-chart-card-border:var(--color-border-soft);
 --fantasy-charts-gallery-chart-card-border-width:1px;
@@ -292,9 +292,6 @@ body{
 --fantasy-charts-gallery-enlarged-chart-subtitle-text:var(--color-text-muted-2);
 --fantasy-charts-gallery-enlarged-chart-title-font-size:22px;
 --fantasy-charts-gallery-enlarged-chart-title-font-size-below-650px:18px;
---fantasy-charts-gallery-logo-backing-background:var(--color-panel);
---fantasy-charts-gallery-logo-backing-border:var(--color-border-control);
---fantasy-charts-gallery-logo-backing-border-width:1px;
 --fantasy-charts-gallery-point-border:var(--color-surface-dialog);
 --fantasy-charts-gallery-point-fill:var(--color-text-muted-2);
 --fantasy-charts-gallery-point-hovered-border:var(--color-white);
@@ -1137,12 +1134,9 @@ body[data-area=betting]{
   fantasy.charts-gallery.enlarged-chart-subtitle.text : .fc-mhead h2 small
   fantasy.charts-gallery.enlarged-chart-title.font-size : .fc-mhead h2
   fantasy.charts-gallery.enlarged-chart-title.font-size-below-650px : .fc-mhead h2
-  fantasy.charts-gallery.logo-backing.background : .fc-bk
-  fantasy.charts-gallery.logo-backing.border : .fc-bk
-  fantasy.charts-gallery.logo-backing.border-width : .fc-bk
   fantasy.charts-gallery.point.border : .fc-dot
   fantasy.charts-gallery.point.fill : .fc-dot
-  fantasy.charts-gallery.point-hovered.border : .fc-pt:hover .fc-bk,.fc-pt:focus-visible .fc-bk  |  .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot
+  fantasy.charts-gallery.point-hovered.border : .fc-pt:focus-visible .fc-hit  |  .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot
   fantasy.charts-gallery.point-hovered.fill : .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot
   fantasy.charts-gallery.team-label.font-size : .fc-pl
   fantasy.charts-gallery.team-label.outline : .fc-pl
