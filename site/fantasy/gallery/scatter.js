@@ -10,7 +10,17 @@ import { favourable, quadrantTone, diagonalTone } from './tint.js';
 const axisTitle = m => m.label + (m.format.suffix && !m.label.includes(m.format.suffix.trim()) ? ` (${m.format.suffix.trim()})` : '');
 const fmt = (m, v) => v.toFixed(m.format.digits) + m.format.suffix;
 
-export function scatter(chart, view, ids, byId, roster) {
+/** Values of one metric over every entity of every window view: the axis range of a chart is computed from these, once, so it does not move when the window or a filter changes. */
+const allValues = (views, id) => views.flatMap(v => v.keys.map(k => v.get(k, id)?.value)).filter(Number.isFinite);
+
+/** The axes of a chart: [x, y] scales from the min and max over all windows (the x = y chart: one shared range from the union of both metrics). */
+export function chartScales(chart, views) {
+  const xs = allValues(views, chart.x), ys = allValues(views, chart.y);
+  return chart.equal ? equalScale(xs, ys) : [axisScale(xs), axisScale(ys)];
+}
+
+/** views = the view of every window (Season, Last 10 / 5 / 3); `view` is the one shown. */
+export function scatter(chart, view, ids, byId, roster, views = [view]) {
   const mx = byId[chart.x], my = byId[chart.y], pts = [];
   for (const id of ids) {
     const a = view.get(id, chart.x)?.value, b = view.get(id, chart.y)?.value;
@@ -19,7 +29,7 @@ export function scatter(chart, view, ids, byId, roster) {
     pts.push({ id, a, b, name, logo: chart.entity === 'teams' ? teamLogo(roster, id) || '' : '', tip: `${name} · ${mx.label} ${fmt(mx, a)} · ${my.label} ${fmt(my, b)}` });
   }
   if (pts.length < 2) return '<p class="fw-empty">Not enough data for this chart.</p>';
-  const [sx, sy] = chart.equal ? equalScale(pts.map(p => p.a), pts.map(p => p.b)) : [axisScale(pts.map(p => p.a)), axisScale(pts.map(p => p.b))];
+  const [sx, sy] = chartScales(chart, views);
   const lx = chart.noAvg ? null : view.league(chart.x)?.value, ly = chart.noAvg ? null : view.league(chart.y)?.value;
   const fav = { x: favourable(mx.direction), y: favourable(my.direction) };
   const model = { fav, title: chart.title, xTitle: axisTitle(mx), yTitle: axisTitle(my), equal: !!chart.equal, sx, sy, avg: Number.isFinite(lx) && Number.isFinite(ly) ? { x: lx, y: ly } : null, pts };
