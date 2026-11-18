@@ -375,7 +375,8 @@
      "margin-top": "2px"
     },
     "enlarged-chart-window": {
-     "width": "min(1000px,96vw)"
+     "width": "min(92vw,1300px)",
+     "height": "88vh"
     },
     "gallery": {
      "margin-top": "4px"
@@ -388,10 +389,13 @@
      "plot-height": 480,
      "plot-width": 640,
      "aspect": 0.75,
-     "logo-size": 33,
-     "logo-size-narrow": 24,
      "width": "100%",
-     "dot-radius": 4
+     "dot-radius": 4,
+     "logo-size-max": 40,
+     "logo-size-max-narrow": 30,
+     "logo-size-min": 24,
+     "logo-size-min-narrow": 20,
+     "logo-density": 0.45
     },
     "chart-notes": {
      "gap": "4px",
@@ -399,6 +403,9 @@
     },
     "chart-title": {
      "padding": "4px 0"
+    },
+    "enlarged-chart-plot": {
+     "height": "100%"
     }
    },
    "player-card": {

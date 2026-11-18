@@ -6,13 +6,13 @@ import { drawScatter } from './scatter.js';
 export function wirePlots(root, onOpen, win = globalThis.window, mode = 'thumb') {
   root.querySelectorAll('.fc-plot').forEach(plot => {
     const model = JSON.parse(plot.dataset.plot), canvas = plot.querySelector('.fc-canvas'), tip = plot.querySelector('.fc-tip');
-    let width = 0, touch = false, tipFor = '';
+    let width = 0, height = 0, touch = false, tipFor = '';
     const hide = () => { tip.hidden = true; tipFor = ''; };
     const draw = () => {
-      const w = Math.round(plot.clientWidth);
-      if (!w || w === width) return;
-      width = w; hide();
-      canvas.innerHTML = drawScatter(model, w, win.matchMedia('(max-width:650px)').matches, mode, mode === 'full' ? Math.round(win.innerHeight * .62) : Infinity);
+      const w = Math.round(plot.clientWidth), h = mode === 'full' ? Math.round(plot.clientHeight) : 0;   // the opened card fills the height of its stage; thumbnails keep the aspect
+      if (!w || (mode === 'full' && !h) || (w === width && h === height)) return;
+      width = w; height = h; hide();
+      canvas.innerHTML = drawScatter(model, w, win.matchMedia('(max-width:650px)').matches, mode, h || undefined);
     };
     const show = g => {
       tip.textContent = g.dataset.tip; tip.hidden = false; tipFor = g.dataset.open;

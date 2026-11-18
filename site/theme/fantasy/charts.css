@@ -29,11 +29,14 @@
 .fc-dot{fill:var(--fantasy-charts-gallery-point-fill);fill-opacity:.85;stroke:var(--fantasy-charts-gallery-point-border);stroke-width:1.5}
 .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot{fill:var(--fantasy-charts-gallery-point-hovered-fill);fill-opacity:1;stroke:var(--fantasy-charts-gallery-point-hovered-border)}
 .fc-pl{font:var(--fantasy-charts-gallery-team-label-font-size) var(--font-ui);fill:var(--fantasy-charts-gallery-axis-numbers-text);paint-order:stroke;stroke:var(--fantasy-charts-gallery-team-label-outline);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
-.fc-dialog{width:var(--fantasy-charts-gallery-enlarged-chart-window-width)}
+.fc-dialog{width:var(--fantasy-charts-gallery-enlarged-chart-window-width);height:var(--fantasy-charts-gallery-enlarged-chart-window-height)}
+.fc-dialog[open]{display:flex;flex-direction:column}   /* title above, the plot fills what is left, the explanatory line below */
 .fc-mhead{display:flex;align-items:center;justify-content:space-between;gap:var(--fantasy-charts-gallery-enlarged-chart-header-gap);flex-wrap:wrap;padding-right:var(--fantasy-charts-gallery-enlarged-chart-header-padding-right);margin-bottom:var(--fantasy-charts-gallery-enlarged-chart-header-margin-bottom)}
 .fc-mhead h2{margin:0;font-size:var(--fantasy-charts-gallery-enlarged-chart-title-font-size)}
 .fc-mhead h2 small{display:block;margin-top:var(--fantasy-charts-gallery-enlarged-chart-subtitle-margin-top);font-size:var(--fantasy-charts-gallery-enlarged-chart-subtitle-font-size);font-weight:500;color:var(--fantasy-charts-gallery-enlarged-chart-subtitle-text)}
-.fc-stage{min-width:0}
+.fc-stage{flex:1 1 auto;min-width:0;min-height:0}
+.fc-stage .fc-plot,.fc-stage .fc-canvas{height:var(--fantasy-charts-gallery-enlarged-chart-plot-height)}
+.fc-dialog .fc-note{flex:none;margin-top:var(--fantasy-charts-gallery-chart-notes-margin-top)}
 @media(max-width:650px){
 .fc-mhead h2{font-size:var(--fantasy-charts-gallery-enlarged-chart-title-font-size-below-650px)}
 .fc-grid-gallery{gap:var(--fantasy-charts-gallery-chart-grid-gap-below-650px)}
