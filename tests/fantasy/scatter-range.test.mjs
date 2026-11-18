@@ -26,19 +26,18 @@ test('every chart has the identical axis range in all four windows (Season, Last
   }
 });
 
-test('min and max of every chart (over all windows) sit strictly inside the axis range with a visible gap and a bounded empty margin; the x = y chart shares one range', async () => {
+test('every extreme (over all windows) lies strictly inside the axis range with a gap smaller than one step; edges and ticks are round; the x = y chart has equal ranges', async () => {
+  const views = await Promise.all(Windows.LIST.map(w => Windows.view('teams', { win: w[0] }, w[0])));
+  const range = id => { const v = views.flatMap(vw => vw.keys.map(k => vw.get(k, id)?.value)).filter(Number.isFinite); return [Math.min(...v), Math.max(...v)]; };
   for (const view of ['profile', 'shooting']) {
     const m = await models(view, 'season');
     for (const c of CHARTS.filter(c => c.view === view)) {
-      const vals = id => Windows.LIST.map(w => w[0]);
-      const views = await Promise.all(Windows.LIST.map(w => Windows.view('teams', { win: w[0] }, w[0])));
-      const range = id => { const v = views.flatMap(vw => vw.keys.map(k => vw.get(k, id)?.value)).filter(Number.isFinite); return [Math.min(...v), Math.max(...v)]; };
       for (const [id, s] of [[c.x, m[c.id].sx], [c.y, m[c.id].sy]]) {
-        const [lo, hi] = c.equal ? [Math.min(...range(c.x), ...range(c.y)), Math.max(...range(c.x), ...range(c.y))] : range(id), span = hi - lo;
-        const R = s.hi - s.lo;
-        assert.ok(s.lo < lo - span * .04 && s.hi > hi + span * .04, `${c.id} ${id}: [${lo}, ${hi}] inside [${s.lo}, ${s.hi}] with a gap of at least 4% of the data range`);
-        // about 10% is the aim; the all-windows ranges are wide and the steps stay fine (1/2/5), so a few axes end up to 20%
-        assert.ok((lo - s.lo) / R <= .2 && (s.hi - hi) / R <= .2 || c.equal, `${c.id} ${id}: empty margin ${((lo - s.lo) / R * 100).toFixed(1)}% / ${((s.hi - hi) / R * 100).toFixed(1)}%`);
+        const [lo, hi] = c.equal ? [Math.min(...range(c.x), ...range(c.y)), Math.max(...range(c.x), ...range(c.y))] : range(id);
+        assert.ok(s.lo < lo && s.hi > hi, `${c.id} ${id}: [${lo}, ${hi}] strictly inside [${s.lo}, ${s.hi}]`);
+        assert.ok(lo - s.lo < s.step + 1e-9 && s.hi - hi < s.step + 1e-9, `${c.id} ${id}: gap under one step (${s.step})`);
+        for (const t of [s.lo, s.hi, ...s.ticks]) assert.ok(Math.abs(t / s.step - Math.round(t / s.step)) < 1e-6, `${c.id} ${id}: ${t} is a multiple of ${s.step}`);
+        assert.ok(s.ticks.length >= 5 && s.ticks.length <= 9, `${c.id} ${id}: ${s.ticks.length} ticks`);
       }
       if (c.equal) assert.deepEqual(m[c.id].sx, m[c.id].sy);
     }

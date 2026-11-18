@@ -5,6 +5,7 @@ import { esc } from '../../core/html.js';
 import { size } from '../../core/sizes.js';
 import { teamLogo } from '../../core/teams.js';
 import { axisScale, equalScale, separate } from './scale.js';
+import { logoFit } from './logo-fit.js';
 import { favourable, quadrantTone, diagonalTone } from './tint.js';
 
 const axisTitle = m => m.label + (m.format.suffix && !m.label.includes(m.format.suffix.trim()) ? ` (${m.format.suffix.trim()})` : '');
@@ -37,11 +38,10 @@ export function scatter(chart, view, ids, byId, roster, views = [view]) {
 }
 
 /** The svg of a model at a pixel width (1 svg unit = 1 css px, so lettering and logos are real sizes); `narrow` = phone sizes.
-    mode 'thumb' (gallery thumbnail): plain dots, no labels, few ticks; 'full' (opened card): team logos, 5-7 ticks. maxH caps the height of a large chart. */
-export function drawScatter(model, W, narrow, mode = 'thumb', maxH = Infinity) {
+    mode 'thumb' (gallery thumbnail): plain dots, no labels, every second tick; 'full' (opened card): team logos, 6-8 ticks. H = the height to fill (default: width x aspect). */
+export function drawScatter(model, W, narrow, mode = 'thumb', H = Math.round(W * size('fantasy.charts-gallery.plot.aspect'))) {
   const full = mode === 'full';
   const L = size('fantasy.charts-gallery.plot.margin-left'), R = size('fantasy.charts-gallery.plot.margin-right'), Tp = size('fantasy.charts-gallery.plot.margin-top'), B = size('fantasy.charts-gallery.plot.margin-bottom');
-  const H = Math.round(Math.min(W * size('fantasy.charts-gallery.plot.aspect'), maxH)), logo = size(narrow ? 'fantasy.charts-gallery.plot.logo-size-narrow' : 'fantasy.charts-gallery.plot.logo-size');
   const iw = W - L - R, ih = H - Tp - B, side = model.equal ? Math.min(iw, ih) : null;   // the x = y chart has a square plot area: same range on both axes = exactly 45°
   const x0 = side ? L + (iw - side) / 2 : L, x1 = side ? x0 + side : W - R, y1 = H - B, y0 = side ? y1 - side : Tp;
   const { sx, sy } = model, X = v => x0 + (v - sx.lo) / (sx.hi - sx.lo) * (x1 - x0), Y = v => y1 - (v - sy.lo) / (sy.hi - sy.lo) * (y1 - y0), f = v => +v.toFixed(1);
@@ -59,10 +59,12 @@ export function drawScatter(model, W, narrow, mode = 'thumb', maxH = Infinity) {
   }
   const avg = model.avg ? `<line class="fc-avg" x1="${f(X(model.avg.x))}" x2="${f(X(model.avg.x))}" y1="${f(y0)}" y2="${f(y1)}"/><line class="fc-avg" x1="${f(x0)}" x2="${f(x1)}" y1="${f(Y(model.avg.y))}" y2="${f(Y(model.avg.y))}"/>` : '';
   const diag = model.equal ? `<line class="fc-diag" x1="${f(X(sx.lo))}" y1="${f(Y(sx.lo))}" x2="${f(X(sx.hi))}" y2="${f(Y(sx.hi))}"/>` : '';
+  const cell = Math.sqrt(Math.max(1, iw * ih) / model.pts.length);   // logo size follows density: the more points on the smaller plot, the smaller the logo, between a legible minimum and a maximum
+  const logo = Math.round(Math.max(size(narrow ? 'fantasy.charts-gallery.plot.logo-size-min-narrow' : 'fantasy.charts-gallery.plot.logo-size-min'), Math.min(size(narrow ? 'fantasy.charts-gallery.plot.logo-size-max-narrow' : 'fantasy.charts-gallery.plot.logo-size-max'), cell * size('fantasy.charts-gallery.plot.logo-density'))));
   const dotR = size('fantasy.charts-gallery.plot.dot-radius'), at = full ? separate(model.pts.map(p => ({ x: X(p.a), y: Y(p.b) })), logo + 2) : model.pts.map(p => ({ x: X(p.a), y: Y(p.b) }));   // logos are centred on the data point, nothing around them; +2 px air between two
-  const r = logo / 2;
+  const r = logo / 2, fit = {};
   const dots = model.pts.map((p, i) => {
-    const body = full && p.logo ? `<circle class="fc-hit" r="${r}"/><image href="${esc(p.logo)}" x="${f(-r)}" y="${f(-r)}" width="${logo}" height="${logo}" preserveAspectRatio="xMidYMid meet"/>`
+    const body = full && p.logo ? `<circle class="fc-hit" r="${r}"/><image href="${esc(p.logo)}" x="${f((fit[p.logo] ||= logoFit(p.logo, logo)).x)}" y="${f(fit[p.logo].y)}" width="${f(fit[p.logo].width)}" height="${f(fit[p.logo].height)}" preserveAspectRatio="xMidYMid meet"/>`
       : `<circle class="fc-hit" r="${dotR + 5}"/><circle class="fc-dot" r="${dotR}"/>${full ? `<text class="fc-pl" x="8" y="4">${esc(p.id)}</text>` : ''}`;
     return `<g class="fc-pt" data-open="${esc(p.id)}" data-x="${f(at[i].x)}" data-y="${f(at[i].y - (full && p.logo ? r : dotR))}" data-tip="${esc(p.tip)}" tabindex="0" role="img" aria-label="${esc(p.tip)}" transform="translate(${f(at[i].x)} ${f(at[i].y)})">${body}</g>`;
   }).join('');
