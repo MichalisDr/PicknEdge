@@ -578,22 +578,24 @@
   "fantasy": {
    "charts-gallery": {
     "average": {
-     "line": "#9fb0c6"
+     "line": "{semantic.text-muted-2}"
     },
     "axis": {
-     "line": "#3b4655"
+     "line": "{semantic.border-control}"
     },
     "axis-numbers": {
-     "font-size": "10px",
-     "text": "#8191a5"
+     "font-size": "12px",
+     "font-size-below-650px": "11px",
+     "text": "{semantic.text-muted-2}"
     },
     "axis-title": {
-     "font-size": "11.5px",
-     "text": "#b7c4d8"
+     "font-size": "13px",
+     "font-size-below-650px": "12px",
+     "text": "{semantic.text-subtle}"
     },
     "chart-card": {
-     "background": "#182335",
-     "border": "#2b3a4f",
+     "background": "{semantic.panel}",
+     "border": "{semantic.border-soft}",
      "border-width": "1px",
      "radius": "10px",
      "text": "{semantic.text-soft}"
@@ -606,42 +608,49 @@
     "chart-card-hovered": {
      "border": "{semantic.accent-fantasy}"
     },
+    "chart-gridline": {
+     "line": "{semantic.border-soft}"
+    },
     "chart-note": {
-     "font-size": "11px",
+     "font-size": "12px",
+     "font-size-below-650px": "11px",
      "text": "{semantic.text-muted-2}"
     },
     "chart-subtitle": {
-     "font-size": "11px",
+     "font-size": "12px",
+     "font-size-below-650px": "11px",
      "text": "{semantic.text-muted-2}"
     },
     "chart-title": {
-     "font-size": "14px"
+     "font-size": "16px",
+     "text": "{semantic.text}"
     },
     "diagonal": {
-     "line": "#6b7c93"
+     "line": "{semantic.border-control}"
     },
     "enlarged-chart-subtitle": {
-     "font-size": "12px",
+     "font-size": "13px",
      "text": "{semantic.text-muted-2}"
     },
     "enlarged-chart-title": {
      "font-size": "22px",
      "font-size-below-650px": "18px"
     },
+    "logo-backing": {
+     "background": "{semantic.panel}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px"
+    },
     "point": {
      "border": "{semantic.surface-dialog}",
-     "fill": "#7f93ab"
+     "fill": "{semantic.text-muted-2}"
     },
     "point-hovered": {
      "border": "{semantic.white}",
      "fill": "{semantic.accent-default}"
     },
-    "point-label": {
-     "font-size": "10px",
-     "text": "#c6d2df"
-    },
     "team-label": {
-     "font-size": "11px",
+     "font-size": "12px",
      "outline": "{semantic.surface-dialog}"
     }
    },

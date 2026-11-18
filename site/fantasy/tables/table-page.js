@@ -11,6 +11,7 @@ import { open as openCard } from '../cards/card.js';
 import { loadIcons } from '../../core/icons.js';
 import { TOOLBAR_ICONS } from './table-toolbar.js';
 import { fitFirstColumn } from './table-fit.js';
+import { wirePlots } from '../gallery/plot-wire.js';
 
 let host = null, drawId = 0, shown = null;
 
@@ -61,7 +62,7 @@ function wire() {
   const on = (sel, ev, fn) => host.querySelectorAll(sel).forEach(el => { el[ev] = () => fn(el); });
   Windows.wire(host, state, () => { state.sort = ''; state.sel = []; draw(); });
   on('[data-fwmode]', 'onclick', b => { state.mode = b.dataset.fwmode; draw(); });
-  host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => openCard(state.entity, p.dataset.open, { win: state.win, mode: state.view }); });
+  wirePlots(host, id => openCard(state.entity, id, { win: state.win, mode: state.view }));
   on('[data-view-set]', 'onclick', b => { if (state.view === b.dataset.viewSet) return; state.view = b.dataset.viewSet; state.sort = ''; state.sel = []; draw(); });
   on('[data-position]', 'onclick', b => { const p = b.dataset.position; state.position = state.position.includes(p) ? state.position.filter(x => x !== p) : [...state.position, p]; draw(); });
   headerSort();
