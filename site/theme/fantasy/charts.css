@@ -23,6 +23,10 @@
 .fc-bk{fill:var(--fantasy-charts-gallery-logo-backing-background);stroke:var(--fantasy-charts-gallery-logo-backing-border);stroke-width:var(--fantasy-charts-gallery-logo-backing-border-width)}
 .fc-pt:hover .fc-bk,.fc-pt:focus-visible .fc-bk{stroke:var(--fantasy-charts-gallery-point-hovered-border)}
 /* A team without a logo keeps the old dot and its code. */
+.fc-hit{fill:transparent}
+.fc-q{stroke:none;fill-opacity:var(--fantasy-charts-gallery-quadrant-tint-opacity)}
+.fc-q.good{fill:var(--fantasy-stat-table-value-good-text)}
+.fc-q.bad{fill:var(--fantasy-stat-table-value-bad-text)}
 .fc-dot{fill:var(--fantasy-charts-gallery-point-fill);fill-opacity:.85;stroke:var(--fantasy-charts-gallery-point-border);stroke-width:1.5}
 .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot{fill:var(--fantasy-charts-gallery-point-hovered-fill);fill-opacity:1;stroke:var(--fantasy-charts-gallery-point-hovered-border)}
 .fc-pl{font:var(--fantasy-charts-gallery-team-label-font-size) var(--font-ui);fill:var(--fantasy-charts-gallery-axis-numbers-text);paint-order:stroke;stroke:var(--fantasy-charts-gallery-team-label-outline);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
@@ -31,7 +35,6 @@
 .fc-mhead h2{margin:0;font-size:var(--fantasy-charts-gallery-enlarged-chart-title-font-size)}
 .fc-mhead h2 small{display:block;margin-top:var(--fantasy-charts-gallery-enlarged-chart-subtitle-margin-top);font-size:var(--fantasy-charts-gallery-enlarged-chart-subtitle-font-size);font-weight:500;color:var(--fantasy-charts-gallery-enlarged-chart-subtitle-text)}
 .fc-stage{min-width:0}
-@media(max-width:900px){.fc-grid-gallery{grid-template-columns:var(--fantasy-charts-gallery-chart-grid-grid-template-columns-below-900px)}}
 @media(max-width:650px){
 .fc-mhead h2{font-size:var(--fantasy-charts-gallery-enlarged-chart-title-font-size-below-650px)}
 .fc-grid-gallery{gap:var(--fantasy-charts-gallery-chart-grid-gap-below-650px)}

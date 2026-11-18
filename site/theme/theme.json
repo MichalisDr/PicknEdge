@@ -652,6 +652,9 @@
     "team-label": {
      "font-size": "12px",
      "outline": "{semantic.surface-dialog}"
+    },
+    "quadrant-tint": {
+     "opacity": "0.12"
     }
    },
    "player-card": {
