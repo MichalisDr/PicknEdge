@@ -6,22 +6,25 @@ const STEPS = [1, 2, 5];   // x 10^n: Pace by 1 or 2, DRtg by 5, percentages by 
 const ticksOf = (a, b, step) => { const out = []; for (let v = Math.ceil(a / step - 1e-9) * step; v <= b + 1e-9; v += step) out.push(+v.toFixed(10)); return out; };
 const stepsFor = (lo, hi, max) => { const base = Math.pow(10, Math.floor(Math.log10((hi - lo || 1) / max)) - 1), out = []; for (let e = 0; e < 4; e++) for (const m of STEPS) out.push(m * base * Math.pow(10, e)); return out.sort((p, q) => p - q); };
 
-/** Round ticks for [lo, hi]: the smallest step of 1 / 2 / 5 x 10^n that gives `min` to `max` ticks inside the range. When the steps skip over that band, the range is widened to the next multiples
-    of the larger step (`widen`) so the axis still has enough ticks; without it the first step with at most `max` ticks is taken. Returns { ticks, step, lo, hi }. */
+/** Round ticks for [lo, hi]. widen (default): the smallest step of 1 / 2 / 5 x 10^n for which the range, rounded OUTWARD to multiples of the step, holds as many ticks as possible up to `max` (normally `min` or more; rounding outward can leave a range 1 tick short of `min`); the axis then
+    starts and ends on a tick. Without widen: the first step with at most `max` ticks inside [lo, hi] as it is. Returns { ticks, step, lo, hi }. */
 export function niceTicks(lo, hi, min = 5, max = 7, widen = true) {
-  for (const step of stepsFor(lo, hi, max)) {
-    const t = ticksOf(lo, hi, step);
-    if (t.length > max) continue;
-    if (t.length >= min || !widen) return { ticks: t, step, lo, hi };
-    const wlo = Math.floor(lo / step + 1e-9) * step, whi = Math.ceil(hi / step - 1e-9) * step;
-    return { ticks: ticksOf(wlo, whi, step), step, lo: wlo, hi: whi };
+  const steps = stepsFor(lo, hi, max);
+  if (!widen) { const step = steps.find(st => ticksOf(lo, hi, st).length <= max) || hi - lo; return { ticks: ticksOf(lo, hi, step), step, lo, hi }; }
+  let pick = null;
+  for (const step of steps) {
+    const wlo = Math.floor(lo / step + 1e-9) * step, whi = Math.ceil(hi / step - 1e-9) * step, n = Math.round((whi - wlo) / step) + 1;
+    if (n > max) continue;
+    pick = { step, wlo, whi };   // the smallest step that fits: the most ticks within max
+    break;
   }
-  return { ticks: [lo, hi], step: hi - lo, lo, hi };
+  if (!pick) return { ticks: [lo, hi], step: hi - lo, lo, hi };
+  return { ticks: ticksOf(pick.wlo, pick.whi, pick.step), step: pick.step, lo: pick.wlo, hi: pick.whi };
 }
 
-/** Axis for a list of values: domain = data range plus `pad` of the span on both sides (a little more when the ticks need it); the step is picked here, from the metric's own range.
-    { lo, hi, ticks (opened card: 5-7), thumb (thumbnails: at most 4), digits }. */
-export function axisScale(values, pad = .06) {
+/** Axis for a list of values: the data range is extended by `pad` (9%) of its span on both sides, then rounded outward to the next round tick, so the highest and lowest value never sit on the edge.
+    The step is picked here, from the metric's own range. { lo, hi, ticks (opened card: 5-7), thumb (thumbnails: at most 4), digits }. */
+export function axisScale(values, pad = .09) {
   const v = values.filter(Number.isFinite);
   if (!v.length) return { lo: 0, hi: 1, ticks: [0, 1], thumb: [0, 1], digits: 0 };
   const min = Math.min(...v), max = Math.max(...v), span = max - min, p = span ? span * pad : (Math.abs(max) * .1 || 1);
