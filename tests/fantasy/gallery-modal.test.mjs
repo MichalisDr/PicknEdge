@@ -9,7 +9,7 @@ function setup() {
   const listeners = {}, body = [], opened = [];
   const node = html => ({ html, onclick: null, oncancel: null, open: false, removed: false, className: '',
     set innerHTML(v) { this.html = v; }, get innerHTML() { return this.html; },
-    querySelector() { return { onclick: null }; }, showModal() { this.open = true; }, close() { this.open = false; }, remove() { this.removed = true; } });
+    querySelector() { return { onclick: null }; }, querySelectorAll() { return []; }, showModal() { this.open = true; }, close() { this.open = false; }, remove() { this.removed = true; } });
   const doc = { addEventListener: (t, f) => { listeners[t] = f; }, createElement: () => node(''), body: { append: d => body.push(d) } };
   installGalleryDialog({ doc, win: { addEventListener() {} }, openCard: (...a) => opened.push(a) });
   const part = cls => ({ innerHTML: cls, outerHTML: `<x class="${cls}"/>` });
@@ -25,7 +25,7 @@ test('click on a card opens a dialog with the scatter; cancel (Esc) closes it an
   assert.equal(body.length, 1);
   const dlg = body[0];
   assert.ok(dlg.open && dlg.className.includes('fw-dialog'));
-  assert.ok(dlg.html.includes('.fc-svg') && dlg.html.includes('fc-mhead'));
+  assert.ok(dlg.html.includes('.fc-plot') && dlg.html.includes('fc-mhead'));
   let prevented = false;
   dlg.oncancel({ preventDefault: () => { prevented = true; } });
   assert.ok(prevented && dlg.removed && !dlg.open);
