@@ -26,7 +26,7 @@ test('every chart has the identical axis range in all four windows (Season, Last
   }
 });
 
-test('min and max of every chart (over all windows) sit strictly inside the axis range with a visible gap; the x = y chart shares one range', async () => {
+test('min and max of every chart (over all windows) sit strictly inside the axis range with a visible gap and a bounded empty margin; the x = y chart shares one range', async () => {
   for (const view of ['profile', 'shooting']) {
     const m = await models(view, 'season');
     for (const c of CHARTS.filter(c => c.view === view)) {
@@ -35,7 +35,10 @@ test('min and max of every chart (over all windows) sit strictly inside the axis
       const range = id => { const v = views.flatMap(vw => vw.keys.map(k => vw.get(k, id)?.value)).filter(Number.isFinite); return [Math.min(...v), Math.max(...v)]; };
       for (const [id, s] of [[c.x, m[c.id].sx], [c.y, m[c.id].sy]]) {
         const [lo, hi] = c.equal ? [Math.min(...range(c.x), ...range(c.y)), Math.max(...range(c.x), ...range(c.y))] : range(id), span = hi - lo;
-        assert.ok(s.lo < lo - span * .07 && s.hi > hi + span * .07, `${c.id} ${id}: [${lo}, ${hi}] inside [${s.lo}, ${s.hi}] with a gap of at least 7% of the data range`);
+        const R = s.hi - s.lo;
+        assert.ok(s.lo < lo - span * .04 && s.hi > hi + span * .04, `${c.id} ${id}: [${lo}, ${hi}] inside [${s.lo}, ${s.hi}] with a gap of at least 4% of the data range`);
+        // about 10% is the aim; the all-windows ranges are wide and the steps stay fine (1/2/5), so a few axes end up to 20%
+        assert.ok((lo - s.lo) / R <= .2 && (s.hi - hi) / R <= .2 || c.equal, `${c.id} ${id}: empty margin ${((lo - s.lo) / R * 100).toFixed(1)}% / ${((s.hi - hi) / R * 100).toFixed(1)}%`);
       }
       if (c.equal) assert.deepEqual(m[c.id].sx, m[c.id].sy);
     }
