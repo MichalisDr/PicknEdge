@@ -91,13 +91,6 @@ test('shot rows carry the assisted flag only for made shots (null = unknown), an
   assert.ok(rows.some(r => r.zone === 'rim'));
 });
 
-test('opponent-production radar excludes team rebounds', async () => {
-  const { D } = loader(), t = await D.view('teams', 'season'), games = await D.games('teams');
-  const row = games.filter(r => r.team === 'RED'), opp = games.filter(r => r.opp === 'RED');
-  assert.ok(opp.reduce((n, r) => n + r.oreb_players, 0) < opp.reduce((n, r) => n + r.oreb, 0), 'player-assigned offensive rebounds are fewer than the team totals');
-  const poss = opp.reduce((n, r) => n + r.poss, 0), dreb = opp.reduce((n, r) => n + r.dreb_players, 0);
-  assert.ok(Math.abs(t.get('RED', 'rt_dreb_100').value - 100 * dreb / poss) < 1e-5);
-});
 
 test('value is displayed in the registry format (2 decimals, trailing zeros kept) while the stored and sorted numbers stay unrounded; cr keeps its own figure', async () => {
   const { D } = loader();

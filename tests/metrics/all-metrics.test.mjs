@@ -25,16 +25,6 @@ const PLAYER = {
 // Box Creation by hand: k = 2; AST = 6; PTS+TOV = 42; proficiency = (2/(1+e^-10) - 1) x 0.4 = 0.39996;
 // BC = 0.1843x6 + 0.0969x42 - 2.3021x0.39996 + 0.0582x6x42x0.39996 - 1.1942 = 8.9267
 // Load = (6 - 0.38x8.9267) x 0.75 + 16x2 + 8.9267 + 2x2 = 46.8824;  cTOV% = 100 x (2x100/50) / 46.8824 = 8.532
-const RADAR_NET = { ft: 2 * 3 - 4, '2p': 3 * 5 - 9, '3p': 4 * 2 - 5, ast: 3 - 2, dreb: 4, oreb: 1, stlblk: 2 + 1 - 1, fd: 5 - 3 };
-const RADAR_GROSS = { ft: 3, '2p': 10, '3p': 6, ast: 3, dreb: 4, oreb: 1, stlblk: 2 + 1, fd: 5 };   // positive contributions only
-for (const [k, v] of Object.entries(RADAR_GROSS)) {
-  PLAYER['rg_' + k + '_g'] = v;
-  PLAYER['rg_' + k + '_100'] = k === 'dreb' ? v / 48 * 100 : k === 'stlblk' || k === 'fd' ? v * 200 / (50 + 48) : v / 50 * 100;
-}
-for (const [k, v] of Object.entries(RADAR_NET)) {
-  PLAYER['rd_' + k + '_g'] = v;
-  PLAYER['rd_' + k + '_100'] = k === 'dreb' ? v / 48 * 100 : k === 'stlblk' || k === 'fd' ? v * 200 / (50 + 48) : v / 50 * 100;
-}
 // value = PIR per game / cr = 21 / 10.5
 const PLAYER_APPROX = { value: [2, 1e-9], bc: [8.9267, 1e-3], load: [46.8824, 1e-3], ctov: [8.532, 5e-3] };
 
@@ -57,7 +47,7 @@ const TEAM = {
 
 test('every registry metric has a hand-checked case', () => {
   const covered = new Set([...Object.keys(PLAYER), ...Object.keys(PLAYER_APPROX), ...Object.keys(TEAM), ...Object.keys(TEAM_EXTRA)]);
-  assert.deepEqual(METRICS.map(m => m.id).filter(id => !covered.has(id) && !/^(t_|o_)?z[sm]?_/.test(id) && !/^rt_|^o_exp_efg$/.test(id)), []);   // zone metrics: zones.test.mjs; team radar and expected eFG: radar-expected.test.mjs
+  assert.deepEqual(METRICS.map(m => m.id).filter(id => !covered.has(id) && !/^(t_|o_)?z[sm]?_/.test(id) && id !== 'o_exp_efg'), []);   // zone metrics: zones.test.mjs; expected eFG: expected-efg.test.mjs
   assert.deepEqual([...covered].filter(id => !METRICS.some(m => m.id === id)), []);
 });
 for (const [id, want] of Object.entries(PLAYER)) test(`player ${id}`, () => approx(evaluate(byId(id), [P]).value, want));

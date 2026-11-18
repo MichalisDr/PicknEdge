@@ -82,6 +82,6 @@ console.log(`assist attribution linked: ${linked} of ${teams.length} team-games;
 const unknownPos = players.filter(p => p.played && !['G', 'F', 'C'].includes(positionOf[p.player_id])).length;
 console.log(`roster positions: ${unknownPos} played player-games without a position`);
 const trb = teams.reduce((n, t) => n + t.oreb + t.dreb, 0), assigned = teams.reduce((n, t) => n + t.oreb_players + t.dreb_players, 0);
-console.log(`rebounds: ${trb - assigned} of ${trb} are team rebounds (credited to no player), excluded from the team radar`);
+console.log(`rebounds: ${trb - assigned} of ${trb} are team rebounds (credited to no player)`);
 const audit = auditPir(players);
 console.log(`PIR vs official valuation (played rows): ${audit.match} of ${audit.total} match` + (audit.bad.length ? `; mismatches: ${audit.bad.slice(0, 10).map(b => `g${b.game} ${b.player_id} ours ${b.ours} official ${b.official}`).join('; ')}${audit.bad.length > 10 ? ' …' : ''}` : ''));

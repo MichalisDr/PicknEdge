@@ -819,26 +819,6 @@
     "next-game-label": {
      "text": "{semantic.text}"
     },
-    "radar-axes": {
-     "line": "#344152"
-    },
-    "radar-comparison": {
-     "fill": "#b48aff22",
-     "line": "#b48aff"
-    },
-    "radar-labels": {
-     "text": "#b7c4d8"
-    },
-    "radar-player": {
-     "fill": "#ef3d2525",
-     "line": "{semantic.accent-fantasy}"
-    },
-    "radar-rings": {
-     "line": "#344152"
-    },
-    "radar-zero-ring": {
-     "line": "#5c6e86"
-    },
     "rank-label": {
      "font-size": "11px"
     },
