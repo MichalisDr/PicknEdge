@@ -360,8 +360,7 @@
     "chart-grid": {
      "gap": "16px",
      "gap-below-650px": "12px",
-     "grid-template-columns": "repeat(2,minmax(0,1fr))",
-     "grid-template-columns-below-900px": "1fr",
+     "grid-template-columns": "repeat(auto-fill,minmax(min(100%,340px),1fr))",
      "margin-top": "14px"
     },
     "chart-note": {
@@ -389,9 +388,10 @@
      "plot-height": 480,
      "plot-width": 640,
      "aspect": 0.75,
-     "logo-size": 28,
-     "logo-size-narrow": 22,
-     "width": "100%"
+     "logo-size": 32,
+     "logo-size-narrow": 24,
+     "width": "100%",
+     "dot-radius": 4
     },
     "chart-notes": {
      "gap": "4px"

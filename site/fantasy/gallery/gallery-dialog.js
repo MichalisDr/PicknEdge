@@ -12,7 +12,7 @@ export function installGalleryDialog({ doc = document, win = window, openCard })
     dlg.className = 'fw-dialog fc-dialog';
     dlg.innerHTML = '<button class="fw-close" aria-label="Close chart">×</button><header class="fc-mhead"><h2>' + card.querySelector('.fc-card-title').innerHTML + '<small>' + card.querySelector('.fc-card-sub').innerHTML + '</small></h2></header><div class="fc-stage">' + card.querySelector('.fc-plot').outerHTML + '</div>' + [...card.querySelectorAll('.fc-note')].map(n => n.outerHTML).join('');
     doc.body.append(dlg);
-    wirePlots(dlg, undefined, win);   // redrawn at the dialog's width; a click on a logo is handled by the dialog's own onclick below
+    wirePlots(dlg, undefined, win, 'full');   // redrawn at the dialog's width; a click on a logo is handled by the dialog's own onclick below
     const mine = dlg, done = () => { if (dlg === mine) close(); if (card.isConnected) card.focus(); };
     mine.querySelector('.fw-close').onclick = done;
     mine.oncancel = e => { e.preventDefault(); done(); };

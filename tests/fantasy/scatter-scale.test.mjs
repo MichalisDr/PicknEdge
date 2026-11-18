@@ -13,19 +13,28 @@ test('axis fits the data with a small padding and does not force zero', () => {
   assert.ok(s.lo > 0, 'no zero baseline');
 });
 
-test('4 to 6 round ticks inside the domain, for ranges of any size', () => {
+test('5 to 7 round ticks inside the domain (opened card), at most 4 in thumbnails, for ranges of any size', () => {
   for (const vals of [[98.2, 110.3], [0.46, 0.58], [13.1, 19.4], [1000, 25000], [3.001, 3.004], [-4, 7]]) {
     const s = axisScale(vals), { step } = niceTicks(s.lo, s.hi);
-    assert.ok(s.ticks.length >= 4 && s.ticks.length <= 6, `${vals}: ${s.ticks}`);
+    assert.ok(s.ticks.length >= 5 && s.ticks.length <= 7, `${vals}: ${s.ticks}`);
+    assert.ok(s.thumb.length >= 2 && s.thumb.length <= 4, `${vals} thumb: ${s.thumb}`);
     assert.ok(s.ticks.every(t => t >= s.lo - 1e-9 && t <= s.hi + 1e-9));
     const mant = step / Math.pow(10, Math.floor(Math.log10(step)));
-    assert.ok([1, 2, 2.5, 5].some(m => Math.abs(m - mant) < 1e-6), `round step ${step}`);
+    assert.ok([1, 2, 5].some(m => Math.abs(m - mant) < 1e-6), `round step ${step}`);
   }
+});
+
+test('the step suits the metric: Pace by 1 or 2, DRtg by 5, TOV per 100 by 1 or 2, percentages by 2 or 5', () => {
+  const step = vals => { const t = axisScale(vals).ticks; return +(t[1] - t[0]).toFixed(6); };
+  assert.ok([1, 2].includes(step([71.6, 72.4, 76.5, 77.3])), 'pace');
+  assert.equal(step([105.4, 112, 119.7, 125.4]), 5);   // DRtg
+  assert.ok([1, 2].includes(step([13.0, 16, 19.8])), 'tov');
+  assert.ok([2, 5].includes(step([48.3, 54.6, 60.4])), 'percentage');
 });
 
 test('digits follow the step so tick labels are exact', () => {
   assert.equal(axisScale([95, 120]).digits, 0);
-  assert.equal(axisScale([0.46, 0.58]).digits, 3);
+  assert.equal(axisScale([0.46, 0.58]).digits, 2);
 });
 
 test('a single value still gets a usable axis', () => {
@@ -37,7 +46,7 @@ test('equal scale: both axes share range and ticks, and the diagonal is exactly 
   const xs = [0.49, 0.51, 0.53], ys = [0.47, 0.5, 0.56], [sx, sy] = equalScale(xs, ys);
   assert.deepEqual(sx, sy);
   assert.ok(sx.lo < 0.47 && sx.hi > 0.56);
-  const model = { title: 't', xTitle: 'x', yTitle: 'y', equal: true, sx, sy, avg: null, pts: [] };
+  const model = { title: 't', xTitle: 'x', yTitle: 'y', equal: true, fav: { x: 1, y: 1 }, sx, sy, avg: null, pts: [] };
   const svg = drawScatter(model, 640, false), d = svg.match(/class="fc-diag" x1="([\d.-]+)" y1="([\d.-]+)" x2="([\d.-]+)" y2="([\d.-]+)"/).slice(1).map(Number);
   near(d[2] - d[0], d[1] - d[3], 0.2);   // run = rise (svg y points down), to the rounding of the coordinates
 });

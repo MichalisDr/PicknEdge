@@ -1,9 +1,9 @@
 /* Browser side of the scatter plots: draws each .fc-plot at its real width (and again when it resizes), brings the hovered logo to the front and shows its read-out
    (name and both values, the same pop-over as the per-game bars). Touch: the first tap on a logo shows the read-out, a second tap opens the card.
-   onOpen(id) opens the card of a clicked logo; without it the click is left to the caller (the enlarged chart handles it). */
+   mode 'full' = the opened card (logos, more ticks). onOpen(id) opens the card of a clicked logo; without it the click is left to the caller (the enlarged chart handles it). */
 import { drawScatter } from './scatter.js';
 
-export function wirePlots(root, onOpen, win = globalThis.window) {
+export function wirePlots(root, onOpen, win = globalThis.window, mode = 'thumb') {
   root.querySelectorAll('.fc-plot').forEach(plot => {
     const model = JSON.parse(plot.dataset.plot), canvas = plot.querySelector('.fc-canvas'), tip = plot.querySelector('.fc-tip');
     let width = 0, touch = false, tipFor = '';
@@ -12,7 +12,7 @@ export function wirePlots(root, onOpen, win = globalThis.window) {
       const w = Math.round(plot.clientWidth);
       if (!w || w === width) return;
       width = w; hide();
-      canvas.innerHTML = drawScatter(model, w, win.matchMedia('(max-width:650px)').matches);
+      canvas.innerHTML = drawScatter(model, w, win.matchMedia('(max-width:650px)').matches, mode, mode === 'full' ? Math.round(win.innerHeight * .62) : Infinity);
     };
     const show = g => {
       tip.textContent = g.dataset.tip; tip.hidden = false; tipFor = g.dataset.open;
