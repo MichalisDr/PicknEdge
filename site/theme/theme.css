@@ -393,14 +393,6 @@ body{
 --fantasy-player-card-next-game-button-radius:5px;
 --fantasy-player-card-next-game-button-hovered-background:var(--color-chip);
 --fantasy-player-card-next-game-label-text:var(--color-text);
---fantasy-player-card-radar-axes-line:#344152;
---fantasy-player-card-radar-comparison-fill:#b48aff22;
---fantasy-player-card-radar-comparison-line:#b48aff;
---fantasy-player-card-radar-labels-text:#b7c4d8;
---fantasy-player-card-radar-player-fill:#ef3d2525;
---fantasy-player-card-radar-player-line:var(--color-accent-fantasy);
---fantasy-player-card-radar-rings-line:#344152;
---fantasy-player-card-radar-zero-ring-line:#5c6e86;
 --fantasy-player-card-rank-label-font-size:11px;
 --fantasy-player-card-section-title-font-size:11px;
 --fantasy-player-card-section-title-text:var(--color-text-subtle);
@@ -1118,14 +1110,6 @@ body[data-area=betting]{
   fantasy.player-card.next-game-button.radius : [data-part="fantasy.player-card.next-game-button"]
   fantasy.player-card.next-game-button-hovered.background : [data-part="fantasy.player-card.next-game-button"]:hover
   fantasy.player-card.next-game-label.text : [data-part="fantasy.player-card.next-game-button"]
-  fantasy.player-card.radar-axes.line : (set by a script)
-  fantasy.player-card.radar-comparison.fill : (set by a script)
-  fantasy.player-card.radar-comparison.line : (set by a script)
-  fantasy.player-card.radar-labels.text : .fw-radar text
-  fantasy.player-card.radar-player.fill : (set by a script)
-  fantasy.player-card.radar-player.line : (set by a script)
-  fantasy.player-card.radar-rings.line : (set by a script)
-  fantasy.player-card.radar-zero-ring.line : (set by a script)
   fantasy.player-card.rank-label.font-size : .fw-rank
   fantasy.player-card.section-title.font-size : .fw-section-title span
   fantasy.player-card.section-title.text : .fw-section-title span
@@ -1192,8 +1176,8 @@ body[data-area=betting]{
   fantasy.player-card.trend-flat.line : .fw-spark-dot.flat  |  .fw-roll.flat
   fantasy.player-card.trend-game.line : .fw-spark-game  |  .fw-spark-pt
   fantasy.player-card.trend-game.opacity : .fw-spark-game  |  .fw-spark-pt
-  fantasy.player-card.trend-labels.font-size : .fw-bars text,.fw-radar text  |  .fw-bar-tip
-  fantasy.player-card.trend-labels.text : .fw-bars text,.fw-radar text
+  fantasy.player-card.trend-labels.font-size : .fw-bars text  |  .fw-bar-tip
+  fantasy.player-card.trend-labels.text : .fw-bars text
   fantasy.player-card.trend-season.line : .fw-avg-season
   fantasy.player-card.trend-season.opacity : .fw-avg-season
   fantasy.player-card.trend-window.line : .fw-avg

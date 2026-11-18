@@ -1,4 +1,4 @@
-/* Fantasy player and team cards, as a dialog: identity header, controls (sample window, GP, Shooting), the metric grid, then the radar, a metric's trend,
+/* Fantasy player and team cards, as a dialog: identity header, controls (sample window, GP, Shooting), the metric grid, then a metric's trend
    or the shot chart, and the player's box scores. Pure UI over the data layer; the parts live in the files next to this one. */
 import { Data } from '../../core/data.js';
 import * as Windows from '../../core/windows.js';
@@ -6,7 +6,6 @@ import { teamLogo } from '../../core/teams.js';
 import { headerHtml, controlsHtml, CONTROL_ICONS } from './card-header.js';
 import { loadIcons } from '../../core/icons.js';
 import { layoutGrid } from './metric-grid.js';
-import { radar, teamRadar } from './radar.js';
 import { trendBlock } from './card-trend.js';
 import { wireBars } from './bars-chart.js';
 import { boxScores } from './box-scores.js';
@@ -49,23 +48,17 @@ async function draw() {
     if (!gp && players) visual = '<p class="fw-empty">No appearances in this sample.</p>';
     else if (sel) visual = await trendBlock(cs, view, season, byId);
     else if (cs.mode === 'shooting') visual = '<div class="fw-shots" data-shots></div>';
-    else if (players) visual = radar(cs, view, byId, roster, cs.cmp ? await Windows.view('players', cs) : null);
-    else visual = teamRadar(cs, view, season);
     parkClose();
     root.innerHTML = `${headerHtml({ cs, players, name, team, row, roster, logo, next })}
       ${controlsHtml({ cs, players, gp })}
-      ${!gp && players ? '' : gridHtml}<div class="fw-visual">${visual}</div>${players ? '<div data-box></div>' : ''}`;
+      ${!gp && players ? '' : gridHtml}${visual ? `<div class="fw-visual">${visual}</div>` : ''}${players ? '<div data-box></div>' : ''}`;
     dockClose(root);
     Windows.wire(root, cs, () => { cs.selected = null; draw(); }, 'data-card-window');
     root.querySelector('[data-next]')?.addEventListener('click', e => { const t = e.currentTarget.dataset.next; open('teams', t, { win: cs.win, mode: cs.mode, back: { id: cs.id, name }, previous: cs.previous }); });
     root.querySelector('[data-back]')?.addEventListener('click', () => open('players', cs.back.id, { win: cs.win, mode: cs.mode, previous: cs.previous }));
     root.querySelectorAll('[data-card-view]').forEach(b => { b.onclick = () => { if (cs.mode === b.dataset.cardView) return; cs.mode = b.dataset.cardView; cs.selected = null; draw(); }; });
     root.querySelectorAll('[data-metric]').forEach(b => { b.onclick = () => { cs.selected = cs.selected === b.dataset.metric ? null : b.dataset.metric; draw(); }; });
-    root.querySelectorAll('[data-radar]').forEach(b => { b.onclick = () => { cs.radar = b.dataset.radar; draw(); }; });
-    root.querySelectorAll('[data-net]').forEach(b => { b.onclick = () => { cs.net = b.dataset.net; draw(); }; });
     root.querySelectorAll('[data-bars]').forEach(wireBars);
-    const cmp = root.querySelector('[data-cmp]');
-    if (cmp) cmp.onchange = () => { cs.cmp = cmp.value; draw(); };
     const shots = root.querySelector('[data-shots]');
     if (shots && (gp || !players)) mountShotChart(shots, { kind, id: cs.id, team, spec: Windows.spec(cs), view, teamsView }, cs.shot);
     const box = root.querySelector('[data-box]');
@@ -77,7 +70,7 @@ async function draw() {
 export function open(entity, id, from = {}) {
   close();
   const previous = from.previous || document.activeElement;
-  cs = { entity, id, previous, back: from.back || null, win: from.win || 'season', mode: from.mode === 'shooting' ? 'shooting' : 'profile', selected: null, cmp: '', radar: 'game', net: 'net', shot: { view: 'hex', hl: null, sc: false } };
+  cs = { entity, id, previous, back: from.back || null, win: from.win || 'season', mode: from.mode === 'shooting' ? 'shooting' : 'profile', selected: null, shot: { view: 'hex', hl: null, sc: false } };
   dialog = document.createElement('dialog');
   dialog.className = 'fw-dialog';
   dialog.innerHTML = '<button class="fw-close" aria-label="Close card">×</button><div class="fw-card"><p class="fw-empty" role="status">Loading…</p></div>';

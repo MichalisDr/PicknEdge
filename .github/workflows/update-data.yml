@@ -71,7 +71,7 @@ jobs:
           tests/core/data-loader.test.mjs
           tests/metrics/all-metrics.test.mjs
           tests/metrics/eligibility.test.mjs
-          tests/metrics/radar-expected.test.mjs
+          tests/metrics/expected-efg.test.mjs
           tests/metrics/registry.test.mjs
           tests/metrics/zones.test.mjs
 

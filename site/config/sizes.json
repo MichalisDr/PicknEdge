@@ -533,15 +533,6 @@
      "height": "38px",
      "height-below-620px": "32px"
     },
-    "radar": {
-     "center-x": 250,
-     "center-y": 195,
-     "max-width": "500px",
-     "plot-height": 395,
-     "plot-width": 500,
-     "radius": 135,
-     "width": "100%"
-    },
     "rank-label": {
      "margin-top": "6px"
     },

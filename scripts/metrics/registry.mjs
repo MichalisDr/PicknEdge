@@ -226,42 +226,6 @@ METRICS.push(
    (shot-chart zone shares, assisted / unassisted splits), so even these ratios are defined here. */
 METRICS.push(e('share', 'Share', T, 'pct', S('n'), S('of'), FB, 1, 'A part as a percentage of its whole (counts supplied by the caller).', { internal: true }));
 
-/* ---------- player radar: net contributions per category, per game and per 100 possessions ----------
-   Shooting categories count points minus misses (FT = made - missed, 2P = 2 x made - missed ...); AST is net of turnovers, FD of fouls,
-   STL+BLK of blocks against. Offensive categories use team offensive possessions on court, DREB the defensive ones, the two mixed
-   categories the average of both (x200 / (off + def)). */
-const RADAR = [   // key, name, net terms, gross terms (positive contributions only), basis
-  ['ft', 'Free throws', [[2, 'm1'], [-1, 'a1']], [[1, 'm1']], 'off'], ['2p', 'Two-pointers', [[3, 'm2'], [-1, 'a2']], [[2, 'm2']], 'off'], ['3p', 'Three-pointers', [[4, 'm3'], [-1, 'a3']], [[3, 'm3']], 'off'],
-  ['ast', 'Assists − turnovers', [[1, 'ast'], [-1, 'tov']], [[1, 'ast']], 'off'], ['dreb', 'Defensive rebounds', [[1, 'dreb']], [[1, 'dreb']], 'def'], ['oreb', 'Offensive rebounds', [[1, 'oreb']], [[1, 'oreb']], 'off'],
-  ['stlblk', 'Steals + blocks − blocks against', [[1, 'stl'], [1, 'blk'], [-1, 'blk_against']], [[1, 'stl'], [1, 'blk']], 'both'], ['fd', 'Fouls drawn − fouls', [[1, 'fd'], [-1, 'pf']], [[1, 'fd']], 'both'],
-];
-for (const [key, name, terms, gross, basis] of RADAR) {
-  const den = basis === 'off' ? S('poss_off_on') : basis === 'def' ? S('poss_def_on') : [[1, 'poss_off_on'], [1, 'poss_def_on']];
-  METRICS.push(
-    e(`rg_${key}_g`, `Gross ${name} / game`, P, 'perGame', gross, S('played'), F, 1, `Positive contributions only (no misses, turnovers or fouls) of ${name.toLowerCase()} per game played (radar gross view).`),
-    e(`rg_${key}_100`, `Gross ${name} / 100 poss`, P, 'per100', gross, den, F, 1, `Positive contributions only of ${name.toLowerCase()} per 100 team possessions on court (radar gross view).`, basis === 'both' ? { mult: 200 } : {}),
-  );
-  METRICS.push(
-    e(`rd_${key}_g`, `Net ${name} / game`, P, 'perGame', terms, S('played'), F, 1, `Net contribution of ${name.toLowerCase()} per game played (radar axis).`),
-    e(`rd_${key}_100`, `Net ${name} / 100 poss`, P, 'per100', terms, basis === 'off' ? S('poss_off_on') : basis === 'def' ? S('poss_def_on') : [[1, 'poss_off_on'], [1, 'poss_def_on']], F, 1,
-      `Net contribution of ${name.toLowerCase()} per 100 team possessions on court (radar axis).`, basis === 'both' ? { mult: 200 } : {}),
-  );
-}
-
-/* ---------- team radar: production of the OPPOSING players against the team, per 100 opponent possessions ----------
-   Rebounds use the opponents' player-assigned rebounds (o_oreb_players / o_dreb_players). Team totals also contain "team rebounds"
-   (credited to no player, e.g. rebounds off the buzzer or out of bounds), which are not production of any player; the radar measures
-   what players did, so they are left out. All other categories are identical in team totals and player lines. */
-const TEAM_RADAR = [
-  ['2p', 'Two-pointers', [[3, 'o_m2'], [-1, 'o_a2']]], ['3p', 'Three-pointers', [[4, 'o_m3'], [-1, 'o_a3']]], ['ft', 'Free throws', [[2, 'o_m1'], [-1, 'o_a1']]],
-  ['ast', 'Assists', [[1, 'o_ast']]], ['dreb', 'Defensive rebounds', [[1, 'o_dreb_players']]], ['oreb', 'Offensive rebounds', [[1, 'o_oreb_players']]],
-  ['blk', 'Blocks', [[1, 'o_blk']]], ['stl', 'Steals', [[1, 'o_stl']]],
-];
-for (const [key, name, terms] of TEAM_RADAR) {
-  METRICS.push(e(`rt_${key}_100`, `Opp net ${name.toLowerCase()} / 100 opp poss`, T, 'per100', terms, S('o_poss'), F, 1,
-    `Net contribution of ${name.toLowerCase()} by the opposing players per 100 opponent possessions (team radar axis; rebounds exclude team rebounds).`));
-}
-
 /* ---------- expected opponent eFG% (zone benchmark) ----------
    Expected = Σ [opponent FGA in zone group x league FG% of the group x weight (2P 1, 3P 1.5)] / opponent FGA, with the league FG% of the
    same window. Groups: rim, rest of paint, mid-range + baseline, corner 3, arc 3. An estimate from zones; it does not include defender pressure. */
