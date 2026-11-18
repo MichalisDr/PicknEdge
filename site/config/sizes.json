@@ -351,20 +351,20 @@
   "fantasy": {
    "charts-gallery": {
     "chart-card": {
-     "gap": "2px",
-     "padding": "12px 12px 8px"
+     "gap": "6px",
+     "padding": "16px"
     },
     "chart-card-plot": {
      "margin-top": "6px"
     },
     "chart-grid": {
-     "gap": "14px",
-     "gap-below-650px": "10px",
-     "grid-template-columns": "repeat(auto-fill,minmax(min(100%,300px),1fr))",
+     "gap": "16px",
+     "gap-below-650px": "12px",
+     "grid-template-columns": "repeat(auto-fill,minmax(min(100%,340px),1fr))",
      "margin-top": "14px"
     },
     "chart-note": {
-     "margin": "4px 0"
+     "margin": "0"
     },
     "enlarged-chart-header": {
      "gap": "12px",
@@ -375,19 +375,37 @@
      "margin-top": "2px"
     },
     "enlarged-chart-window": {
-     "width": "min(1000px,96vw)"
+     "width": "min(92vw,1300px)",
+     "height": "88vh"
     },
     "gallery": {
      "margin-top": "4px"
     },
     "plot": {
-     "margin-bottom": 44,
-     "margin-left": 52,
-     "margin-right": 14,
-     "margin-top": 14,
-     "plot-height": 360,
-     "plot-width": 520,
-     "width": "100%"
+     "margin-bottom": 50,
+     "margin-left": 64,
+     "margin-right": 20,
+     "margin-top": 16,
+     "plot-height": 480,
+     "plot-width": 640,
+     "aspect": 0.75,
+     "width": "100%",
+     "dot-radius": 4,
+     "logo-size-max": 40,
+     "logo-size-max-narrow": 30,
+     "logo-size-min": 24,
+     "logo-size-min-narrow": 20,
+     "logo-density": 0.45
+    },
+    "chart-notes": {
+     "gap": "4px",
+     "margin-top": "10px"
+    },
+    "chart-title": {
+     "padding": "4px 0"
+    },
+    "enlarged-chart-plot": {
+     "height": "100%"
     }
    },
    "player-card": {
