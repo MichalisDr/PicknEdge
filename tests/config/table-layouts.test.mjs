@@ -12,7 +12,7 @@ const zp = (pre, z) => `${pre}${z === 'mid' ? 'zm' : 'zs'}_${z}_pct`;
 const EXPECT = {
   'players.profile': [['pir', 'min', 'usg', 'tov_pct', 'ts_pct', 'ftr', 'pts_g', 'ast_g', 'reb_g', 'stocks_g', 'fd_g', 'fc100']],
   'players.shooting': [['efg', 'fg2_pct', 'fg3_pct', 'ft_pct'], ZONES.map(z => zp('', z))],
-  'teams.profile': [['pace', 'drtg'], ['o_efg', 'o_ftr'], ['o_tov100', 'o_ast100', 't_dreb_pct'], ['o_pot100', 'o_fb100', 'o_sc100']],
+  'teams.profile': [['pace', 'drtg'], ['o_efg', 'o_ftr'], ['o_tov100', 'o_ast100', 'o_ast_pct', 't_dreb_pct', 't_oreb_pct', 't_stocks100'], ['o_fb100', 'o_sc100']],
   'teams.shooting': [['o_efg', 'o_fg2_pct', 'o_fg3_pct'], ZONES.map(z => zp('o_', z))],
 };
 

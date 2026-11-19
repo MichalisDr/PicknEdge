@@ -149,7 +149,7 @@ export const METRICS = [
   e('o_a3_rate', 'Opp 3PA / FGA', T, 'pct', S('o_a3'), S('o_fga'), B, 1, 'Share of opponent field-goal attempts that are three-pointers.'),
 
   // ---------- teams: rebounds ----------
-  e('t_oreb_pct', 'OREB%', T, 'pct', S('oreb'), [[1, 'oreb'], [1, 'o_dreb']], B, 1, 'Offensive rebounds taken / offensive rebounds available (own OREB + opponent DREB).'),
+  e('t_oreb_pct', 'OREB%', T, 'pct', S('oreb'), [[1, 'oreb'], [1, 'o_dreb']], FB, 1, 'Offensive rebounds taken / offensive rebounds available (own OREB + opponent DREB).'),
   e('t_dreb_pct', 'DREB%', T, 'pct', S('dreb'), [[1, 'dreb'], [1, 'o_oreb']], FB, 1, 'Defensive rebounds taken / defensive rebounds available (own DREB + opponent OREB).'),
 
   // ---------- teams: per 100 possessions (offense stats on own possessions, defense stats on opponent possessions) ----------
@@ -157,6 +157,8 @@ export const METRICS = [
   e('o_tov100', 'Opp TOV / 100 poss', T, 'per100', S('o_tov'), S('o_poss'), FB, 1, 'Opponent turnovers per 100 opponent possessions.'),
   e('t_ast100', 'AST / 100 poss', T, 'per100', S('ast'), S('poss'), B, 1, 'Own assists per 100 own possessions.'),
   e('o_ast100', 'Opp AST / 100 poss', T, 'per100', S('o_ast'), S('o_poss'), FB, 1, 'Opponent assists per 100 opponent possessions.'),
+  e('o_ast_pct', 'Opp AST%', T, 'pct', S('o_ast'), [[1, 'o_m2'], [1, 'o_m3']], FB, 1, 'Share of opponent field goals that were assisted.'),
+  e('t_stocks100', 'STOCKS/100', T, 'per100', [[1, 'stl'], [1, 'blk']], S('o_poss'), F, 1, 'Own steals + blocks (blocks in favour, not blocks against) per 100 defensive (= opponent) possessions.'),
   e('t_stl100', 'STL / 100 poss', T, 'per100', S('stl'), S('o_poss'), B, 1, 'Own steals per 100 defensive (= opponent) possessions.'),
   e('o_stl100', 'Opp STL / 100 poss', T, 'per100', S('o_stl'), S('poss'), B, 1, 'Opponent steals per 100 of their defensive (= own) possessions.'),
   e('t_blk_pct', 'BLK%', T, 'pct', S('blk'), S('o_a2'), B, 1, 'Own blocks as a share of opponent two-point attempts.'),

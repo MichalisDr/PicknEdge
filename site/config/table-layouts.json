@@ -57,10 +57,12 @@
         [
           { "metric": "o_tov100", "label": "Opp TOV/100", "colour": "rank", "chart": true },
           { "metric": "o_ast100", "label": "Opp AST/100", "colour": "rank", "chart": true },
-          { "metric": "t_dreb_pct", "label": "DREB%", "colour": "rank", "chart": true }
+          { "metric": "o_ast_pct", "label": "Opp AST%", "colour": "rank", "chart": true },
+          { "metric": "t_dreb_pct", "label": "DREB%", "colour": "rank", "chart": true },
+          { "metric": "t_oreb_pct", "label": "OREB%", "colour": "rank", "chart": true },
+          { "metric": "t_stocks100", "label": "STOCKS/100", "colour": "rank", "chart": true }
         ],
         [
-          { "metric": "o_pot100", "label": "Opp PTS off TO", "colour": "rank", "chart": true },
           { "metric": "o_fb100", "label": "Opp fast break", "colour": "rank", "chart": true },
           { "metric": "o_sc100", "label": "Opp 2nd chance", "colour": "rank", "chart": true }
         ]
