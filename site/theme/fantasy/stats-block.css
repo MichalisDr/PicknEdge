@@ -43,3 +43,28 @@
 .sb .cell.lead,.sb .cell.low{grid-column:1/-1}
 .sb .t48 .v b{font-size:var(--fantasy-stats-block-value-48-font-size-narrow);line-height:var(--fantasy-stats-block-value-48-line-height-narrow)}
 }
+
+/* Tiles (.sb-tiles, the player cards): the same cells (.m) in tiles. Wide: the lead tile on the left spanning the stacked section tiles, a full section as a full-width tile below.
+   The first column of a full tile is as wide as the lead tile plus a gap minus a column gap, so its cells sit under the same x as the cells of the tiles above. */
+.sb-board{display:grid;grid-template-columns:var(--fantasy-stats-block-tile-board-columns);gap:var(--fantasy-stats-block-tile-gap)}
+.sb-tile{position:relative;grid-column:2;min-width:0;padding:var(--fantasy-stats-block-tile-padding);border:var(--fantasy-stats-block-tile-border-width) solid var(--fantasy-stats-block-tile-border);border-radius:var(--fantasy-stats-block-tile-radius);background:var(--fantasy-stats-block-tile-background)}
+.sb-tile.sb-full{grid-column:1/-1}
+.sb-tile.sb-lead{grid-column:1;grid-row:1/span var(--rows);width:var(--fantasy-stats-block-tile-lead-width);display:flex;flex-direction:column;justify-content:space-between;gap:var(--fantasy-stats-block-tile-gap);padding:var(--fantasy-stats-block-tile-lead-padding)}
+.sb-hair{display:block;align-self:stretch;height:var(--fantasy-stats-block-tile-border-width);background:var(--fantasy-stats-block-tile-border)}
+.sb-tile-title{position:absolute;top:var(--fantasy-stats-block-tile-title-top);left:var(--fantasy-stats-block-tile-title-left);padding:var(--fantasy-stats-block-tile-title-padding);border-radius:var(--fantasy-stats-block-tile-title-radius);background:var(--fantasy-stats-block-tile-background);font-size:var(--fantasy-stats-block-section-title-font-size);line-height:var(--fantasy-stats-block-section-title-line-height);font-weight:var(--fantasy-stats-block-section-title-font-weight);letter-spacing:var(--fantasy-stats-block-tile-title-letter-spacing);text-transform:uppercase;color:var(--fantasy-player-card-section-title-text)}
+.sb-cells{display:grid;grid-template-columns:var(--fantasy-stats-block-tile-cells-columns);column-gap:var(--fantasy-stats-block-tile-column-gap);align-items:last baseline}
+.sb-full .sb-cells{grid-template-columns:var(--fantasy-stats-block-tile-cells-columns-full)}
+.sb-cell{min-width:0}
+.sb-cell:has(.sub){padding-bottom:var(--fantasy-stats-block-tile-cell-padding-bottom-with-sub)}
+/* Mid: every tile full width, the lead tile with PIR and nsPIR side by side (the hairline turns vertical); a full tile has one column per cell. */
+@container sb (max-width:779px){
+.sb-board{grid-template-columns:var(--fantasy-stats-block-tile-board-columns-mid)}
+.sb-tile,.sb-tile.sb-full,.sb-tile.sb-lead{grid-column:1;grid-row:auto}
+.sb-tile.sb-lead{width:auto;flex-direction:row;justify-content:flex-start;align-items:last baseline;gap:var(--fantasy-stats-block-tile-column-gap)}
+.sb-hair{align-self:stretch;width:var(--fantasy-stats-block-tile-border-width);height:auto}
+.sb-full .sb-cells{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:var(--fantasy-stats-block-tile-cells-auto-column)}
+}
+/* Narrow: two columns of cells in every tile. */
+@container sb (max-width:519px){
+.sb-cells,.sb-full .sb-cells{grid-auto-flow:row;grid-template-columns:var(--fantasy-stats-block-tile-cells-columns-narrow);row-gap:var(--fantasy-stats-block-tile-gap)}
+}

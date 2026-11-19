@@ -437,7 +437,22 @@ body{
 --fantasy-stats-block-label-gap:8px;
 --fantasy-stats-block-value-gap:4px;
 --fantasy-stats-block-halo-inset:-8px -12px;
---fantasy-stats-block-sub-top:100%
+--fantasy-stats-block-sub-top:100%;
+--fantasy-stats-block-tile-gap:16px;
+--fantasy-stats-block-tile-padding:20px 20px 16px;
+--fantasy-stats-block-tile-lead-width:216px;
+--fantasy-stats-block-tile-lead-padding:16px 20px;
+--fantasy-stats-block-tile-column-gap:24px;
+--fantasy-stats-block-tile-title-top:-8px;
+--fantasy-stats-block-tile-title-left:28px;
+--fantasy-stats-block-tile-title-padding:0 8px;
+--fantasy-stats-block-tile-cell-padding-bottom-with-sub:16px;
+--fantasy-stats-block-tile-board-columns:var(--fantasy-stats-block-tile-lead-width) minmax(0,1fr);
+--fantasy-stats-block-tile-board-columns-mid:minmax(0,1fr);
+--fantasy-stats-block-tile-cells-columns:repeat(4,minmax(0,1fr));
+--fantasy-stats-block-tile-cells-columns-full:calc(var(--fantasy-stats-block-tile-lead-width) + var(--fantasy-stats-block-tile-gap) - var(--fantasy-stats-block-tile-column-gap)) repeat(4,minmax(0,1fr));
+--fantasy-stats-block-tile-cells-columns-narrow:repeat(2,minmax(0,1fr));
+--fantasy-stats-block-tile-cells-auto-column:minmax(0,1fr)
 }
 body[data-area=fantasy]{
 --app-page-content-padding:clamp(16px,2vw,25px) clamp(18px,3vw,36px) clamp(18px,3vw,36px);

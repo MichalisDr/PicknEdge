@@ -8,7 +8,7 @@ const PER_ROW = 4, MISSING = '–';
 let layoutPromise = null;
 const layoutFile = () => layoutPromise || (layoutPromise = fetch(new URL('../../config/layout.json', import.meta.url)).then(r => { if (!r.ok) throw new Error('layout.json ' + r.status); return r.json(); }));
 
-function cellHtml(id, cell, view, byId, sel, players, place = '', cls = '') {
+function cellHtml(id, cell, view, byId, sel, players, place = '', cls = '', wrap = 'cell') {
   const m = byId[cell.metric], c = view.get(id, cell.metric), label = cell.label || m.label, has = Number.isFinite(c?.value);
   const r = players ? null : teamRank(view, cell.metric, c?.value, m.direction), tone = r ? ` ev-${r.tone}` : '';
   const subs = (cell.sub || []).map(s => {
@@ -17,7 +17,7 @@ function cellHtml(id, cell, view, byId, sel, players, place = '', cls = '') {
     return `<span class="sub">${esc(sc.value === 0 && s.zeroText ? s.zeroText : s.text.replace('{v}', sc.value.toFixed(byId[s.metric].format.digits)))}</span>`;
   }).join('');
   const text = has ? c.value.toFixed(m.format.digits) : MISSING, unit = has ? cell.unit ?? (m.format.suffix || '') : '';   // the number and its unit are separate elements
-  return `<div class="cell ${cls}"${place ? ` style="${place}"` : ''}><button class="m t${cell.size}${tone}" data-metric="${cell.metric}" aria-pressed="${sel === cell.metric}" aria-label="${esc(label + ' ' + text + (unit ? ' ' + unit : ''))}" title="${esc(m.description)}">`
+  return `<div class="${wrap}${cls ? ' ' + cls : ''}"${place ? ` style="${place}"` : ''}><button class="m t${cell.size}${tone}" data-metric="${cell.metric}" aria-pressed="${sel === cell.metric}" aria-label="${esc(label + ' ' + text + (unit ? ' ' + unit : ''))}" title="${esc(m.description)}">`
     + `<span class="lab">${esc(label)}${r ? `<span class="rk">#${r.position}</span>` : ''}</span>`
     + `<span class="v"><b>${esc(text)}</b>${unit ? `<u>${esc(unit)}</u>` : ''}</span>${subs}</button></div>`;
 }
@@ -26,6 +26,7 @@ function cellHtml(id, cell, view, byId, sel, players, place = '', cls = '') {
 export async function layoutGrid(id, name, view, byId, sel, players) {
   const L = (await layoutFile()).layouts[name];
   if (!L) throw new Error('no layout ' + name);
+  if (L.tiles) return tilesGrid(id, name, L, view, byId, sel, players);
   let row = 1, ruleEnd = null;
   const sections = L.sections.map(s => {
     const head = row, top = row + 1, right = s.full ? s.cells.length - 1 : s.cells.length;
@@ -36,4 +37,13 @@ export async function layoutGrid(id, name, view, byId, sel, players) {
   const left = [L.hero && cellHtml(id, L.hero, view, byId, sel, players, at(1), 'left lead'), L.low && cellHtml(id, L.low, view, byId, sel, players, at(sections[1]?.top ?? sections[0]?.top ?? 1), 'left low')].filter(Boolean).join('');
   const body = sections.map(s => `<div class="sh${s.full ? ' full' : ''}" style="${at(s.head)}"><span>${esc(s.title)}</span><i></i></div>${s.cells.map((cell, i) => { if (s.full && i === 0) return cellHtml(id, cell, view, byId, sel, players, at(s.top), 'left'); const j = s.full ? i - 1 : i; return cellHtml(id, cell, view, byId, sel, players, at(s.top + Math.floor(j / PER_ROW), j % PER_ROW + 1), j % PER_ROW ? '' : 'first'); }).join('')}`).join('');
   return `<div class="sb" data-layout="${name}"><div class="sb-grid" style="--rows:${row - 1}">${left}<i class="vr" aria-hidden="true" style="--r:1 / ${ruleEnd ?? row}"></i>${body}</div></div>`;
+}
+
+/* Tiles (layouts flagged "tiles": true, the player cards): a lead tile (hero above a hairline and the low slot), then one tile per section with its title on the border;
+   a 'full' section is a full-width tile below. Placement is the CSS of theme/fantasy/stats-block.css (.sb-board); --rows is the number of rows the lead tile spans. */
+function tilesGrid(id, name, L, view, byId, sel, players) {
+  const one = (cell, cls = '') => cellHtml(id, cell, view, byId, sel, players, '', cls, 'sb-cell');
+  const lead = `<div class="sb-tile sb-lead">${one(L.hero)}${L.low ? `<i class="sb-hair" aria-hidden="true"></i>${one(L.low)}` : ''}</div>`;
+  const tiles = L.sections.map(s => `<div class="sb-tile${s.full ? ' sb-full' : ''}" role="group" aria-label="${esc(s.title)}"><span class="sb-tile-title" aria-hidden="true">${esc(s.title)}</span><div class="sb-cells">${s.cells.map(c => one(c)).join('')}</div></div>`).join('');
+  return `<div class="sb sb-tiles" data-layout="${name}"><div class="sb-board" style="--rows:${Math.max(1, L.sections.filter(s => !s.full).length)}">${lead}${tiles}</div></div>`;
 }

@@ -1506,6 +1506,14 @@
     "halo": {
      "radius": "8px",
      "background": "{semantic.chip}"
+    },
+    "tile": {
+     "background": "{semantic.sortcell}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "16px",
+     "title-radius": "8px 8px 0 0",
+     "title-letter-spacing": "0.04em"
     }
    }
   }
