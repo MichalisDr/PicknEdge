@@ -1,0 +1,45 @@
+/* The stats block of the Fantasy cards (markup: fantasy/cards/metric-grid.js, content: config/layout.json). Stats sit directly on the card background: no boxes, no frames.
+   A grid whose items share last baselines per row. The dividers are grid items of their own (.vr, and the rule inside .sh), not borders of the cells.
+   It adapts to its own width (container queries on .sb): wide >= 780px, mid 520-779px, narrow < 520px. */
+.sb{container:sb/inline-size}
+.sb-grid{display:grid;grid-template-columns:var(--fantasy-stats-block-grid-grid-template-columns);grid-template-rows:repeat(var(--rows),auto);align-items:last baseline}
+.sb .vr{grid-column:2;grid-row:var(--r);align-self:stretch;width:var(--fantasy-stats-block-rule-size);background:var(--color-border-soft)}
+.sb .sh{grid-column:3/-1;grid-row:var(--r);display:flex;align-items:center;gap:var(--fantasy-stats-block-section-header-gap);padding:var(--fantasy-stats-block-section-header-padding-top) 0 var(--fantasy-stats-block-section-header-padding-bottom) var(--fantasy-stats-block-cell-padding-left-first);font-size:var(--fantasy-stats-block-section-title-font-size);line-height:var(--fantasy-stats-block-section-title-line-height);font-weight:var(--fantasy-stats-block-section-title-font-weight);text-transform:uppercase;color:var(--fantasy-player-card-section-title-text)}
+.sb .sh i{flex:1;height:var(--fantasy-stats-block-rule-size);background:var(--color-border-soft)}
+.sb .cell{grid-row:var(--r);grid-column:calc(var(--c,1) + 2);padding:0 0 var(--fantasy-stats-block-cell-padding-bottom) var(--fantasy-stats-block-cell-padding-left);min-width:0}
+.sb .cell:has(.sub){padding-bottom:var(--fantasy-stats-block-cell-padding-bottom-with-sub)}.sb .cell.first{padding-left:var(--fantasy-stats-block-cell-padding-left-first)}
+.sb .cell.left{grid-column:1;padding-left:0}
+.sb .cell.lead{grid-row:1/span 2;align-self:start;padding-top:var(--fantasy-stats-block-section-header-padding-top);padding-bottom:0}
+.sb .sh.full{grid-column:1/-1;padding-left:0}
+.sb .m{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:flex-start;margin:0;padding:0;background:none;border:0;color:var(--fantasy-player-card-tile-text);font:inherit;text-align:left;cursor:pointer}
+.sb .m::after{content:"";position:absolute;inset:var(--fantasy-stats-block-halo-inset);z-index:-1;border-radius:var(--fantasy-stats-block-halo-radius);pointer-events:none}
+.sb .m:hover::after,.sb .m:focus-visible::after{background:var(--fantasy-stats-block-halo-background)}
+.sb .m[aria-pressed=true]::after{box-shadow:var(--fantasy-player-card-tile-selected-shadow-size) var(--fantasy-player-card-tile-selected-border)}
+.sb .m:focus-visible{outline:0}
+.sb .lab{display:flex;align-items:baseline;gap:var(--fantasy-stats-block-label-gap);margin-bottom:var(--fantasy-stats-block-label-margin-bottom);font-size:var(--fantasy-stats-block-label-font-size);line-height:var(--fantasy-stats-block-label-line-height);font-weight:var(--fantasy-stats-block-label-font-weight);color:var(--fantasy-player-card-tile-label-text)}
+.sb .rk{padding:0;border-radius:0;background:none;font-size:var(--fantasy-stats-block-rank-font-size);line-height:var(--fantasy-stats-block-rank-line-height);font-weight:var(--fantasy-stats-block-rank-font-weight);color:var(--fantasy-player-card-tile-rank-text)}
+.sb .v{display:flex;align-items:baseline;gap:var(--fantasy-stats-block-value-gap);white-space:nowrap}
+.sb .v u{text-decoration:none;font-size:var(--fantasy-stats-block-unit-font-size);line-height:var(--fantasy-stats-block-unit-line-height);font-weight:var(--fantasy-stats-block-unit-font-weight);color:var(--fantasy-player-card-tile-unit-text)}
+.sb .sub{position:absolute;left:0;top:var(--fantasy-stats-block-sub-top);white-space:nowrap;font-size:var(--fantasy-stats-block-sub-font-size);line-height:var(--fantasy-stats-block-sub-line-height);color:var(--fantasy-player-card-tile-note-text)}
+.sb .t48 .v b{font-size:var(--fantasy-stats-block-value-48-font-size);line-height:var(--fantasy-stats-block-value-48-line-height);font-weight:var(--fantasy-stats-block-value-48-font-weight)}
+.sb .t32 .v b{font-size:var(--fantasy-stats-block-value-32-font-size);line-height:var(--fantasy-stats-block-value-32-line-height);font-weight:var(--fantasy-stats-block-value-32-font-weight)}
+.sb .t24 .v b{font-size:var(--fantasy-stats-block-value-24-font-size);line-height:var(--fantasy-stats-block-value-24-line-height);font-weight:var(--fantasy-stats-block-value-24-font-weight)}
+.sb .t20 .v b{font-size:var(--fantasy-stats-block-value-20-font-size);line-height:var(--fantasy-stats-block-value-20-line-height);font-weight:var(--fantasy-stats-block-value-20-font-weight)}
+.sb .t16 .v b{font-size:var(--fantasy-stats-block-value-16-font-size);line-height:var(--fantasy-stats-block-value-16-line-height);font-weight:var(--fantasy-stats-block-value-16-font-weight)}
+.sb .ev-good .v b{color:var(--fantasy-player-card-tile-rank-good-text)}.sb .ev-avg .v b{color:var(--fantasy-player-card-tile-rank-average-text)}.sb .ev-bad .v b{color:var(--fantasy-player-card-tile-rank-bad-text)}.sb .ev-neutral .v b{color:var(--fantasy-player-card-tile-rank-neutral-text)}
+/* Mid: four columns, no left column; the hero spans columns 1-2, the low slot 3-4; sections flow in DOM order (a fifth cell wraps to the next row). */
+@container sb (max-width:779px){
+.sb-grid{grid-template-columns:var(--fantasy-stats-block-grid-grid-template-columns-mid);grid-template-rows:none}
+.sb .vr{display:none}
+.sb .sh{grid-column:1/-1;grid-row:auto;padding-left:0}
+.sb .cell,.sb .cell.left,.sb .cell.first{grid-row:auto;grid-column:auto;padding-left:0;padding-right:var(--fantasy-stats-block-cell-padding-left)}
+.sb .cell.lead{grid-column:1/span 2;align-self:auto;padding-top:0;padding-bottom:var(--fantasy-stats-block-cell-padding-bottom)}
+.sb .cell.low{grid-column:3/span 2}
+}
+/* Narrow: two columns, the hero value 40px, no dividers. */
+@container sb (max-width:519px){
+.sb-grid{grid-template-columns:var(--fantasy-stats-block-grid-grid-template-columns-narrow)}
+.sb .sh i{display:none}
+.sb .cell.lead,.sb .cell.low{grid-column:1/-1}
+.sb .t48 .v b{font-size:var(--fantasy-stats-block-value-48-font-size-narrow);line-height:var(--fantasy-stats-block-value-48-line-height-narrow)}
+}

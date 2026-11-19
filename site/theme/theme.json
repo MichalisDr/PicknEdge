@@ -647,8 +647,9 @@
    },
    "player-card": {
     "box-scores-cell-note": {
-     "font-size": "10px",
-     "text": "{semantic.text-muted-2}"
+     "font-size": "12px",
+     "text": "{semantic.text-muted-2}",
+     "line-height": "16px"
     },
     "box-scores-first-column": {
      "background": "{semantic.surface-dialog}",
@@ -656,8 +657,10 @@
      "shadow-size-below-650px": "1px 0 0"
     },
     "box-scores-header": {
-     "font-size": "11px",
-     "text": "{semantic.text-subtle}"
+     "font-size": "12px",
+     "text": "{semantic.text-subtle}",
+     "line-height": "16px",
+     "font-weight": "500"
     },
     "box-scores-header-button": {
      "radius": "4px",
@@ -668,7 +671,7 @@
      "outline-width": "2px"
     },
     "box-scores-header-note": {
-     "font-size": "10px",
+     "font-size": "12px",
      "text": "{semantic.text-muted-2}"
     },
     "box-scores-row": {
@@ -679,14 +682,16 @@
      "background": "#ef3d2518"
     },
     "box-scores-table-body": {
-     "font-size": "13px"
+     "font-size": "14px",
+     "line-height": "20px"
     },
     "close-and-next-button": {
      "background": "{semantic.field}",
      "border-width": "1px",
-     "radius": "5px",
+     "radius": "8px",
      "text": "{semantic.text}",
-     "font-size-2": "13px"
+     "font-size-2": "14px",
+     "line-height": "20px"
     },
     "close-and-next-button-hovered": {
      "border": "{semantic.accent-fantasy}"
@@ -696,7 +701,7 @@
      "border": "{semantic.border-control}",
      "border-width": "1px",
      "font-size": "20px",
-     "radius": "5px",
+     "radius": "8px",
      "text": "{semantic.text}"
     },
     "close-button-hovered": {
@@ -710,13 +715,16 @@
      "background": "{semantic.border-control}"
     },
     "controls-games-played-label": {
-     "font-size": "11px",
-     "text": "{semantic.muted}"
+     "font-size": "12px",
+     "text": "{semantic.muted}",
+     "line-height": "16px",
+     "font-weight": "400"
     },
     "controls-games-played-number": {
-     "font-size": "13px",
+     "font-size": "14px",
      "font-weight": "600",
-     "text": "{semantic.text}"
+     "text": "{semantic.text}",
+     "line-height": "20px"
     },
     "cr-box": {
      "border": "#645977",
@@ -724,13 +732,15 @@
      "radius": "4px"
     },
     "cr-box-label": {
-     "font-size": "9px",
-     "text": "{semantic.muted}"
+     "font-size": "12px",
+     "text": "{semantic.muted}",
+     "line-height": "16px"
     },
     "cr-box-value": {
-     "font-size": "13px",
-     "font-weight": "550",
-     "text": "{semantic.text}"
+     "font-size": "14px",
+     "font-weight": "600",
+     "text": "{semantic.text}",
+     "line-height": "16px"
     },
     "header": {
      "background": "{semantic.violet-header}",
@@ -745,16 +755,19 @@
     },
     "header-city": {
      "font-size": "12px",
-     "text": "{semantic.muted}"
+     "text": "{semantic.muted}",
+     "line-height": "16px"
     },
     "header-given-name": {
-     "font-size": "13px",
-     "text": "#d7d4dd"
+     "font-size": "12px",
+     "text": "#d7d4dd",
+     "line-height": "16px"
     },
     "header-name": {
-     "font-size": "clamp(19px,2.6vw,22px)",
+     "font-size": "24px",
      "font-weight": "600",
-     "text": "{semantic.text}"
+     "text": "{semantic.text}",
+     "line-height": "32px"
     },
     "header-portrait-fade": {
      "default-colour": "{semantic.border-control}",
@@ -785,9 +798,10 @@
      "border-bottom-width": "1px"
     },
     "header-team-name": {
-     "font-size": "clamp(20px,2.6vw,24px)",
-     "font-weight": "650",
-     "text": "{semantic.text}"
+     "font-size": "24px",
+     "font-weight": "600",
+     "text": "{semantic.text}",
+     "line-height": "32px"
     },
     "large-tile": {
      "border": "#3a4d68"
@@ -801,7 +815,7 @@
      "font-size-below-650px": "26px"
     },
     "legend": {
-     "font-size": "11px",
+     "font-size": "12px",
      "text": "{semantic.text-subtle}"
     },
     "legend-rolling-line": {
@@ -811,7 +825,8 @@
     "next-game-button": {
      "background": "transparent",
      "font-size": "12px",
-     "radius": "5px"
+     "radius": "8px",
+     "line-height": "16px"
     },
     "next-game-button-hovered": {
      "background": "{semantic.chip}"
@@ -819,27 +834,27 @@
     "next-game-label": {
      "text": "{semantic.text}"
     },
-    "rank-label": {
-     "font-size": "11px"
-    },
     "section-title": {
-     "font-size": "11px",
-     "text": "{semantic.text-subtle}"
+     "font-size": "12px",
+     "text": "{semantic.text-subtle}",
+     "line-height": "16px"
     },
     "section-title-text": {
-     "font-size": "14px"
+     "font-size": "16px",
+     "line-height": "24px",
+     "font-weight": "600"
     },
     "section-title-value": {
-     "text": "{semantic.accent-fantasy-light}"
+     "text": "{semantic.accent-fantasy-light}",
+     "font-size": "16px",
+     "line-height": "24px",
+     "font-weight": "600"
     },
     "shot-chart-note": {
-     "font-size": "11px"
-    },
-    "small-sample-marker": {
-     "font-size": "10px"
+     "font-size": "12px"
     },
     "small-sample-note": {
-     "font-size": "10px",
+     "font-size": "12px",
      "text": "#f2c14e"
     },
     "small-tile-value": {
@@ -850,23 +865,27 @@
      "background": "#1c2330",
      "border": "{semantic.border-soft}",
      "border-width": "1px",
-     "radius": "10px"
+     "radius": "8px"
     },
     "summary-box-label": {
-     "font-size": "11px",
-     "text": "{semantic.text-subtle}"
+     "font-size": "12px",
+     "text": "{semantic.text-subtle}",
+     "line-height": "16px"
     },
     "summary-box-note": {
-     "font-size": "11px",
-     "text": "{semantic.text-muted-2}"
+     "font-size": "12px",
+     "text": "{semantic.text-muted-2}",
+     "line-height": "16px"
     },
     "summary-box-value": {
-     "font-size": "17px",
-     "text": "#e7edf5"
+     "font-size": "16px",
+     "text": "#e7edf5",
+     "line-height": "24px",
+     "font-weight": "600"
     },
     "switch-button": {
-     "font-size": "13px",
-     "radius": "5px",
+     "font-size": "14px",
+     "radius": "4px",
      "text": "#b8c7da"
     },
     "switch-button-selected": {
@@ -879,8 +898,9 @@
      "radius": "8px"
     },
     "team-line": {
-     "font-size": "11px",
-     "text": "{semantic.muted}"
+     "font-size": "12px",
+     "text": "{semantic.muted}",
+     "line-height": "16px"
     },
     "team-line-divider": {
      "background": "{semantic.border-control}"
@@ -892,25 +912,15 @@
      "text": "{semantic.muted}"
     },
     "tile": {
-     "background": "#182335",
-     "border": "#2b3a4f",
-     "border-width": "1px",
-     "radius": "9px",
      "text": "{semantic.text-soft}"
     },
-    "tile-accent-text": {
-     "text": "{semantic.accent-fantasy-light}"
-    },
     "tile-label": {
-     "font-size": "11px",
      "text": "#acbace"
     },
     "tile-note": {
-     "font-size": "12px",
      "text": "{semantic.text-soft}"
     },
     "tile-rank": {
-     "font-size": "11px",
      "text": "{semantic.muted}"
     },
     "tile-rank-average": {
@@ -930,17 +940,8 @@
      "shadow": "{semantic.accent-fantasy}",
      "shadow-size": "inset 0 0 0 1px"
     },
-    "tile-side-label": {
-     "font-size": "11px",
-     "text": "{semantic.muted}"
-    },
     "tile-unit": {
-     "font-size": "11px",
      "text": "#acbace"
-    },
-    "tile-value": {
-     "font-size": "24px",
-     "font-size-below-650px": "21px"
     },
     "trend-axis": {
      "line": "{semantic.border-control}"
@@ -958,7 +959,7 @@
      "opacity": "0.35"
     },
     "trend-labels": {
-     "font-size": "11px",
+     "font-size": "12px",
      "text": "{semantic.muted}"
     },
     "trend-season": {
@@ -973,13 +974,15 @@
      "radius": "4px"
     },
     "value-chip-label": {
-     "font-size": "9px",
-     "text": "{semantic.muted}"
+     "font-size": "12px",
+     "text": "{semantic.muted}",
+     "line-height": "16px"
     },
     "value-chip-value": {
-     "font-size": "12px",
-     "font-weight": "550",
-     "text": "{semantic.positive}"
+     "font-size": "14px",
+     "font-weight": "600",
+     "text": "{semantic.positive}",
+     "line-height": "16px"
     },
     "value-sparkline": {
      "line": "{semantic.positive}",
@@ -988,8 +991,9 @@
     },
     "view-button": {
      "font-size": "12px",
-     "radius": "5px",
-     "text": "{semantic.muted}"
+     "radius": "8px",
+     "text": "{semantic.muted}",
+     "line-height": "16px"
     },
     "view-button-selected": {
      "text": "{semantic.accent-fantasy}",
@@ -1003,7 +1007,7 @@
      "background": "{semantic.surface-dialog}",
      "border": "{semantic.line}",
      "border-width": "1px",
-     "radius": "14px",
+     "radius": "16px",
      "text": "{semantic.text}"
     },
     "window-backdrop": {
@@ -1013,8 +1017,10 @@
      "border": "{semantic.border-control}",
      "border-width": "1px",
      "font-size": "12px",
-     "radius": "5px",
-     "text": "{semantic.text}"
+     "radius": "8px",
+     "text": "{semantic.text}",
+     "font-weight": "500",
+     "line-height": "16px"
     },
     "window-button-hovered": {
      "background": "{semantic.chip}"
@@ -1023,6 +1029,9 @@
      "background": "{semantic.accent-fantasy}",
      "border": "{semantic.accent-fantasy}",
      "text": "{semantic.white}",
+     "font-weight": "600"
+    },
+    "box-scores-strong": {
      "font-weight": "600"
     }
    },
@@ -1049,8 +1058,9 @@
      "line": "#4a5b72"
     },
     "explanation": {
-     "font-size": "11px",
-     "text": "{semantic.accent-fantasy-light}"
+     "font-size": "12px",
+     "text": "{semantic.accent-fantasy-light}",
+     "line-height": "16px"
     },
     "hexagon": {
      "border": "{semantic.surface-deep}"
@@ -1066,8 +1076,9 @@
      "line": "#8da0b8"
     },
     "note": {
-     "font-size": "11px",
-     "text": "#91a2b7"
+     "font-size": "12px",
+     "text": "#91a2b7",
+     "line-height": "16px"
     },
     "popup": {
      "background": "#111c2b",
@@ -1086,7 +1097,7 @@
      "text": "#a2b4c9"
     },
     "popup-note": {
-     "font-size": "11px",
+     "font-size": "12px",
      "text": "#8ea0b5"
     },
     "popup-selected-row": {
@@ -1097,7 +1108,7 @@
      "text": "{semantic.accent-fantasy-light}"
     },
     "popup-title": {
-     "font-size": "13px"
+     "font-size": "14px"
     },
     "second-chance-button-selected": {
      "background": "{semantic.accent-fantasy-dark}",
@@ -1108,8 +1119,9 @@
      "border": "{semantic.border-control}",
      "border-width": "1px",
      "font-size": "12px",
-     "radius": "6px",
-     "text": "{semantic.text-soft}"
+     "radius": "8px",
+     "text": "{semantic.text-soft}",
+     "line-height": "16px"
     },
     "view-button-selected": {
      "background": "{semantic.accent-fantasy}",
@@ -1437,6 +1449,63 @@
     },
     "value-good": {
      "text": "{semantic.eval-good-text}"
+    }
+   },
+   "stats-block": {
+    "label": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "400"
+    },
+    "unit": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "500"
+    },
+    "sub": {
+     "font-size": "12px",
+     "line-height": "16px"
+    },
+    "rank": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "500"
+    },
+    "section-title": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "500"
+    },
+    "value-48": {
+     "font-size": "48px",
+     "line-height": "52px",
+     "font-weight": "600",
+     "font-size-narrow": "40px",
+     "line-height-narrow": "40px"
+    },
+    "value-32": {
+     "font-size": "32px",
+     "line-height": "40px",
+     "font-weight": "600"
+    },
+    "value-24": {
+     "font-size": "24px",
+     "line-height": "32px",
+     "font-weight": "500"
+    },
+    "value-20": {
+     "font-size": "20px",
+     "line-height": "24px",
+     "font-weight": "500"
+    },
+    "value-16": {
+     "font-size": "16px",
+     "line-height": "24px",
+     "font-weight": "500"
+    },
+    "halo": {
+     "radius": "8px",
+     "background": "{semantic.chip}"
     }
    }
   }

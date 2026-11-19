@@ -42,7 +42,7 @@ const closeBtn = {}, closeAt = { where: 'dialog' };   // the single Close button
 const dlg = { className: '', querySelector: s => (s === '.fw-card' ? root : s === '.fw-close' ? closeBtn : {}), prepend: el => { assert.equal(el, closeBtn); closeAt.where = 'dialog'; }, showModal() {}, close() {}, remove() {} };
 globalThis.document = { createElement: () => dlg, body: { append() {} }, activeElement: null };
 globalThis.window = { addEventListener() {} };
-globalThis.fetch = async () => ({ ok: true, json: async () => ({ cols: 24, layouts: Object.fromEntries(['team.profile', 'team.shooting', 'player.profile', 'player.shooting'].map(k => [k, { rows: 1, boxes: [], lines: [] }])) }) });
+globalThis.fetch = async () => ({ ok: true, json: async () => ({ cols: 24, layouts: Object.fromEntries(['team.profile', 'team.shooting', 'player.profile', 'player.shooting'].map(k => [k, { sections: [] }])) }) });
 await useIcons();
 const { open } = await import('../../site/fantasy/cards/card.js');
 

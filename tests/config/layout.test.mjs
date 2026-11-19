@@ -1,4 +1,4 @@
-// Validates site/config/layout.json, the single source of the Fantasy card grids. Run: node --test tests/config
+// Validates site/config/layout.json, the single source of the stats block of the Fantasy cards. Run: node --test tests/config
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -7,85 +7,106 @@ import { METRICS } from '../../scripts/metrics/registry.mjs';
 const layout = JSON.parse(readFileSync(new URL('../../site/config/layout.json', import.meta.url), 'utf8'));
 const ids = new Set(METRICS.map(m => m.id)), scopeOf = Object.fromEntries(METRICS.map(m => [m.id, m.scope]));
 const NAMES = ['player.profile', 'team.profile', 'player.shooting', 'team.shooting'];
-const int = v => Number.isInteger(v);
-/* Cells left empty on purpose until the design is approved: player.profile lost cTOV% (x 6, y 8, w 6, h 2) and nothing fills its place yet. */
-const PENDING_HOLES = { 'player.profile': ['6,8', '7,8', '8,8', '9,8', '10,8', '11,8', '6,9', '7,9', '8,9', '9,9', '10,9', '11,9'] };
+const SIZES = [48, 32, 24, 20, 16];   // the type ladder of the stats block
+const cellsOf = L => [L.hero, L.low, ...L.sections.flatMap(s => s.cells)].filter(Boolean);
+const ofLayout = name => layout.layouts[name];
 
-test('the four card layouts exist on a 24-column grid', () => {
-  assert.equal(layout.cols, 24);
+test('the four card layouts exist, each with a hero and sections of cells on the type ladder', () => {
   assert.deepEqual(Object.keys(layout.layouts).sort(), [...NAMES].sort());
-  for (const n of NAMES) assert.ok(int(layout.layouts[n].rows) && layout.layouts[n].rows > 0, n);
-});
-
-for (const name of NAMES) {
-  const L = layout.layouts[name], scope = name.split('.')[0];
-  test(`${name}: every box is inside the grid and has integer cells`, () => {
-    for (const b of L.boxes) {
-      assert.ok([b.x, b.y, b.w, b.h].every(int), b.id);
-      assert.ok(b.x >= 0 && b.y >= 0 && b.w >= 1 && b.h >= 1 && b.x + b.w <= layout.cols && b.y + b.h <= L.rows, `${b.id} is outside ${layout.cols}x${L.rows}`);
-    }
-    assert.equal(new Set(L.boxes.map(b => b.id)).size, L.boxes.length, 'duplicate box ids');
-  });
-  test(`${name}: no overlaps and no holes (the boxes cover every cell exactly once)`, () => {
-    const cover = Array.from({ length: L.rows }, () => Array(layout.cols).fill(null));
-    for (const b of L.boxes) for (let y = b.y; y < b.y + b.h; y++) for (let x = b.x; x < b.x + b.w; x++) {
-      assert.equal(cover[y][x], null, `${b.id} overlaps ${cover[y][x]} at ${x},${y}`);
-      cover[y][x] = b.id;
-    }
-    const holes = []; cover.forEach((row, y) => row.forEach((c, x) => { if (c === null) holes.push(`${x},${y}`); }));
-    assert.deepEqual(holes, PENDING_HOLES[name] || []);
-  });
-  test(`${name}: lines lie on grid lines inside the grid`, () => {
-    for (const l of L.lines) {
-      assert.ok(l.o === 'h' || l.o === 'v');
-      assert.ok([l.x, l.y, l.n].every(int) && l.n >= 1, JSON.stringify(l));
-      assert.ok(l.x >= 0 && l.y >= 0 && l.x <= layout.cols && l.y <= L.rows, JSON.stringify(l));
-      if (l.o === 'h') assert.ok(l.x + l.n <= layout.cols, JSON.stringify(l)); else assert.ok(l.y + l.n <= L.rows, JSON.stringify(l));
-    }
-  });
-  test(`${name}: every metric id exists in the registry, with the right scope`, () => {
-    for (const b of L.boxes) {
-      const used = [b.metric, ...(b.sub || []).map(s => s.metric)].filter(Boolean);
-      assert.ok(b.metric, `${b.id} has no metric`);
-      for (const id of used) {
-        assert.ok(ids.has(id), `${b.id}: unknown metric ${id}`);
-        assert.equal(scopeOf[id], scope === 'player' ? 'player' : 'team', `${b.id}: ${id} has the wrong scope`);
-      }
-    }
-  });
-}
-
-test('the stacked (narrow) order covers every box of every layout exactly once, in the stack order or (y, x)', async () => {
-  const { stackOrder } = await import('../../site/core/stack-order.js');
-  for (const name of NAMES) {
-    const L = layout.layouts[name], order = stackOrder(L);
-    assert.equal(order.length, L.boxes.length, name);
-    assert.deepEqual([...order.map(b => b.id)].sort(), L.boxes.map(b => b.id).sort(), `${name}: each box exactly once`);
-    if (L.stack) { assert.equal(L.stack.length, L.boxes.length, name + ': stack lists every box'); assert.equal(new Set(L.stack).size, L.stack.length, name + ': no id twice'); assert.ok(L.stack.every(id => L.boxes.some(b => b.id === id)), name + ': no unknown id'); assert.ok(order.every(Boolean)); }
-    else for (let i = 1; i < order.length; i++) assert.ok(order[i].y > order[i - 1].y || (order[i].y === order[i - 1].y && order[i].x > order[i - 1].x), `${name}: order is (y, x)`);
+  for (const n of NAMES) {
+    const L = ofLayout(n);
+    assert.ok(L.hero && L.sections.length > 0, n);
+    for (const c of cellsOf(L)) assert.ok(SIZES.includes(c.size), `${n}: ${c.metric} size ${c.size}`);
+    for (const s of L.sections) assert.ok(s.title && s.cells.length > 0, `${n}: section ${s.title}`);
   }
 });
-
-test('player.profile (Batch 4): no Offensive Load, no cTOV%; TS% in the old Load position (provisional); PIR and TOV% as before; the empty area is the old cTOV% one', async () => {
-  const L = layout.layouts['player.profile'], by = Object.fromEntries(L.boxes.map(b => [b.id, b]));
-  assert.ok(!by.load && !by.ctov && !L.stack.includes('load') && !L.stack.includes('ctov'));
-  assert.ok(!L.boxes.some(b => [b.metric, ...(b.sub || []).map(s => s.metric)].some(m => ['load', 'bc', 'ctov', 'tov100', 'efg'].includes(m))), 'no Load / Box Creation / cTOV% / TOV per 100 / eFG% tile or line');
-  assert.deepEqual(by.ts, { id: 'ts', metric: 'ts_pct', label: 'TS%', x: 6, y: 4, w: 6, h: 4 });
-  assert.deepEqual(L.stack, ['pir', 'min', 'ftr', 'usg', 'ts', 'pts100', 'tov_pct', 'ast100', 'reb100', 'fd100', 'fc100'], 'ts sits where load was');
-  assert.deepEqual(L.stack.slice().sort(), L.boxes.map(b => b.id).sort(), 'the stack list matches the boxes');
-  assert.deepEqual([by.pir.x, by.pir.y, by.pir.w, by.pir.h, by.pir.unit, by.pir.sub], [6, 0, 12, 4, '/g', [{ metric: 'pir_min', unit: '/m' }, { metric: 'nspir100', label: 'nsPIR', unit: ' /100 poss', side: true }]]);
-  assert.deepEqual([by.tov_pct.metric, by.tov_pct.x, by.tov_pct.y, by.tov_pct.w, by.tov_pct.h, by.tov_pct.sub], ['tov_pct', 0, 8, 6, 2, [{ metric: 'tov_g', unit: '/g' }]]);
-  assert.equal(L.rows, 10); assert.equal(layout.cols, 24); assert.equal(L.boxes.length, 11);
+for (const name of NAMES) test(`${name}: every metric id exists in the registry, with the right scope; no metric twice`, () => {
+  const scope = name.split('.')[0], cells = cellsOf(ofLayout(name));
+  for (const c of cells) for (const id of [c.metric, ...(c.sub || []).map(s => s.metric)]) {
+    assert.ok(ids.has(id), `${name}: unknown metric ${id}`);
+    assert.equal(scopeOf[id], scope, `${name}: ${id} has the wrong scope`);
+  }
+  assert.equal(new Set(cells.map(c => c.metric)).size, cells.length, `${name}: a metric appears twice`);
 });
 
-test('the TS% tile shows the normal empty value when a player has no ts_pct, and the value otherwise', async () => {
+test('player.profile: the agreed stat set and sizes (PIR hero, nsPIR low slot, ROLE / EFFICIENCY / PRODUCTION)', () => {
+  const L = ofLayout('player.profile'), sec = Object.fromEntries(L.sections.map(s => [s.title, s.cells.map(c => [c.metric, c.size])]));
+  assert.deepEqual([L.hero.metric, L.hero.size, L.hero.unit], ['pir', 48, '/g']);
+  assert.deepEqual([L.low.metric, L.low.size, L.low.unit], ['nspir100', 20, '/100 poss']);
+  assert.deepEqual(sec, {
+    Role: [['min', 32], ['usg', 32]],
+    Efficiency: [['ts_pct', 24], ['ftr', 24], ['tov_pct', 24], ['pf_g', 16]],
+    Production: [['pts_g', 24], ['ast_g', 20], ['reb_g', 20], ['stocks_g', 20], ['fd_g', 16]],
+  });
+  assert.ok(!cellsOf(L).some(c => c.sub), 'single value each, no extra lines');
+});
+test('team.profile (proposal): DRtg hero, Pace low slot; DEFENSE, POSSESSION, OPPONENT OFFENSE; no Opp PTS off TO', () => {
+  const L = ofLayout('team.profile'), sec = Object.fromEntries(L.sections.map(s => [s.title, s.cells.map(c => [c.metric, c.size])]));
+  assert.deepEqual([L.hero.metric, L.hero.size, L.low.metric, L.low.size], ['drtg', 48, 'pace', 20]);
+  assert.deepEqual(sec, {
+    Defense: [['o_efg', 24], ['o_tov100', 24]],
+    Possession: [['o_ftr', 24], ['t_dreb_pct', 24], ['t_oreb_pct', 24], ['t_stocks100', 24]],
+    'Opponent offense': [['o_sc100', 20], ['o_ast100', 20], ['o_ast_pct', 20], ['o_fb100', 20]],
+  });
+  assert.ok(!cellsOf(L).some(c => c.metric === 'o_pot100'));
+});
+test('shooting layouts: eFG% hero with the kept sub lines, 2FG% / 3FG% / FT% at 24', () => {
+  const L = ofLayout('player.shooting'), by = Object.fromEntries(cellsOf(L).map(c => [c.metric, c]));
+  assert.deepEqual([L.hero.metric, L.hero.size], ['efg', 48]);
+  assert.deepEqual(L.hero.sub, [{ metric: 'fga100', text: 'FGA {v} /100' }]);
+  assert.deepEqual(by.fg3_pct.sub, [{ metric: 'a3_rate', text: '{v}% of FGA', zeroText: 'no 3PA' }]);
+  assert.deepEqual(L.sections[0].cells.map(c => [c.metric, c.size]), [['fg2_pct', 24], ['fg3_pct', 24], ['ft_pct', 24]]);
+});
+
+/* ---------- the markup ---------- */
+const byIdOf = digitsOf => Object.fromEntries(METRICS.map(m => [m.id, { ...m, format: { digits: digitsOf(m), suffix: m.kind === 'pct' ? '%' : '' } }]));
+async function grid(name, view, byId, sel = null, players = true) {
   globalThis.fetch = async () => ({ ok: true, json: async () => layout });
   const { layoutGrid } = await import('../../site/fantasy/cards/metric-grid.js');
-  const byId = Object.fromEntries(METRICS.map(m => [m.id, { ...m, format: { digits: 1, suffix: m.id === 'ts_pct' ? '%' : '' } }]));
-  const grid = value => layoutGrid('P1', 'player.profile', { get: (id, metric) => ({ value: metric === 'ts_pct' ? value : 5 }), row: () => ({}) }, byId, null, true);
-  const missing = await grid(NaN), has = await grid(61.234);
-  const tile = h => h.match(/<button class="fw-metric[^>]*data-metric="ts_pct".*?<\/button>/s)[0];
-  assert.ok(tile(missing).includes('<strong>—</strong>') && tile(missing).includes('TS%'));
-  assert.ok(tile(has).includes('61.2%') && tile(has).includes('TS%'));
-  assert.ok(!has.includes('Offensive Load') && !has.includes('cTOV%'));
+  return layoutGrid('P1', name, view, byId, sel, players);
+}
+const cell = (html, metric) => html.match(new RegExp(`<div class="cell[^"]*"[^>]*><button class="m [^"]*" data-metric="${metric}".*?</button></div>`, 's'))[0];
+
+test('a cell is a button with data-metric, aria-pressed and a title; a missing value shows "–" and no unit; the selected one is aria-pressed', async () => {
+  const byId = byIdOf(() => 1), view = { get: (id, metric) => ({ value: metric === 'ts_pct' ? NaN : metric === 'pir' ? 21.5 : 5 }), row: () => ({}) };
+  const html = await grid('player.profile', view, byId, 'pir');
+  const ts = cell(html, 'ts_pct'), pir = cell(html, 'pir');
+  assert.ok(ts.includes('<b>–</b>') && !ts.includes('<u>') && ts.includes('aria-pressed="false"') && ts.includes('title="'));
+  assert.ok(pir.includes('<b>21.5</b><u>/g</u>') && pir.includes('aria-pressed="true"') && pir.includes('class="m t48"'));
+  assert.ok(html.includes('class="sb"') && html.includes('class="sb-grid"') && !html.includes('fw-metric'));
+  assert.ok(!html.includes('Offensive Load') && !html.includes('cTOV%') && !html.includes('o_pot100'));
+});
+test('shooting: sub lines are kept; a zero 3PA share shows "no 3PA"; team cards carry the rank chip and the eval class', async () => {
+  const byId = byIdOf(m => m.digits);
+  const shoot = await grid('player.shooting', { get: (id, metric) => ({ value: metric === 'a3_rate' ? 0 : metric === 'fga100' ? 24.64 : 40 }), row: () => ({}) }, byId);
+  assert.ok(cell(shoot, 'efg').includes('<span class="sub">FGA 24.6 /100</span>'));
+  assert.ok(cell(shoot, 'fg3_pct').includes('<span class="sub">no 3PA</span>'));
+  assert.ok(cell(shoot, 'fg2_pct').includes('<span class="sub">0.0% of FGA</span>') || cell(shoot, 'fg2_pct').includes('of FGA</span>'));
+  const keys = ['A', 'B', 'C'], values = { A: 100, B: 110, C: 120 };
+  const team = await grid('team.profile', { keys, get: (k, metric) => ({ value: values[k] ?? 110 }), row: () => ({}) }, byIdOf(m => m.digits), null, false);
+  assert.ok(/<span class="rk">#\d+<\/span>/.test(cell(team, 'drtg')) && /class="m t48 ev-(good|avg|bad|neutral)"/.test(cell(team, 'drtg')));
+});
+
+test('the last group of both Profile cards is a full-width row (first cell in the left column); Production has 4 cells to the right of PTS', () => {
+  for (const n of ['player.profile', 'team.profile']) assert.deepEqual(ofLayout(n).sections.map(s => !!s.full), [false, false, true], n);
+  assert.deepEqual(ofLayout('player.profile').sections.at(-1).cells.map(c => c.metric).slice(0, 2), ['pts_g', 'ast_g']);
+  assert.ok(!ofLayout('player.shooting').sections.some(s => s.full) && !ofLayout('team.shooting').sections.some(s => s.full));
+});
+test('units are separate small elements: percent metrics show a % unit, per-game metrics /g, nsPIR /100 poss, MIN none, missing none', async () => {
+  const byId = byIdOf(() => 1), view = { get: (id, metric) => ({ value: metric === 'fd_g' ? NaN : 5 }), row: () => ({}) };
+  const html = await grid('player.profile', view, byId);
+  for (const [m, u] of [['usg', '%'], ['ts_pct', '%'], ['ftr', '%'], ['tov_pct', '%'], ['pir', '/g'], ['pts_g', '/g'], ['ast_g', '/g'], ['reb_g', '/g'], ['stocks_g', '/g'], ['pf_g', '/g'], ['nspir100', '/100 poss']])
+    assert.ok(cell(html, m).includes(`<b>5.0</b><u>${u}</u>`) || cell(html, m).includes(`<b>5.0</b><u>${u}</u>`.replace('5.0', '5.0')), `${m} unit ${u}`);
+  assert.ok(!cell(html, 'min').includes('<u>'));
+  assert.ok(cell(html, 'fd_g').includes('<b>–</b></span>') && !cell(html, 'fd_g').includes('<u>'));
+  assert.ok(!/<b>[^<]*%<\/b>/.test(html), 'no unit inside the value text');
+});
+
+test('wide: the hero cell gets the same top offset as the section header (so the hero label and the first header share one top edge); mid and narrow reset it', () => {
+  const css = readFileSync(new URL('../../site/theme/fantasy/stats-block.css', import.meta.url), 'utf8');
+  const TOP = 'var(--fantasy-stats-block-section-header-padding-top)';
+  const wide = css.slice(0, css.indexOf('@container')), mid = css.slice(css.indexOf('@container sb (max-width:779px)'), css.indexOf('@container sb (max-width:519px)'));
+  assert.ok(wide.includes('.sb .sh{') && wide.includes('padding:' + TOP + ' 0 '), 'the header pads its top with the token');
+  assert.ok(wide.includes(`.sb .cell.lead{grid-row:1/span 2;align-self:start;padding-top:${TOP};padding-bottom:0}`), 'the hero cell pads its top with the same token');
+  assert.ok(mid.includes('.sb .cell.lead{grid-column:1/span 2;align-self:auto;padding-top:0;'), 'no offset in mid and narrow');
 });
