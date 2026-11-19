@@ -62,6 +62,7 @@ export const METRICS = [
   e('tov_g', 'TOV / game', P, 'perGame', S('tov'), S('played'), FB, 1, 'Turnovers per game played.'),
   e('fd_g', 'FD / game', P, 'perGame', S('fd'), S('played'), FB, 1, 'Fouls drawn per game played.'),
   e('pf_g', 'PF / game', P, 'perGame', S('pf'), S('played'), FB, 1, 'Personal fouls per game played.'),
+  e('stocks_g', 'STOCKS', P, 'perGame', [[1, 'stl'], [1, 'blk']], S('played'), F, 1, 'Steals + blocks (blocks in favour, not blocks against) per game played.'),
 
   // ---------- players: per 100 possessions on court ----------
   e('pts100', 'PTS / 100 poss', P, 'per100', S('pts'), S('poss_off_on'), FB, 1, 'Points per 100 team offensive possessions while the player is on court.'),
@@ -69,7 +70,8 @@ export const METRICS = [
   e('tov100', 'TOV / 100 poss', P, 'per100', S('tov'), S('poss_off_on'), FB, 1, 'Turnovers per 100 team offensive possessions while on court.'),
   e('oreb100', 'OREB / 100 poss', P, 'per100', S('oreb'), S('poss_off_on'), FB, 1, 'Offensive rebounds per 100 team offensive possessions while on court.'),
   e('fd100', 'FD / 100 poss', P, 'per100', S('fd'), S('poss_off_on'), FB, 1, 'Fouls drawn per 100 team offensive possessions while on court.'),
-  e('fc100', 'FC / 100 poss', P, 'per100', S('pf'), S('poss_off_on'), F, 1, 'Fouls committed per 100 possessions'),
+  e('fc100', 'FC / 100 poss', P, 'per100', S('pf'), [[1, 'poss_off_on'], [1, 'poss_def_on']], F, 1,
+    'Personal fouls incl. offensive fouls, per 100 possessions on court, both phases (x200 / (offensive + defensive possessions on court), like REB / 100).', { mult: 200 }),
   e('stl100', 'STL / 100 poss', P, 'per100', S('stl'), S('poss_def_on'), FB, 1, 'Steals per 100 team defensive possessions while on court.'),
   e('blk100', 'BLK / 100 poss', P, 'per100', S('blk'), S('poss_def_on'), FB, 1, 'Blocks per 100 team defensive possessions while on court.'),
   e('dreb100', 'DREB / 100 poss', P, 'per100', S('dreb'), S('poss_def_on'), FB, 1, 'Defensive rebounds per 100 team defensive possessions while on court.'),
@@ -102,11 +104,12 @@ export const METRICS = [
   e('ft_pct', 'FT%', P, 'pct', S('m1'), S('a1'), FB, 1, 'Free-throw percentage.'),
   e('ftr', 'FTr', P, 'pct', S('a1'), S('fga'), FB, 1, 'Free-throw rate: free-throw attempts per field-goal attempt, x100.'),
   e('a3_rate', '3PA / FGA', P, 'pct', S('a3'), S('fga'), B, 1, 'Share of field-goal attempts that are three-pointers.'),
-  e('ts_pct', 'TS%', P, 'pct', S('pts'), [[2, 'a2'], [2, 'a3'], [0.88, 'a1']], B, 1, 'True shooting: points / (2 x (FGA + 0.44 x FTA)).'),
+  e('ts_pct', 'TS%', P, 'pct', S('pts'), [[2, 'sa']], FB, 1, 'True shooting: points / (2 x sa), where sa = shot attempts + free-throw trips from the play-by-play (replaces the 0.44 x FTA estimate).'),
 
   // ---------- players: PIR family ----------
   e('pir', 'PIR / game', P, 'perGame', S('pir'), S('played'), FB, 1, 'Performance Index Rating per game: points, rebounds, assists, steals, blocks and fouls drawn minus misses, turnovers, fouls and blocks against.'),
   e('pir_min', 'PIR / min', P, 'perMin', S('pir'), null, F, 3, 'PIR per minute played (total PIR / total minutes).'),
+  e('nspir_g', 'nsPIR / game', P, 'perGame', S('nonscoring'), S('played'), F, 1, 'Non Scoring PIR (nsPIR) per game played: rebounds + assists + steals + blocks + fouls drawn - personal fouls - blocks against - turnovers.'),
   e('nspir100', 'nsPIR / 100 poss', P, 'per100', S('nonscoring'), [[1, 'poss_off_on'], [1, 'poss_def_on']], F, 1,
     'Non Scoring PIR (nsPIR) per 100 possessions: PIR minus its scoring part (points minus missed field goals and free throws), that is rebounds + assists + steals + blocks + fouls drawn - personal fouls - blocks against - turnovers. Per 100 uses x200 / (offensive + defensive possessions on court), like total REB / 100, because PIR combines offense and defense. Shown inside PIR, not as a column.', { mult: 200 }),
 

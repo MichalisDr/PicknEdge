@@ -15,11 +15,11 @@ const PLAYER = {
   ast_pct: 3 / (15 - (5 + 2)) * 100, blk_pct: 1 / 30 * 100, a3_rate: 5 / 14 * 100,
   fga100: 14 / 50 * 100, a2_rate: 9 / 14 * 100,
   gp: 1, min: 30, pts_g: 19, reb_g: 5, ast_g: 3, stl_g: 2, blk_g: 1, tov_g: 2, fd_g: 5, pf_g: 3,
-  pts100: 19 / 50 * 100, ast100: 3 / 50 * 100, tov100: 2 / 50 * 100, oreb100: 1 / 50 * 100, fd100: 5 / 50 * 100, fc100: 3 / 50 * 100,
+  pts100: 19 / 50 * 100, ast100: 3 / 50 * 100, tov100: 2 / 50 * 100, oreb100: 1 / 50 * 100, fd100: 5 / 50 * 100, fc100: 3 * 200 / (50 + 48), stocks_g: 2 + 1, nspir_g: 10,
   stl100: 2 / 48 * 100, blk100: 1 / 48 * 100, dreb100: 4 / 48 * 100, reb100: 5 * 200 / (50 + 48),
   usg: (16 + 2) / (40 + 10) * 100, tov_pct: 2 / (16 + 2) * 100, oreb_pct: 1 / (8 + 25) * 100, dreb_pct: 4 / (20 + 10) * 100,
   fg2_made: 5, fg2_att: 9, fg3_made: 2, fg3_att: 5, ft_made: 3, ft_att: 4,
-  efg: (5 + 1.5 * 2) / 14 * 100, fg2_pct: 5 / 9 * 100, fg3_pct: 2 / 5 * 100, ft_pct: 3 / 4 * 100, ftr: 4 / 14 * 100, ts_pct: 19 / (2 * (14 + 0.44 * 4)) * 100,
+  efg: (5 + 1.5 * 2) / 14 * 100, fg2_pct: 5 / 9 * 100, fg3_pct: 2 / 5 * 100, ft_pct: 3 / 4 * 100, ftr: 4 / 14 * 100, ts_pct: 19 / (2 * 16) * 100,
   pir: 21, pir_min: 21 / 30, nspir100: 10 * 200 / (50 + 48),   // nsPIR = 10 (see above): x200 / (offensive + defensive possessions on court)
 };
 // Box Creation by hand: k = 2; AST = 6; PTS+TOV = 42; proficiency = (2/(1+e^-10) - 1) x 0.4 = 0.39996;
@@ -55,11 +55,10 @@ for (const [id, [want, tol]] of Object.entries(PLAYER_APPROX)) test(`player ${id
 for (const [id, want] of Object.entries(TEAM)) test(`team ${id}`, () => approx(evaluate(byId(id), [T]).value, want));
 test('share = n / of x 100', () => approx(evaluate(byId('share'), [{ n: 3, of: 8 }]).value, TEAM_EXTRA.share));
 
-test('fc100: fouls committed per 100 offensive possessions on court (the denominator of fd100), lower is better, player scope', () => {
-  const m = byId('fc100'), fd = byId('fd100');
-  assert.equal(m.scope, 'player'); assert.equal(m.direction, -1); assert.equal(fd.direction, 1);
-  approx(evaluate(m, [{ ...P, pf: 6, poss_off_on: 40 }, { ...P, pf: 2, poss_off_on: 60 }]).value, 8 / 100 * 100);   // window sums: 8 fouls over 100 possessions
-  approx(evaluate(m, [P]).value, evaluate(fd, [{ ...P, fd: P.pf }]).value);   // same calculation as FD/100
+test('fc100: personal fouls x200 / (offensive + defensive possessions on court), like reb100; lower is better, player scope', () => {
+  const m = byId('fc100');
+  assert.equal(m.scope, 'player'); assert.equal(m.direction, -1);
+  approx(evaluate(m, [{ ...P, pf: 6, poss_off_on: 40, poss_def_on: 38 }, { ...P, pf: 2, poss_off_on: 60, poss_def_on: 62 }]).value, 8);   // window sums: 8 fouls over 100 + 100 possessions, x200
 });
 
 test('custom metrics use window sums, not per-game results', () => {
