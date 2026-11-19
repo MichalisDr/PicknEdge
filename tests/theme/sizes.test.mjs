@@ -63,7 +63,7 @@ test('inline styles in scripts are computed geometry only (no literal px)', () =
 
 test('every variable a style sheet reads exists in theme.json or sizes.json (or is set by a script)', () => {
   const defined = new Set([...themeVariables(theme).map(([k]) => k), ...sizeVariables(sizes).map(([k]) => k), ...arrangementVariables(JSON.parse(read('config/arrangement.json'))).map(([k]) => k), '--color-accent']);
-  for (const f of styles) for (const m of read(f).matchAll(/var\((--[\w-]+)/g)) assert.ok(defined.has(m[1]) || ['--rows', '--gap', '--rowsT', '--fade-colour', '--table-total'].includes(m[1]), `${f} reads ${m[1]}`);
+  for (const f of styles) for (const m of read(f).matchAll(/var\((--[\w-]+)/g)) assert.ok(defined.has(m[1]) || ['--rows', '--gap', '--rowsT', '--fade-colour', '--table-total', '--r', '--c'].includes(m[1]), `${f} reads ${m[1]}`);
 });
 
 test('theme.json and sizes.json share the names but never a variable', () => {
