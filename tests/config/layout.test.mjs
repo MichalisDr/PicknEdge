@@ -101,3 +101,12 @@ test('units are separate small elements: percent metrics show a % unit, per-game
   assert.ok(cell(html, 'fd_g').includes('<b>–</b></span>') && !cell(html, 'fd_g').includes('<u>'));
   assert.ok(!/<b>[^<]*%<\/b>/.test(html), 'no unit inside the value text');
 });
+
+test('wide: the hero cell gets the same top offset as the section header (so the hero label and the first header share one top edge); mid and narrow reset it', () => {
+  const css = readFileSync(new URL('../../site/theme/fantasy/stats-block.css', import.meta.url), 'utf8');
+  const TOP = 'var(--fantasy-stats-block-section-header-padding-top)';
+  const wide = css.slice(0, css.indexOf('@container')), mid = css.slice(css.indexOf('@container sb (max-width:779px)'), css.indexOf('@container sb (max-width:519px)'));
+  assert.ok(wide.includes('.sb .sh{') && wide.includes('padding:' + TOP + ' 0 '), 'the header pads its top with the token');
+  assert.ok(wide.includes(`.sb .cell.lead{grid-row:1/span 2;align-self:start;padding-top:${TOP};padding-bottom:0}`), 'the hero cell pads its top with the same token');
+  assert.ok(mid.includes('.sb .cell.lead{grid-column:1/span 2;align-self:auto;padding-top:0;'), 'no offset in mid and narrow');
+});
