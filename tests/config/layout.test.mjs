@@ -86,3 +86,18 @@ test('shooting: sub lines are kept; a zero 3PA share shows "no 3PA"; team cards 
   const team = await grid('team.profile', { keys, get: (k, metric) => ({ value: values[k] ?? 110 }), row: () => ({}) }, byIdOf(m => m.digits), null, false);
   assert.ok(/<span class="rk">#\d+<\/span>/.test(cell(team, 'drtg')) && /class="m t48 ev-(good|avg|bad|neutral)"/.test(cell(team, 'drtg')));
 });
+
+test('the last group of both Profile cards is a full-width row (first cell in the left column); Production has 4 cells to the right of PTS', () => {
+  for (const n of ['player.profile', 'team.profile']) assert.deepEqual(ofLayout(n).sections.map(s => !!s.full), [false, false, true], n);
+  assert.deepEqual(ofLayout('player.profile').sections.at(-1).cells.map(c => c.metric).slice(0, 2), ['pts_g', 'ast_g']);
+  assert.ok(!ofLayout('player.shooting').sections.some(s => s.full) && !ofLayout('team.shooting').sections.some(s => s.full));
+});
+test('units are separate small elements: percent metrics show a % unit, per-game metrics /g, nsPIR /100 poss, MIN none, missing none', async () => {
+  const byId = byIdOf(() => 1), view = { get: (id, metric) => ({ value: metric === 'fd_g' ? NaN : 5 }), row: () => ({}) };
+  const html = await grid('player.profile', view, byId);
+  for (const [m, u] of [['usg', '%'], ['ts_pct', '%'], ['ftr', '%'], ['tov_pct', '%'], ['pir', '/g'], ['pts_g', '/g'], ['ast_g', '/g'], ['reb_g', '/g'], ['stocks_g', '/g'], ['pf_g', '/g'], ['nspir100', '/100 poss']])
+    assert.ok(cell(html, m).includes(`<b>5.0</b><u>${u}</u>`) || cell(html, m).includes(`<b>5.0</b><u>${u}</u>`.replace('5.0', '5.0')), `${m} unit ${u}`);
+  assert.ok(!cell(html, 'min').includes('<u>'));
+  assert.ok(cell(html, 'fd_g').includes('<b>–</b></span>') && !cell(html, 'fd_g').includes('<u>'));
+  assert.ok(!/<b>[^<]*%<\/b>/.test(html), 'no unit inside the value text');
+});

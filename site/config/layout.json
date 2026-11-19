@@ -1,6 +1,6 @@
 {
  "version": 2,
- "note": "Single source of the stats block of the Fantasy cards (class .sb). A layout has 'hero' (the large value, left column when wide), optional 'low' (the second slot of the left column), and 'sections': [{title, cells}] (uppercase header with a rule, then up to 4 cells per row, more wrap). A cell is {metric, size, label?, unit?, sub?}: size is the type step of the value in px (48, 32, 24, 20 or 16: the ladder of config/sizes.json and theme.json), label (else the registry label), unit (shown only when there is a value), sub: [{metric, text, zeroText?}] secondary lines ('{v}' is the value; zeroText replaces text when the value is 0). Every metric id must exist in the registry with the scope of the card (tests/config/layout.test.mjs). The layout adapts to the width of the block with container queries (wide >= 780px, mid 520-779px, narrow < 520px).",
+ "note": "Single source of the stats block of the Fantasy cards (class .sb). A layout has 'hero' (the large value, left column when wide), optional 'low' (the second slot of the left column), and 'sections': [{title, cells}] (uppercase header with a rule; 'full': true makes the section a full-width row below the vertical rule, its first cell in the left column, then up to 4 cells per row, more wrap). A cell is {metric, size, label?, unit?, sub?}: size is the type step of the value in px (48, 32, 24, 20 or 16: the ladder of config/sizes.json and theme.json), label (else the registry label), unit (a separate small element, shown only when there is a value; a percent metric shows % on its own), sub: [{metric, text, zeroText?}] secondary lines ('{v}' is the value; zeroText replaces text when the value is 0). Every metric id must exist in the registry with the scope of the card (tests/config/layout.test.mjs). The layout adapts to the width of the block with container queries (wide >= 780px, mid 520-779px, narrow < 520px).",
  "layouts": {
   "player.profile": {
    "hero": {
@@ -52,7 +52,8 @@
       {
        "metric": "pf_g",
        "size": 16,
-       "label": "FC"
+       "label": "FC",
+       "unit": "/g"
       }
      ]
     },
@@ -62,29 +63,35 @@
       {
        "metric": "pts_g",
        "size": 24,
-       "label": "PTS"
+       "label": "PTS",
+       "unit": "/g"
       },
       {
        "metric": "ast_g",
        "size": 20,
-       "label": "AST"
+       "label": "AST",
+       "unit": "/g"
       },
       {
        "metric": "reb_g",
        "size": 20,
-       "label": "REB"
+       "label": "REB",
+       "unit": "/g"
       },
       {
        "metric": "stocks_g",
        "size": 20,
-       "label": "STOCKS"
+       "label": "STOCKS",
+       "unit": "/g"
       },
       {
        "metric": "fd_g",
        "size": 16,
-       "label": "FD"
+       "label": "FD",
+       "unit": "/g"
       }
-     ]
+     ],
+     "full": true
     }
    ]
   },
@@ -168,7 +175,8 @@
        "label": "Opp fast break",
        "unit": "/100"
       }
-     ]
+     ],
+     "full": true
     }
    ]
   },

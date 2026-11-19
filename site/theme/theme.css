@@ -739,8 +739,6 @@ body{
 --fantasy-stats-block-unit-font-size:12px;
 --fantasy-stats-block-unit-line-height:16px;
 --fantasy-stats-block-unit-font-weight:500;
---fantasy-stats-block-unit-hero-font-size:16px;
---fantasy-stats-block-unit-hero-line-height:24px;
 --fantasy-stats-block-sub-font-size:12px;
 --fantasy-stats-block-sub-line-height:16px;
 --fantasy-stats-block-rank-font-size:12px;
@@ -759,13 +757,13 @@ body{
 --fantasy-stats-block-value-32-font-weight:600;
 --fantasy-stats-block-value-24-font-size:24px;
 --fantasy-stats-block-value-24-line-height:32px;
---fantasy-stats-block-value-24-font-weight:600;
+--fantasy-stats-block-value-24-font-weight:500;
 --fantasy-stats-block-value-20-font-size:20px;
 --fantasy-stats-block-value-20-line-height:24px;
---fantasy-stats-block-value-20-font-weight:600;
+--fantasy-stats-block-value-20-font-weight:500;
 --fantasy-stats-block-value-16-font-size:16px;
 --fantasy-stats-block-value-16-line-height:24px;
---fantasy-stats-block-value-16-font-weight:600;
+--fantasy-stats-block-value-16-font-weight:500;
 --fantasy-stats-block-halo-radius:8px;
 --fantasy-stats-block-halo-background:var(--color-chip)
 }
@@ -1511,8 +1509,6 @@ body[data-area=betting]{
   fantasy.stats-block.unit.font-size : .sb .v u
   fantasy.stats-block.unit.line-height : .sb .v u
   fantasy.stats-block.unit.font-weight : .sb .v u
-  fantasy.stats-block.unit-hero.font-size : .sb .t48 .v u
-  fantasy.stats-block.unit-hero.line-height : .sb .t48 .v u
   fantasy.stats-block.sub.font-size : .sb .sub
   fantasy.stats-block.sub.line-height : .sb .sub
   fantasy.stats-block.rank.font-size : .sb .rk

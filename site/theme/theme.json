@@ -1462,10 +1462,6 @@
      "line-height": "16px",
      "font-weight": "500"
     },
-    "unit-hero": {
-     "font-size": "16px",
-     "line-height": "24px"
-    },
     "sub": {
      "font-size": "12px",
      "line-height": "16px"
@@ -1495,17 +1491,17 @@
     "value-24": {
      "font-size": "24px",
      "line-height": "32px",
-     "font-weight": "600"
+     "font-weight": "500"
     },
     "value-20": {
      "font-size": "20px",
      "line-height": "24px",
-     "font-weight": "600"
+     "font-weight": "500"
     },
     "value-16": {
      "font-size": "16px",
      "line-height": "24px",
-     "font-weight": "600"
+     "font-weight": "500"
     },
     "halo": {
      "radius": "8px",
