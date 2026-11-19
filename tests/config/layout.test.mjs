@@ -29,10 +29,10 @@ for (const name of NAMES) test(`${name}: every metric id exists in the registry,
   assert.equal(new Set(cells.map(c => c.metric)).size, cells.length, `${name}: a metric appears twice`);
 });
 
-test('player.profile: the agreed stat set and sizes (PIR hero, nsPIR low slot, ROLE / EFFICIENCY / PRODUCTION)', () => {
+test('player.profile: the agreed stat set and sizes (PIR hero, nsPIR per game low slot, ROLE / EFFICIENCY / PRODUCTION)', () => {
   const L = ofLayout('player.profile'), sec = Object.fromEntries(L.sections.map(s => [s.title, s.cells.map(c => [c.metric, c.size])]));
   assert.deepEqual([L.hero.metric, L.hero.size, L.hero.unit], ['pir', 48, '/g']);
-  assert.deepEqual([L.low.metric, L.low.size, L.low.unit], ['nspir100', 20, '/100 poss']);
+  assert.deepEqual([L.low.metric, L.low.size, L.low.unit], ['nspir_g', 20, '/g']);
   assert.deepEqual(sec, {
     Role: [['min', 32], ['usg', 32]],
     Efficiency: [['ts_pct', 24], ['ftr', 24], ['tov_pct', 24], ['pf_g', 16]],
@@ -92,10 +92,10 @@ test('the last group of both Profile cards is a full-width row (first cell in th
   assert.deepEqual(ofLayout('player.profile').sections.at(-1).cells.map(c => c.metric).slice(0, 2), ['pts_g', 'ast_g']);
   assert.ok(!ofLayout('player.shooting').sections.some(s => s.full) && !ofLayout('team.shooting').sections.some(s => s.full));
 });
-test('units are separate small elements: percent metrics show a % unit, per-game metrics /g, nsPIR /100 poss, MIN none, missing none', async () => {
+test('units are separate small elements: percent metrics show a % unit, per-game metrics /g, nsPIR /g, MIN none, missing none', async () => {
   const byId = byIdOf(() => 1), view = { get: (id, metric) => ({ value: metric === 'fd_g' ? NaN : 5 }), row: () => ({}) };
   const html = await grid('player.profile', view, byId);
-  for (const [m, u] of [['usg', '%'], ['ts_pct', '%'], ['ftr', '%'], ['tov_pct', '%'], ['pir', '/g'], ['pts_g', '/g'], ['ast_g', '/g'], ['reb_g', '/g'], ['stocks_g', '/g'], ['pf_g', '/g'], ['nspir100', '/100 poss']])
+  for (const [m, u] of [['usg', '%'], ['ts_pct', '%'], ['ftr', '%'], ['tov_pct', '%'], ['pir', '/g'], ['pts_g', '/g'], ['ast_g', '/g'], ['reb_g', '/g'], ['stocks_g', '/g'], ['pf_g', '/g'], ['nspir_g', '/g']])
     assert.ok(cell(html, m).includes(`<b>5.0</b><u>${u}</u>`) || cell(html, m).includes(`<b>5.0</b><u>${u}</u>`.replace('5.0', '5.0')), `${m} unit ${u}`);
   assert.ok(!cell(html, 'min').includes('<u>'));
   assert.ok(cell(html, 'fd_g').includes('<b>–</b></span>') && !cell(html, 'fd_g').includes('<u>'));

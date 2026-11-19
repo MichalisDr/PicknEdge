@@ -10,10 +10,10 @@
     "unit": "/g"
    },
    "low": {
-    "metric": "nspir100",
+    "metric": "nspir_g",
     "size": 20,
     "label": "nsPIR",
-    "unit": "/100 poss"
+    "unit": "/g"
    },
    "sections": [
     {
