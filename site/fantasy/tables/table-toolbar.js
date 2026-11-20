@@ -47,7 +47,7 @@ export function tableToolbarHtml(state, show, titleHtml = '') {
       'players-sort-value-icon': () => `<span ${part('players-sort-value-icon')} aria-hidden="true">${ICONS['sort-value']}</span>`,
       'players-sort-value-label': () => '<span>Sort by value</span>',
     }, {}).map(p => p.html).join('')}</button>`,
-    'filters-button': () => `<button ${part('players-filters-button')} data-filters aria-expanded="${state.filters}" data-active="${state.filters || filtersActive(state)}" aria-label="Filters" title="Filters">${drawParts(`${A}players-filters-button`, {
+    'filters-button': () => `<button ${part('players-filters-button')} data-filters aria-expanded="${state.filters}" data-active="${state.filters || filtersActive(state, show.teamCount)}" aria-label="Filters" title="Filters">${drawParts(`${A}players-filters-button`, {
       'players-filters-icon': () => `<span ${part('players-filters-icon')} aria-hidden="true">${icon('funnel')}</span>`,
     }, {}).map(p => p.html).join('')}</button>`,
   };

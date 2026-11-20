@@ -3,8 +3,8 @@
     team = the ticked team codes (empty = all teams); minCr / maxCr = the Credits handles (null = the end of the range found in the data); minValue 0 = no filter. */
 export const FILTER_DEFAULTS = { team: [], minCr: null, maxCr: null, minValue: 0, minMin: 0, minGp: 1, showAll: false };
 const same = (a, b) => (Array.isArray(a) ? Array.isArray(b) && a.length === b.length && a.every((v, i) => v === b[i]) : a === b);
-/** True when any drawer field differs from its default. */
-export const filtersActive = s => Object.entries(FILTER_DEFAULTS).some(([k, v]) => !same(s[k], v));
+/** True when any drawer field differs from its default. teamCount = the number of teams: every team ticked counts as the default (no filter). */
+export const filtersActive = (s, teamCount = 0) => Object.entries(FILTER_DEFAULTS).some(([k, v]) => !(k === 'team' && teamCount > 0 && s.team.length >= teamCount) && !same(s[k], v));
 /** Reset filters: every drawer field back to its default; position, search, window and Sort by value stay as they are. */
 export const resetFilters = s => Object.assign(s, FILTER_DEFAULTS, { team: [] });
 export const state = { entity: 'teams', view: 'profile', win: 'season', position: [], query: '', ...FILTER_DEFAULTS, team: [], filters: false, sortValue: false, sort: '', dir: 'desc', sel: [], mode: 'table' };

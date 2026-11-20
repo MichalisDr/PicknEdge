@@ -32,6 +32,8 @@ test('defaults: team array, Credits handles at the range ends, Min. value 0, Min
   const s = { ...FILTER_DEFAULTS, team: [], position: ['G'], query: 'a', win: 'l5', sortValue: true };
   assert.equal(filtersActive(s), false);
   for (const over of [{ team: ['BAR'] }, { minCr: 5 }, { maxCr: 9 }, { minValue: 1 }, { minMin: 1 }, { minGp: 2 }, { showAll: true }]) assert.equal(filtersActive({ ...s, ...over }), true, JSON.stringify(over));
+  assert.equal(filtersActive({ ...s, team: ['A', 'B', 'C'] }, 3), false, 'every team ticked = the default');
+  assert.equal(filtersActive({ ...s, team: ['A', 'B'] }, 3), true);
   Object.assign(s, { team: ['BAR', 'RED'], minCr: 5, maxCr: 9, minValue: 3, minMin: 10, minGp: 4, showAll: true });
   resetFilters(s);
   assert.deepEqual([s.team, s.minCr, s.maxCr, s.minValue, s.minMin, s.minGp, s.showAll], [[], null, null, 0, 0, 1, false]);

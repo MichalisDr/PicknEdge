@@ -54,7 +54,7 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
   const filters = !teams && state.filters ? drawerHtml(state, { range, roster }) : '';   // docked to the right edge of the table area (table-filters.js)
   const info = sel.length ? `<div class="fw-tinfo">Combined rank: ${esc(sel.map(id => cols.find(c => c.metric === id).label).join(' + '))} (mean percentile). Click a header to clear.</div>` : '';
   /* The toolbar (two rows, Players and Teams): its parts, order and visibility come from config/arrangement.json (fantasy.stat-table.players-view-row, .players-toolbar); see table-toolbar.js. */
-  const show = { players: !teams, teams, 'charts-available': hasCharts };
+  const show = { players: !teams, teams, teamCount: Object.keys(roster.teams).length, 'charts-available': hasCharts };
   const bars = tableToolbarHtml(state, show, `<h1 data-part="fantasy.stat-table.heading-title">${title}</h1>`);
   const tableMarkup = `<table class="fw-t" style="--table-total:${totalW}px"><colgroup><col style="width:${firstW}px">${cols.map(() => '<col>').join('')}</colgroup><thead><tr><th>${teams ? 'Team' : 'Player'}</th>${header}</tr></thead>
       <tbody>${body}</tbody></table>`;
