@@ -53,6 +53,7 @@
      "align": "center",
      "parts": [
       { "name": "search", "show": "always" },
+      { "name": "sort-value-button", "show": "players" },
       { "name": "filters-button", "show": "players" }
      ]
     },
@@ -103,6 +104,15 @@
      "parts": [
       { "name": "players-search-icon", "show": "always" },
       { "name": "players-search-field", "show": "always" }
+     ]
+    },
+    "players-sort-value-button": {
+     "direction": "row",
+     "align": "center",
+     "justify": "center",
+     "parts": [
+      { "name": "players-sort-value-icon", "show": "always" },
+      { "name": "players-sort-value-label", "show": "always" }
      ]
     },
     "players-filters-button": {

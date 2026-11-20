@@ -705,16 +705,120 @@
     "empty-note": {
      "padding": "30px"
     },
-    "filters-field": {
-     "margin-top": "5px",
-     "padding": "4px",
+    "filters-bar": {
+     "height": "24px",
+     "padding": "0 12px"
+    },
+    "filters-bar-handle": {
+     "height": "24px",
+     "width": "24px"
+    },
+    "filters-bar-input": {
+     "height": "24px",
      "width": "100%"
     },
-    "filters-panel": {
-     "gap": "6px",
-     "padding": "9px",
-     "top": "calc(100% + 6px)",
-     "width": "154px"
+    "filters-bar-line": {
+     "height": "4px"
+    },
+    "filters-bar-rail": {
+     "height": "8px"
+    },
+    "filters-bar-segment": {
+     "height": "8px"
+    },
+    "filters-body": {
+     "gap": "16px",
+     "padding-bottom": "16px"
+    },
+    "filters-checkbox": {
+     "height": "16px",
+     "width": "16px"
+    },
+    "filters-checkbox-tick": {
+     "height": "12px",
+     "width": "12px"
+    },
+    "filters-close": {
+     "height": "32px",
+     "width": "32px"
+    },
+    "filters-close-icon": {
+     "height": "16px",
+     "width": "16px"
+    },
+    "filters-credits-number": {
+     "min-width": "32px"
+    },
+    "filters-credits-row": {
+     "gap": "12px",
+     "height": "24px"
+    },
+    "filters-drawer": {
+     "height": "calc(100vh - 200px)",
+     "max-height-below-650px": "70vh",
+     "padding": "16px",
+     "width": "336px"
+    },
+    "filters-drawer-area": {
+     "grid-template-columns": "minmax(0,1fr)"
+    },
+    "filters-label": {
+     "gap": "8px"
+    },
+    "filters-field": {
+     "height": "32px",
+     "margin-top": "4px",
+     "padding": "0 8px",
+     "width": "100%"
+    },
+    "filters-fields": {
+     "gap": "12px",
+     "grid-template-columns": "1fr 1fr"
+    },
+    "filters-footer": {
+     "padding-top": "12px"
+    },
+    "filters-header": {
+     "height": "32px",
+     "margin-bottom": "16px"
+    },
+    "filters-reset": {
+     "gap": "8px",
+     "height": "32px"
+    },
+    "filters-reset-icon": {
+     "height": "16px",
+     "width": "16px"
+    },
+    "filters-section": {
+     "gap": "8px"
+    },
+    "filters-switch": {
+     "height": "32px",
+     "width": "64px"
+    },
+    "filters-switch-knob": {
+     "height": "24px",
+     "width": "36px"
+    },
+    "filters-switch-row": {
+     "gap": "12px",
+     "padding-top": "16px"
+    },
+    "filters-switch-track": {
+     "height": "16px"
+    },
+    "filters-team-actions": {
+     "padding": "0 0 8px"
+    },
+    "filters-team-list": {
+     "gap": "0 16px",
+     "grid-template-columns": "repeat(2,1fr)",
+     "grid-template-rows": "repeat(10,24px)"
+    },
+    "filters-team-row": {
+     "gap": "8px",
+     "height": "24px"
     },
     "first-column": {
      "padding": "5px 10px"
@@ -829,9 +933,18 @@
      "height": "17px",
      "width": "17px"
     },
+    "players-sort-value-button": {
+     "gap": "6px",
+     "min-height": "35px",
+     "padding": "0 10px"
+    },
+    "players-sort-value-icon": {
+     "height": "14px",
+     "width": "14px"
+    },
     "players-toolbar": {
      "gap": "8px",
-     "grid-template-columns": "minmax(max-content,1fr) auto minmax(0,215px)",
+     "grid-template-columns": "minmax(max-content,1fr) auto minmax(0,max-content)",
      "grid-template-columns-below-650px": "1fr",
      "margin-bottom": "0",
      "padding": "3px 0 9px",

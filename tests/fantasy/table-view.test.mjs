@@ -17,7 +17,7 @@ const { FILTER_DEFAULTS, filtersActive, resetFilters } = await import('../../sit
 globalThis.fetch = async u => ({ ok: true, json: async () => JSON.parse(siteFile('config/table-layouts.json')) });
 const widthsOf = names => names.map(n => n.length * 8);
 async function render(over) {
-  Object.assign(state, { entity: 'teams', view: 'profile', win: 'season', position: [], query: '', minMin: 0, minGp: 1, team: '', filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' }, over);
+  Object.assign(state, { entity: 'teams', view: 'profile', win: 'season', position: [], query: '', minMin: 0, minGp: 1, team: [], minCr: null, maxCr: null, minValue: 0, sortValue: false, filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' }, over);
   const M = await loadTable(state, widthsOf, () => false);
   return { M, html: tableHtml(state, M) };
 }
@@ -234,19 +234,18 @@ test('Filters funnel: active (orange) while the pop-up is open or any pop-up fie
   const active = html => /players-filters-button" data-filters aria-expanded="(true|false)" data-active="(true|false)"/.exec(html).slice(1);
   assert.deepEqual(active((await render({ entity: 'players' })).html), ['false', 'false'], 'defaults, closed');
   assert.deepEqual(active((await render({ entity: 'players', filters: true })).html), ['true', 'true'], 'open');
-  for (const over of [{ team: 'BAR' }, { minMin: 10 }, { minGp: 5 }, { showAll: true }]) {
+  for (const over of [{ team: ['BAR'] }, { minCr: 5 }, { maxCr: 9 }, { minValue: 3 }, { minMin: 10 }, { minGp: 5 }, { showAll: true }]) {
     assert.deepEqual(active((await render({ entity: 'players', ...over })).html), ['false', 'true'], JSON.stringify(over) + ', closed');
   }
   for (const over of [{ position: ['G'] }, { query: 'a' }, { win: 'l5' }]) assert.deepEqual(active((await render({ entity: 'players', ...over })).html), ['false', 'false'], JSON.stringify(over) + ' is not a filter');
-  assert.ok(/data-filters-reset>Reset filters<\/button>/.test((await render({ entity: 'players', filters: true })).html), 'Reset filters at the bottom of the pop-up');
-  assert.match((await render({ entity: 'players', filters: true })).html, /class="fw-filter-btn" data-filters-reset/);
+  assert.match((await render({ entity: 'players', filters: true })).html, /<div class="fw-fd-foot"><button type="button" class="fw-fd-link fw-fd-reset" data-filters-reset[^>]*>.*<span>Reset filters<\/span><\/button><\/div>\s*<\/aside>/s, 'Reset filters is the pinned footer of the drawer');
 });
 test('Reset filters restores every pop-up field and the default rows; position, search and window stay; the pop-up stays open', async () => {
   const defaults = await render({ entity: 'players' });
-  const filtered = await render({ entity: 'players', team: 'ZZZ', minMin: 25, minGp: 8, showAll: true, position: ['G'], query: 'a', win: 'l5', filters: true });
+  const filtered = await render({ entity: 'players', team: ['ZZZ'], minCr: 6, maxCr: 9, minValue: 2, minMin: 25, minGp: 8, showAll: true, position: ['G'], query: 'a', win: 'l5', filters: true });
   assert.notDeepEqual(filtered.M.shown.map(r => r.id), defaults.M.shown.map(r => r.id), 'the non-default filters change the rows');
   resetFilters(state);
-  for (const [k, v] of Object.entries(FILTER_DEFAULTS)) assert.equal(state[k], v, k);
+  for (const [k, v] of Object.entries(FILTER_DEFAULTS)) assert.deepEqual(state[k], v, k);
   assert.deepEqual([state.position, state.query, state.win, state.filters], [['G'], 'a', 'l5', true]);
   assert.equal(filtersActive(state), false);
   Object.assign(state, { position: [], query: '', win: 'season' });
