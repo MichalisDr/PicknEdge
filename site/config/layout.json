@@ -1,6 +1,6 @@
 {
  "version": 2,
- "note": "Single source of the stats block of the Fantasy cards (class .sb). A layout has 'hero' (the large value, left column when wide), optional 'low' (the second slot of the left column), and 'sections': [{title, cells}] (uppercase header with a rule; 'full': true makes the section a full-width row below the vertical rule, its first cell in the left column, then up to 4 cells per row, more wrap). A cell is {metric, size, label?, unit?, sub?}: size is the type step of the value in px (48, 32, 24, 20 or 16: the ladder of config/sizes.json and theme.json), label (else the registry label), unit (a separate small element, shown only when there is a value; a percent metric shows % on its own), sub: [{metric, text, zeroText?}] secondary lines ('{v}' is the value; zeroText replaces text when the value is 0). Every metric id must exist in the registry with the scope of the card (tests/config/layout.test.mjs). The layout adapts to the width of the block with container queries (wide >= 780px, mid 520-779px, narrow < 520px).",
+ "note": "Single source of the stats block of the Fantasy cards (class .sb). A layout has 'hero' (the large value, left column when wide), optional 'low' (the second slot of the left column), and 'sections': [{title, cells}] (uppercase header with a rule; 'full': true makes the section a full-width row below the vertical rule, its first cell in the left column, then up to 4 cells per row, more wrap). A cell is {metric, size, label?, unit?, sub?}: size is the type step of the value in px (48, 32, 24, 20 or 16: the ladder of config/sizes.json and theme.json), label (else the registry label), unit (a separate small element, shown only when there is a value; a percent metric shows % on its own), sub: [{metric, text, zeroText?}] secondary lines ('{v}' is the value; zeroText replaces text when the value is 0). Every metric id must exist in the registry with the scope of the card (tests/config/layout.test.mjs). The layout adapts to the width of the block with container queries (wide >= 780px, mid 520-779px, narrow < 520px). 'tiles': true (player cards only) renders the sections as tiles: the hero and the low slot in a lead tile on the left (wide), each section a tile with its title on the border, a 'full' section a full-width tile below; without it the flat block (team cards).",
  "layouts": {
   "player.profile": {
    "hero": {
@@ -93,7 +93,8 @@
      ],
      "full": true
     }
-   ]
+   ],
+   "tiles": true
   },
   "team.profile": {
    "hero": {
@@ -226,7 +227,8 @@
       }
      ]
     }
-   ]
+   ],
+   "tiles": true
   },
   "team.shooting": {
    "hero": {

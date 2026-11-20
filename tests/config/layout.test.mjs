@@ -65,7 +65,7 @@ async function grid(name, view, byId, sel = null, players = true) {
   const { layoutGrid } = await import('../../site/fantasy/cards/metric-grid.js');
   return layoutGrid('P1', name, view, byId, sel, players);
 }
-const cell = (html, metric) => html.match(new RegExp(`<div class="cell[^"]*"[^>]*><button class="m [^"]*" data-metric="${metric}".*?</button></div>`, 's'))[0];
+const cell = (html, metric) => html.match(new RegExp(`<div class="(?:sb-)?cell[^"]*"[^>]*><button class="m [^"]*" data-metric="${metric}".*?</button></div>`, 's'))[0];
 
 test('a cell is a button with data-metric, aria-pressed and a title; a missing value shows "–" and no unit; the selected one is aria-pressed', async () => {
   const byId = byIdOf(() => 1), view = { get: (id, metric) => ({ value: metric === 'ts_pct' ? NaN : metric === 'pir' ? 21.5 : 5 }), row: () => ({}) };
@@ -73,7 +73,7 @@ test('a cell is a button with data-metric, aria-pressed and a title; a missing v
   const ts = cell(html, 'ts_pct'), pir = cell(html, 'pir');
   assert.ok(ts.includes('<b>–</b>') && !ts.includes('<u>') && ts.includes('aria-pressed="false"') && ts.includes('title="'));
   assert.ok(pir.includes('<b>21.5</b><u>/g</u>') && pir.includes('aria-pressed="true"') && pir.includes('class="m t48"'));
-  assert.ok(html.includes('class="sb"') && html.includes('class="sb-grid"') && !html.includes('fw-metric'));
+  assert.ok(html.includes('class="sb sb-tiles"') && html.includes('class="sb-board"') && !html.includes('fw-metric'));
   assert.ok(!html.includes('Offensive Load') && !html.includes('cTOV%') && !html.includes('o_pot100'));
 });
 test('shooting: sub lines are kept; a zero 3PA share shows "no 3PA"; team cards carry the rank chip and the eval class', async () => {
@@ -109,4 +109,26 @@ test('wide: the hero cell gets the same top offset as the section header (so the
   assert.ok(wide.includes('.sb .sh{') && wide.includes('padding:' + TOP + ' 0 '), 'the header pads its top with the token');
   assert.ok(wide.includes(`.sb .cell.lead{grid-row:1/span 2;align-self:start;padding-top:${TOP};padding-bottom:0}`), 'the hero cell pads its top with the same token');
   assert.ok(mid.includes('.sb .cell.lead{grid-column:1/span 2;align-self:auto;padding-top:0;'), 'no offset in mid and narrow');
+});
+
+test('tiles: only the player layouts are flagged; a flagged layout renders a lead tile (hero, hairline, low slot) and one titled tile per section, the full section last', async () => {
+  assert.deepEqual(NAMES.filter(n => ofLayout(n).tiles), ['player.profile', 'player.shooting']);
+  const byId = byIdOf(() => 1), view = { get: () => ({ value: 5 }), row: () => ({}) };
+  const html = await grid('player.profile', view, byId);
+  assert.ok(html.indexOf('sb-lead') < html.indexOf('sb-tile-title') && /sb-lead">.*data-metric="pir".*<i class="sb-hair".*data-metric="nspir_g"/s.test(html));
+  assert.deepEqual([...html.matchAll(/class="sb-tile-title"[^>]*>([^<]*)</g)].map(m => m[1]), ['Role', 'Efficiency', 'Production']);
+  assert.ok(html.includes('class="sb-tile sb-full"') && html.includes('style="--rows:2"'));
+  assert.ok(!/class="(vr|sh)|class="sb-grid"/.test(html), 'no vertical rule or inline header in tiles');
+  const shoot = await grid('player.shooting', view, byId);
+  assert.ok(shoot.includes('style="--rows:1"') && shoot.includes('>By shot type<') && shoot.includes('<span class="sub">FGA 5.0 /100</span>'));
+  const team = await grid('team.profile', { keys: ['A'], get: () => ({ value: 5 }), row: () => ({}) }, byIdOf(m => m.digits), null, false);
+  assert.ok(team.includes('class="sb-grid"') && team.includes('class="vr"') && !team.includes('sb-tile'), 'team cards stay flat');
+});
+test('tiles css: the tile surface is two tokens, the title takes the tile background, and no literal px or colour is used', () => {
+  const css = readFileSync(new URL('../../site/theme/fantasy/stats-block.css', import.meta.url), 'utf8').slice(readFileSync(new URL('../../site/theme/fantasy/stats-block.css', import.meta.url), 'utf8').indexOf('/* Tiles'));
+  assert.ok(css.includes('background:var(--fantasy-stats-block-tile-background)') && css.includes('var(--fantasy-stats-block-tile-border)'));
+  const title = css.slice(css.indexOf('.sb-tile-title{'), css.indexOf('}', css.indexOf('.sb-tile-title{')));
+  assert.ok(title.includes('background:var(--fantasy-stats-block-tile-background)'));
+  const code = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@container sb \([^)]*\)/g, '');   // the container breakpoints are the only literals
+  assert.ok(!code.includes('#') && !/\dpx/.test(code), 'no hex colour or literal px');
 });

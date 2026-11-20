@@ -765,7 +765,13 @@ body{
 --fantasy-stats-block-value-16-line-height:24px;
 --fantasy-stats-block-value-16-font-weight:500;
 --fantasy-stats-block-halo-radius:8px;
---fantasy-stats-block-halo-background:var(--color-chip)
+--fantasy-stats-block-halo-background:var(--color-chip);
+--fantasy-stats-block-tile-background:var(--color-sortcell);
+--fantasy-stats-block-tile-border:var(--color-border-control);
+--fantasy-stats-block-tile-border-width:1px;
+--fantasy-stats-block-tile-radius:16px;
+--fantasy-stats-block-tile-title-radius:8px 8px 0 0;
+--fantasy-stats-block-tile-title-letter-spacing:0.04em
 }
 body[data-area=fantasy]{
 --color-bg:#09090b;
@@ -1179,7 +1185,7 @@ body[data-area=betting]{
   fantasy.player-card.next-game-button-hovered.background : [data-part="fantasy.player-card.next-game-button"]:hover
   fantasy.player-card.next-game-label.text : [data-part="fantasy.player-card.next-game-button"]
   fantasy.player-card.section-title.font-size : .fw-section-title span
-  fantasy.player-card.section-title.text : .sb .sh  |  .fw-section-title span
+  fantasy.player-card.section-title.text : .sb .sh  |  .sb-tile-title  |  .fw-section-title span
   fantasy.player-card.section-title.line-height : .fw-section-title span
   fantasy.player-card.section-title-text.font-size : .fw-section-title h3
   fantasy.player-card.section-title-text.line-height : .fw-section-title h3
@@ -1514,9 +1520,9 @@ body[data-area=betting]{
   fantasy.stats-block.rank.font-size : .sb .rk
   fantasy.stats-block.rank.line-height : .sb .rk
   fantasy.stats-block.rank.font-weight : .sb .rk
-  fantasy.stats-block.section-title.font-size : .sb .sh
-  fantasy.stats-block.section-title.line-height : .sb .sh
-  fantasy.stats-block.section-title.font-weight : .sb .sh
+  fantasy.stats-block.section-title.font-size : .sb .sh  |  .sb-tile-title
+  fantasy.stats-block.section-title.line-height : .sb .sh  |  .sb-tile-title
+  fantasy.stats-block.section-title.font-weight : .sb .sh  |  .sb-tile-title
   fantasy.stats-block.value-48.font-size : .sb .t48 .v b
   fantasy.stats-block.value-48.line-height : .sb .t48 .v b
   fantasy.stats-block.value-48.font-weight : .sb .t48 .v b
@@ -1536,4 +1542,10 @@ body[data-area=betting]{
   fantasy.stats-block.value-16.font-weight : .sb .t16 .v b
   fantasy.stats-block.halo.radius : .sb .m::after
   fantasy.stats-block.halo.background : .sb .m:hover::after,.sb .m:focus-visible::after
+  fantasy.stats-block.tile.background : .sb-tile  |  .sb-tile-title
+  fantasy.stats-block.tile.border : .sb-tile  |  .sb-hair
+  fantasy.stats-block.tile.border-width : .sb-tile  |  .sb-hair
+  fantasy.stats-block.tile.radius : .sb-tile
+  fantasy.stats-block.tile.title-radius : .sb-tile-title
+  fantasy.stats-block.tile.title-letter-spacing : .sb-tile-title
 */

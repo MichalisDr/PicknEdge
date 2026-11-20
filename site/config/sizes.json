@@ -923,6 +923,23 @@
     },
     "sub": {
      "top": "100%"
+    },
+    "tile": {
+     "gap": "16px",
+     "padding": "20px 20px 16px",
+     "lead-width": "216px",
+     "lead-padding": "16px 20px",
+     "column-gap": "24px",
+     "title-top": "-8px",
+     "title-left": "28px",
+     "title-padding": "0 8px",
+     "cell-padding-bottom-with-sub": "16px",
+     "board-columns": "var(--fantasy-stats-block-tile-lead-width) minmax(0,1fr)",
+     "board-columns-mid": "minmax(0,1fr)",
+     "cells-columns": "repeat(4,minmax(0,1fr))",
+     "cells-columns-full": "calc(var(--fantasy-stats-block-tile-lead-width) + var(--fantasy-stats-block-tile-gap) - var(--fantasy-stats-block-tile-column-gap)) repeat(4,minmax(0,1fr))",
+     "cells-columns-narrow": "repeat(2,minmax(0,1fr))",
+     "cells-auto-column": "minmax(0,1fr)"
     }
    }
   }
