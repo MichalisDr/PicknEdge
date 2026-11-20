@@ -4,6 +4,7 @@ import { Data } from '../../core/data.js';
 import * as Windows from '../../core/windows.js';
 import * as TM from '../../core/table-model.js';
 import { state, resetFilters } from './table-state.js';
+import { moveState } from './table-filters.js';
 import { loadTable } from './table-data.js';
 import { tableHtml, errorHtml, loadingHtml } from './table-view.js';
 import { wirePopups } from './table-popups.js';
@@ -37,7 +38,10 @@ async function draw() {
     return;
   }
   shown = M;
+  const keep = document.activeElement?.dataset?.fkey, body = host.querySelector('.fw-fd-body'), top = body ? body.scrollTop : 0;   // the drawer is redrawn with the table: keep its scroll and focus
   host.innerHTML = tableHtml(state, M);
+  const nb = host.querySelector('.fw-fd-body'); if (nb) nb.scrollTop = top;
+  if (keep) host.querySelector(`[data-fkey="${keep}"]`)?.focus({ preventScroll: true });
   performance.mark('fantasy-table-ready');   // measured by the Phase 3 gate (time to table)
   fit();
   wire();
@@ -45,9 +49,9 @@ async function draw() {
 
 /* Header: click = sort best end first (again = reverse), Shift+click or long-press = add or remove the column from the combined rank. */
 function headerSort() {
-  const current = () => (shown.sel.length ? null : shown.cur.metric);
-  const toggle = id => { let s = state.sel.slice(); if (!s.length && current() && current() !== id) s = [current()]; s = s.includes(id) ? s.filter(x => x !== id) : [...s, id]; state.sel = s; draw(); };
-  const plain = id => { const same = !shown.sel.length && shown.cur.metric === id; state.dir = same ? (shown.cur.dir === 'asc' ? 'desc' : 'asc') : TM.firstDirection(shown.byId[id].direction); state.sort = id; state.sel = []; draw(); };
+  const current = () => (shown.sel.length || shown.byValue ? null : shown.cur.metric);
+  const toggle = id => { let s = state.sel.slice(); if (!s.length && current() && current() !== id) s = [current()]; s = s.includes(id) ? s.filter(x => x !== id) : [...s, id]; state.sel = s; state.sortValue = false; draw(); };
+  const plain = id => { const same = !shown.byValue && !shown.sel.length && shown.cur.metric === id; state.dir = same ? (shown.cur.dir === 'asc' ? 'desc' : 'asc') : TM.firstDirection(shown.byId[id].direction); state.sort = id; state.sel = []; state.sortValue = false; draw(); };
   host.querySelectorAll('[data-sort]').forEach(b => {
     let timer = null, long = false;
     b.onpointerdown = e => { long = false; if (e.pointerType === 'mouse') return; timer = setTimeout(() => { long = true; toggle(b.dataset.sort); }, 500); };
@@ -57,9 +61,40 @@ function headerSort() {
   });
 }
 
+/* The Filters drawer: every change applies at once. The Credits bar updates the numbers and the segment while dragging (no redraw, so the drag is not interrupted) and redraws the table on release. */
+function wireDrawer() {
+  const range = shown.range, num = el => (el.value === '' ? NaN : Number(el.value));
+  host.querySelectorAll('[data-team]').forEach(el => { el.onchange = () => { const c = el.dataset.team; state.team = el.checked ? [...state.team, c] : state.team.filter(x => x !== c); draw(); }; });
+  const all = host.querySelector('[data-team-all]'), none = host.querySelector('[data-team-none]');
+  if (all) all.onclick = () => { state.team = Object.keys(shown.roster.teams); draw(); };
+  if (none) none.onclick = () => { state.team = []; draw(); };
+  const bar = host.querySelectorAll('[data-cr]');
+  const paint = h => {
+    const span = range.max - range.min || 1, out = k => host.querySelector(`[data-cr-out="${k}"]`), seg = host.querySelector('[data-cr-seg]');
+    out('lo').textContent = h.lo.toFixed(1); out('hi').textContent = h.hi.toFixed(1);
+    seg.style.marginLeft = ((h.lo - range.min) / span) * 100 + '%'; seg.style.setProperty('margin-right', ((range.max - h.hi) / span) * 100 + '%');
+    bar.forEach(i => { i.value = i.dataset.cr === 'lo' ? h.lo : h.hi; if (i.dataset.cr === 'lo') i.toggleAttribute('data-top', h.lo > range.min + span / 2); });
+    const box = host.querySelector('[data-filter="maxCr"]'); if (box) box.value = h.hi.toFixed(1);
+  };
+  bar.forEach(i => { i.oninput = () => paint(moveState(state, range, i.dataset.cr, num(i))); i.onchange = () => draw(); });
+  host.querySelectorAll('[data-filter]').forEach(el => {
+    el.onchange = () => {
+      const k = el.dataset.filter;
+      if (k === 'showAll') state.showAll = el.checked;
+      else if (k === 'maxCr') moveState(state, range, 'hi', num(el));   // the same value as the bar's upper handle
+      else state[k] = Math.max(0, num(el) || 0);
+      draw();
+    };
+  });
+  const close = host.querySelector('[data-filters-close]');
+  if (close) close.onclick = () => { state.filters = false; draw(); };
+  const reset = host.querySelector('[data-filters-reset]');
+  if (reset) reset.onclick = () => { resetFilters(state); draw(); };   // the drawer stays open; G / F / C, search, window and Sort by value are untouched
+}
+
 function wire() {
   const on = (sel, ev, fn) => host.querySelectorAll(sel).forEach(el => { el[ev] = () => fn(el); });
-  Windows.wire(host, state, () => { state.sort = ''; state.sel = []; draw(); });
+  Windows.wire(host, state, () => { state.sort = ''; state.sel = []; state.sortValue = false; draw(); });
   on('[data-fwmode]', 'onclick', b => { state.mode = b.dataset.fwmode; draw(); });
   host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => openCard(state.entity, p.dataset.open, { win: state.win, mode: state.view }); });
   on('[data-view-set]', 'onclick', b => { if (state.view === b.dataset.viewSet) return; state.view = b.dataset.viewSet; state.sort = ''; state.sel = []; draw(); });
@@ -67,13 +102,8 @@ function wire() {
   headerSort();
   const filters = host.querySelector('[data-filters]');
   if (filters) filters.onclick = () => { state.filters = !state.filters; draw(); };
-  on('[data-filter]', 'onchange', el => {
-    const k = el.dataset.filter;
-    state[k] = k === 'team' ? el.value : k === 'showAll' ? el.checked : Math.max(0, Number(el.value) || 0);
-    draw();
-  });
-  const reset = host.querySelector('[data-filters-reset]');
-  if (reset) reset.onclick = e => { e.stopPropagation(); resetFilters(state); draw(); };   // the pop-up stays open; G / F / C, search and window are untouched
+  on('[data-sort-value]', 'onclick', () => { state.sortValue = !state.sortValue; if (state.sortValue) state.sel = []; draw(); });
+  wireDrawer();
   on('[data-open]', 'onclick', b => openCard(state.entity, b.dataset.open, { win: state.win, mode: state.view }));
   wirePopups(host, state, shown);
   const search = host.querySelector('input[type=search]');
@@ -88,5 +118,4 @@ export function mount(target, entity = 'teams') {
   host.innerHTML = loadingHtml;
   draw();
 }
-document.addEventListener('click', e => { if (state.filters && host?.isConnected && !e.target.closest('.fw-filters,[data-filters]')) { state.filters = false; draw(); } });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.filters && host?.isConnected) { state.filters = false; draw(); } });

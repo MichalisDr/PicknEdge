@@ -585,19 +585,81 @@ body{
 --fantasy-stat-table-empty-note-text:#a7b7ca;
 --fantasy-stat-table-filter-button-border:var(--color-border-control);
 --fantasy-stat-table-filter-button-border-width:1px;
+--fantasy-stat-table-filters-bar-handle-background:var(--color-accent-fantasy);
+--fantasy-stat-table-filters-bar-handle-radius:50%;
+--fantasy-stat-table-filters-bar-line-background:var(--color-border-control);
+--fantasy-stat-table-filters-bar-line-radius:2px;
+--fantasy-stat-table-filters-bar-segment-background:var(--color-accent-fantasy);
+--fantasy-stat-table-filters-bar-segment-radius:4px;
+--fantasy-stat-table-filters-checkbox-background:transparent;
+--fantasy-stat-table-filters-checkbox-border:var(--color-border-control);
+--fantasy-stat-table-filters-checkbox-border-width:1px;
+--fantasy-stat-table-filters-checkbox-radius:4px;
+--fantasy-stat-table-filters-checkbox-text:var(--color-white);
+--fantasy-stat-table-filters-checkbox-checked-background:var(--color-accent-fantasy);
+--fantasy-stat-table-filters-checkbox-checked-border:var(--color-accent-fantasy);
+--fantasy-stat-table-filters-close-radius:8px;
+--fantasy-stat-table-filters-close-text:var(--color-text);
+--fantasy-stat-table-filters-close-hovered-background:var(--color-chip);
+--fantasy-stat-table-filters-credits-number-font-size:12px;
+--fantasy-stat-table-filters-credits-number-font-weight:600;
+--fantasy-stat-table-filters-credits-number-line-height:16px;
+--fantasy-stat-table-filters-credits-number-text:var(--color-text);
+--fantasy-stat-table-filters-drawer-background:var(--color-surface-dialog);
+--fantasy-stat-table-filters-drawer-border:var(--color-line);
+--fantasy-stat-table-filters-drawer-border-width:1px;
+--fantasy-stat-table-filters-drawer-radius:8px 0 0 0;
+--fantasy-stat-table-filters-drawer-radius-below-650px:8px 8px 0 0;
+--fantasy-stat-table-filters-drawer-text:var(--color-text);
 --fantasy-stat-table-filters-field-background:var(--color-field);
 --fantasy-stat-table-filters-field-border:var(--color-border-control);
 --fantasy-stat-table-filters-field-border-width:1px;
 --fantasy-stat-table-filters-field-radius:4px;
 --fantasy-stat-table-filters-field-text:var(--color-text);
+--fantasy-stat-table-filters-field-font-size:14px;
+--fantasy-stat-table-filters-field-line-height:20px;
+--fantasy-stat-table-filters-focus-outline:var(--color-accent-fantasy);
+--fantasy-stat-table-filters-focus-outline-offset:2px;
+--fantasy-stat-table-filters-focus-outline-width:2px;
+--fantasy-stat-table-filters-footer-border:var(--color-line);
+--fantasy-stat-table-filters-footer-border-width:1px;
 --fantasy-stat-table-filters-label-font-size:12px;
+--fantasy-stat-table-filters-label-font-weight:600;
+--fantasy-stat-table-filters-label-line-height:16px;
 --fantasy-stat-table-filters-label-text:var(--color-muted);
---fantasy-stat-table-filters-panel-background:var(--color-surface-dialog);
---fantasy-stat-table-filters-panel-border:var(--color-line);
---fantasy-stat-table-filters-panel-border-width:1px;
---fantasy-stat-table-filters-panel-radius:6px;
---fantasy-stat-table-filters-panel-shadow:#00000099;
---fantasy-stat-table-filters-panel-shadow-size:0 10px 40px;
+--fantasy-stat-table-filters-link-font-size:12px;
+--fantasy-stat-table-filters-link-font-weight:400;
+--fantasy-stat-table-filters-link-line-height:16px;
+--fantasy-stat-table-filters-link-text:var(--color-accent-fantasy);
+--fantasy-stat-table-filters-note-font-size:12px;
+--fantasy-stat-table-filters-note-font-weight:400;
+--fantasy-stat-table-filters-note-line-height:16px;
+--fantasy-stat-table-filters-note-text:var(--color-muted);
+--fantasy-stat-table-filters-reset-font-weight:600;
+--fantasy-stat-table-filters-switch-knob-background:var(--color-border-control);
+--fantasy-stat-table-filters-switch-knob-radius:4px;
+--fantasy-stat-table-filters-switch-knob-text:var(--color-white);
+--fantasy-stat-table-filters-switch-knob-font-size:12px;
+--fantasy-stat-table-filters-switch-knob-font-weight:700;
+--fantasy-stat-table-filters-switch-knob-line-height:16px;
+--fantasy-stat-table-filters-switch-knob-on-background:var(--color-accent-fantasy);
+--fantasy-stat-table-filters-switch-row-border:var(--color-line);
+--fantasy-stat-table-filters-switch-row-border-width:1px;
+--fantasy-stat-table-filters-switch-row-font-size:12px;
+--fantasy-stat-table-filters-switch-row-line-height:16px;
+--fantasy-stat-table-filters-switch-row-text:var(--color-text);
+--fantasy-stat-table-filters-switch-track-background:var(--color-chip);
+--fantasy-stat-table-filters-switch-track-radius:8px;
+--fantasy-stat-table-filters-team-actions-border:var(--color-line);
+--fantasy-stat-table-filters-team-actions-border-width:1px;
+--fantasy-stat-table-filters-team-name-font-size:12px;
+--fantasy-stat-table-filters-team-name-font-weight:400;
+--fantasy-stat-table-filters-team-name-line-height:16px;
+--fantasy-stat-table-filters-team-name-text:var(--color-text);
+--fantasy-stat-table-filters-title-font-size:16px;
+--fantasy-stat-table-filters-title-font-weight:600;
+--fantasy-stat-table-filters-title-line-height:24px;
+--fantasy-stat-table-filters-title-text:var(--color-text);
 --fantasy-stat-table-first-column-shadow:var(--color-gridline);
 --fantasy-stat-table-first-column-shadow-size:inset -1px 0 0;
 --fantasy-stat-table-first-column-body-background:var(--color-panel);
@@ -686,6 +748,16 @@ body{
 --fantasy-stat-table-players-search-placeholder:var(--color-muted);
 --fantasy-stat-table-players-search-focused-border:var(--color-muted);
 --fantasy-stat-table-players-search-icon-text:var(--color-muted);
+--fantasy-stat-table-players-sort-value-button-background:transparent;
+--fantasy-stat-table-players-sort-value-button-border:var(--color-border-control);
+--fantasy-stat-table-players-sort-value-button-border-width:1px;
+--fantasy-stat-table-players-sort-value-button-font-size:12px;
+--fantasy-stat-table-players-sort-value-button-radius:6px;
+--fantasy-stat-table-players-sort-value-button-text:var(--color-white);
+--fantasy-stat-table-players-sort-value-button-hovered-background:var(--color-chip);
+--fantasy-stat-table-players-sort-value-button-selected-background:var(--color-accent-fantasy);
+--fantasy-stat-table-players-sort-value-button-selected-border:var(--color-accent-fantasy);
+--fantasy-stat-table-players-sort-value-button-selected-text:var(--color-text);
 --fantasy-stat-table-players-toolbar-border-bottom:var(--color-line);
 --fantasy-stat-table-players-toolbar-border-bottom-width:1px;
 --fantasy-stat-table-players-view-button-font-size:12px;
@@ -1361,19 +1433,81 @@ body[data-area=betting]{
   fantasy.stat-table.empty-note.text : .fw-empty
   fantasy.stat-table.filter-button.border : .fw-filter-btn
   fantasy.stat-table.filter-button.border-width : .fw-filter-btn
-  fantasy.stat-table.filters-field.background : .fw-filters input:not([type=checkbox]),.fw-filters select
-  fantasy.stat-table.filters-field.border : .fw-filters input:not([type=checkbox]),.fw-filters select
-  fantasy.stat-table.filters-field.border-width : .fw-filters input:not([type=checkbox]),.fw-filters select
-  fantasy.stat-table.filters-field.radius : .fw-filters input:not([type=checkbox]),.fw-filters select
-  fantasy.stat-table.filters-field.text : .fw-filters input:not([type=checkbox]),.fw-filters select
-  fantasy.stat-table.filters-label.font-size : .fw-filters label
-  fantasy.stat-table.filters-label.text : .fw-filters label
-  fantasy.stat-table.filters-panel.background : .fw-filters
-  fantasy.stat-table.filters-panel.border : .fw-filters
-  fantasy.stat-table.filters-panel.border-width : .fw-filters
-  fantasy.stat-table.filters-panel.radius : .fw-filters
-  fantasy.stat-table.filters-panel.shadow : .fw-filters
-  fantasy.stat-table.filters-panel.shadow-size : .fw-filters
+  fantasy.stat-table.filters-bar-handle.background : .fw-fd-range::-webkit-slider-thumb  |  .fw-fd-range::-moz-range-thumb
+  fantasy.stat-table.filters-bar-handle.radius : .fw-fd-range::-webkit-slider-thumb  |  .fw-fd-range::-moz-range-thumb
+  fantasy.stat-table.filters-bar-line.background : .fw-fd-line
+  fantasy.stat-table.filters-bar-line.radius : .fw-fd-line
+  fantasy.stat-table.filters-bar-segment.background : .fw-fd-seg
+  fantasy.stat-table.filters-bar-segment.radius : .fw-fd-seg
+  fantasy.stat-table.filters-checkbox.background : .fw-fd-box
+  fantasy.stat-table.filters-checkbox.border : .fw-fd-box
+  fantasy.stat-table.filters-checkbox.border-width : .fw-fd-box
+  fantasy.stat-table.filters-checkbox.radius : .fw-fd-box
+  fantasy.stat-table.filters-checkbox.text : .fw-fd-box
+  fantasy.stat-table.filters-checkbox-checked.background : .fw-fd-team input:checked+.fw-fd-box
+  fantasy.stat-table.filters-checkbox-checked.border : .fw-fd-team input:checked+.fw-fd-box
+  fantasy.stat-table.filters-close.radius : .fw-fd-close
+  fantasy.stat-table.filters-close.text : .fw-fd-close
+  fantasy.stat-table.filters-close-hovered.background : .fw-fd-close:hover
+  fantasy.stat-table.filters-credits-number.font-size : .fw-fd-num
+  fantasy.stat-table.filters-credits-number.font-weight : .fw-fd-num
+  fantasy.stat-table.filters-credits-number.line-height : .fw-fd-num
+  fantasy.stat-table.filters-credits-number.text : .fw-fd-num
+  fantasy.stat-table.filters-drawer.background : .fw-fd
+  fantasy.stat-table.filters-drawer.border : .fw-fd
+  fantasy.stat-table.filters-drawer.border-width : .fw-fd
+  fantasy.stat-table.filters-drawer.radius : .fw-fd
+  fantasy.stat-table.filters-drawer.radius-below-650px : .fw-fd
+  fantasy.stat-table.filters-drawer.text : .fw-fd
+  fantasy.stat-table.filters-field.background : .fw-fd input[type=number]
+  fantasy.stat-table.filters-field.border : .fw-fd input[type=number]
+  fantasy.stat-table.filters-field.border-width : .fw-fd input[type=number]
+  fantasy.stat-table.filters-field.radius : .fw-fd input[type=number]
+  fantasy.stat-table.filters-field.text : .fw-fd input[type=number]
+  fantasy.stat-table.filters-field.font-size : .fw-fd input[type=number]
+  fantasy.stat-table.filters-field.line-height : .fw-fd input[type=number]
+  fantasy.stat-table.filters-focus.outline : .fw-fd-range:focus-visible::-webkit-slider-thumb  |  .fw-fd-range:focus-visible::-moz-range-thumb  |  .fw-fd-team input:focus-visible+.fw-fd-box,.fw-fd-link:focus-visible,.fw-fd-close:focus-visible,.fw-fd-switch input:focus-visible~.fw-fd-knob
+  fantasy.stat-table.filters-focus.outline-offset : .fw-fd-range:focus-visible::-webkit-slider-thumb  |  .fw-fd-range:focus-visible::-moz-range-thumb  |  .fw-fd-team input:focus-visible+.fw-fd-box,.fw-fd-link:focus-visible,.fw-fd-close:focus-visible,.fw-fd-switch input:focus-visible~.fw-fd-knob
+  fantasy.stat-table.filters-focus.outline-width : .fw-fd-range:focus-visible::-webkit-slider-thumb  |  .fw-fd-range:focus-visible::-moz-range-thumb  |  .fw-fd-team input:focus-visible+.fw-fd-box,.fw-fd-link:focus-visible,.fw-fd-close:focus-visible,.fw-fd-switch input:focus-visible~.fw-fd-knob
+  fantasy.stat-table.filters-footer.border : .fw-fd-foot
+  fantasy.stat-table.filters-footer.border-width : .fw-fd-foot
+  fantasy.stat-table.filters-label.font-size : .fw-fd-label
+  fantasy.stat-table.filters-label.font-weight : .fw-fd-label
+  fantasy.stat-table.filters-label.line-height : .fw-fd-label
+  fantasy.stat-table.filters-label.text : .fw-fd-label
+  fantasy.stat-table.filters-link.font-size : .fw-fd-link
+  fantasy.stat-table.filters-link.font-weight : .fw-fd-link
+  fantasy.stat-table.filters-link.line-height : .fw-fd-link
+  fantasy.stat-table.filters-link.text : .fw-fd-link
+  fantasy.stat-table.filters-note.font-size : .fw-fd-note
+  fantasy.stat-table.filters-note.font-weight : .fw-fd-note
+  fantasy.stat-table.filters-note.line-height : .fw-fd-note
+  fantasy.stat-table.filters-note.text : .fw-fd-note
+  fantasy.stat-table.filters-reset.font-weight : .fw-fd-reset
+  fantasy.stat-table.filters-switch-knob.background : .fw-fd-knob
+  fantasy.stat-table.filters-switch-knob.radius : .fw-fd-knob
+  fantasy.stat-table.filters-switch-knob.text : .fw-fd-knob
+  fantasy.stat-table.filters-switch-knob.font-size : .fw-fd-knob
+  fantasy.stat-table.filters-switch-knob.font-weight : .fw-fd-knob
+  fantasy.stat-table.filters-switch-knob.line-height : .fw-fd-knob
+  fantasy.stat-table.filters-switch-knob-on.background : .fw-fd-switch[data-on=true] .fw-fd-knob
+  fantasy.stat-table.filters-switch-row.border : .fw-fd-switchrow
+  fantasy.stat-table.filters-switch-row.border-width : .fw-fd-switchrow
+  fantasy.stat-table.filters-switch-row.font-size : .fw-fd-switchrow
+  fantasy.stat-table.filters-switch-row.line-height : .fw-fd-switchrow
+  fantasy.stat-table.filters-switch-row.text : .fw-fd-switchrow
+  fantasy.stat-table.filters-switch-track.background : .fw-fd-track
+  fantasy.stat-table.filters-switch-track.radius : .fw-fd-track
+  fantasy.stat-table.filters-team-actions.border : .fw-fd-teamact
+  fantasy.stat-table.filters-team-actions.border-width : .fw-fd-teamact
+  fantasy.stat-table.filters-team-name.font-size : .fw-fd-teamname
+  fantasy.stat-table.filters-team-name.font-weight : .fw-fd-teamname
+  fantasy.stat-table.filters-team-name.line-height : .fw-fd-teamname
+  fantasy.stat-table.filters-team-name.text : .fw-fd-teamname
+  fantasy.stat-table.filters-title.font-size : .fw-fd-title
+  fantasy.stat-table.filters-title.font-weight : .fw-fd-title
+  fantasy.stat-table.filters-title.line-height : .fw-fd-title
+  fantasy.stat-table.filters-title.text : .fw-fd-title
   fantasy.stat-table.first-column.shadow : .fw-t th:first-child
   fantasy.stat-table.first-column.shadow-size : .fw-t th:first-child
   fantasy.stat-table.first-column-body.background : .fw-t tbody th:first-child
@@ -1462,6 +1596,16 @@ body[data-area=betting]{
   fantasy.stat-table.players-search.placeholder : [data-part="fantasy.stat-table.players-search"] input::placeholder
   fantasy.stat-table.players-search-focused.border : [data-part="fantasy.stat-table.players-search"]:focus-within
   fantasy.stat-table.players-search-icon.text : [data-part="fantasy.stat-table.players-search-icon"]
+  fantasy.stat-table.players-sort-value-button.background : [data-part="fantasy.stat-table.players-sort-value-button"]
+  fantasy.stat-table.players-sort-value-button.border : [data-part="fantasy.stat-table.players-sort-value-button"]
+  fantasy.stat-table.players-sort-value-button.border-width : [data-part="fantasy.stat-table.players-sort-value-button"]
+  fantasy.stat-table.players-sort-value-button.font-size : [data-part="fantasy.stat-table.players-sort-value-button"]
+  fantasy.stat-table.players-sort-value-button.radius : [data-part="fantasy.stat-table.players-sort-value-button"]
+  fantasy.stat-table.players-sort-value-button.text : [data-part="fantasy.stat-table.players-sort-value-button"]
+  fantasy.stat-table.players-sort-value-button-hovered.background : [data-part="fantasy.stat-table.players-sort-value-button"]:hover:not([aria-pressed=true])
+  fantasy.stat-table.players-sort-value-button-selected.background : [data-part="fantasy.stat-table.players-sort-value-button"][aria-pressed=true]
+  fantasy.stat-table.players-sort-value-button-selected.border : [data-part="fantasy.stat-table.players-sort-value-button"][aria-pressed=true]
+  fantasy.stat-table.players-sort-value-button-selected.text : [data-part="fantasy.stat-table.players-sort-value-button"][aria-pressed=true]
   fantasy.stat-table.players-toolbar.border-bottom : [data-part="fantasy.stat-table.players-toolbar"]
   fantasy.stat-table.players-toolbar.border-bottom-width : [data-part="fantasy.stat-table.players-toolbar"]
   fantasy.stat-table.players-view-button.font-size : [data-part="fantasy.stat-table.players-view-button"]
@@ -1486,10 +1630,10 @@ body[data-area=betting]{
   fantasy.stat-table.rank-chip.radius : .fw-t .fw-rk
   fantasy.stat-table.rank-chip.text : .fw-t .fw-rk
   fantasy.stat-table.row-hovered.background : .fw-t tbody tr:hover>*
-  fantasy.stat-table.scrollbar-thumb.background : .fw-table-wrap  |  .fw-table-wrap::-webkit-scrollbar-thumb
+  fantasy.stat-table.scrollbar-thumb.background : .fw-table-wrap  |  .fw-table-wrap::-webkit-scrollbar-thumb  |  .fw-fd-body
   fantasy.stat-table.scrollbar-thumb.radius : .fw-table-wrap::-webkit-scrollbar-thumb
   fantasy.stat-table.scrollbar-thumb-hovered.background : .fw-table-wrap::-webkit-scrollbar-thumb:hover
-  fantasy.stat-table.scrollbar-track.background : .fw-table-wrap  |  .fw-table-wrap::-webkit-scrollbar-track
+  fantasy.stat-table.scrollbar-track.background : .fw-table-wrap  |  .fw-table-wrap::-webkit-scrollbar-track  |  .fw-fd-body
   fantasy.stat-table.sorted-column.background : .fw-t td.fw-sorted
   fantasy.stat-table.sorted-column.font-weight : .fw-t td.fw-sorted
   fantasy.stat-table.status-and-footer.font-size : .fw-foot

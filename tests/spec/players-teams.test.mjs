@@ -25,13 +25,13 @@ test('view / mode buttons: min 56 x 44, padding 3 x 4, icon 19, gap 4, 12 px, mu
   assert.deepEqual([theme['buttons-focused'].outline, theme['buttons-focused']['outline-width'], theme['buttons-focused']['outline-offset']], ['{semantic.accent-fantasy}', '2px', '2px']);
 });
 
-test('filter row: grid minmax(max-content,1fr) auto minmax(0,215px), gap 8, padding 3 / 9, 1 px bottom line; periods, positions, search group', () => {
+test('filter row: grid minmax(max-content,1fr) auto minmax(0,max-content), gap 8, padding 3 / 9, 1 px bottom line; periods, positions, search group', () => {
   assert.deepEqual(arr['players-toolbar'].parts.map(p => p.name), ['window-buttons', 'position-buttons', 'players-search-group']);
-  assert.deepEqual(arr['players-search-group'].parts.map(p => p.name), ['search', 'filters-button']);
-  assert.deepEqual([sizes['players-toolbar']['grid-template-columns'], sizes['players-toolbar'].gap, sizes['players-toolbar'].padding, sizes['players-toolbar']['margin-bottom']], ['minmax(max-content,1fr) auto minmax(0,215px)', '8px', '3px 0 9px', '0']);
+  assert.deepEqual(arr['players-search-group'].parts.map(p => p.name), ['search', 'sort-value-button', 'filters-button']);
+  assert.deepEqual([sizes['players-toolbar']['grid-template-columns'], sizes['players-toolbar'].gap, sizes['players-toolbar'].padding, sizes['players-toolbar']['margin-bottom']], ['minmax(max-content,1fr) auto minmax(0,max-content)', '8px', '3px 0 9px', '0']);
   assert.deepEqual([theme['players-toolbar']['border-bottom'], theme['players-toolbar']['border-bottom-width']], ['{semantic.line}', '1px']);
   assert.deepEqual(arr['players-toolbar'].parts.filter(p => p.show === 'players').map(p => p.name), ['position-buttons'], 'G / F / C stay Players only');
-  assert.deepEqual(arr['players-search-group'].parts.filter(p => p.show === 'players').map(p => p.name), ['filters-button'], 'the funnel stays Players only');
+  assert.deepEqual(arr['players-search-group'].parts.filter(p => p.show === 'players').map(p => p.name), ['sort-value-button', 'filters-button'], 'Sort by value and the funnel stay Players only');
 });
 
 test('periods and G / F / C: sizes, outline #534568, text, hover #2C2250, selected accent with weight 600; G/F/C 500', () => {
@@ -43,14 +43,17 @@ test('periods and G / F / C: sizes, outline #534568, text, hover #2C2250, select
   assert.equal(palette['border-control'].fantasy, '#534568'); assert.equal(palette.chip.fantasy, '#2c2250');
 });
 
-test('search and funnel: group up to 215 px with a 7 px gap; field min 33 px, padding 0 8, icon 17, 12 px, #534568, radius 6, focus grey; funnel 35 x 35, icon 17', () => {
+test('search and funnel: group with a 7 px gap; field min 33 px, padding 0 8, icon 17, 12 px, #534568, radius 6, focus grey; funnel 35 x 35, icon 17', () => {
   assert.equal(sizes['players-search-group'].gap, '7px');
   assert.deepEqual([sizes['players-search']['min-height'], sizes['players-search'].padding, sizes['players-search'].gap, sizes['players-search-icon'].width, theme['players-search']['font-size'], theme['players-search'].radius, theme['players-search'].background, theme['players-search-focused'].border, theme['players-search'].placeholder], ['33px', '0 8px', '7px', '17px', '12px', '6px', 'transparent', '{semantic.muted}', '{semantic.muted}']);
   assert.deepEqual([sizes['players-filters-button'].width, sizes['players-filters-button']['min-height'], sizes['players-filters-icon'].width, theme['players-filters-button'].radius, theme['players-filters-button-selected'].background], ['35px', '35px', '17px', '6px', '{semantic.accent-fantasy}']);
 });
 
-test('filters panel: 154 px, padding 9, radius 6, gap 6; input margin-top 5, padding 4, radius 4, field colour', () => {
-  assert.deepEqual([sizes['filters-panel'].width, sizes['filters-panel'].padding, sizes['filters-panel'].gap, theme['filters-panel'].radius, sizes['filters-field']['margin-top'], sizes['filters-field'].padding, theme['filters-field'].radius, theme['filters-field'].background, theme['filters-label']['font-size']], ['154px', '9px', '6px', '6px', '5px', '4px', '4px', '{semantic.field}', '12px']);
+test('filters drawer (card-system scale): 336 wide, padding 16, radius 8 top-left, 1 px border; fields 32 high radius 4; switch 64 x 32; handles 24; checkbox 16 radius 4; Sort by value as tall as the funnel', () => {
+  assert.deepEqual([sizes['filters-drawer'].width, sizes['filters-drawer'].padding, theme['filters-drawer'].radius, theme['filters-drawer']['border-width'], sizes['filters-field'].height, sizes['filters-field']['margin-top'], theme['filters-field'].radius, theme['filters-field'].background], ['336px', '16px', '8px 0 0 0', '1px', '32px', '4px', '4px', '{semantic.field}']);
+  assert.deepEqual([sizes['filters-switch'].width, sizes['filters-switch'].height, sizes['filters-switch-track'].height, theme['filters-switch-track'].radius, sizes['filters-switch-knob'].width, sizes['filters-switch-knob'].height, theme['filters-switch-knob'].radius, theme['filters-switch-knob']['font-weight']], ['64px', '32px', '16px', '8px', '36px', '24px', '4px', '700']);
+  assert.deepEqual([sizes['filters-bar-handle'].width, sizes['filters-bar-line'].height, sizes['filters-bar-segment'].height, sizes['filters-checkbox'].width, theme['filters-checkbox'].radius, sizes['filters-team-row'].height, sizes['filters-credits-row'].gap, sizes['filters-reset'].height], ['24px', '4px', '8px', '16px', '4px', '24px', '12px', '32px']);
+  assert.deepEqual([sizes['players-sort-value-button']['min-height'], theme['players-sort-value-button'].radius], [sizes['players-filters-button']['min-height'], theme['players-filters-button'].radius], 'same height and radius as the funnel');
 });
 
 test('table: min 1000 px, first column 230 px, cell padding 9 x 8, header violet 11 px / 500, body 12 px, selected column accent / #2C2250 at 600, row hover 7 %, league average mixes 27 % / 74 %', () => {

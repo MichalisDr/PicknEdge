@@ -1185,24 +1185,126 @@
      "border": "{semantic.border-control}",
      "border-width": "1px"
     },
+    "filters-bar-handle": {
+     "background": "{semantic.accent-fantasy}",
+     "radius": "50%"
+    },
+    "filters-bar-line": {
+     "background": "{semantic.border-control}",
+     "radius": "2px"
+    },
+    "filters-bar-segment": {
+     "background": "{semantic.accent-fantasy}",
+     "radius": "4px"
+    },
+    "filters-checkbox": {
+     "background": "transparent",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "4px",
+     "text": "{semantic.white}"
+    },
+    "filters-checkbox-checked": {
+     "background": "{semantic.accent-fantasy}",
+     "border": "{semantic.accent-fantasy}"
+    },
+    "filters-close": {
+     "radius": "8px",
+     "text": "{semantic.text}"
+    },
+    "filters-close-hovered": {
+     "background": "{semantic.chip}"
+    },
+    "filters-credits-number": {
+     "font-size": "12px",
+     "font-weight": "600",
+     "line-height": "16px",
+     "text": "{semantic.text}"
+    },
+    "filters-drawer": {
+     "background": "{semantic.surface-dialog}",
+     "border": "{semantic.line}",
+     "border-width": "1px",
+     "radius": "8px 0 0 0",
+     "radius-below-650px": "8px 8px 0 0",
+     "text": "{semantic.text}"
+    },
     "filters-field": {
      "background": "{semantic.field}",
      "border": "{semantic.border-control}",
      "border-width": "1px",
      "radius": "4px",
-     "text": "{semantic.text}"
+     "text": "{semantic.text}",
+     "font-size": "14px",
+     "line-height": "20px"
+    },
+    "filters-focus": {
+     "outline": "{semantic.accent-fantasy}",
+     "outline-offset": "2px",
+     "outline-width": "2px"
+    },
+    "filters-footer": {
+     "border": "{semantic.line}",
+     "border-width": "1px"
     },
     "filters-label": {
      "font-size": "12px",
+     "font-weight": "600",
+     "line-height": "16px",
      "text": "{semantic.muted}"
     },
-    "filters-panel": {
-     "background": "{semantic.surface-dialog}",
+    "filters-link": {
+     "font-size": "12px",
+     "font-weight": "400",
+     "line-height": "16px",
+     "text": "{semantic.accent-fantasy}"
+    },
+    "filters-note": {
+     "font-size": "12px",
+     "font-weight": "400",
+     "line-height": "16px",
+     "text": "{semantic.muted}"
+    },
+    "filters-reset": {
+     "font-weight": "600"
+    },
+    "filters-switch-knob": {
+     "background": "{semantic.border-control}",
+     "radius": "4px",
+     "text": "{semantic.white}",
+     "font-size": "12px",
+     "font-weight": "700",
+     "line-height": "16px"
+    },
+    "filters-switch-knob-on": {
+     "background": "{semantic.accent-fantasy}"
+    },
+    "filters-switch-row": {
      "border": "{semantic.line}",
      "border-width": "1px",
-     "radius": "6px",
-     "shadow": "#00000099",
-     "shadow-size": "0 10px 40px"
+     "font-size": "12px",
+     "line-height": "16px",
+     "text": "{semantic.text}"
+    },
+    "filters-switch-track": {
+     "background": "{semantic.chip}",
+     "radius": "8px"
+    },
+    "filters-team-actions": {
+     "border": "{semantic.line}",
+     "border-width": "1px"
+    },
+    "filters-team-name": {
+     "font-size": "12px",
+     "font-weight": "400",
+     "line-height": "16px",
+     "text": "{semantic.text}"
+    },
+    "filters-title": {
+     "font-size": "16px",
+     "font-weight": "600",
+     "line-height": "24px",
+     "text": "{semantic.text}"
     },
     "first-column": {
      "shadow": "{semantic.gridline}",
@@ -1358,6 +1460,22 @@
     },
     "players-search-icon": {
      "text": "{semantic.muted}"
+    },
+    "players-sort-value-button": {
+     "background": "transparent",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "font-size": "12px",
+     "radius": "6px",
+     "text": "{semantic.white}"
+    },
+    "players-sort-value-button-hovered": {
+     "background": "{semantic.chip}"
+    },
+    "players-sort-value-button-selected": {
+     "background": "{semantic.accent-fantasy}",
+     "border": "{semantic.accent-fantasy}",
+     "text": "{semantic.text}"
     },
     "players-toolbar": {
      "border-bottom": "{semantic.line}",
