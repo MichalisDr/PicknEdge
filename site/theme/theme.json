@@ -656,6 +656,9 @@
     },
     "quadrant-tint": {
      "opacity": "0.12"
+    },
+    "chart-legend-swatch": {
+     "radius": "4px"
     }
    },
    "player-card": {

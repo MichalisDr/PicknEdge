@@ -420,6 +420,15 @@
     },
     "enlarged-chart-body": {
      "height-wide": "calc(88vh - 48px)"
+    },
+    "enlarged-chart-aside": {
+     "width": "280px",
+     "gap": "24px",
+     "grid-template-rows": "minmax(0,1fr)"
+    },
+    "chart-legend": {
+     "gap": "8px",
+     "swatch-size": "12px"
     }
    },
    "player-card": {
