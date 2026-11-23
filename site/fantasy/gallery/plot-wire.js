@@ -1,8 +1,8 @@
 /* Browser side of the scatter plots: draws each .fc-plot at its real width (and again when it resizes), brings the hovered logo to the front and shows its read-out
    (name and both values, the same pop-over as the per-game bars). Touch: the first tap on a logo shows the read-out, a second tap opens the card.
-   Narrow = the container is below 520px: charts.css sets --fc-narrow:1 on the plot (the same container query as the card system); the logos use their narrow sizes.
+   Narrow = the container is below 520px: charts.css sets --fc-narrow:1 on the plot (the same container query as the card system); then the opened card is drawn at its width (narrowHeight) instead of filling a fixed height.
    mode 'full' = the opened card (logos, more ticks). onOpen(id) opens the card of a clicked logo; without it the click is left to the caller (the enlarged chart handles it). */
-import { drawScatter } from './scatter.js';
+import { drawScatter, narrowHeight } from './scatter.js';
 
 export function wirePlots(root, onOpen, win = globalThis.window, mode = 'thumb') {
   root.querySelectorAll('.fc-plot').forEach(plot => {
@@ -11,7 +11,7 @@ export function wirePlots(root, onOpen, win = globalThis.window, mode = 'thumb')
     const hide = () => { tip.hidden = true; tipFor = ''; };
     const draw = () => {
       const nar = win.getComputedStyle(plot).getPropertyValue('--fc-narrow').trim() === '1';
-      const w = Math.round(plot.clientWidth), h = mode === 'full' ? Math.round(plot.clientHeight) : 0;   // the opened card fills the height of its stage; thumbnails keep the aspect
+      const w = Math.round(plot.clientWidth), h = mode === 'full' ? (nar ? narrowHeight(model, w) : Math.round(plot.clientHeight)) : 0;   // the opened card fills the height of its stage (narrow: its width x aspect); thumbnails keep the aspect
       if (!w || (mode === 'full' && !h) || (w === width && h === height && nar === narrow)) return;
       width = w; height = h; narrow = nar; hide();
       canvas.innerHTML = drawScatter(model, w, nar, mode, h || undefined);

@@ -37,11 +37,17 @@ export function scatter(chart, view, ids, byId, roster, views = [view]) {
   return `<div class="fc-plot" data-plot="${esc(JSON.stringify(model))}"><div class="fc-canvas">${drawScatter(model, size('fantasy.charts-gallery.plot.plot-width'), false, 'thumb')}</div><div class="fc-tip fw-bar-tip" role="status" hidden></div></div>`;
 }
 
+/** Height of the opened card's plot when the container is narrow (it follows the content, not a fixed height): width x aspect; an x = y chart is exactly as tall as its square plot area, so no empty band sits above it. */
+export function narrowHeight(model, W) {
+  const P = k => size('fantasy.charts-gallery.plot.' + k);
+  return model.equal ? W - P('margin-left-narrow') - P('margin-right-narrow') + P('margin-top') + P('margin-bottom') : Math.round(W * P('aspect-narrow'));
+}
+
 /** The svg of a model at a pixel width (1 svg unit = 1 css px, so lettering and logos are real sizes); `narrow` = phone sizes.
     mode 'thumb' (gallery thumbnail): plain dots, no labels, every second tick; 'full' (opened card): team logos, 6-8 ticks. H = the height to fill (default: width x aspect). */
-export function drawScatter(model, W, narrow, mode = 'thumb', H = Math.round(W * size('fantasy.charts-gallery.plot.' + 'aspect'))) {
+export function drawScatter(model, W, narrow, mode = 'thumb', H = Math.round(W * size('fantasy.charts-gallery.plot.' + (narrow && mode === 'full' ? 'aspect-narrow' : 'aspect')))) {
   const full = mode === 'full', P = k => size('fantasy.charts-gallery.plot.' + k);
-  const L = P('margin-left'), R = P('margin-right'), Tp = P('margin-top'), B = P('margin-bottom');
+  const L = P(narrow ? 'margin-left-narrow' : 'margin-left'), R = P(narrow ? 'margin-right-narrow' : 'margin-right'), Tp = P('margin-top'), B = P('margin-bottom');
   const iw = W - L - R, ih = H - Tp - B, side = model.equal ? Math.min(iw, ih) : null;   // the x = y chart has a square plot area: same range on both axes = exactly 45°
   const x0 = side ? L + (iw - side) / 2 : L, x1 = side ? x0 + side : W - R, y1 = H - B, y0 = side ? y1 - side : Tp;
   const { sx, sy } = model, X = v => x0 + (v - sx.lo) / (sx.hi - sx.lo) * (x1 - x0), Y = v => y1 - (v - sy.lo) / (sy.hi - sy.lo) * (y1 - y0), f = v => +v.toFixed(1);
