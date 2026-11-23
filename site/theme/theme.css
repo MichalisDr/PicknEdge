@@ -264,15 +264,15 @@ body{
 --fantasy-charts-gallery-average-line:var(--color-text-muted-2);
 --fantasy-charts-gallery-axis-line:var(--color-border-control);
 --fantasy-charts-gallery-axis-numbers-font-size:12px;
---fantasy-charts-gallery-axis-numbers-font-size-below-650px:11px;
 --fantasy-charts-gallery-axis-numbers-text:var(--color-text-muted-2);
+--fantasy-charts-gallery-axis-numbers-font-size-narrow:12px;
 --fantasy-charts-gallery-axis-title-font-size:14px;
---fantasy-charts-gallery-axis-title-font-size-below-650px:13px;
 --fantasy-charts-gallery-axis-title-text:var(--color-text);
+--fantasy-charts-gallery-axis-title-font-size-narrow:14px;
 --fantasy-charts-gallery-chart-card-background:var(--color-panel);
 --fantasy-charts-gallery-chart-card-border:var(--color-border-soft);
 --fantasy-charts-gallery-chart-card-border-width:1px;
---fantasy-charts-gallery-chart-card-radius:10px;
+--fantasy-charts-gallery-chart-card-radius:8px;
 --fantasy-charts-gallery-chart-card-text:var(--color-text-soft);
 --fantasy-charts-gallery-chart-card-focused-outline:var(--color-accent-fantasy);
 --fantasy-charts-gallery-chart-card-focused-outline-offset:3px;
@@ -280,18 +280,24 @@ body{
 --fantasy-charts-gallery-chart-card-hovered-border:var(--color-accent-fantasy);
 --fantasy-charts-gallery-chart-gridline-line:var(--color-border-soft);
 --fantasy-charts-gallery-chart-note-font-size:12px;
---fantasy-charts-gallery-chart-note-font-size-below-650px:11px;
 --fantasy-charts-gallery-chart-note-text:var(--color-text-muted-2);
+--fantasy-charts-gallery-chart-note-font-size-narrow:12px;
+--fantasy-charts-gallery-chart-note-line-height:16px;
 --fantasy-charts-gallery-chart-subtitle-font-size:12px;
---fantasy-charts-gallery-chart-subtitle-font-size-below-650px:11px;
 --fantasy-charts-gallery-chart-subtitle-text:var(--color-text-muted-2);
+--fantasy-charts-gallery-chart-subtitle-font-size-narrow:12px;
+--fantasy-charts-gallery-chart-subtitle-line-height:16px;
 --fantasy-charts-gallery-chart-title-font-size:16px;
 --fantasy-charts-gallery-chart-title-text:var(--color-text);
+--fantasy-charts-gallery-chart-title-line-height:24px;
 --fantasy-charts-gallery-diagonal-line:var(--color-border-control);
---fantasy-charts-gallery-enlarged-chart-subtitle-font-size:13px;
+--fantasy-charts-gallery-enlarged-chart-subtitle-font-size:14px;
 --fantasy-charts-gallery-enlarged-chart-subtitle-text:var(--color-text-muted-2);
---fantasy-charts-gallery-enlarged-chart-title-font-size:22px;
---fantasy-charts-gallery-enlarged-chart-title-font-size-below-650px:18px;
+--fantasy-charts-gallery-enlarged-chart-subtitle-line-height:20px;
+--fantasy-charts-gallery-enlarged-chart-title-font-size:24px;
+--fantasy-charts-gallery-enlarged-chart-title-font-size-narrow:20px;
+--fantasy-charts-gallery-enlarged-chart-title-line-height:32px;
+--fantasy-charts-gallery-enlarged-chart-title-line-height-narrow:24px;
 --fantasy-charts-gallery-point-border:var(--color-surface-dialog);
 --fantasy-charts-gallery-point-fill:var(--color-text-muted-2);
 --fantasy-charts-gallery-point-hovered-border:var(--color-white);
@@ -1106,11 +1112,11 @@ body[data-area=betting]{
   fantasy.charts-gallery.average.line : .fc-avg
   fantasy.charts-gallery.axis.line : .fc-axis
   fantasy.charts-gallery.axis-numbers.font-size : .fc-tick
-  fantasy.charts-gallery.axis-numbers.font-size-below-650px : .fc-tick
   fantasy.charts-gallery.axis-numbers.text : .fc-tick  |  .fc-pl
+  fantasy.charts-gallery.axis-numbers.font-size-narrow : .fc-tick
   fantasy.charts-gallery.axis-title.font-size : .fc-ax
-  fantasy.charts-gallery.axis-title.font-size-below-650px : .fc-ax
   fantasy.charts-gallery.axis-title.text : .fc-ax
+  fantasy.charts-gallery.axis-title.font-size-narrow : .fc-ax
   fantasy.charts-gallery.chart-card.background : .fc-card
   fantasy.charts-gallery.chart-card.border : .fc-card
   fantasy.charts-gallery.chart-card.border-width : .fc-card
@@ -1122,18 +1128,24 @@ body[data-area=betting]{
   fantasy.charts-gallery.chart-card-hovered.border : .fc-card:hover
   fantasy.charts-gallery.chart-gridline.line : .fc-grid
   fantasy.charts-gallery.chart-note.font-size : .fc-note
-  fantasy.charts-gallery.chart-note.font-size-below-650px : .fc-note
   fantasy.charts-gallery.chart-note.text : .fc-note
+  fantasy.charts-gallery.chart-note.font-size-narrow : .fc-note
+  fantasy.charts-gallery.chart-note.line-height : .fc-note
   fantasy.charts-gallery.chart-subtitle.font-size : .fc-card-sub
-  fantasy.charts-gallery.chart-subtitle.font-size-below-650px : .fc-card-sub
   fantasy.charts-gallery.chart-subtitle.text : .fc-card-sub
+  fantasy.charts-gallery.chart-subtitle.font-size-narrow : .fc-card-sub
+  fantasy.charts-gallery.chart-subtitle.line-height : .fc-card-sub
   fantasy.charts-gallery.chart-title.font-size : .fc-card-title
   fantasy.charts-gallery.chart-title.text : .fc-card-title
+  fantasy.charts-gallery.chart-title.line-height : .fc-card-title
   fantasy.charts-gallery.diagonal.line : .fc-diag
   fantasy.charts-gallery.enlarged-chart-subtitle.font-size : .fc-mhead h2 small
   fantasy.charts-gallery.enlarged-chart-subtitle.text : .fc-mhead h2 small
+  fantasy.charts-gallery.enlarged-chart-subtitle.line-height : .fc-mhead h2 small
   fantasy.charts-gallery.enlarged-chart-title.font-size : .fc-mhead h2
-  fantasy.charts-gallery.enlarged-chart-title.font-size-below-650px : .fc-mhead h2
+  fantasy.charts-gallery.enlarged-chart-title.font-size-narrow : .fc-mhead h2
+  fantasy.charts-gallery.enlarged-chart-title.line-height : .fc-mhead h2
+  fantasy.charts-gallery.enlarged-chart-title.line-height-narrow : .fc-mhead h2
   fantasy.charts-gallery.point.border : .fc-dot
   fantasy.charts-gallery.point.fill : .fc-dot
   fantasy.charts-gallery.point-hovered.border : .fc-pt:focus-visible .fc-hit  |  .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot

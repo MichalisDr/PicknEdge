@@ -585,19 +585,19 @@
     },
     "axis-numbers": {
      "font-size": "12px",
-     "font-size-below-650px": "11px",
-     "text": "{semantic.text-muted-2}"
+     "text": "{semantic.text-muted-2}",
+     "font-size-narrow": "12px"
     },
     "axis-title": {
      "font-size": "14px",
-     "font-size-below-650px": "13px",
-     "text": "{semantic.text}"
+     "text": "{semantic.text}",
+     "font-size-narrow": "14px"
     },
     "chart-card": {
      "background": "{semantic.panel}",
      "border": "{semantic.border-soft}",
      "border-width": "1px",
-     "radius": "10px",
+     "radius": "8px",
      "text": "{semantic.text-soft}"
     },
     "chart-card-focused": {
@@ -613,28 +613,34 @@
     },
     "chart-note": {
      "font-size": "12px",
-     "font-size-below-650px": "11px",
-     "text": "{semantic.text-muted-2}"
+     "text": "{semantic.text-muted-2}",
+     "font-size-narrow": "12px",
+     "line-height": "16px"
     },
     "chart-subtitle": {
      "font-size": "12px",
-     "font-size-below-650px": "11px",
-     "text": "{semantic.text-muted-2}"
+     "text": "{semantic.text-muted-2}",
+     "font-size-narrow": "12px",
+     "line-height": "16px"
     },
     "chart-title": {
      "font-size": "16px",
-     "text": "{semantic.text}"
+     "text": "{semantic.text}",
+     "line-height": "24px"
     },
     "diagonal": {
      "line": "{semantic.border-control}"
     },
     "enlarged-chart-subtitle": {
-     "font-size": "13px",
-     "text": "{semantic.text-muted-2}"
+     "font-size": "14px",
+     "text": "{semantic.text-muted-2}",
+     "line-height": "20px"
     },
     "enlarged-chart-title": {
-     "font-size": "22px",
-     "font-size-below-650px": "18px"
+     "font-size": "24px",
+     "font-size-narrow": "20px",
+     "line-height": "32px",
+     "line-height-narrow": "24px"
     },
     "point": {
      "border": "{semantic.surface-dialog}",
