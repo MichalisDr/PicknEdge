@@ -15,7 +15,7 @@
 //
 // Exit codes: 0 = done, or no/expired token (one warning, nothing written: the games update must never fail because of this step);
 //             2 = the API shape changed (loud, nothing more is written); 1 = other failure (retried on the next run).
-import { mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync, appendFileSync, existsSync } from 'node:fs';
 import { gzipSync, gunzipSync } from 'node:zlib';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -195,7 +195,9 @@ export async function run({ argv = process.argv, env = process.env, fetch: fetch
   try {
     const r = await pull({ root, token, fetch: fetchFn, sleep: wait, gapMs, log, warn });
     if (r.status === 'ok') log(`fantasy: ${r.written} new snapshot(s), ${r.unchanged} unchanged, ${r.matchdays} round(s) covered`);
-    return 0;                                     // also for a missing / expired token: that step never fails the games update
+    // In GitHub Actions: say how the pull ended (ok | auth | no-token) so a later step can raise one clear annotation (scripts/build/fantasy-status.mjs).
+    if (env.GITHUB_OUTPUT) { try { appendFileSync(env.GITHUB_OUTPUT, `credits_pull=${r.status}\n`); } catch { /* the output is a convenience */ } }
+    return 0;                                    // also for a missing / expired token: that step never fails the games update
   } catch (e) {
     const msg = mask(e.message, token);
     if (e instanceof ShapeError) { error(`

@@ -42,6 +42,7 @@ jobs:
       # Fantasy credits (private backend, personal token in the repository secret FANTAKING_TOKEN). Without the secret, or with an expired one, this
       # step only prints a warning and writes nothing. continue-on-error: whatever happens here must never stop the games update.
       - name: Fetch Fantasy credits (raw)
+        id: fantasy
         if: ${{ !inputs.probe }}
         continue-on-error: true
         env:
@@ -51,6 +52,15 @@ jobs:
       - name: Build the clean tables
         if: ${{ !inputs.probe }}
         run: node scripts/build/build.mjs
+
+      # One clear warning (annotation + job summary line) when the token was rejected / missing or the credits are behind the games. Never fails the run:
+      # the build and the guard tolerate stale credits (cr, crSeries and valueSeries stop at the last round with credits).
+      - name: Fantasy credits status
+        if: ${{ !inputs.probe }}
+        continue-on-error: true
+        env:
+          FANTASY_PULL: ${{ steps.fantasy.outputs.credits_pull }}
+        run: node scripts/build/fantasy-status.mjs
 
       - name: Build site/data and docs
         if: ${{ !inputs.probe }}
@@ -67,6 +77,7 @@ jobs:
           tests/build/fantasy.test.mjs
           tests/build/names.test.mjs
           tests/build/pbp.test.mjs
+          tests/build/pull-fantasy.test.mjs
           tests/core/coverage.test.mjs
           tests/core/data-loader.test.mjs
           tests/metrics/all-metrics.test.mjs
