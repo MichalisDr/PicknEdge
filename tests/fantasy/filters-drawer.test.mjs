@@ -125,7 +125,7 @@ test('sorting by Cr or Value changes only the order: every rank stays the overal
   }
 });
 
-test('Credits: the range comes from the data; Max. credits and the upper handle are one value; the handles keep one step apart', async () => {
+test('Credits: the range comes from the data; the Credits \u2264 box and the upper handle are one value; the handles keep one step apart', async () => {
   const { M, html } = await render({ filters: true });
   const crs = M.shown.map(r => r.cr).filter(Number.isFinite), range = M.range;
   assert.ok(range.min <= Math.min(...crs) && range.max >= Math.max(...crs) && range.max > range.min, 'range = lowest to highest cr of the data');
@@ -157,8 +157,10 @@ test('Min. value uses the selected window and hides players without a value', as
 test('the drawer: right-side dialog with every control, nothing else; teams are checkboxes, the switch is a real checkbox', async () => {
   const { html } = await render({ filters: true, team: ['BAR'] });
   const drawer = html.slice(html.indexOf('<aside class="fw-fd"'), html.indexOf('</aside>'));
-  for (const part of ['Filters</h2>', 'data-filters-close', 'none ticked = all teams', 'Select all', 'Deselect all', '>Credits<', 'Max. credits', 'Min. value', 'Min. games', 'Min. minutes', 'Include players below the minimum thresholds', 'role="switch"', 'Reset filters'])
+  for (const part of ['Filters</h2>', 'data-filters-close', 'Select all', 'Deselect all', '>Credits<', 'Credits \u2264', 'Value \u2265', 'Games \u2265', 'Minutes \u2265', 'aria-label="Credits, at most"', 'aria-label="Value, at least"', 'aria-label="Games, at least"', 'aria-label="Minutes, at least"', 'Include players below the minimum thresholds', 'role="switch"', 'Reset filters'])
     assert.ok(drawer.includes(part), part);
+  assert.ok(!drawer.includes('none ticked') && /<div class="fw-fd-label">Team<\/div>/.test(drawer), 'the Team heading is just Team');
+  assert.ok(!/Max\. credits|Min\. (value|games|minutes)/.test(drawer), 'the old labels are gone');
   assert.equal((drawer.match(/type="checkbox" data-team=/g) || []).length, Object.keys((await Data.roster()).teams).length);
   assert.match(drawer, /data-team="BAR"[^>]*checked/);
   assert.ok(!html.includes('fw-filters'), 'the old pop-up is gone');

@@ -1259,12 +1259,6 @@
      "line-height": "16px",
      "text": "{semantic.accent-fantasy}"
     },
-    "filters-note": {
-     "font-size": "12px",
-     "font-weight": "400",
-     "line-height": "16px",
-     "text": "{semantic.muted}"
-    },
     "filters-reset": {
      "font-weight": "600"
     },

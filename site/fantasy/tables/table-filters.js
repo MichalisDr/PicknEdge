@@ -50,7 +50,7 @@ export const ICONS = {
 };
 
 const P = 'fw-fd';
-const numberBox = (key, label, value, extra = '') => `<label class="${P}-field"><span class="${P}-label">${label}</span><input data-filter="${key}" data-fkey="${key}" type="number" inputmode="decimal" ${extra} value="${value}"></label>`;
+const numberBox = (key, label, aria, value, extra = '') => `<label class="${P}-field"><span class="${P}-label">${label}</span><input data-filter="${key}" data-fkey="${key}" aria-label="${aria}" type="number" inputmode="decimal" ${extra} value="${value}"></label>`;
 
 /** The drawer. range = the Credits range of the data; roster = the roster (every team gets a checkbox). */
 export function drawerHtml(state, { range, roster }) {
@@ -61,14 +61,14 @@ export function drawerHtml(state, { range, roster }) {
   return `<aside class="${P}" role="dialog" aria-label="Filters">
     <div class="${P}-head"><h2 class="${P}-title">Filters</h2><button type="button" class="${P}-close" data-filters-close data-fkey="close" aria-label="Close filters">${ICONS.close}</button></div>
     <div class="${P}-body">
-      <section class="${P}-sec"><div class="${P}-label">Team <span class="${P}-note">none ticked = all teams</span></div>
+      <section class="${P}-sec"><div class="${P}-label">Team</div>
         <div class="${P}-teamact"><button type="button" class="${P}-link" data-team-all>Select all</button><button type="button" class="${P}-link" data-team-none>Deselect all</button></div>
         <div class="${P}-teams">${teams.map(([c, n]) => `<label class="${P}-team"><input type="checkbox" data-team="${esc(c)}" data-fkey="team-${esc(c)}" ${state.team.includes(c) ? 'checked' : ''}><span class="${P}-box">${ICONS.tick}</span><span class="${P}-teamname">${esc(n)}</span></label>`).join('')}</div></section>
       <section class="${P}-sec"><div class="${P}-label">Credits</div>
         <div class="${P}-credits"><span class="${P}-num" data-cr-out="lo">${lo.toFixed(1)}</span>
           <div class="${P}-bar"><div class="${P}-rail"><span class="${P}-line"></span><span class="${P}-seg" data-cr-seg style="margin-left:${left}%;margin-right:${right}%"></span></div>${rangeInput('lo', lo)}${rangeInput('hi', hi)}</div>
           <span class="${P}-num" data-cr-out="hi">${hi.toFixed(1)}</span></div></section>
-      <section class="${P}-fields">${numberBox('maxCr', 'Max. credits', hi.toFixed(1), `min="${range.min}" max="${range.max}" step="${CR_STEP}"`)}${numberBox('minValue', 'Min. value', state.minValue, 'min="0" step="0.1"')}${numberBox('minGp', 'Min. games', state.minGp, 'min="0" step="1"')}${numberBox('minMin', 'Min. minutes', state.minMin, 'min="0" step="1"')}</section>
+      <section class="${P}-fields">${numberBox('maxCr', 'Credits \u2264', 'Credits, at most', hi.toFixed(1), `min="${range.min}" max="${range.max}" step="${CR_STEP}"`)}${numberBox('minValue', 'Value \u2265', 'Value, at least', state.minValue, 'min="0" step="0.1"')}${numberBox('minGp', 'Games \u2265', 'Games, at least', state.minGp, 'min="0" step="1"')}${numberBox('minMin', 'Minutes \u2265', 'Minutes, at least', state.minMin, 'min="0" step="1"')}</section>
       <section class="${P}-switchrow"><span class="${P}-switchtext" id="${P}-switch-label">Include players below the minimum thresholds</span>
         <label class="${P}-switch" data-on="${state.showAll}"><input type="checkbox" role="switch" data-filter="showAll" data-fkey="showAll" aria-labelledby="${P}-switch-label" ${state.showAll ? 'checked' : ''}><span class="${P}-track"></span><span class="${P}-knob">${state.showAll ? 'ON' : 'OFF'}</span></label></section>
     </div>
