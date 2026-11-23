@@ -1,5 +1,5 @@
 /* The Players and Teams toolbar (one renderer): an upper row with the Profile / Shooting pair and the Table / Charts pair (icon above label), and a lower row with the sample windows
-   at the left and, grouped at the right, G / F / C and the Filters funnel (Players only) with the search field (Find player / Find team) and, for Players, the Sort by value toggle. Rows, order, alignment and visibility come from config/arrangement.json
+   at the left and, grouped at the right, G / F / C and the Filters funnel (Players only) with the search field (Find player / Find team). Rows, order, alignment and visibility come from config/arrangement.json
    (fantasy.stat-table.players-view-row, .players-toolbar, ...); every element has a data-part equal to its theme / sizes / arrangement key.
    The icons are SVG files (assets/icons) drawn with currentColor: they take the colour of the button around them. */
 import * as Windows from '../../core/windows.js';
@@ -7,7 +7,6 @@ import { esc } from '../../core/html.js';
 import { icon } from '../../core/icons.js';
 import { drawParts } from '../../core/arrangement.js';
 import { filtersActive } from './table-state.js';
-import { ICONS } from './table-filters.js';
 
 const A = 'fantasy.stat-table.';
 const part = key => `data-part="${A}${key}"`;
@@ -43,10 +42,6 @@ export function tableToolbarHtml(state, show, titleHtml = '') {
       'players-search-icon': () => `<span ${part('players-search-icon')} aria-hidden="true">${icon('search')}</span>`,
       'players-search-field': () => `<input type="search" aria-label="${label}" placeholder="${label}" value="${esc(state.query)}">`,
     }, {}).map(p => p.html).join('')}</label>`,
-    'sort-value-button': () => `<button ${part('players-sort-value-button')} data-sort-value aria-pressed="${!!state.sortValue}">${drawParts(`${A}players-sort-value-button`, {
-      'players-sort-value-icon': () => `<span ${part('players-sort-value-icon')} aria-hidden="true">${ICONS['sort-value']}</span>`,
-      'players-sort-value-label': () => '<span>Sort by value</span>',
-    }, {}).map(p => p.html).join('')}</button>`,
     'filters-button': () => `<button ${part('players-filters-button')} data-filters aria-expanded="${state.filters}" data-active="${state.filters || filtersActive(state, show.teamCount)}" aria-label="Filters" title="Filters">${drawParts(`${A}players-filters-button`, {
       'players-filters-icon': () => `<span ${part('players-filters-icon')} aria-hidden="true">${icon('funnel')}</span>`,
     }, {}).map(p => p.html).join('')}</button>`,

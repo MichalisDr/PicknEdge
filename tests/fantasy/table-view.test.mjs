@@ -17,7 +17,7 @@ const { FILTER_DEFAULTS, filtersActive, resetFilters } = await import('../../sit
 globalThis.fetch = async u => ({ ok: true, json: async () => JSON.parse(siteFile('config/table-layouts.json')) });
 const widthsOf = names => names.map(n => n.length * 8);
 async function render(over) {
-  Object.assign(state, { entity: 'teams', view: 'profile', win: 'season', position: [], query: '', minMin: 0, minGp: 1, team: [], minCr: null, maxCr: null, minValue: 0, sortValue: false, filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' }, over);
+  Object.assign(state, { entity: 'teams', view: 'profile', win: 'season', position: [], query: '', minMin: 0, minGp: 1, team: [], minCr: null, maxCr: null, minValue: 0, filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' }, over);
   const M = await loadTable(state, widthsOf, () => false);
   return { M, html: tableHtml(state, M) };
 }

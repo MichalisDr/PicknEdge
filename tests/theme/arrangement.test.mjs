@@ -20,7 +20,7 @@ const { headerHtml, controlsHtml } = await import('../../site/fantasy/cards/card
 const SITE = new URL('../../site/', import.meta.url);
 globalThis.fetch = async () => ({ ok: true, json: async () => JSON.parse(readFileSync(new URL('config/table-layouts.json', SITE), 'utf8')) });
 async function table(entity) {
-  Object.assign(state, { entity, view: 'profile', win: 'season', position: [], query: '', minMin: 0, minGp: 1, team: [], minCr: null, maxCr: null, minValue: 0, sortValue: false, filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' });
+  Object.assign(state, { entity, view: 'profile', win: 'season', position: [], query: '', minMin: 0, minGp: 1, team: [], minCr: null, maxCr: null, minValue: 0, filters: false, showAll: false, sort: '', dir: 'desc', sel: [], mode: 'table' });
   return tableHtml(state, await loadTable(state, names => names.map(n => n.length * 8), () => false));
 }
 const at = (html, parts) => parts.map(p => html.indexOf(p));

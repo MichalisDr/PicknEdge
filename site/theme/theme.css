@@ -748,16 +748,6 @@ body{
 --fantasy-stat-table-players-search-placeholder:var(--color-muted);
 --fantasy-stat-table-players-search-focused-border:var(--color-muted);
 --fantasy-stat-table-players-search-icon-text:var(--color-muted);
---fantasy-stat-table-players-sort-value-button-background:transparent;
---fantasy-stat-table-players-sort-value-button-border:var(--color-border-control);
---fantasy-stat-table-players-sort-value-button-border-width:1px;
---fantasy-stat-table-players-sort-value-button-font-size:12px;
---fantasy-stat-table-players-sort-value-button-radius:6px;
---fantasy-stat-table-players-sort-value-button-text:var(--color-white);
---fantasy-stat-table-players-sort-value-button-hovered-background:var(--color-chip);
---fantasy-stat-table-players-sort-value-button-selected-background:var(--color-accent-fantasy);
---fantasy-stat-table-players-sort-value-button-selected-border:var(--color-accent-fantasy);
---fantasy-stat-table-players-sort-value-button-selected-text:var(--color-text);
 --fantasy-stat-table-players-toolbar-border-bottom:var(--color-line);
 --fantasy-stat-table-players-toolbar-border-bottom-width:1px;
 --fantasy-stat-table-players-view-button-font-size:12px;
@@ -805,6 +795,9 @@ body{
 --fantasy-stat-table-table-frame-radius:10px;
 --fantasy-stat-table-value-bad-text:var(--color-eval-bad-text);
 --fantasy-stat-table-value-good-text:var(--color-eval-good-text);
+--fantasy-stat-table-header-sort-label-font-size:12px;
+--fantasy-stat-table-header-sort-label-line-height:16px;
+--fantasy-stat-table-header-sort-label-radius:4px;
 --fantasy-stats-block-label-font-size:12px;
 --fantasy-stats-block-label-line-height:16px;
 --fantasy-stats-block-label-font-weight:400;
@@ -1519,8 +1512,8 @@ body[data-area=betting]{
   fantasy.stat-table.header-first-cell.background : .fw-t thead th:first-child
   fantasy.stat-table.header-selected.text : .fw-t thead button[data-sel]
   fantasy.stat-table.header-sort-arrow.font-size : .fw-t th[aria-sort=ascending] button::after,.fw-t th[aria-sort=descending] button::after
-  fantasy.stat-table.header-sorted.background : .fw-t thead th.fw-sorted
-  fantasy.stat-table.header-sorted.text : .fw-t thead th.fw-sorted
+  fantasy.stat-table.header-sorted.background : .fw-t thead th.fw-sorted  |  .fw-t thead .fw-hs[data-on]
+  fantasy.stat-table.header-sorted.text : .fw-t thead th.fw-sorted  |  .fw-t thead .fw-hs[data-on]
   fantasy.stat-table.heading-title.font-size : .fw-heading h1,[data-part="fantasy.stat-table.heading-title"]
   fantasy.stat-table.heading-title.font-size-below-580px : [data-part="fantasy.stat-table.heading-title"]
   fantasy.stat-table.hover-popup.background : .fw-tooltip  |  .fw-bar-tip
@@ -1596,16 +1589,6 @@ body[data-area=betting]{
   fantasy.stat-table.players-search.placeholder : [data-part="fantasy.stat-table.players-search"] input::placeholder
   fantasy.stat-table.players-search-focused.border : [data-part="fantasy.stat-table.players-search"]:focus-within
   fantasy.stat-table.players-search-icon.text : [data-part="fantasy.stat-table.players-search-icon"]
-  fantasy.stat-table.players-sort-value-button.background : [data-part="fantasy.stat-table.players-sort-value-button"]
-  fantasy.stat-table.players-sort-value-button.border : [data-part="fantasy.stat-table.players-sort-value-button"]
-  fantasy.stat-table.players-sort-value-button.border-width : [data-part="fantasy.stat-table.players-sort-value-button"]
-  fantasy.stat-table.players-sort-value-button.font-size : [data-part="fantasy.stat-table.players-sort-value-button"]
-  fantasy.stat-table.players-sort-value-button.radius : [data-part="fantasy.stat-table.players-sort-value-button"]
-  fantasy.stat-table.players-sort-value-button.text : [data-part="fantasy.stat-table.players-sort-value-button"]
-  fantasy.stat-table.players-sort-value-button-hovered.background : [data-part="fantasy.stat-table.players-sort-value-button"]:hover:not([aria-pressed=true])
-  fantasy.stat-table.players-sort-value-button-selected.background : [data-part="fantasy.stat-table.players-sort-value-button"][aria-pressed=true]
-  fantasy.stat-table.players-sort-value-button-selected.border : [data-part="fantasy.stat-table.players-sort-value-button"][aria-pressed=true]
-  fantasy.stat-table.players-sort-value-button-selected.text : [data-part="fantasy.stat-table.players-sort-value-button"][aria-pressed=true]
   fantasy.stat-table.players-toolbar.border-bottom : [data-part="fantasy.stat-table.players-toolbar"]
   fantasy.stat-table.players-toolbar.border-bottom-width : [data-part="fantasy.stat-table.players-toolbar"]
   fantasy.stat-table.players-view-button.font-size : [data-part="fantasy.stat-table.players-view-button"]
@@ -1653,6 +1636,9 @@ body[data-area=betting]{
   fantasy.stat-table.table-frame.radius : .fw-table-wrap
   fantasy.stat-table.value-bad.text : .fw-v.bad  |  .fw-spark-dot.bad  |  .fw-roll.bad
   fantasy.stat-table.value-good.text : .fw-v.good  |  .fw-spark-dot.good  |  .fw-roll.good
+  fantasy.stat-table.header-sort-label.font-size : .fw-t thead .fw-hs
+  fantasy.stat-table.header-sort-label.line-height : .fw-t thead .fw-hs
+  fantasy.stat-table.header-sort-label.radius : .fw-t thead .fw-hs
   fantasy.stats-block.label.font-size : .sb .lab
   fantasy.stats-block.label.line-height : .sb .lab
   fantasy.stats-block.label.font-weight : .sb .lab

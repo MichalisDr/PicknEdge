@@ -404,6 +404,7 @@ body{
 --fantasy-stat-table-name-cell-city-margin-top:3px;
 --fantasy-stat-table-name-cell-cr-box-padding:3px 5px;
 --fantasy-stat-table-name-cell-cr-box-min-width:32px;
+--fantasy-stat-table-name-cell-cr-box-width:35px;
 --fantasy-stat-table-name-cell-figures-gap:5px;
 --fantasy-stat-table-name-cell-identity-gap:0px;
 --fantasy-stat-table-name-cell-position-badge-margin-right:1px;
@@ -414,6 +415,7 @@ body{
 --fantasy-stat-table-name-cell-value-chip-gap:4px;
 --fantasy-stat-table-name-cell-value-chip-min-height:18px;
 --fantasy-stat-table-name-cell-value-chip-padding:2px 5px;
+--fantasy-stat-table-name-cell-value-chip-width:60px;
 --fantasy-stat-table-player-name-max-width:100%;
 --fantasy-stat-table-players-filters-button-min-height:35px;
 --fantasy-stat-table-players-filters-button-padding:0;
@@ -439,13 +441,8 @@ body{
 --fantasy-stat-table-players-search-group-gap:7px;
 --fantasy-stat-table-players-search-icon-height:17px;
 --fantasy-stat-table-players-search-icon-width:17px;
---fantasy-stat-table-players-sort-value-button-gap:6px;
---fantasy-stat-table-players-sort-value-button-min-height:35px;
---fantasy-stat-table-players-sort-value-button-padding:0 10px;
---fantasy-stat-table-players-sort-value-icon-height:14px;
---fantasy-stat-table-players-sort-value-icon-width:14px;
 --fantasy-stat-table-players-toolbar-gap:8px;
---fantasy-stat-table-players-toolbar-grid-template-columns:minmax(max-content,1fr) auto minmax(0,max-content);
+--fantasy-stat-table-players-toolbar-grid-template-columns:minmax(max-content,1fr) auto minmax(0,215px);
 --fantasy-stat-table-players-toolbar-grid-template-columns-below-650px:1fr;
 --fantasy-stat-table-players-toolbar-margin-bottom:0;
 --fantasy-stat-table-players-toolbar-padding:3px 0 9px;
@@ -475,6 +472,8 @@ body{
 --fantasy-stat-table-title-row-gap:10px;
 --fantasy-stat-table-title-row-margin-bottom:10px;
 --fantasy-stat-table-value-cell-gap:3px;
+--fantasy-stat-table-header-sort-label-height:24px;
+--fantasy-stat-table-header-sort-label-padding:0 4px;
 --fantasy-stats-block-rule-size:1px;
 --fantasy-stats-block-grid-grid-template-columns:192px 1px repeat(4,minmax(0,1fr));
 --fantasy-stats-block-grid-grid-template-columns-mid:repeat(4,minmax(0,1fr));

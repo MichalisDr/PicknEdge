@@ -48,10 +48,15 @@ async function draw() {
 }
 
 /* Header: click = sort best end first (again = reverse), Shift+click or long-press = add or remove the column from the combined rank. */
+const FX = ['cr', 'value'];   // the Player header's own sort keys
+
 function headerSort() {
-  const current = () => (shown.sel.length || shown.byValue ? null : shown.cur.metric);
-  const toggle = id => { let s = state.sel.slice(); if (!s.length && current() && current() !== id) s = [current()]; s = s.includes(id) ? s.filter(x => x !== id) : [...s, id]; state.sel = s; state.sortValue = false; draw(); };
-  const plain = id => { const same = !shown.byValue && !shown.sel.length && shown.cur.metric === id; state.dir = same ? (shown.cur.dir === 'asc' ? 'desc' : 'asc') : TM.firstDirection(shown.byId[id].direction); state.sort = id; state.sel = []; state.sortValue = false; draw(); };
+  const current = () => (shown.sel.length || FX.includes(shown.cur.metric) ? null : shown.cur.metric);
+  const toggle = id => { let s = state.sel.slice(); if (!s.length && current() && current() !== id) s = [current()]; s = s.includes(id) ? s.filter(x => x !== id) : [...s, id]; state.sel = s; draw(); };
+  const plain = id => { const same = !shown.sel.length && shown.cur.metric === id; state.dir = same ? (shown.cur.dir === 'asc' ? 'desc' : 'asc') : TM.firstDirection(shown.byId[id].direction); state.sort = id; state.sel = []; draw(); };
+  host.querySelectorAll('[data-sort-fx]').forEach(b => {   // Cr / Value: highest first, again = reverse
+    b.onclick = () => { const id = b.dataset.sortFx, same = !shown.sel.length && shown.cur.metric === id; state.dir = same ? (shown.cur.dir === 'asc' ? 'desc' : 'asc') : 'desc'; state.sort = id; state.sel = []; draw(); };
+  });
   host.querySelectorAll('[data-sort]').forEach(b => {
     let timer = null, long = false;
     b.onpointerdown = e => { long = false; if (e.pointerType === 'mouse') return; timer = setTimeout(() => { long = true; toggle(b.dataset.sort); }, 500); };
@@ -94,7 +99,7 @@ function wireDrawer() {
 
 function wire() {
   const on = (sel, ev, fn) => host.querySelectorAll(sel).forEach(el => { el[ev] = () => fn(el); });
-  Windows.wire(host, state, () => { state.sort = ''; state.sel = []; state.sortValue = false; draw(); });
+  Windows.wire(host, state, () => { state.sort = ''; state.sel = []; draw(); });
   on('[data-fwmode]', 'onclick', b => { state.mode = b.dataset.fwmode; draw(); });
   host.querySelectorAll('.fc-pt[data-open]').forEach(p => { p.onclick = () => openCard(state.entity, p.dataset.open, { win: state.win, mode: state.view }); });
   on('[data-view-set]', 'onclick', b => { if (state.view === b.dataset.viewSet) return; state.view = b.dataset.viewSet; state.sort = ''; state.sel = []; draw(); });
@@ -102,7 +107,6 @@ function wire() {
   headerSort();
   const filters = host.querySelector('[data-filters]');
   if (filters) filters.onclick = () => { state.filters = !state.filters; draw(); };
-  on('[data-sort-value]', 'onclick', () => { state.sortValue = !state.sortValue; if (state.sortValue) state.sel = []; draw(); });
   wireDrawer();
   on('[data-open]', 'onclick', b => openCard(state.entity, b.dataset.open, { win: state.win, mode: state.view }));
   wirePopups(host, state, shown);

@@ -15,7 +15,7 @@ const F = await import('../../site/fantasy/tables/table-filters.js');
 const { Data } = await import('../../site/core/data.js');
 
 globalThis.fetch = async () => ({ ok: true, json: async () => JSON.parse(siteFile('config/table-layouts.json')) });
-const BASE = { entity: 'players', view: 'profile', win: 'season', position: [], query: '', ...FILTER_DEFAULTS, team: [], filters: false, sortValue: false, sort: '', dir: 'desc', sel: [], mode: 'table' };
+const BASE = { entity: 'players', view: 'profile', win: 'season', position: [], query: '', ...FILTER_DEFAULTS, team: [], filters: false, sort: '', dir: 'desc', sel: [], mode: 'table' };
 async function render(over = {}) {
   Object.assign(state, BASE, { team: [] }, over);
   const M = await loadTable(state, names => names.map(n => n.length * 8), () => false);
@@ -29,7 +29,7 @@ const ranksOf = (html, id) => {
 
 test('defaults: team array, Credits handles at the range ends, Min. value 0, Min. games 1, Min. minutes 0, switch off; active and reset follow', () => {
   assert.deepEqual(FILTER_DEFAULTS, { team: [], minCr: null, maxCr: null, minValue: 0, minMin: 0, minGp: 1, showAll: false });
-  const s = { ...FILTER_DEFAULTS, team: [], position: ['G'], query: 'a', win: 'l5', sortValue: true };
+  const s = { ...FILTER_DEFAULTS, team: [], position: ['G'], query: 'a', win: 'l5', sort: 'value' };
   assert.equal(filtersActive(s), false);
   for (const over of [{ team: ['BAR'] }, { minCr: 5 }, { maxCr: 9 }, { minValue: 1 }, { minMin: 1 }, { minGp: 2 }, { showAll: true }]) assert.equal(filtersActive({ ...s, ...over }), true, JSON.stringify(over));
   assert.equal(filtersActive({ ...s, team: ['A', 'B', 'C'] }, 3), false, 'every team ticked = the default');
@@ -37,7 +37,7 @@ test('defaults: team array, Credits handles at the range ends, Min. value 0, Min
   Object.assign(s, { team: ['BAR', 'RED'], minCr: 5, maxCr: 9, minValue: 3, minMin: 10, minGp: 4, showAll: true });
   resetFilters(s);
   assert.deepEqual([s.team, s.minCr, s.maxCr, s.minValue, s.minMin, s.minGp, s.showAll], [[], null, null, 0, 0, 1, false]);
-  assert.deepEqual([s.position, s.query, s.win, s.sortValue], [['G'], 'a', 'l5', true], 'position, search, window and Sort by value are not filters');
+  assert.deepEqual([s.position, s.query, s.win, s.sort], [['G'], 'a', 'l5', 'value'], 'position, search, window and the sort are not filters');
   s.team.push('X'); assert.deepEqual(FILTER_DEFAULTS.team, [], 'the default array is never shared');
 });
 
@@ -74,24 +74,55 @@ test('with the switch on, a player below the thresholds is listed with a dash an
   assert.ok(on.html.includes('rank among the eligible players of the selected position and window; filters do not change it'), 'the note under the table says so');
 });
 
-test('Sort by value: highest first in the selected window, players without a value last; a header click turns it off', async () => {
+test('Player header: "Cr" and "Value" are sort buttons (Players only), no toolbar button, no switch in the drawer', async () => {
+  const { html } = await render({ filters: true });
+  assert.match(html, /<th><div class="fw-ph"><span>Player<\/span><span class="fw-ph-sorts"><button type="button" class="fw-hs fw-hs-cr-box" data-sort-fx="cr" aria-label="Sort by credits">Cr<\/button><button type="button" class="fw-hs fw-hs-value-chip" data-sort-fx="value" aria-label="Sort by value">Value<\/button>/);
+  assert.ok(!html.includes('data-sort-value') && !/Sort by value<\/span>/.test(html), 'no toolbar button');
+  assert.ok(!/sort/i.test(html.slice(html.indexOf('<aside'), html.indexOf('</aside>'))), 'nothing about sorting in the drawer');
+  assert.ok(!(await render({ entity: 'teams' })).html.includes('data-sort-fx'), 'Players only');
+  assert.equal(filtersActive({ ...FILTER_DEFAULTS, team: [], sort: 'cr' }), false, 'sorting does not make the funnel active');
+});
+
+test('sort by Value: the value of the selected window, highest first, second click reverses, missing values last in both directions', async () => {
+  const order = {};
   for (const win of ['season', 'l5']) {
-    const { M, html } = await render({ sortValue: true, win });
+    const { M, html } = await render({ sort: 'value', dir: 'desc', win, showAll: true });
     const v = M.shown.map(r => r.value), finite = v.filter(Number.isFinite);
-    assert.ok(finite.length > 1);
-    assert.deepEqual(finite, [...finite].sort((a, b) => b - a), win + ': descending');
-    assert.equal(v.findIndex(x => !Number.isFinite(x)) === -1 ? v.length : v.findIndex(x => !Number.isFinite(x)), finite.length, win + ': missing values come last');
-    assert.equal(M.shown[0].value, Data.fantasyInfo(M.shown[0].id, win).value, 'the value of the selected window');
-    assert.ok(!/aria-sort="(ascending|descending)"/.test(html) && !html.includes('fw-sorted'), 'no column is marked as the sort');
-    assert.match(html, /data-sort-value aria-pressed="true"/);
+    assert.ok(finite.length > 1, win + ': players have values');
+    assert.deepEqual(finite, [...finite].sort((a, b) => b - a), win + ': highest first');
+    assert.ok(v.slice(finite.length).every(x => !Number.isFinite(x)), win + ': missing last');
+    assert.equal(M.shown[0].value, Data.fantasyInfo(M.shown[0].id, win).value, 'the same number as the chip');
+    assert.match(html, /<th aria-sort="descending"><div class="fw-ph">/);
+    assert.match(html, /data-sort-fx="value" aria-label="Sort by value" data-on>Value<span aria-hidden="true"> ▾<\/span>/);
+    assert.ok(!/data-sort-fx="cr"[^>]*data-on/.test(html));
+    order[win] = M.shown.map(r => r.id).join();
   }
-  const off = await render();
-  assert.match(off.html, /data-sort-value aria-pressed="false"/);
-  assert.match(off.html, /aria-sort="(ascending|descending)"/);
-  const missing = await render({ sortValue: true, showAll: true });
-  const firstMissing = missing.M.shown.findIndex(r => !Number.isFinite(r.value));
-  assert.ok(firstMissing < 0 || missing.M.shown.slice(firstMissing).every(r => !Number.isFinite(r.value)), 'once a value is missing, all the rest are missing');
-  assert.ok(!(await render({ entity: 'teams', sortValue: true })).html.includes('data-sort-value'), 'Players only');
+  assert.notEqual(order.season, order.l5, 'the window changes the order');
+  const asc = await render({ sort: 'value', dir: 'asc', showAll: true }), va = asc.M.shown.map(r => r.value), fin = va.filter(Number.isFinite);
+  assert.deepEqual(fin, [...fin].sort((a, b) => a - b), 'reversed: lowest first');
+  assert.ok(va.slice(fin.length).every(x => !Number.isFinite(x)), 'missing values still last');
+  assert.match(asc.html, /aria-sort="ascending"/); assert.match(asc.html, /Value<span aria-hidden="true"> ▴/);
+});
+
+test('sort by Cr: credits, highest first, second click reverses, players without credits last; another header replaces it', async () => {
+  const { M } = await render({ sort: 'cr', dir: 'desc' });
+  const fin = M.shown.map(r => r.cr).filter(Number.isFinite);
+  assert.deepEqual(fin, [...fin].sort((a, b) => b - a));
+  const asc = await render({ sort: 'cr', dir: 'asc', showAll: true }), ca = asc.M.shown.map(r => r.cr), fa = ca.filter(Number.isFinite);
+  assert.deepEqual(fa, [...fa].sort((a, b) => a - b)); assert.ok(ca.slice(fa.length).every(x => !Number.isFinite(x)), 'missing last when ascending too');
+  assert.match(asc.html, /data-sort-fx="cr" aria-label="Sort by credits" data-on>Cr<span aria-hidden="true"> ▴/);
+  const other = await render({ sort: 'min', dir: 'desc' });   // clicking MIN sets state.sort to the column: the Cr / Value sort is replaced
+  assert.ok(!/data-on/.test(other.html) && !/<th aria-sort=/.test(other.html) && /aria-sort="descending"/.test(other.html));
+});
+
+test('sorting by Cr or Value changes only the order: every rank stays the overall rank of the position and window', async () => {
+  const base = await render(), ids = base.M.shown.slice(0, 5).map(r => r.id), before = ids.map(id => ranksOf(base.html, id));
+  for (const sort of ['cr', 'value']) {
+    const s = await render({ sort, dir: 'desc' });
+    assert.notDeepEqual(s.M.shown.map(r => r.id), base.M.shown.map(r => r.id), sort + ' reorders the rows');
+    assert.equal(s.M.pool.size, base.M.pool.size);
+    ids.forEach((id, i) => assert.deepEqual(ranksOf(s.html, id), before[i], `${sort}: ${id}`));
+  }
 });
 
 test('Credits: the range comes from the data; Max. credits and the upper handle are one value; the handles keep one step apart', async () => {
@@ -139,10 +170,10 @@ test('every new element is a token: the sizes exist and no raw px is in the draw
   const sizes = JSON.parse(siteFile('config/sizes.json')).component.fantasy['stat-table'], theme = JSON.parse(siteFile('theme/theme.json')).component.fantasy['stat-table'];
   const need = { 'filters-drawer': ['width', 'padding'], 'filters-header': ['height'], 'filters-close': ['width', 'height'], 'filters-team-list': ['grid-template-columns', 'grid-template-rows', 'gap'], 'filters-team-row': ['height', 'gap'], 'filters-checkbox': ['width', 'height'],
     'filters-credits-row': ['height', 'gap'], 'filters-bar-line': ['height'], 'filters-bar-segment': ['height'], 'filters-bar-handle': ['width', 'height'], 'filters-fields': ['gap'], 'filters-field': ['height'], 'filters-switch': ['width', 'height'], 'filters-switch-track': ['height'],
-    'filters-switch-knob': ['width', 'height'], 'filters-footer': ['padding-top'], 'filters-reset': ['height', 'gap'], 'players-sort-value-button': ['min-height'] };
+    'filters-switch-knob': ['width', 'height'], 'filters-footer': ['padding-top'], 'filters-reset': ['height', 'gap'] };
   for (const [part, props] of Object.entries(need)) for (const p of props) assert.ok(sizes[part]?.[p], `sizes.json ${part}.${p}`);
-  for (const part of ['filters-drawer', 'filters-title', 'filters-label', 'filters-checkbox', 'filters-bar-segment', 'filters-bar-handle', 'filters-switch-knob', 'players-sort-value-button']) assert.ok(theme[part], `theme.json ${part}`);
+  for (const part of ['filters-drawer', 'filters-title', 'filters-label', 'filters-checkbox', 'filters-bar-segment', 'filters-bar-handle', 'filters-switch-knob']) assert.ok(theme[part], `theme.json ${part}`);
   const code = readFileSync(new URL('../../site/fantasy/tables/table-filters.js', import.meta.url), 'utf8'), css = readFileSync(new URL('../../site/theme/fantasy/workbench.css', import.meta.url), 'utf8');
   assert.ok(!/\d\s*px\b/.test(code), 'no px in table-filters.js');
-  for (const rule of css.split('\n').filter(l => /\.fw-fd|\.fw-table-area|players-sort-value/.test(l))) assert.ok(!/(?<![\w.-])\d*\.?\d+px/.test(rule.replace(/@media\(max-width:\d+px\)/, '')), rule.slice(0, 80));
+  for (const rule of css.split('\n').filter(l => /\.fw-fd|\.fw-table-area/.test(l))) assert.ok(!/(?<![\w.-])\d*\.?\d+px/.test(rule.replace(/@media\(max-width:\d+px\)/, '')), rule.slice(0, 80));
 });
