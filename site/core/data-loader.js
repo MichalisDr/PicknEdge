@@ -85,14 +85,14 @@ export function create({ base, fetch: fetchFn, importer, storage } = {}) {
   }
 
   /* Credits (cr) and value of a player in a window, from the EuroLeague Fantasy backend (build: scripts/build/fantasy.mjs, formula: registry metric `value`):
-     { cr, crSeries, value, valueSeries } or null when the player has no entry (no match, or the data of that window is not loaded yet: it answers from the
-     already loaded Players view of the window, so the page that shows the figure loads that view first). crSeries / valueSeries: one point per round
+     { cr, crSeries, value, valueSeries, gameValues } or null when the player has no entry (no match, or the data of that window is not loaded yet: it answers from the
+     already loaded Players view of the window, so the page that shows the figure loads that view first). crSeries / valueSeries / gameValues: one point per round
      (index 0 = round 1), null = no credits known at that round. value is null when the player has no game in the window. window defaults to Season, the page's default. */
   const fantasyInfo = (playerId, window = 'season') => {
     const view = loaded.get(`players:${window}`), fx = view?.fx(playerId);
     if (!fx) return null;
     const v = view.get(playerId, 'value')?.value;
-    return { cr: fx.cr, crSeries: fx.crSeries, value: Number.isFinite(v) ? v : null, valueSeries: fx.valueSeries };
+    return { cr: fx.cr, crSeries: fx.crSeries, value: Number.isFinite(v) ? v : null, valueSeries: fx.valueSeries, gameValues: fx.gameValues };
   };
 
   return { manifest, metrics, formatMetric, view, fantasyInfo, windowGames, games, shots, roster, schedule, nextGame, engine, status, clearOldCaches, records, decode };

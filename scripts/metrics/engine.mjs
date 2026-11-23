@@ -74,3 +74,20 @@ export function valueSeries(rows, teamGames, n, crSeries) {
     return v === null ? null : v;
   });
 }
+
+/** gameValues of one player (the Fantasy Value chart): for each round r (index r-1) the value of the game he played in round r = his PIR in that game
+ *  divided by the credits IN FORCE FOR round r, i.e. before the round was played (a big game raises the price after it; dividing by that would punish it).
+ *  Same rule as the metric `value`, applied to the single game. The same series in every window (the window only changes the average line).
+ *  A round he did not play, or with no known credits before it, has no point (null); nothing is filled in.
+ *  rows: the player's clean rows for his current team (any order); teamGames: that team's games [{game, round}];
+ *  crBefore: credits in force for each round, index r-1 (null = unknown). */
+export function gameValues(rows, teamGames, crBefore) {
+  const m = byId('value'), byGame = new Map(rows.filter(r => r.played).map(r => [r.game, r]));
+  return crBefore.map((cr, i) => {
+    if (cr === null || cr === undefined) return null;
+    const g = teamGames.find(t => t.round === i + 1), row = g && byGame.get(g.game);
+    if (!row) return null;
+    const v = evaluate(m, [{ ...row, cr }]).value;
+    return v === null ? null : v;
+  });
+}

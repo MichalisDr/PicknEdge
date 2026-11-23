@@ -12,13 +12,14 @@ const lastBox = (series, n, m) => {
   return `<div class="fw-ibox"><span>LAST ${n} AVG</span><strong>${fmt(w, m)}</strong></div>`;
 };
 
-/* ---------- cr and value (the header's two figures): the same bars chart, fed by the per-round series of Data.fantasyInfo ---------- */
+/* ---------- cr and value (the header's two figures): the same bars chart, fed by the per-round series of Data.fantasyInfo:
+   crSeries (credits after each round) and gameValues (the value of each game: PIR / credits in force before its round; the same in every window) ---------- */
 /** The two header figures that open a trend: key = their data-metric. cr is no registry metric, so it carries its own chart definition. */
 export const FANTASY_KEYS = ['cr', 'value'];
 const CR_METRIC = { id: 'cr', label: 'Credits', direction: 0, chartScale: 'range', format: { digits: 1, suffix: '' } };   // a price: bars on the data range, no good / bad tone
 const finiteSome = a => Array.isArray(a) && a.some(Number.isFinite);
 /** Can the header figure `key` open a chart for this player and window? (it needs at least one round with a value) */
-export const fantasyChartable = (info, key) => !!info && finiteSome(key === 'cr' ? info.crSeries : info.valueSeries);
+export const fantasyChartable = (info, key) => !!info && finiteSome(key === 'cr' ? info.crSeries : info.gameValues);
 
 /** Rolling 5 of a per-round series, drawn over the last 5 rounds only (null elsewhere and wherever one of its 5 values is missing). */
 export function recentRolling5(values) {
@@ -40,7 +41,7 @@ export async function fantasyTrendBlock(cs, season, byId) {
   if (!fantasyChartable(info, key)) return '<p class="fw-empty">Not enough data for this metric.</p>';
   const [roster, games] = await Promise.all([Data.roster(), Data.games('teams')]), team = season.row(cs.id)?.team;
   const rounds = new Map(games.filter(r => r.team === team).map(r => [Number(r.round), { game: r.game, opponent: teamCode(roster, r.opp), home: r.home === 1 }]));
-  const cr = key === 'cr', m = cr ? CR_METRIC : byId.value, series = fantasySeries(cr ? info.crSeries : info.valueSeries, rounds, key);
+  const cr = key === 'cr', m = cr ? CR_METRIC : byId.value, series = fantasySeries(cr ? info.crSeries : info.gameValues, rounds, key);
   const current = cr ? info.cr.toFixed(m.format.digits) : Data.formatMetric('value', info.value);
   const opts = cr ? {} : { windowLabel: Windows.label(cs), windowValue: info.value, seasonValue: base?.value ?? null, isSeason: cs.win === 'season', windowGames: Windows.spec(cs).last ?? Infinity };   // a price has nothing to average
   return `<section class="fw-trend"><div class="fw-section-title"><h3>${esc(m.label)}</h3><b>${esc(current)}</b></div>${barsChart(series, m, opts)}</section>`;
