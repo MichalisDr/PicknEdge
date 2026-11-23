@@ -174,7 +174,8 @@ test('CR and Value (label + number, the chip with its sparkline): only with real
   await withInfo({ cr: 0, value: 0, valueSeries: [0, 0] }, () => {
     const html = draw();
     assert.match(html, /<span class="fw-cr-box" data-part="fantasy.player-card.cr-box"><span data-part="fantasy.player-card.cr-box-label">CR<\/span><span data-part="fantasy.player-card.cr-box-value">0<\/span><\/span>/);
-    assert.match(html, /<span class="fw-value-chip" data-part="fantasy.player-card.value-chip"><span data-part="fantasy.player-card.value-chip-label">Value<\/span><span data-part="fantasy.player-card.value-chip-value">0.00<\/span><svg data-part="fantasy.player-card.value-sparkline"/);
+    assert.match(html, /<span class="fw-value-chip" data-part="fantasy.player-card.value-chip" role="button" tabindex="0" data-metric="value" aria-pressed="false" aria-label="Value 0.00, per-round chart"><span data-part="fantasy.player-card.value-chip-label">Value<\/span><span data-part="fantasy.player-card.value-chip-value">0.00<\/span><svg data-part="fantasy.player-card.value-sparkline"/);
+    assert.ok(!/cr-box"[^>]*data-metric/.test(html), 'no credits series: the CR box is not clickable');
     assert.ok(inOrder(at(html, ['<h2>', 'header-figures', 'cr-box-label', 'value-chip-label', 'value-sparkline', 'data-part="fantasy.player-card.header-actions"'])), 'CR, then Value with its sparkline, after the name');
   });
   await withInfo({ cr: 12.5, value: null, valueSeries: [4] }, () => { const html = draw(); assert.ok(html.includes('cr-box-value">12.5<') && !html.includes('fw-value-chip') && !html.includes('value-sparkline'), 'a chip needs a value; a sparkline needs two numbers'); });

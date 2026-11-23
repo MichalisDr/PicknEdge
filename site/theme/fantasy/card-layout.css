@@ -73,3 +73,8 @@
 @media(max-width:560px){[data-part="fantasy.player-card.view-buttons-team"] button{min-width:var(--fantasy-player-card-view-button-min-width-below-560px)}}
 [data-part="fantasy.player-card.header-title"]{min-width:var(--fantasy-player-card-header-title-min-width)}
 [data-part="fantasy.player-card.header-team"]>[data-part="fantasy.player-card.header-title"]{flex:1 1 auto}
+/* cr box and value chip open their trend like a stats-block tile: the tile's own halo (hover / focus) and selected ring; nothing else about them changes. */
+[data-part="fantasy.player-card.cr-box"][data-metric],[data-part="fantasy.player-card.value-chip"][data-metric]{cursor:pointer}
+[data-part="fantasy.player-card.cr-box"][data-metric]:hover,[data-part="fantasy.player-card.cr-box"][data-metric]:focus-visible,[data-part="fantasy.player-card.value-chip"][data-metric]:hover,[data-part="fantasy.player-card.value-chip"][data-metric]:focus-visible{background-image:linear-gradient(var(--fantasy-stats-block-halo-background),var(--fantasy-stats-block-halo-background))}
+[data-part="fantasy.player-card.cr-box"][data-metric]:focus-visible,[data-part="fantasy.player-card.value-chip"][data-metric]:focus-visible{outline:0}
+[data-part="fantasy.player-card.cr-box"][aria-pressed=true],[data-part="fantasy.player-card.value-chip"][aria-pressed=true]{box-shadow:var(--fantasy-player-card-tile-selected-shadow-size) var(--fantasy-player-card-tile-selected-border)}
