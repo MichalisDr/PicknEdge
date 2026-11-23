@@ -39,6 +39,9 @@ const fantasy = fantasyForBuild({
   activeOurs: o => Number(o.active) === 1,
 });
 if (fantasy) for (const line of fantasy.report) console.log(line); else console.log('fantasy: no snapshots stored (data/raw/' + season + '/fantasy): no credits');
+// Games ahead of the credits (expired token): not an error. cr, crSeries and valueSeries stop at the last round with credits, nothing is filled in.
+const gamesRound = Math.max(0, ...teams.map(t => Number(t.round)));
+if (fantasy && gamesRound > fantasy.lastRound) console.log(`fantasy: credits are at round ${fantasy.lastRound}, games at round ${gamesRound}: cr, crSeries and valueSeries stop at round ${fantasy.lastRound}; value = PIR average of the window / the last known cr`);
 
 // ---- views (Season / L3 / L5 / L10), with league rows ----
 const views = buildViews({ players, teams, dim, fantasy });

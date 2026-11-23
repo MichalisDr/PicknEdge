@@ -10,6 +10,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { pull, run, store, snapshotText, snapshotFiles, snapshotDir, mask } from '../../scripts/fetch/fantasy.mjs';
 import { readFantasy, creditsAfter, matchPlayers, fantasyForBuild } from '../../scripts/build/fantasy.mjs';
+import { creditsMessage, report } from '../../scripts/build/fantasy-status.mjs';
 import { buildViews } from '../../scripts/build/views.mjs';
 import { create } from '../../site/core/data-loader.js';
 
@@ -296,7 +297,7 @@ test('fantasyInfo(playerId, window): {cr, crSeries, value, valueSeries} of that 
   assert.equal(D.fantasyInfo('P3', 'l3').crSeries[0], null);
 });
 
-test('the real build: every Fantasy entry has cr, one credit per round and a value that matches its last series point', () => {
+test('the real build: every Fantasy entry has cr and one point per round with credits; where the player\'s games reach no further than that round, the last value point is the value shown', () => {
   const dir = join(repo, 'site', 'data');
   if (!existsSync(join(dir, 'players-season.json'))) return;
   const v = JSON.parse(readFileSync(join(dir, 'players-season.json'), 'utf8')), ix = v.metrics.indexOf('value');
@@ -304,11 +305,86 @@ test('the real build: every Fantasy entry has cr, one credit per round and a val
   const withFx = Object.entries(v.rows).filter(([, r]) => r.fx);
   if (!existsSync(join(repo, 'data', 'raw', 'E2026', 'fantasy'))) { assert.equal(withFx.length, 0); return; }
   assert.ok(withFx.length > 100, `${withFx.length} players with credits`);
+  // the round of each player's last game (games can be AHEAD of the credits when the token has expired: the series then stop at the last round with credits)
+  const g = JSON.parse(readFileSync(join(dir, 'games', 'players.json'), 'utf8')), ci = g.columns.indexOf('player_id'), ri = g.columns.indexOf('round');
+  const lastGame = new Map();
+  for (const row of g.rows) lastGame.set(row[ci], Math.max(lastGame.get(row[ci]) || 0, Number(row[ri])));
   for (const [id, r] of withFx) {
     assert.ok(Number.isFinite(r.fx.cr) && r.fx.cr > 0, id);
     assert.equal(r.fx.crSeries.length, v.fxRounds, id);
     assert.equal(r.fx.valueSeries.length, v.fxRounds, id);
     const val = Array.isArray(r.v[ix]) ? r.v[ix][0] : r.v[ix];
-    if (val !== null && r.fx.crSeries.at(-1) === r.fx.cr) assert.ok(Math.abs(r.fx.valueSeries.at(-1) - val) < 1e-3, id);
+    if (val !== null && r.fx.crSeries.at(-1) === r.fx.cr && (lastGame.get(id) || 0) <= v.fxRounds) assert.ok(Math.abs(r.fx.valueSeries.at(-1) - val) < 1e-3, id);
+  }
+});
+
+/* ---------- credits behind the games (expired token): the build still works, nothing is invented ---------- */
+// One round more of games than of credits: round 5 exists in the games, the credits stop at round 4.
+const TEAMS5 = [...TEAMS, game(5, 5, 'AA', 'BB', 1), game(5, 5, 'BB', 'AA', 0)];
+const PLAYERS5 = [...PLAYERS, pr(5, 'AA', 'P1', 'ALPHA, ANN', 25), pr(5, 'AA', 'P3', 'GAMMA, CARL', 12), pr(5, 'BB', 'P2', 'BETA, BOB', 8), pr(5, 'BB', 'P8', 'QUUX, QUINN', 3)];
+
+function checkStale(views, fantasy) {
+  const p = views.season.players, ix = p.metrics.indexOf('value');
+  assert.equal(fantasy.lastRound, 4);
+  assert.equal(p.fxRounds, 4, 'fxRounds is the last round with credits, not the last round with games');
+  for (const id of ['P1', 'P2', 'P3']) {
+    const fx = p.rows[id].fx;
+    assert.equal(fx.crSeries.length, 4, `${id}: crSeries stops at the last credit round`);
+    assert.equal(fx.valueSeries.length, 4, `${id}: valueSeries stops at the last credit round`);
+    assert.ok(Number.isFinite(fx.cr) && fx.cr > 0);
+  }
+  const a = p.rows.P1;
+  assert.deepEqual(a.fx.crSeries, [10.5, 10.2, 10.2, 10.6], 'no credit is invented for round 5');
+  near(a.fx.valueSeries.at(-1), 15 / 10.6, 'the series ends with the window as it stood at round 4');
+  near(a.v[ix], 17 / 10.6, 'the value shown = PIR average of the whole window (incl. round 5) / the last known cr');
+  assert.ok(Math.abs(a.fx.valueSeries.at(-1) - a.v[ix]) > 0.1, 'so the last point differs from the value while the games are ahead');
+  assert.equal(p.rows.P8.fx, undefined);
+}
+
+test('games one round ahead of the credits: the build passes and cr / crSeries / valueSeries stop at the last credit round', async () => {
+  const fantasy = fantasyForBuild({ dir: await snapshots(), ours: OURS, fixes: {}, teamCodes: { AAA: 'AA', BBB: 'BB' } });
+  checkStale(buildViews({ players: PLAYERS5, teams: TEAMS5, dim: DIM, fantasy }), fantasy);
+});
+
+test('an expired token leaves the credits behind: the failed pull writes nothing, then the build passes with the series stopped at the last credit round', async () => {
+  const root = await snapshots(), before = files(root);
+  const warnings = [];
+  const code = await run({ argv: ['node', 'x'], env: { FANTAKING_TOKEN: TOKEN }, root, fetch: fakeBackend(WORLD, { status: 401 }), sleep: async () => {}, gapMs: 0, log: () => {}, warn: m => warnings.push(m), error: () => {} });
+  assert.equal(code, 0);
+  assert.deepEqual(files(root), before, 'nothing written');
+  assert.equal(warnings.length, 1);
+  const fantasy = fantasyForBuild({ dir: root, ours: OURS, fixes: {}, teamCodes: { AAA: 'AA', BBB: 'BB' } });
+  checkStale(buildViews({ players: PLAYERS5, teams: TEAMS5, dim: DIM, fantasy }), fantasy);
+});
+
+/* ---------- making staleness visible ---------- */
+test('creditsMessage: one clear line when the credits are behind the games or the token was rejected / missing; nothing when all is fine', () => {
+  assert.equal(creditsMessage({ creditsRound: 13, gamesRound: 13, pull: 'ok' }), null);
+  assert.equal(creditsMessage({ creditsRound: 13, gamesRound: 13 }), null);
+  assert.equal(creditsMessage({ creditsRound: 12, gamesRound: 13, pull: 'auth' }), 'Fantasy credits are at round 12, games at round 13: renew the token (the backend rejected FANTAKING_TOKEN)');
+  assert.match(creditsMessage({ creditsRound: 12, gamesRound: 13, pull: 'no-token' }), /^Fantasy credits are at round 12, games at round 13: renew the token \(FANTAKING_TOKEN is not set\)$/);
+  assert.match(creditsMessage({ creditsRound: 12, gamesRound: 13 }), /^Fantasy credits are at round 12, games at round 13: renew the token$/, 'behind for any reason');
+  assert.match(creditsMessage({ creditsRound: 13, gamesRound: 13, pull: 'auth' }), /rejected.*round 13.*renew the token/);
+});
+
+test('report: a GitHub warning annotation and one job-summary line; plain text outside GitHub; nothing when fine', () => {
+  const lines = [], summary = [];
+  const msg = report({ creditsRound: 12, gamesRound: 13, pull: 'auth', env: { GITHUB_ACTIONS: 'true', GITHUB_STEP_SUMMARY: '/tmp/summary.md' }, log: m => lines.push(m), append: (f, t) => summary.push([f, t]) });
+  assert.equal(lines.length, 1);
+  assert.equal(lines[0], `::warning title=Fantasy credits::${msg}`);
+  assert.equal(summary.length, 1);
+  assert.equal(summary[0][0], '/tmp/summary.md');
+  assert.ok(summary[0][1].includes('Fantasy credits are at round 12, games at round 13: renew the token'));
+  const plain = [];
+  report({ creditsRound: 12, gamesRound: 13, env: {}, log: m => plain.push(m), append: () => assert.fail('no summary file') });
+  assert.match(plain[0], /^WARNING: Fantasy credits are at round 12/);
+  assert.equal(report({ creditsRound: 13, gamesRound: 13, pull: 'ok', env: {}, log: () => assert.fail('silent'), append: () => assert.fail('silent') }), null);
+});
+
+test('run writes how the pull ended to GITHUB_OUTPUT (ok | auth | no-token) for the status step', async () => {
+  for (const [status, want, token] of [[200, 'ok', TOKEN], [401, 'auth', TOKEN], [200, 'no-token', '']]) {
+    const out = join(temp(), 'github-output');
+    await run({ argv: ['node', 'x'], env: { FANTAKING_TOKEN: token, GITHUB_OUTPUT: out }, root: temp(), fetch: fakeBackend(WORLD, { status }), sleep: async () => {}, gapMs: 0, log: () => {}, warn: () => {}, error: () => {} });
+    assert.equal(readFileSync(out, 'utf8'), `credits_pull=${want}\n`);
   }
 });
