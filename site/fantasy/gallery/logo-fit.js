@@ -10,3 +10,11 @@ export function logoFit(path, box) {
   const k = box / Math.max(b.bw, b.bh);
   return { x: -(b.x + b.bw / 2) * k, y: -(b.y + b.bh / 2) * k, width: b.w * k, height: b.h * k };
 }
+
+/** The visible artwork of a logo fitted into `box` px, as { w, h }: what a neighbouring logo must not cover. */
+export function logoBox(path, box) {
+  const b = LOGO_BOUNDS[logoId(path)];
+  if (!b) return { w: box, h: box };
+  const k = box / Math.max(b.bw, b.bh);
+  return { w: b.bw * k, h: b.bh * k };
+}

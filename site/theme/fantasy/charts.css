@@ -1,16 +1,18 @@
 /* Fantasy · Charts mode: the gallery of scatter charts (cards, plots, logos) and the enlarged chart dialog. Every colour, font size and layout size is a variable. */
+/* Container queries, the same as the card system (.sb): narrow = container below 520px, wide = 780px and above. .fc-gallery holds the thumbnails, .fc-dialog the opened card. */
+.fc-gallery,.fc-dialog{container:fc/inline-size}
 .fc-gallery{margin-top:var(--fantasy-charts-gallery-gallery-margin-top)}
 .fc-grid-gallery{display:grid;grid-template-columns:var(--fantasy-charts-gallery-chart-grid-grid-template-columns);gap:var(--fantasy-charts-gallery-chart-grid-gap);margin-top:var(--fantasy-charts-gallery-chart-grid-margin-top)}
 /* A card spans four rows of the grid and uses them as its own (subgrid): title, subtitle, chart and notes line up across the cards of a row, and all cards of a row are as tall as the tallest. */
 .fc-card{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:var(--fantasy-charts-gallery-chart-card-gap);min-width:0;padding:var(--fantasy-charts-gallery-chart-card-padding);background:var(--fantasy-charts-gallery-chart-card-background);border:var(--fantasy-charts-gallery-chart-card-border-width) solid var(--fantasy-charts-gallery-chart-card-border);border-radius:var(--fantasy-charts-gallery-chart-card-radius);color:var(--fantasy-charts-gallery-chart-card-text);font:inherit;text-align:left;cursor:pointer}
 .fc-card:hover{border-color:var(--fantasy-charts-gallery-chart-card-hovered-border)}
 .fc-card:focus-visible{outline:var(--fantasy-charts-gallery-chart-card-focused-outline-width) solid var(--fantasy-charts-gallery-chart-card-focused-outline);outline-offset:var(--fantasy-charts-gallery-chart-card-focused-outline-offset)}
-.fc-card-title{padding:var(--fantasy-charts-gallery-chart-title-padding);font-size:var(--fantasy-charts-gallery-chart-title-font-size);font-weight:600;color:var(--fantasy-charts-gallery-chart-title-text)}
-.fc-card-sub{font-size:var(--fantasy-charts-gallery-chart-subtitle-font-size);color:var(--fantasy-charts-gallery-chart-subtitle-text)}
+.fc-card-title{padding:var(--fantasy-charts-gallery-chart-title-padding);font-size:var(--fantasy-charts-gallery-chart-title-font-size);font-weight:600;line-height:var(--fantasy-charts-gallery-chart-title-line-height);color:var(--fantasy-charts-gallery-chart-title-text)}
+.fc-card-sub{font-size:var(--fantasy-charts-gallery-chart-subtitle-font-size);line-height:var(--fantasy-charts-gallery-chart-subtitle-line-height);color:var(--fantasy-charts-gallery-chart-subtitle-text)}
 .fc-card .fc-plot{margin-top:var(--fantasy-charts-gallery-chart-card-plot-margin-top)}
 .fc-notes{margin-top:var(--fantasy-charts-gallery-chart-notes-margin-top);display:flex;flex-direction:column;gap:var(--fantasy-charts-gallery-chart-notes-gap)}
-.fc-note{font-size:var(--fantasy-charts-gallery-chart-note-font-size);color:var(--fantasy-charts-gallery-chart-note-text);margin:var(--fantasy-charts-gallery-chart-note-margin)}
-.fc-plot{position:relative;min-width:0}
+.fc-note{font-size:var(--fantasy-charts-gallery-chart-note-font-size);line-height:var(--fantasy-charts-gallery-chart-note-line-height);color:var(--fantasy-charts-gallery-chart-note-text);margin:var(--fantasy-charts-gallery-chart-note-margin)}
+.fc-plot{--fc-narrow:0;position:relative;min-width:0}   /* --fc-narrow is read by plot-wire.js: 1 when the container is narrow */
 .fc-canvas{min-width:0}
 .fc-svg{display:block;width:var(--fantasy-charts-gallery-plot-width);height:auto;overflow:visible}
 .fc-grid{stroke:var(--fantasy-charts-gallery-chart-gridline-line);stroke-width:1;opacity:.5}
@@ -29,19 +31,39 @@
 .fc-dot{fill:var(--fantasy-charts-gallery-point-fill);fill-opacity:.85;stroke:var(--fantasy-charts-gallery-point-border);stroke-width:1.5}
 .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot{fill:var(--fantasy-charts-gallery-point-hovered-fill);fill-opacity:1;stroke:var(--fantasy-charts-gallery-point-hovered-border)}
 .fc-pl{font:var(--fantasy-charts-gallery-team-label-font-size) var(--font-ui);fill:var(--fantasy-charts-gallery-axis-numbers-text);paint-order:stroke;stroke:var(--fantasy-charts-gallery-team-label-outline);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
-.fc-dialog{width:var(--fantasy-charts-gallery-enlarged-chart-window-width);height:var(--fantasy-charts-gallery-enlarged-chart-window-height)}
-.fc-dialog[open]{display:flex;flex-direction:column}   /* title above, the plot fills what is left, the explanatory line below */
+.fc-dialog{width:var(--fantasy-charts-gallery-enlarged-chart-window-width)}
+/* The body of the opened card: from 520px up it is 88% of the viewport high (title above, the plot fills what is left, notes below); narrow, it is as tall as its content and the plot fills the card width. */
+.fc-body{display:flex;flex-direction:column;height:var(--fantasy-charts-gallery-enlarged-chart-body-height-wide)}
 .fc-mhead{display:flex;align-items:center;justify-content:space-between;gap:var(--fantasy-charts-gallery-enlarged-chart-header-gap);flex-wrap:wrap;padding-right:var(--fantasy-charts-gallery-enlarged-chart-header-padding-right);margin-bottom:var(--fantasy-charts-gallery-enlarged-chart-header-margin-bottom)}
-.fc-mhead h2{margin:0;font-size:var(--fantasy-charts-gallery-enlarged-chart-title-font-size)}
-.fc-mhead h2 small{display:block;margin-top:var(--fantasy-charts-gallery-enlarged-chart-subtitle-margin-top);font-size:var(--fantasy-charts-gallery-enlarged-chart-subtitle-font-size);font-weight:500;color:var(--fantasy-charts-gallery-enlarged-chart-subtitle-text)}
+.fc-mhead h2{margin:0;font-size:var(--fantasy-charts-gallery-enlarged-chart-title-font-size);line-height:var(--fantasy-charts-gallery-enlarged-chart-title-line-height)}
+.fc-mhead h2 small{display:block;margin-top:var(--fantasy-charts-gallery-enlarged-chart-subtitle-margin-top);font-size:var(--fantasy-charts-gallery-enlarged-chart-subtitle-font-size);line-height:var(--fantasy-charts-gallery-enlarged-chart-subtitle-line-height);font-weight:500;color:var(--fantasy-charts-gallery-enlarged-chart-subtitle-text)}
+.fc-main{display:flex;flex-direction:column;flex:1 1 auto;min-width:0;min-height:0}
 .fc-stage{flex:1 1 auto;min-width:0;min-height:0}
 .fc-stage .fc-plot,.fc-stage .fc-canvas{height:var(--fantasy-charts-gallery-enlarged-chart-plot-height)}
-.fc-dialog .fc-note{flex:none;margin-top:var(--fantasy-charts-gallery-chart-notes-margin-top)}
-@media(max-width:650px){
-.fc-mhead h2{font-size:var(--fantasy-charts-gallery-enlarged-chart-title-font-size-below-650px)}
-.fc-grid-gallery{gap:var(--fantasy-charts-gallery-chart-grid-gap-below-650px)}
-.fc-card-sub{font-size:var(--fantasy-charts-gallery-chart-subtitle-font-size-below-650px)}
-.fc-note{font-size:var(--fantasy-charts-gallery-chart-note-font-size-below-650px)}
-.fc-tick{font-size:var(--fantasy-charts-gallery-axis-numbers-font-size-below-650px)}
-.fc-ax{font-size:var(--fantasy-charts-gallery-axis-title-font-size-below-650px)}
+.fc-aside{flex:none;display:flex;flex-direction:column;gap:var(--fantasy-charts-gallery-chart-notes-gap);margin-top:var(--fantasy-charts-gallery-chart-notes-margin-top)}
+.fc-legend{display:none;flex-direction:column;gap:var(--fantasy-charts-gallery-chart-legend-gap);margin:0;padding:0;list-style:none;font-size:var(--fantasy-charts-gallery-chart-note-font-size);line-height:var(--fantasy-charts-gallery-chart-note-line-height);color:var(--fantasy-charts-gallery-chart-note-text)}
+.fc-legend li{display:flex;align-items:center;gap:var(--fantasy-charts-gallery-chart-legend-gap)}
+.fc-swatch{flex:none;box-sizing:border-box;width:var(--fantasy-charts-gallery-chart-legend-swatch-size);height:var(--fantasy-charts-gallery-chart-legend-swatch-size);border-radius:var(--fantasy-charts-gallery-chart-legend-swatch-radius)}
+.fc-swatch.good{background:var(--fantasy-stat-table-value-good-text)}
+.fc-swatch.bad{background:var(--fantasy-stat-table-value-bad-text)}
+.fc-swatch.diag{border-bottom:var(--fantasy-charts-gallery-chart-card-border-width) dotted var(--fantasy-charts-gallery-diagonal-line);border-radius:0}
+/* Wide (780px and up), x = y charts (square by design): the plot is a square on the left, the notes and a short legend are a column on the right, so the card is not empty at the sides. */
+@container fc (min-width:780px){
+.fc-body[data-equal] .fc-main{display:grid;grid-template-columns:auto var(--fantasy-charts-gallery-enlarged-chart-aside-width);grid-template-rows:var(--fantasy-charts-gallery-enlarged-chart-aside-grid-template-rows);column-gap:var(--fantasy-charts-gallery-enlarged-chart-aside-gap);justify-content:center;align-items:start}
+.fc-body[data-equal] .fc-stage{height:var(--fantasy-charts-gallery-enlarged-chart-plot-height);aspect-ratio:1}
+.fc-body[data-equal] .fc-aside{margin-top:0}
+.fc-body[data-equal] .fc-legend{display:flex}
+.fc-body[data-equal] .fc-note-key{display:none}
+}
+/* Narrow (below 520px): the card follows its content; the plot is drawn at its width (plot-wire.js reads --fc-narrow). */
+@container fc (max-width:519px){
+.fc-plot{--fc-narrow:1}
+.fc-body{height:auto}
+.fc-stage .fc-plot,.fc-stage .fc-canvas{height:auto}
+.fc-mhead h2{font-size:var(--fantasy-charts-gallery-enlarged-chart-title-font-size-narrow);line-height:var(--fantasy-charts-gallery-enlarged-chart-title-line-height-narrow)}
+.fc-grid-gallery{gap:var(--fantasy-charts-gallery-chart-grid-gap-narrow)}
+.fc-card-sub{font-size:var(--fantasy-charts-gallery-chart-subtitle-font-size-narrow)}
+.fc-note,.fc-legend{font-size:var(--fantasy-charts-gallery-chart-note-font-size-narrow)}
+.fc-tick{font-size:var(--fantasy-charts-gallery-axis-numbers-font-size-narrow)}
+.fc-ax{font-size:var(--fantasy-charts-gallery-axis-title-font-size-narrow)}
 }
