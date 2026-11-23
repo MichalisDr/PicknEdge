@@ -6,7 +6,7 @@ import { useRealData } from '../helpers/site-data.mjs';
 
 useRealData();
 const { Data } = await import('../../site/core/data.js');
-const { loadSeries, buildSeries, trendOf, TREND_FLAT_BELOW } = await import('../../site/core/game-series.js');
+const { loadSeries, buildSeries, trendOf, TREND_FLAT_BELOW, TREND_TOKEN } = await import('../../site/core/game-series.js');
 const WIN = { l10: 10, l5: 5, l3: 3 };
 
 /** Two players with gaps (they missed team games) and at least 4 games, preferring the most games played. */
@@ -115,12 +115,23 @@ test('trendOf: up, down, flat inside the threshold, lower-is-better swaps the co
   assert.equal(trendOf([1, 9], 1).token, 'fantasy.stat-table.value-good.text');
 });
 
-test('trend of the shown rolling line: Bryant PIR and a lower-is-better metric', async () => {
+test('trend of the shown rolling line: Bryant PIR and a lower-is-better metric, from the rule itself (no data-of-the-day expectation)', async () => {
+  // What the line shows comes from the one trendOf; here the expectation is computed from the same series by the documented rule, so a data update cannot break it.
+  const expected = (rolling, direction) => {
+    const v = rolling.filter(x => x !== null && Number.isFinite(x)), first = v[0], last = v.at(-1), top = Math.max(Math.abs(first), Math.abs(last));
+    const change = top === 0 ? 0 : (last - first) / top;
+    const trend = Math.abs(change) < TREND_FLAT_BELOW ? 'flat' : change > 0 ? 'up' : 'down';
+    const tone = trend === 'flat' || !direction ? 'flat' : (trend === 'up') === (direction > 0) ? 'good' : 'bad';
+    return { change, trend, tone, token: TREND_TOKEN[tone] };
+  };
   const roster = await Data.roster(), id = Object.keys(roster.players).find(k => roster.players[k].name === 'Elijah Bryant');
+  assert.ok(id, 'Elijah Bryant is in the roster');
   const pir = await loadSeries('players', id, 'pir'), a = trendOf(pir.recentRolling(), pir.metric.direction);
-  assert.equal(a.trend, 'down'); assert.equal(a.tone, 'bad');
+  assert.equal(pir.metric.direction, 1);
+  assert.deepEqual(a, expected(pir.recentRolling(), pir.metric.direction));
   const tov = await loadSeries('players', id, 'tov_g'), b = trendOf(tov.recentRolling(), tov.metric.direction);
   assert.equal(tov.metric.direction, -1);
+  assert.deepEqual(b, expected(tov.recentRolling(), tov.metric.direction));
   console.log(`  Bryant PIR rolling ${pir.recentRolling().filter(v => v !== null).map(v => v.toFixed(1)).join(' -> ')}: change ${(a.change * 100).toFixed(1)}%, ${a.trend}, ${a.tone} (${a.token})`);
   console.log(`  Bryant TOV / game (direction -1) rolling ${tov.recentRolling().filter(v => v !== null).map(v => v.toFixed(1)).join(' -> ')}: change ${(b.change * 100).toFixed(1)}%, ${b.trend}, ${b.tone} (${b.token})`);
 });
