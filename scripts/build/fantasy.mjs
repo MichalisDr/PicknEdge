@@ -61,6 +61,12 @@ export function creditsAfter(fid, fantasy) {
   return out;
 }
 
+/** Credits in force for each round (index 0 = round 1) = the quotation of that round's table, before the round is played; null where the player is not priced yet. */
+export function creditsBefore(fid, fantasy) {
+  const { rounds, lastRound } = fantasy;
+  return Array.from({ length: lastRound }, (_, i) => rounds[i + 1].get(fid)?.before ?? null).map(v => (Number.isFinite(v) ? v : null));
+}
+
 /** Match Fantasy players to ours by exact key: team (via the manual code map) + first initial + family name. No guessing:
  *  a key that is not unique on either side, or a team that disagrees, leaves both sides unmatched and listed. */
 export function matchPlayers(fantasyPlayers, ours, { fixes = {}, teamCodes = {}, manual = {} } = {}) {
@@ -97,15 +103,15 @@ export function matchPlayers(fantasyPlayers, ours, { fixes = {}, teamCodes = {},
   return { pairs, unmatchedFantasy, unmatchedOurs, manualMissing };
 }
 
-/** { byPlayer: Map(our id -> {cr, crSeries}), lastRound, match, report: [lines] }: crSeries has one entry per Fantasy round. null when nothing is stored. */
+/** { byPlayer: Map(our id -> {cr, crSeries, crBefore}), lastRound, match, report: [lines] }: crSeries has one entry per Fantasy round. null when nothing is stored. */
 export function fantasyForBuild({ dir, ours, fixes, teamCodes, manual, activeOurs = () => true }) {
   const fantasy = readFantasy(dir);
   if (!fantasy) return null;
   const match = matchPlayers(fantasy.players, ours, { fixes, teamCodes, manual });
   const byPlayer = new Map();
   for (const [id, fid] of match.pairs) {
-    const crSeries = creditsAfter(fid, fantasy), cr = fantasy.players.find(p => p.fid === fid)?.cr;
-    if (Number.isFinite(cr)) byPlayer.set(id, { cr, crSeries });
+    const crSeries = creditsAfter(fid, fantasy), crBefore = creditsBefore(fid, fantasy), cr = fantasy.players.find(p => p.fid === fid)?.cr;
+    if (Number.isFinite(cr)) byPlayer.set(id, { cr, crSeries, crBefore });
   }
   const report = [`fantasy: ${fantasy.players.filter(p => p.position !== 'Head Coach').length} Fantasy players, ${match.pairs.size} matched to ours, rounds 1-${fantasy.lastRound}`];
   if (match.manualMissing.length) report.push(`fantasy: manual match(es) not applied (name not found or not unique): ${match.manualMissing.join('; ')}`);

@@ -16,7 +16,7 @@
 //   chartScale  how the per-game bars chart scales its axis: 'zero' (bars start at 0, negatives go below; the default) or 'range' (the data range; default for kind pct, set on Pace)
 // Fantasy credits (cr): not a column of the clean tables. The build (scripts/build/site-data.mjs, from the Fantasy pull) puts the player's credits at the
 // latest round on each of his rows as the component `cr`; a player with no Fantasy match has no `cr` and so no value. The per-round credits (crSeries) and the
-// per-round value (valueSeries, engine.mjs) use the same rule as the metric `value` below, with the credits of that round.
+// per-round value (valueSeries, engine.mjs) use the same rule as the metric `value` below, with the credits of that round. The value of each game (gameValues, engine.mjs) is PIR of that game / the credits in force before its round.
 // Naming rule: "/100" = count x100 / possessions on court: offense stats (PTS, AST, TOV, OREB, FD) per 100 team
 // offensive possessions, defense stats (STL, BLK, DREB) per 100 team defensive possessions, total REB/100 over both
 // phases (x200 / (OfPo + DePo)). "%" = part of a defined whole. No suffix = per game or per minute, in the label.
@@ -115,7 +115,7 @@ export const METRICS = [
 
   // ---------- players: Fantasy value (needs the credits from the Fantasy pull) ----------
   e('value', 'Value', P, 'custom', null, null, F, 2,
-    'Fantasy value: PIR per game of the window divided by the credits (cr) of the player at the latest round, i.e. how much PIR he gives for each credit. The window is Season, L10, L5 or L3 (last N games of the team); the PIR average is the same as PIR / game. Empty when the player has no credits or no game in the window. The per-round sparkline (valueSeries) applies the same rule at each round, with the PIR average as it stood at that round and the credits at that round.',
+    'Fantasy value: PIR per game of the window divided by the credits (cr) of the player at the latest round, i.e. how much PIR he gives for each credit. The window is Season, L10, L5 or L3 (last N games of the team); the PIR average is the same as PIR / game. Empty when the player has no credits or no game in the window. The per-round sparkline (valueSeries) applies the same rule at each round, with the PIR average as it stood at that round and the credits at that round. The Value chart on the card shows the value of each game instead (gameValues): the PIR of that game divided by the credits in force before its round, the same in every window.',
     { needs: ['pir', 'played', 'cr'], fn: s => { const gp = s.played, cr = s.cr / gp; return gp > 0 && cr > 0 ? (s.pir / gp) / cr : null; } }),
 
   // ---------- players: Ben Taylor family (custom, from the window's summed components) ----------

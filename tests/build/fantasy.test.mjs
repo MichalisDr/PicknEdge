@@ -13,6 +13,7 @@ import { readFantasy, creditsAfter, matchPlayers, fantasyForBuild } from '../../
 import { creditsMessage, report } from '../../scripts/build/fantasy-status.mjs';
 import { buildViews } from '../../scripts/build/views.mjs';
 import { create } from '../../site/core/data-loader.js';
+import { gameValues } from '../../scripts/metrics/engine.mjs';
 
 const repo = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const TOKEN = 'Bearer 1234567|AbCdEfGhIjKlMnOpQrStUvWxYz0123456789AbCdEfGhIjKl';   // invented, token-shaped
@@ -275,7 +276,7 @@ test('players without a Fantasy match have no cr, no value, no fx; their other m
 });
 
 /* ---------- the loader ---------- */
-test('fantasyInfo(playerId, window): {cr, crSeries, value, valueSeries} of that window, null when the player has no entry or the window is not loaded', async () => {
+test('fantasyInfo(playerId, window): {cr, crSeries, value, valueSeries, gameValues} of that window, null when the player has no entry or the window is not loaded', async () => {
   const { views } = await built();
   const manifest = { version: 'abcdef1234' }, base = 'http://x/data/';
   const D = create({ base, fetch: async u => {
@@ -286,7 +287,8 @@ test('fantasyInfo(playerId, window): {cr, crSeries, value, valueSeries} of that 
   assert.equal(D.fantasyInfo('P1', 'l3'), null, 'nothing loaded yet');
   await D.view('players', 'season'); await D.view('players', 'l3');
   const l3 = D.fantasyInfo('P1', 'l3'), season = D.fantasyInfo('P1');
-  assert.deepEqual(Object.keys(l3).sort(), ['cr', 'crSeries', 'value', 'valueSeries']);
+  assert.deepEqual(Object.keys(l3).sort(), ['cr', 'crSeries', 'gameValues', 'value', 'valueSeries']);
+  assert.deepEqual(l3.gameValues, season.gameValues, 'the value of each game is the same in every window');
   assert.equal(l3.cr, 10.6);
   near(l3.value, (50 / 3) / 10.6, 'L3 value');
   near(season.value, 15 / 10.6, 'the default window is Season');
@@ -387,4 +389,18 @@ test('run writes how the pull ended to GITHUB_OUTPUT (ok | auth | no-token) for 
     await run({ argv: ['node', 'x'], env: { FANTAKING_TOKEN: token, GITHUB_OUTPUT: out }, root: temp(), fetch: fakeBackend(WORLD, { status }), sleep: async () => {}, gapMs: 0, log: () => {}, warn: () => {}, error: () => {} });
     assert.equal(readFileSync(out, 'utf8'), `credits_pull=${want}\n`);
   }
+});
+
+test('gameValues: the value of each game = its PIR / the credits in force BEFORE its round (the quotation of that round, one step behind crSeries), the same in every window; no game or no credits = gap', async () => {
+  const { fantasy, views } = await built();
+  assert.deepEqual(fantasy.byPlayer.get('P1').crBefore, [10, 10.5, 10.2, 10.2], 'round 1 uses the round-1 quotation; round r the credits after round r-1');
+  assert.deepEqual(fantasy.byPlayer.get('P3').crBefore, [null, 6, 6.4, 6.4]);
+  const gv = (w, id) => views[w].players.rows[id].fx.gameValues;
+  const alpha = [10 / 10, 20 / 10.5, 10 / 10.2, 20 / 10.2];                 // PIR 10, 20, 10, 20
+  gv('season', 'P1').forEach((x, i) => near(x, alpha[i], 'Alpha round ' + (i + 1)));
+  assert.ok(Math.abs(gv('season', 'P1')[3] - 20 / 10.6) > 0.05, 'round 4 is NOT divided by the credits after round 4 (a big game would be punished by its own price rise)');
+  const gamma = gv('season', 'P3');                                           // missed round 1; PIR 12, 6, 12
+  assert.equal(gamma[0], null, 'a round he did not play is a gap even though a price exists'); near(gamma[1], 12 / 6, 'Gamma 2'); near(gamma[2], 6 / 6.4, 'Gamma 3'); near(gamma[3], 12 / 6.4, 'Gamma 4');
+  for (const w of ['l10', 'l5', 'l3']) for (const id of ['P1', 'P2', 'P3']) assert.deepEqual(gv(w, id), gv('season', id), w + ' ' + id + ': the bars do not change with the window');
+  assert.deepEqual(gameValues(PLAYERS.filter(r => r.player_id === 'P1'), [{ game: 1, round: 1 }, { game: 2, round: 2 }], [null, 5]).map(x => x === null ? null : +x.toFixed(3)), [null, 4], 'unknown credits = gap');
 });

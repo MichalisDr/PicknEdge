@@ -197,7 +197,7 @@ test('player card: no kicker, the identity starts with the given name or the dis
 
 test('cr box and value chip open the trend like a tile: one selected at a time, again closes, each feeds its own series; no series = not clickable', async () => {
   const { root, tick } = setup(null);
-  const info = { cr: 9.5, crSeries: [8, 8.5, 9, 9.5], value: 1.2, valueSeries: [1, 1.1, 1.15, 1.2] };
+  const info = { cr: 9.5, crSeries: [8, 8.5, 9, 9.5], value: 1.2, valueSeries: [9, 9, 9, 9], gameValues: [1, 1.1, 1.15, 1.2] };
   Data.metrics = async () => ({ byId: { value: { id: 'value', label: 'Value', direction: 1, chartScale: 'zero', format: { digits: 2, suffix: '' } } } });
   Data.fantasyInfo = () => info; Data.formatMetric = (id, v) => v.toFixed(2);
   const gpView = { keys: [], league: () => ({ value: 0 }), row: () => ({ team: 'AAA', pos: 'G' }), get: () => ({ value: 5 }) };
@@ -214,10 +214,10 @@ test('cr box and value chip open the trend like a tile: one selected at a time, 
   assert.deepEqual(tips(root.innerHTML), [8, 8.5, 9, 9.5], 'cr feeds crSeries');
   els.value.onclick(); await tick();
   assert.equal(pressed('value'), 'true'); assert.equal(pressed('cr'), 'false', 'selecting value deselects cr');
-  assert.deepEqual(tips(root.innerHTML), [1, 1.1, 1.15, 1.2].map(v => +v.toFixed(2)), 'value feeds valueSeries (2 decimals)');
+  assert.deepEqual(tips(root.innerHTML), [1, 1.1, 1.15, 1.2].map(v => +v.toFixed(2)), 'value feeds gameValues (2 decimals), not the sparkline series');
   els.value.onkeydown({ key: 'Enter', preventDefault() {} }); await tick();
   assert.equal(pressed('value'), 'false'); assert.ok(!root.innerHTML.includes('fw-trend'), 'again closes the chart');
-  Data.fantasyInfo = () => ({ ...info, crSeries: [null, null], valueSeries: [null, null] });
+  Data.fantasyInfo = () => ({ ...info, crSeries: [null, null], gameValues: [null, null] });
   open('players', 'P1', {}); await tick();
   assert.ok(!/data-metric="(cr|value)"/.test(root.innerHTML), 'no series: nothing clickable');
 });

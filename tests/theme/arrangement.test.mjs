@@ -171,7 +171,7 @@ test('CR and Value (label + number, the chip with its sparkline): only with real
   const draw = () => headerHtml({ ...PCTX, roster: ROSTER() });
   assert.equal(Data.fantasyInfo('P1'), null);
   assert.ok(!/cr-box|value-chip|value-sparkline|header-figures/.test(draw()), 'no empty boxes while the info is null');
-  await withInfo({ cr: 0, value: 0, valueSeries: [0, 0] }, () => {
+  await withInfo({ cr: 0, value: 0, valueSeries: [0, 0], gameValues: [0, 0] }, () => {
     const html = draw();
     assert.match(html, /<span class="fw-cr-box" data-part="fantasy.player-card.cr-box"><span data-part="fantasy.player-card.cr-box-label">CR<\/span><span data-part="fantasy.player-card.cr-box-value">0<\/span><\/span>/);
     assert.match(html, /<span class="fw-value-chip" data-part="fantasy.player-card.value-chip" role="button" tabindex="0" data-metric="value" aria-pressed="false" aria-label="Value 0.00, per-round chart"><span data-part="fantasy.player-card.value-chip-label">Value<\/span><span data-part="fantasy.player-card.value-chip-value">0.00<\/span><svg data-part="fantasy.player-card.value-sparkline"/);
