@@ -4,8 +4,8 @@
 import { esc } from '../../core/html.js';
 import { size } from '../../core/sizes.js';
 import { teamLogo } from '../../core/teams.js';
-import { axisScale, equalScale, separate } from './scale.js';
-import { logoFit } from './logo-fit.js';
+import { axisScale, equalScale, separateBoxes, overlapPairs } from './scale.js';
+import { logoFit, logoBox } from './logo-fit.js';
 import { favourable, quadrantTone, diagonalTone } from './tint.js';
 
 const axisTitle = m => m.label + (m.format.suffix && !m.label.includes(m.format.suffix.trim()) ? ` (${m.format.suffix.trim()})` : '');
@@ -66,10 +66,18 @@ export function drawScatter(model, W, narrow, mode = 'thumb', H = Math.round(W *
   const avg = model.avg ? `<line class="fc-avg" x1="${f(X(model.avg.x))}" x2="${f(X(model.avg.x))}" y1="${f(y0)}" y2="${f(y1)}"/><line class="fc-avg" x1="${f(x0)}" x2="${f(x1)}" y1="${f(Y(model.avg.y))}" y2="${f(Y(model.avg.y))}"/>` : '';
   const diag = model.equal ? `<line class="fc-diag" x1="${f(X(sx.lo))}" y1="${f(Y(sx.lo))}" x2="${f(X(sx.hi))}" y2="${f(Y(sx.hi))}"/>` : '';
   const cell = Math.sqrt(Math.max(1, iw * ih) / model.pts.length);   // logo size follows density: the more points on the smaller plot, the smaller the logo, between a legible minimum and a maximum
-  const lo = P(narrow ? 'logo-size-min-narrow' : 'logo-size-min'), hi = P(narrow ? 'logo-size-max-narrow' : 'logo-size-max'), step = P('logo-step');
-  const logo = Math.max(lo, Math.min(hi, Math.round(cell * P('logo-density') / step) * step));   // a multiple of the step (4), between the legible minimum and the maximum
-  const dotR = P('dot-radius'), at = full ? separate(model.pts.map(p => ({ x: X(p.a), y: Y(p.b) })), logo + P('logo-gap')) : model.pts.map(p => ({ x: X(p.a), y: Y(p.b) }));   // logos are centred on the data point, nothing around them; some air between two
+  const lo = P(narrow ? 'logo-size-min-narrow' : 'logo-size-min'), hi = P(narrow ? 'logo-size-max-narrow' : 'logo-size-max'), step = P('logo-step'), floor = P('logo-size-floor');
+  const start = Math.max(lo, Math.min(hi, Math.round(cell * P('logo-density') / step) * step));   // a multiple of the step (4), between the legible minimum and the maximum
+  const dotR = P('dot-radius'), place = model.pts.map(p => ({ x: X(p.a), y: Y(p.b) }));
+  // Logos: overlapping ones are nudged apart by the smallest push, never further than half a logo from their data point; when that cannot clear them, the logo goes one step (4px) smaller, down to the floor (16px).
+  let logo = start, at = place;
+  for (; full; logo -= step) {
+    const boxes = model.pts.map((p, i) => ({ ...place[i], ...(p.logo ? logoBox(p.logo, logo) : { w: dotR * 2, h: dotR * 2 }) }));
+    at = separateBoxes(boxes, P('logo-gap'), logo / 2);
+    if (logo - step < floor || !overlapPairs(at, boxes)) break;
+  }
   const r = logo / 2, fit = {};
+
   const dots = model.pts.map((p, i) => {
     const body = full && p.logo ? `<circle class="fc-hit" r="${r}"/><image href="${esc(p.logo)}" x="${f((fit[p.logo] ||= logoFit(p.logo, logo)).x)}" y="${f(fit[p.logo].y)}" width="${f(fit[p.logo].width)}" height="${f(fit[p.logo].height)}" preserveAspectRatio="xMidYMid meet"/>`
       : `<circle class="fc-hit" r="${dotR + P('hit-pad')}"/><circle class="fc-dot" r="${dotR}"/>${full ? `<text class="fc-pl" x="${P('label-offset-x')}" y="${P('tick-baseline')}">${esc(p.id)}</text>` : ''}`;

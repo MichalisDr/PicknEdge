@@ -406,7 +406,8 @@
      "axis-title-left": 16,
      "logo-gap": 4,
      "hit-pad": 4,
-     "label-offset-x": 8
+     "label-offset-x": 8,
+     "logo-size-floor": 16
     },
     "chart-notes": {
      "gap": "4px",

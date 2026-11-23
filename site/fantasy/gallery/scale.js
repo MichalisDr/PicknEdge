@@ -48,3 +48,32 @@ export function separate(points, gap, iterations = 80) {
   }
   return p;
 }
+
+/** Resolve overlaps of logo boxes (the visible artwork, w x h px, centred on the point; `gap` px of air between two) by the SMALLEST nudge: a pair that overlaps in both directions is pushed
+    apart along the direction where it overlaps less, half each. No logo ever ends further than `maxShift` px from its data point (the standard: at most half the logo size), so a pair that
+    cannot be separated within that stays slightly overlapped. items: [{ x, y, w, h }] → new [{ x, y }] in the same order (a logo nothing touches does not move). */
+export function separateBoxes(items, gap, maxShift, iterations = 120) {
+  const p = items.map(q => ({ x: q.x, y: q.y }));
+  const clamp = (q, o) => { const dx = q.x - o.x, dy = q.y - o.y, d = Math.hypot(dx, dy); if (d > maxShift) { q.x = o.x + dx / d * maxShift; q.y = o.y + dy / d * maxShift; } };
+  for (let it = 0; it < iterations; it++) {
+    let moved = false;
+    for (let i = 0; i < p.length; i++) for (let j = i + 1; j < p.length; j++) {
+      const dx = p[j].x - p[i].x, dy = p[j].y - p[i].y;
+      const ox = (items[i].w + items[j].w) / 2 + gap - Math.abs(dx), oy = (items[i].h + items[j].h) / 2 + gap - Math.abs(dy);
+      if (ox <= 1e-6 || oy <= 1e-6) continue;
+      if (ox <= oy) { const s = (dx < 0 ? -1 : 1) * (ox / 2 + 1e-6); p[i].x -= s; p[j].x += s; } else { const s = (dy < 0 ? -1 : 1) * (oy / 2 + 1e-6); p[i].y -= s; p[j].y += s; }
+      clamp(p[i], items[i]); clamp(p[j], items[j]); moved = true;
+    }
+    if (!moved) break;
+  }
+  return p;
+}
+
+/** How many pairs of logo boxes (x, y = centres from `points`, w x h from `items`) still cover each other. */
+export function overlapPairs(points, items) {
+  let n = 0;
+  for (let i = 0; i < points.length; i++) for (let j = i + 1; j < points.length; j++) {
+    if ((items[i].w + items[j].w) / 2 - Math.abs(points[j].x - points[i].x) > 1e-6 && (items[i].h + items[j].h) / 2 - Math.abs(points[j].y - points[i].y) > 1e-6) n++;
+  }
+  return n;
+}

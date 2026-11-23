@@ -26,7 +26,7 @@ export function wirePlots(root, onOpen, win = globalThis.window, mode = 'thumb')
     plot.addEventListener('pointerdown', e => { touch = e.pointerType !== 'mouse'; });
     plot.addEventListener('pointerover', e => { const g = pt(e); if (!g || touch) return; if (g.nextElementSibling) g.parentNode.appendChild(g); show(g); });   // already last = no move, so no flicker
     plot.addEventListener('pointerout', e => { if (pt(e) && !touch) hide(); });
-    plot.addEventListener('focusin', e => { const g = pt(e); if (g) show(g); });
+    plot.addEventListener('focusin', e => { const g = pt(e); if (!g) return; if (g.nextElementSibling) g.parentNode.appendChild(g); show(g); });   // the focused logo comes to the front too
     plot.addEventListener('focusout', e => { if (pt(e)) hide(); });
     plot.addEventListener('keydown', e => { const g = pt(e); if (g && onOpen && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); e.stopPropagation(); onOpen(g.dataset.open); } });
     plot.addEventListener('click', e => {
