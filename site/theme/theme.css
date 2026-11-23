@@ -631,10 +631,6 @@ body{
 --fantasy-stat-table-filters-link-font-weight:400;
 --fantasy-stat-table-filters-link-line-height:16px;
 --fantasy-stat-table-filters-link-text:var(--color-accent-fantasy);
---fantasy-stat-table-filters-note-font-size:12px;
---fantasy-stat-table-filters-note-font-weight:400;
---fantasy-stat-table-filters-note-line-height:16px;
---fantasy-stat-table-filters-note-text:var(--color-muted);
 --fantasy-stat-table-filters-reset-font-weight:600;
 --fantasy-stat-table-filters-switch-knob-background:var(--color-border-control);
 --fantasy-stat-table-filters-switch-knob-radius:4px;
@@ -1472,10 +1468,6 @@ body[data-area=betting]{
   fantasy.stat-table.filters-link.font-weight : .fw-fd-link
   fantasy.stat-table.filters-link.line-height : .fw-fd-link
   fantasy.stat-table.filters-link.text : .fw-fd-link
-  fantasy.stat-table.filters-note.font-size : .fw-fd-note
-  fantasy.stat-table.filters-note.font-weight : .fw-fd-note
-  fantasy.stat-table.filters-note.line-height : .fw-fd-note
-  fantasy.stat-table.filters-note.text : .fw-fd-note
   fantasy.stat-table.filters-reset.font-weight : .fw-fd-reset
   fantasy.stat-table.filters-switch-knob.background : .fw-fd-knob
   fantasy.stat-table.filters-switch-knob.radius : .fw-fd-knob
