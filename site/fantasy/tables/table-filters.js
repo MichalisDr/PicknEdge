@@ -47,7 +47,6 @@ export const ICONS = {
   close: svg('<path d="M6 6l12 12M18 6L6 18"/>'),
   tick: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
   reset: svg('<path d="M4 12a8 8 0 1 0 2.6-5.9"/><path d="M4 4v4.5h4.5"/>'),
-  'sort-value': svg('<path d="M8 20V5M4.5 8.5L8 5l3.5 3.5M16 4v15M12.5 15.5L16 19l3.5-3.5"/>'),
 };
 
 const P = 'fw-fd';

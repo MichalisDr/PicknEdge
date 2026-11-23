@@ -28,4 +28,12 @@
 
 /* Players name cell: the identity takes what the badge and the figures leave (the first column is sized from its content, table-fit.js). */
 [data-part="fantasy.stat-table.name-cell-identity"]{flex:1 1 auto}
-[data-part="fantasy.stat-table.name-cell-value-chip"]{box-sizing:border-box}
+[data-part="fantasy.stat-table.name-cell-value-chip"]{box-sizing:border-box;width:var(--fantasy-stat-table-name-cell-value-chip-width)}[data-part="fantasy.stat-table.name-cell-cr-box"]{width:var(--fantasy-stat-table-name-cell-cr-box-width)}
+
+/* Player header sort labels (table-view.js): "Cr" and "Value" sit over the credits box and the value chip, whose fixed widths they share */
+.fw-ph{display:flex;align-items:center;justify-content:space-between;gap:var(--fantasy-stat-table-name-cell-figures-gap)}
+.fw-ph-sorts{display:flex;flex:none;gap:var(--fantasy-stat-table-name-cell-figures-gap)}
+.fw-t thead .fw-hs{display:flex;align-items:center;justify-content:center;box-sizing:border-box;height:var(--fantasy-stat-table-header-sort-label-height);padding:var(--fantasy-stat-table-header-sort-label-padding);border-radius:var(--fantasy-stat-table-header-sort-label-radius);font-size:var(--fantasy-stat-table-header-sort-label-font-size);line-height:var(--fantasy-stat-table-header-sort-label-line-height);white-space:pre}
+.fw-t th[aria-sort] .fw-hs::after{content:none}
+.fw-t thead .fw-hs-cr-box{width:var(--fantasy-stat-table-name-cell-cr-box-width)}.fw-t thead .fw-hs-value-chip{width:var(--fantasy-stat-table-name-cell-value-chip-width)}
+.fw-t thead .fw-hs[data-on]{background:var(--fantasy-stat-table-header-sorted-background);color:var(--fantasy-stat-table-header-sorted-text)}

@@ -51,12 +51,13 @@ export async function loadTable(state, widthsOf, isStale) {
     const m = byId[c.metric], values = new Map(allIds.map(id => [id, few(c, id) ? null : view.get(id, c.metric).value]));
     model.set(c.metric, { c, m, values, list: poolIds.map(id => values.get(id)) });
   }
-  const cur = state.sort && cols.some(c => c.metric === state.sort) ? { metric: state.sort, dir: state.dir } : T.defaultSort;
-  const sel = state.sel.every(id => cols.some(c => c.metric === id)) ? state.sel : [];   // a combined rank with a column the table no longer has falls back to the default sort
-  const byRow = new Map(rows.map(r => [r.id, r])), byValue = !teams && !!state.sortValue;   // Sort by value: the window's value, highest first, players without one last
+  const fx = !teams && (state.sort === 'cr' || state.sort === 'value') ? state.sort : null;   // Players only: the two sort keys of the Player header (credits, value of the selected window)
+  const cur = fx ? { metric: fx, dir: state.dir } : state.sort && cols.some(c => c.metric === state.sort) ? { metric: state.sort, dir: state.dir } : T.defaultSort;
+  const sel = !fx && state.sel.every(id => cols.some(c => c.metric === id)) ? state.sel : [];   // a combined rank with a column the table no longer has falls back to the default sort
+  const byRow = new Map(rows.map(r => [r.id, r]));
   let ordered;
-  if (byValue) {
-    ordered = TM.order(list.map(r => r.id), id => byRow.get(id).value, 'desc');
+  if (fx) {
+    ordered = TM.order(list.map(r => r.id), id => byRow.get(id)[fx], cur.dir);   // players without a cr / value go last in both directions; ranks are not recomputed
   } else if (sel.length) {
     const sc = TM.combined(list.map(r => r.id), sel.map(id => ({ dir: byId[id].direction, values: model.get(id).values })), poolIds);
     ordered = TM.order(list.map(r => r.id), id => sc.get(id), 'desc');
@@ -66,5 +67,5 @@ export async function loadTable(state, widthsOf, isStale) {
   }
   const gallery = state.mode === 'charts' && chartsAvailable(state.entity, state.view) ? await galleryHtml(state.entity, state.view, state, filtered.map(r => r.id)) : '';
   if (isStale()) return null;
-  return { view, TL, T, tname, cols, model, few, roster, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth(widthsOf([...rows.map(r => r.name), 'League average']), TL.firstCol), sel, cur, byValue, pool: poolSet, range, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
+  return { view, TL, T, tname, cols, model, few, roster, shown: ordered.map(id => byRow.get(id)), firstW: TM.firstColWidth(widthsOf([...rows.map(r => r.name), 'League average']), TL.firstCol), sel, cur, pool: poolSet, range, avg: leagueCells(view, cols.map(c => c.metric)), gallery, byId };
 }

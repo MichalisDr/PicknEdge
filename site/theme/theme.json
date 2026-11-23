@@ -1461,22 +1461,6 @@
     "players-search-icon": {
      "text": "{semantic.muted}"
     },
-    "players-sort-value-button": {
-     "background": "transparent",
-     "border": "{semantic.border-control}",
-     "border-width": "1px",
-     "font-size": "12px",
-     "radius": "6px",
-     "text": "{semantic.white}"
-    },
-    "players-sort-value-button-hovered": {
-     "background": "{semantic.chip}"
-    },
-    "players-sort-value-button-selected": {
-     "background": "{semantic.accent-fantasy}",
-     "border": "{semantic.accent-fantasy}",
-     "text": "{semantic.text}"
-    },
     "players-toolbar": {
      "border-bottom": "{semantic.line}",
      "border-bottom-width": "1px"
@@ -1567,6 +1551,11 @@
     },
     "value-good": {
      "text": "{semantic.eval-good-text}"
+    },
+    "header-sort-label": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "radius": "4px"
     }
    },
    "stats-block": {

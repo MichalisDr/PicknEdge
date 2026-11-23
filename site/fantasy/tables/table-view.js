@@ -13,14 +13,20 @@ import { tableToolbarHtml } from './table-toolbar.js';
 import { drawerHtml } from './table-filters.js';
 import { playerNameCellHtml } from './table-name-cell.js';
 
-export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster, shown: rowsShown, firstW, sel, cur, byValue, pool, range, avg, gallery, byId }) {
+export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster, shown: rowsShown, firstW, sel, cur, pool, range, avg, gallery, byId }) {
   const teams = state.entity === 'teams', title = teams ? 'Teams' : 'Players', hasCharts = chartsAvailable(state.entity, state.view);
   const totalW = TM.tableWidth(TL, tname, firstW);
-  const sortedCols = new Set(byValue ? [] : sel.length ? sel : [cur.metric]);   // Sort by value: no column is the sorted one
+  const sortedCols = new Set(sel.length ? sel : [cur.metric]);
   const cls = c => 'fw-n' + (sortedCols.has(c.metric) ? ' fw-sorted' : '');
   const header = cols.map(c => {
-    const m = byId[c.metric], on = !byValue && cur.metric === c.metric && !sel.length;
+    const m = byId[c.metric], on = cur.metric === c.metric && !sel.length;
     return `<th class="${cls(c)}" aria-sort="${on ? (cur.dir === 'asc' ? 'ascending' : 'descending') : 'none'}"><button data-sort="${c.metric}" ${sel.includes(c.metric) ? 'data-sel' : ''} title="${esc(m.label + ': ' + m.description)}">${esc(c.label)}</button></th>`;
+  }).join('');
+  /* Player header: "Cr" and "Value" sort the rows by the credits box / value chip below them (not columns). Same sort state, direction and arrow as the other headers. */
+  const fxOn = !teams && !sel.length && (cur.metric === 'cr' || cur.metric === 'value');
+  const fxLabels = teams ? '' : [['cr', 'Cr', 'Sort by credits', 'cr-box'], ['value', 'Value', 'Sort by value', 'value-chip']].map(([key, text, aria, box]) => {
+    const on = fxOn && cur.metric === key;
+    return `<button type="button" class="fw-hs fw-hs-${box}" data-sort-fx="${key}" aria-label="${aria}"${on ? ' data-on' : ''}>${text}${on ? `<span aria-hidden="true"> ${cur.dir === 'asc' ? '\u25B4' : '\u25BE'}</span>` : ''}</button>`;
   }).join('');
   const tint = (c, value, rankInfo) => {
     if (!Number.isFinite(value)) return '';
@@ -45,7 +51,7 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
   const averageHtml = `<tr class="fw-average"><th title="full league${teams ? '' : ' · all players who played'} · ignores filters">League average</th>${cells(null, true)}</tr>`;
   /* League average takes part in the order of the active stat and direction (at the end for a combined rank); without a value for that stat it is not drawn. */
   let averageAt = rowsHtml.length;
-  if (!sel.length && !byValue) {
+  if (!sel.length) {
     const avgValue = avg[cur.metric]?.value;
     if (!Number.isFinite(avgValue)) averageAt = -1;
     else { const at = rowsShown.findIndex(r => { const v = view.get(r.id, cur.metric).value; return !Number.isFinite(v) || (cur.dir === 'asc' ? v > avgValue : v < avgValue); }); averageAt = at < 0 ? rowsHtml.length : at; }
@@ -56,7 +62,7 @@ export function tableHtml(state, { view, TL, T, tname, cols, model, few, roster,
   /* The toolbar (two rows, Players and Teams): its parts, order and visibility come from config/arrangement.json (fantasy.stat-table.players-view-row, .players-toolbar); see table-toolbar.js. */
   const show = { players: !teams, teams, teamCount: Object.keys(roster.teams).length, 'charts-available': hasCharts };
   const bars = tableToolbarHtml(state, show, `<h1 data-part="fantasy.stat-table.heading-title">${title}</h1>`);
-  const tableMarkup = `<table class="fw-t" style="--table-total:${totalW}px"><colgroup><col style="width:${firstW}px">${cols.map(() => '<col>').join('')}</colgroup><thead><tr><th>${teams ? 'Team' : 'Player'}</th>${header}</tr></thead>
+  const tableMarkup = `<table class="fw-t" style="--table-total:${totalW}px"><colgroup><col style="width:${firstW}px">${cols.map(() => '<col>').join('')}</colgroup><thead><tr><th${fxOn ? ` aria-sort="${cur.dir === 'asc' ? 'ascending' : 'descending'}"` : ''}>${teams ? 'Team' : `<div class="fw-ph"><span>Player</span><span class="fw-ph-sorts">${fxLabels}</span></div>`}</th>${header}</tr></thead>
       <tbody>${body}</tbody></table>`;
   return `<section class="fantasy-stats fw-workbench">
     ${bars}
