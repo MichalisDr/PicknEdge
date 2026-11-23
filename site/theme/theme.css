@@ -261,14 +261,16 @@ body{
 --betting-stats-table-window-buttons-border:#344052;
 --betting-stats-table-window-buttons-border-width:1px;
 --betting-stats-table-window-buttons-radius:7px;
---fantasy-charts-gallery-average-line:#9fb0c6;
---fantasy-charts-gallery-axis-line:#3b4655;
---fantasy-charts-gallery-axis-numbers-font-size:10px;
---fantasy-charts-gallery-axis-numbers-text:#8191a5;
---fantasy-charts-gallery-axis-title-font-size:11.5px;
---fantasy-charts-gallery-axis-title-text:#b7c4d8;
---fantasy-charts-gallery-chart-card-background:#182335;
---fantasy-charts-gallery-chart-card-border:#2b3a4f;
+--fantasy-charts-gallery-average-line:var(--color-text-muted-2);
+--fantasy-charts-gallery-axis-line:var(--color-border-control);
+--fantasy-charts-gallery-axis-numbers-font-size:12px;
+--fantasy-charts-gallery-axis-numbers-font-size-below-650px:11px;
+--fantasy-charts-gallery-axis-numbers-text:var(--color-text-muted-2);
+--fantasy-charts-gallery-axis-title-font-size:14px;
+--fantasy-charts-gallery-axis-title-font-size-below-650px:13px;
+--fantasy-charts-gallery-axis-title-text:var(--color-text);
+--fantasy-charts-gallery-chart-card-background:var(--color-panel);
+--fantasy-charts-gallery-chart-card-border:var(--color-border-soft);
 --fantasy-charts-gallery-chart-card-border-width:1px;
 --fantasy-charts-gallery-chart-card-radius:10px;
 --fantasy-charts-gallery-chart-card-text:var(--color-text-soft);
@@ -276,24 +278,27 @@ body{
 --fantasy-charts-gallery-chart-card-focused-outline-offset:3px;
 --fantasy-charts-gallery-chart-card-focused-outline-width:2px;
 --fantasy-charts-gallery-chart-card-hovered-border:var(--color-accent-fantasy);
---fantasy-charts-gallery-chart-note-font-size:11px;
+--fantasy-charts-gallery-chart-gridline-line:var(--color-border-soft);
+--fantasy-charts-gallery-chart-note-font-size:12px;
+--fantasy-charts-gallery-chart-note-font-size-below-650px:11px;
 --fantasy-charts-gallery-chart-note-text:var(--color-text-muted-2);
---fantasy-charts-gallery-chart-subtitle-font-size:11px;
+--fantasy-charts-gallery-chart-subtitle-font-size:12px;
+--fantasy-charts-gallery-chart-subtitle-font-size-below-650px:11px;
 --fantasy-charts-gallery-chart-subtitle-text:var(--color-text-muted-2);
---fantasy-charts-gallery-chart-title-font-size:14px;
---fantasy-charts-gallery-diagonal-line:#6b7c93;
---fantasy-charts-gallery-enlarged-chart-subtitle-font-size:12px;
+--fantasy-charts-gallery-chart-title-font-size:16px;
+--fantasy-charts-gallery-chart-title-text:var(--color-text);
+--fantasy-charts-gallery-diagonal-line:var(--color-border-control);
+--fantasy-charts-gallery-enlarged-chart-subtitle-font-size:13px;
 --fantasy-charts-gallery-enlarged-chart-subtitle-text:var(--color-text-muted-2);
 --fantasy-charts-gallery-enlarged-chart-title-font-size:22px;
 --fantasy-charts-gallery-enlarged-chart-title-font-size-below-650px:18px;
 --fantasy-charts-gallery-point-border:var(--color-surface-dialog);
---fantasy-charts-gallery-point-fill:#7f93ab;
+--fantasy-charts-gallery-point-fill:var(--color-text-muted-2);
 --fantasy-charts-gallery-point-hovered-border:var(--color-white);
 --fantasy-charts-gallery-point-hovered-fill:var(--color-accent-default);
---fantasy-charts-gallery-point-label-font-size:10px;
---fantasy-charts-gallery-point-label-text:#c6d2df;
---fantasy-charts-gallery-team-label-font-size:11px;
+--fantasy-charts-gallery-team-label-font-size:12px;
 --fantasy-charts-gallery-team-label-outline:var(--color-surface-dialog);
+--fantasy-charts-gallery-quadrant-tint-opacity:0.12;
 --fantasy-player-card-box-scores-cell-note-font-size:12px;
 --fantasy-player-card-box-scores-cell-note-text:var(--color-text-muted-2);
 --fantasy-player-card-box-scores-cell-note-line-height:16px;
@@ -1099,10 +1104,12 @@ body[data-area=betting]{
   betting.stats-table.window-buttons.border-width : .period-switch
   betting.stats-table.window-buttons.radius : .period-switch
   fantasy.charts-gallery.average.line : .fc-avg
-  fantasy.charts-gallery.axis.line : (set by a script)
+  fantasy.charts-gallery.axis.line : .fc-axis
   fantasy.charts-gallery.axis-numbers.font-size : .fc-tick
-  fantasy.charts-gallery.axis-numbers.text : .fc-tick
+  fantasy.charts-gallery.axis-numbers.font-size-below-650px : .fc-tick
+  fantasy.charts-gallery.axis-numbers.text : .fc-tick  |  .fc-pl
   fantasy.charts-gallery.axis-title.font-size : .fc-ax
+  fantasy.charts-gallery.axis-title.font-size-below-650px : .fc-ax
   fantasy.charts-gallery.axis-title.text : .fc-ax
   fantasy.charts-gallery.chart-card.background : .fc-card
   fantasy.charts-gallery.chart-card.border : .fc-card
@@ -1113,24 +1120,27 @@ body[data-area=betting]{
   fantasy.charts-gallery.chart-card-focused.outline-offset : .fc-card:focus-visible
   fantasy.charts-gallery.chart-card-focused.outline-width : .fc-card:focus-visible
   fantasy.charts-gallery.chart-card-hovered.border : .fc-card:hover
+  fantasy.charts-gallery.chart-gridline.line : .fc-grid
   fantasy.charts-gallery.chart-note.font-size : .fc-note
+  fantasy.charts-gallery.chart-note.font-size-below-650px : .fc-note
   fantasy.charts-gallery.chart-note.text : .fc-note
   fantasy.charts-gallery.chart-subtitle.font-size : .fc-card-sub
+  fantasy.charts-gallery.chart-subtitle.font-size-below-650px : .fc-card-sub
   fantasy.charts-gallery.chart-subtitle.text : .fc-card-sub
   fantasy.charts-gallery.chart-title.font-size : .fc-card-title
-  fantasy.charts-gallery.diagonal.line : (set by a script)
+  fantasy.charts-gallery.chart-title.text : .fc-card-title
+  fantasy.charts-gallery.diagonal.line : .fc-diag
   fantasy.charts-gallery.enlarged-chart-subtitle.font-size : .fc-mhead h2 small
   fantasy.charts-gallery.enlarged-chart-subtitle.text : .fc-mhead h2 small
   fantasy.charts-gallery.enlarged-chart-title.font-size : .fc-mhead h2
   fantasy.charts-gallery.enlarged-chart-title.font-size-below-650px : .fc-mhead h2
-  fantasy.charts-gallery.point.border : .fc-pt circle
-  fantasy.charts-gallery.point.fill : .fc-pt circle
-  fantasy.charts-gallery.point-hovered.border : .fc-pt circle:hover,.fc-pt circle:focus-visible
-  fantasy.charts-gallery.point-hovered.fill : .fc-pt:hover circle,.fc-pt:focus circle
-  fantasy.charts-gallery.point-label.font-size : .fc-pt text
-  fantasy.charts-gallery.point-label.text : .fc-pt text
+  fantasy.charts-gallery.point.border : .fc-dot
+  fantasy.charts-gallery.point.fill : .fc-dot
+  fantasy.charts-gallery.point-hovered.border : .fc-pt:focus-visible .fc-hit  |  .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot
+  fantasy.charts-gallery.point-hovered.fill : .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot
   fantasy.charts-gallery.team-label.font-size : .fc-pl
   fantasy.charts-gallery.team-label.outline : .fc-pl
+  fantasy.charts-gallery.quadrant-tint.opacity : .fc-q
   fantasy.player-card.box-scores-cell-note.font-size : .fw-with td small,.fw-with th small
   fantasy.player-card.box-scores-cell-note.text : .fw-with td small,.fw-with th small
   fantasy.player-card.box-scores-cell-note.line-height : .fw-with td small,.fw-with th small
@@ -1626,8 +1636,8 @@ body[data-area=betting]{
   fantasy.stat-table.table-frame.border : .fw-table-wrap
   fantasy.stat-table.table-frame.border-width : .fw-table-wrap
   fantasy.stat-table.table-frame.radius : .fw-table-wrap
-  fantasy.stat-table.value-bad.text : .fw-v.bad  |  .fw-spark-dot.bad  |  .fw-roll.bad
-  fantasy.stat-table.value-good.text : .fw-v.good  |  .fw-spark-dot.good  |  .fw-roll.good
+  fantasy.stat-table.value-bad.text : .fc-q.bad  |  .fw-v.bad  |  .fw-spark-dot.bad  |  .fw-roll.bad
+  fantasy.stat-table.value-good.text : .fc-q.good  |  .fw-v.good  |  .fw-spark-dot.good  |  .fw-roll.good
   fantasy.stat-table.header-sort-label.font-size : .fw-t thead .fw-hs
   fantasy.stat-table.header-sort-label.line-height : .fw-t thead .fw-hs
   fantasy.stat-table.header-sort-label.radius : .fw-t thead .fw-hs
