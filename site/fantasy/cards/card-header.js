@@ -7,6 +7,7 @@ import { teamCode, teamLogo } from '../../core/teams.js';
 import { drawParts } from '../../core/arrangement.js';
 import { icon } from '../../core/icons.js';
 import { sparklineSvg } from '../../core/sparkline.js';
+import { fantasyChartable } from './card-trend.js';
 import { teamEntry } from '../../core/teams.js';
 import { teamTitleLines } from '../../core/team-city.js';
 import CITIES from '../../config/team-cities.json' with { type: 'json' };
@@ -82,14 +83,16 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
     'team-line': () => (players ? teamLine(row?.pos, roster.teams[team] || team) : ''),
   }, show).map(p => p.html).join('');
   if (!players) return teamHeaderHtml({ cs, title, logo, show });
+  /* The figure opens its trend like a stats-block tile (data-metric, aria-pressed); only when it has a series to draw. */
+  const tile = (key, label, shown) => (fantasyChartable(info, key) ? ` role="button" tabindex="0" data-metric="${key}" aria-pressed="${cs.selected === key}" aria-label="${label} ${esc(shown)}, per-round chart"` : '');
   const figure = (label, value, key) => drawParts(PART + key, {
     [`${key}-label`]: () => `<span data-part="${PART}${key}-label">${label}</span>`,
     [`${key}-value`]: () => `<span data-part="${PART}${key}-value">${esc(value)}</span>`,
     'value-sparkline': () => sparklineSvg(info?.valueSeries, `${PART}value-sparkline`),
   }, { 'when-data': key === 'value-chip' }).map(p => p.html).join('');
   const figures = drawParts('fantasy.player-card.header-figures', {
-    'cr-box': () => (info?.cr == null ? '' : `<span class="fw-cr-box" data-part="${PART}cr-box">${figure('CR', info.cr, 'cr-box')}</span>`),
-    'value-chip': () => (info?.value == null ? '' : `<span class="fw-value-chip" data-part="${PART}value-chip">${figure('Value', Data.formatMetric('value', info.value), 'value-chip')}</span>`),
+    'cr-box': () => (info?.cr == null ? '' : `<span class="fw-cr-box" data-part="${PART}cr-box"${tile('cr', 'CR', info.cr)}>${figure('CR', info.cr, 'cr-box')}</span>`),
+    'value-chip': () => (info?.value == null ? '' : `<span class="fw-value-chip" data-part="${PART}value-chip"${tile('value', 'Value', Data.formatMetric('value', info.value))}>${figure('Value', Data.formatMetric('value', info.value), 'value-chip')}</span>`),
   }, show).map(p => p.html).join('');
   const identity = drawParts('fantasy.player-card.header-identity', {
     'logo': () => (logo ? `<img src="${esc(logo)}" alt="" data-part="${PART}header-logo">` : ''),

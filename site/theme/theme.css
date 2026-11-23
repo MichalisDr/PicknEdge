@@ -1296,9 +1296,9 @@ body[data-area=betting]{
   fantasy.player-card.tile-rank-bad.text : .sb .ev-bad .v b
   fantasy.player-card.tile-rank-good.text : .sb .ev-good .v b
   fantasy.player-card.tile-rank-neutral.text : .sb .ev-neutral .v b
-  fantasy.player-card.tile-selected.border : .sb .m[aria-pressed=true]::after
+  fantasy.player-card.tile-selected.border : [data-part="fantasy.player-card.cr-box"][aria-pressed=true],[data-part="fantasy.player-card.value-chip"][aria-pressed=true]  |  .sb .m[aria-pressed=true]::after
   fantasy.player-card.tile-selected.shadow : (set by a script)
-  fantasy.player-card.tile-selected.shadow-size : .sb .m[aria-pressed=true]::after
+  fantasy.player-card.tile-selected.shadow-size : [data-part="fantasy.player-card.cr-box"][aria-pressed=true],[data-part="fantasy.player-card.value-chip"][aria-pressed=true]  |  .sb .m[aria-pressed=true]::after
   fantasy.player-card.tile-unit.text : .sb .v u
   fantasy.player-card.trend-axis.line : .fw-axis
   fantasy.player-card.trend-bar.fill : .fw-bar
@@ -1663,7 +1663,7 @@ body[data-area=betting]{
   fantasy.stats-block.value-16.line-height : .sb .t16 .v b
   fantasy.stats-block.value-16.font-weight : .sb .t16 .v b
   fantasy.stats-block.halo.radius : .sb .m::after
-  fantasy.stats-block.halo.background : .sb .m:hover::after,.sb .m:focus-visible::after
+  fantasy.stats-block.halo.background : [data-part="fantasy.player-card.cr-box"][data-metric]:hover,[data-part="fantasy.player-card.cr-box"][data-metric]:focus-visible,[data-part="fantasy.player-card.value-chip"][data-metric]:hover,[data-part="fantasy.player-card.value-chip"][data-metric]:focus-visible  |  .sb .m:hover::after,.sb .m:focus-visible::after
   fantasy.stats-block.tile.background : .sb-tile  |  .sb-tile-title
   fantasy.stats-block.tile.border : .sb-tile  |  .sb-hair
   fantasy.stats-block.tile.border-width : .sb-tile  |  .sb-hair

@@ -57,3 +57,23 @@ test('sparkline: the dashed window line covers only the window part, the Season 
   assert.ok(l3[0] > all[0] && l3[1] === all[1]);
   assert.ok(Math.abs((l3[1] - l3[0]) / (all[1] - all[0]) - 2 / (s.points.length - 1)) < 0.01);
 });
+
+/* ---- cr and value: the header figures open the same bars chart ---- */
+test('cr and value charts: bars equal fantasyInfo crSeries / valueSeries, value draws the chip value as its window line, cr draws no average line', async () => {
+  const { fantasySeries, recentRolling5 } = await import('../../site/fantasy/cards/card-trend.js');
+  const view = await Data.view('players', 'l5'); await Data.view('players', 'season');
+  const id = view.keys.find(k => { const i = Data.fantasyInfo(k, 'l5'); return i && i.value !== null && i.crSeries.every(Number.isFinite) && i.valueSeries.slice(-5).every(Number.isFinite); });
+  const info = Data.fantasyInfo(id, 'l5'), season = Data.fantasyInfo(id, 'season'), byId = (await Data.metrics()).byId;
+  const rounds = new Map(info.crSeries.map((_, i) => [i + 1, { game: i + 1, opponent: 'XXX', home: i % 2 === 0 }]));
+  const crHtml = barsChart(fantasySeries(info.crSeries, rounds, 'cr'), { id: 'cr', label: 'Credits', direction: 0, chartScale: 'range', format: { digits: 1, suffix: '' } });
+  const tips = h => [...h.matchAll(/class="fw-bg"[^>]*data-tip="R(\d+) · [^"]* · ([-\d.]+)"/g)].map(m => [+m[1], +m[2]]);
+  assert.deepEqual(tips(crHtml), info.crSeries.map((v, i) => [i + 1, +v.toFixed(1)]), 'one bar per round with the real credits');
+  assert.ok(!crHtml.includes('fw-avg') && !crHtml.includes('fw-roll'), 'no average and no rolling line for a price');
+  const vHtml = barsChart(fantasySeries(info.valueSeries, rounds, 'value'), byId.value, { windowLabel: 'Last 5', windowValue: info.value, seasonValue: season.value, isSeason: false, windowGames: 5 });
+  assert.deepEqual(tips(vHtml), info.valueSeries.map((v, i) => [i + 1, +v.toFixed(2)]));
+  assert.ok(vHtml.includes(`data-tip="Last 5 ${info.value.toFixed(2)}"`), 'dashed window line = the chip value');
+  assert.ok(vHtml.includes(`data-tip="Season ${season.value.toFixed(2)}"`) && vHtml.includes('fw-avg-season'));
+  assert.equal((vHtml.match(/class="fw-roll [a-z]+" points="([^"]*)"/)[1].split(' ')).length, 5, 'rolling 5 over the last 5 rounds');
+  assert.deepEqual(recentRolling5([1, 2, 3, 4, 5, 6, 7]), [null, null, null, null, 3, 4, 5], 'rolling 5 = mean of the five rounds ending there, last 5 rounds only');
+  assert.deepEqual(recentRolling5([1, 2, null, 4, 5, 6, 7]), new Array(7).fill(null), 'a missing round inside every window leaves a gap');
+});

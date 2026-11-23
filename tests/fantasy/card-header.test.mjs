@@ -194,3 +194,30 @@ test('player card: no kicker, the identity starts with the given name or the dis
   assert.ok(html.indexOf('header-given-name') < html.indexOf('<h2>'));
   assert.ok(headerHtml({ cs: { id: 'P1', mode: 'profile', win: 'season' }, players: true, name: 'Player One', team: 'AAA', row: {}, logo: null, next: null, roster: { teams: {}, players: {} } }).includes('<h2>Player One</h2>'));
 });
+
+test('cr box and value chip open the trend like a tile: one selected at a time, again closes, each feeds its own series; no series = not clickable', async () => {
+  const { root, tick } = setup(null);
+  const info = { cr: 9.5, crSeries: [8, 8.5, 9, 9.5], value: 1.2, valueSeries: [1, 1.1, 1.15, 1.2] };
+  Data.metrics = async () => ({ byId: { value: { id: 'value', label: 'Value', direction: 1, chartScale: 'zero', format: { digits: 2, suffix: '' } } } });
+  Data.fantasyInfo = () => info; Data.formatMetric = (id, v) => v.toFixed(2);
+  const gpView = { keys: [], league: () => ({ value: 0 }), row: () => ({ team: 'AAA', pos: 'G' }), get: () => ({ value: 5 }) };
+  Data.view = async () => gpView;   // a player with games, so the card draws a chart
+  const els = {};
+  root.querySelectorAll = sel => (sel === '[data-metric]' ? ['cr', 'value'].map(k => (els[k] = { tagName: 'SPAN', dataset: { metric: k } })) : []);
+  const tips = html => [...html.matchAll(/data-tip="R\d+ · ([-\d.]+)"/g)].map(m => +m[1]);
+  const pressed = (k) => new RegExp('data-metric="' + k + '" aria-pressed="(true|false)"').exec(root.innerHTML)[1];
+  open('players', 'P1', {}); await tick();
+  assert.match(root.innerHTML, /data-part="fantasy.player-card.cr-box" role="button" tabindex="0" data-metric="cr" aria-pressed="false"/);
+  assert.equal(pressed('value'), 'false'); assert.ok(!root.innerHTML.includes('fw-trend'));
+  els.cr.onclick(); await tick();
+  assert.equal(pressed('cr'), 'true'); assert.equal(pressed('value'), 'false');
+  assert.deepEqual(tips(root.innerHTML), [8, 8.5, 9, 9.5], 'cr feeds crSeries');
+  els.value.onclick(); await tick();
+  assert.equal(pressed('value'), 'true'); assert.equal(pressed('cr'), 'false', 'selecting value deselects cr');
+  assert.deepEqual(tips(root.innerHTML), [1, 1.1, 1.15, 1.2].map(v => +v.toFixed(2)), 'value feeds valueSeries (2 decimals)');
+  els.value.onkeydown({ key: 'Enter', preventDefault() {} }); await tick();
+  assert.equal(pressed('value'), 'false'); assert.ok(!root.innerHTML.includes('fw-trend'), 'again closes the chart');
+  Data.fantasyInfo = () => ({ ...info, crSeries: [null, null], valueSeries: [null, null] });
+  open('players', 'P1', {}); await tick();
+  assert.ok(!/data-metric="(cr|value)"/.test(root.innerHTML), 'no series: nothing clickable');
+});

@@ -6,7 +6,7 @@ import { teamLogo } from '../../core/teams.js';
 import { headerHtml, controlsHtml, CONTROL_ICONS } from './card-header.js';
 import { loadIcons } from '../../core/icons.js';
 import { layoutGrid } from './metric-grid.js';
-import { trendBlock } from './card-trend.js';
+import { trendBlock, fantasyTrendBlock, fantasyChartable, FANTASY_KEYS } from './card-trend.js';
 import { wireBars } from './bars-chart.js';
 import { boxScores } from './box-scores.js';
 import { mount as mountShotChart } from '../shotchart/shotchart.js';
@@ -41,12 +41,13 @@ async function draw() {
     const players = kind === 'players', gp = players ? view.get(cs.id, 'gp').value : view.row(cs.id)?.games;
     const team = players ? row.team : cs.id, name = players ? roster.players[cs.id]?.name || cs.id : roster.teams[cs.id] || cs.id;
     const logo = teamLogo(roster, team);
-    const sel = cs.selected && byId[cs.selected] ? cs.selected : null;
+    const fx = players && FANTASY_KEYS.includes(cs.selected) && fantasyChartable(Data.fantasyInfo(cs.id, cs.win), cs.selected);   // the header's cr / value figure, opened as a chart
+    const sel = cs.selected && (byId[cs.selected] || fx) ? cs.selected : null;
     let visual = '', gridHtml = '';
     if (gp || !players) gridHtml = await layoutGrid(cs.id, (players ? 'player.' : 'team.') + cs.mode, view, byId, sel, players);
     if (mine !== cs.token || !dialog) return;
     if (!gp && players) visual = '<p class="fw-empty">No appearances in this sample.</p>';
-    else if (sel) visual = await trendBlock(cs, view, season, byId);
+    else if (sel) visual = fx ? await fantasyTrendBlock(cs, season, byId) : await trendBlock(cs, view, season, byId);
     else if (cs.mode === 'shooting') visual = '<div class="fw-shots" data-shots></div>';
     parkClose();
     root.innerHTML = `${headerHtml({ cs, players, name, team, row, roster, logo, next })}
@@ -57,7 +58,12 @@ async function draw() {
     root.querySelector('[data-next]')?.addEventListener('click', e => { const t = e.currentTarget.dataset.next; open('teams', t, { win: cs.win, mode: cs.mode, back: { id: cs.id, name }, previous: cs.previous }); });
     root.querySelector('[data-back]')?.addEventListener('click', () => open('players', cs.back.id, { win: cs.win, mode: cs.mode, previous: cs.previous }));
     root.querySelectorAll('[data-card-view]').forEach(b => { b.onclick = () => { if (cs.mode === b.dataset.cardView) return; cs.mode = b.dataset.cardView; cs.selected = null; draw(); }; });
-    root.querySelectorAll('[data-metric]').forEach(b => { b.onclick = () => { cs.selected = cs.selected === b.dataset.metric ? null : b.dataset.metric; draw(); }; });
+    /* One mechanism for every metric: the stats-block tiles (buttons) and the header's cr box and value chip (role=button spans, so Enter and Space act too). */
+    root.querySelectorAll('[data-metric]').forEach(b => {
+      const pick = () => { cs.selected = cs.selected === b.dataset.metric ? null : b.dataset.metric; draw(); };
+      b.onclick = pick;
+      if (b.tagName !== 'BUTTON') b.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } };
+    });
     root.querySelectorAll('[data-bars]').forEach(wireBars);
     const shots = root.querySelector('[data-shots]');
     if (shots && (gp || !players)) mountShotChart(shots, { kind, id: cs.id, team, spec: Windows.spec(cs), view, teamsView }, cs.shot);
