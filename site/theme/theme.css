@@ -291,6 +291,9 @@ body{
 --fantasy-charts-gallery-chart-title-text:var(--color-text);
 --fantasy-charts-gallery-chart-title-line-height:24px;
 --fantasy-charts-gallery-diagonal-line:var(--color-border-control);
+--fantasy-charts-gallery-fit-line:var(--color-text-soft);
+--fantasy-charts-gallery-fit-line-width:2px;
+--fantasy-charts-gallery-zone-label-font-size:12px;
 --fantasy-charts-gallery-enlarged-chart-subtitle-font-size:14px;
 --fantasy-charts-gallery-enlarged-chart-subtitle-text:var(--color-text-muted-2);
 --fantasy-charts-gallery-enlarged-chart-subtitle-line-height:20px;
@@ -1140,6 +1143,9 @@ body[data-area=betting]{
   fantasy.charts-gallery.chart-title.text : .fc-card-title
   fantasy.charts-gallery.chart-title.line-height : .fc-card-title
   fantasy.charts-gallery.diagonal.line : .fc-diag  |  .fc-swatch.diag
+  fantasy.charts-gallery.fit.line : .fc-fit
+  fantasy.charts-gallery.fit.line-width : .fc-fit
+  fantasy.charts-gallery.zone-label.font-size : .fc-zone
   fantasy.charts-gallery.enlarged-chart-subtitle.font-size : .fc-mhead h2 small
   fantasy.charts-gallery.enlarged-chart-subtitle.text : .fc-mhead h2 small
   fantasy.charts-gallery.enlarged-chart-subtitle.line-height : .fc-mhead h2 small
@@ -1650,8 +1656,8 @@ body[data-area=betting]{
   fantasy.stat-table.table-frame.border : .fw-table-wrap
   fantasy.stat-table.table-frame.border-width : .fw-table-wrap
   fantasy.stat-table.table-frame.radius : .fw-table-wrap
-  fantasy.stat-table.value-bad.text : .fc-q.bad  |  .fc-swatch.bad  |  .fw-v.bad  |  .fw-spark-dot.bad  |  .fw-roll.bad
-  fantasy.stat-table.value-good.text : .fc-q.good  |  .fc-swatch.good  |  .fw-v.good  |  .fw-spark-dot.good  |  .fw-roll.good
+  fantasy.stat-table.value-bad.text : .fc-zone.bad  |  .fc-q.bad  |  .fc-swatch.bad  |  .fw-v.bad  |  .fw-spark-dot.bad  |  .fw-roll.bad
+  fantasy.stat-table.value-good.text : .fc-zone.good  |  .fc-q.good  |  .fc-swatch.good  |  .fw-v.good  |  .fw-spark-dot.good  |  .fw-roll.good
   fantasy.stat-table.header-sort-label.font-size : .fw-t thead .fw-hs
   fantasy.stat-table.header-sort-label.line-height : .fw-t thead .fw-hs
   fantasy.stat-table.header-sort-label.radius : .fw-t thead .fw-hs

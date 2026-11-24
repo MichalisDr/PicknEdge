@@ -631,6 +631,13 @@
     "diagonal": {
      "line": "{semantic.border-control}"
     },
+    "fit": {
+     "line": "{semantic.text-soft}",
+     "line-width": "2px"
+    },
+    "zone-label": {
+     "font-size": "12px"
+    },
     "enlarged-chart-subtitle": {
      "font-size": "14px",
      "text": "{semantic.text-muted-2}",

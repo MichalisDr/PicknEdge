@@ -25,6 +25,15 @@ export function axisScale(values) {
   return { lo: pick.lo, hi: pick.hi, ticks, thumb: ticks.filter((_, i) => i % 2 === 0), step: pick.step, digits: Math.min(4, (String(+pick.step.toPrecision(6)).split('.')[1] || '').length) };
 }
 
+/** Axis of a quantity that has a real minimum and counts in whole numbers (credits: nothing costs less than 4). It starts exactly at `floor` (lower only if a value is below it), ends at the first whole number
+    above the highest value (20.2 -> 21, 20 -> 21), and has a grid line and a tick at every whole number. `ticks` = every whole number (labels in the opened card), `thumb` = every second one (labels in thumbnails and at narrow
+    width); `grid` = every whole number always. { lo, hi, ticks, thumb, grid, step: 1, digits: 0 }. */
+export function integerScale(values, floor) {
+  const v = values.filter(Number.isFinite), lo = Math.min(floor, ...v.map(Math.floor)), hi = Math.max(lo + 1, ...v.map(x => Math.floor(x) + 1));
+  const ticks = Array.from({ length: hi - lo + 1 }, (_, i) => lo + i);
+  return { lo, hi, ticks, thumb: ticks.filter((_, i) => i % 2 === 0), grid: ticks, step: 1, digits: 0 };
+}
+
 /** One shared range for both axes (the x = y chart): the same domain and ticks for x and y, so the diagonal is exactly 45° on a square plot. */
 export function equalScale(xs, ys) {
   const s = axisScale([...xs, ...ys]);

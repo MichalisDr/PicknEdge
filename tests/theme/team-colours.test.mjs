@@ -36,7 +36,8 @@ test('the colours live only in theme.json: no team hex in any script, style shee
 });
 
 test('the renderer resolves the team key and falls back to the one default; the fade is the 106 degree gradient of the spec across the header', () => {
-  const js = read('fantasy/cards/card-header.js'), css = read('theme/fantasy/card-layout.css');
+  const js = read('core/team-colour.js'), css = read('theme/fantasy/card-layout.css');
+  assert.ok(read('fantasy/cards/card-header.js').includes("import { teamColour } from '../../core/team-colour.js'"), 'the card header reads the one helper');
   assert.match(js, /--fantasy-player-card-header-portrait-fade-team-colour-\$\{[^}]*\}, var\(--fantasy-player-card-header-portrait-fade-default-colour\)/);
   assert.match(css, /linear-gradient\(var\(--fantasy-player-card-header-portrait-fade-angle\),color-mix\(in srgb,var\(--fade-colour\) var\(--fantasy-player-card-header-portrait-fade-alpha-start\),transparent\) 0,/);
 });
