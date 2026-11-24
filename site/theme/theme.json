@@ -1194,8 +1194,7 @@
      "ZAL": "#0c6f3e"
     },
     "neutral": {
-     "colour": "{semantic.border-control}",
-     "teams": "BJK PAR PBB VIR"
+     "colour": "{semantic.border-control}"
     }
    },
    "stat-table": {

@@ -4,7 +4,7 @@
 import { esc } from '../../core/html.js';
 import { size } from '../../core/sizes.js';
 import { teamLogo, teamCode } from '../../core/teams.js';
-import { teamColourOnSurface } from '../../core/team-colour.js';
+import { teamColour } from '../../core/team-colour.js';
 import { axisScale, equalScale, integerScale, separateBoxes, overlapPairs } from './scale.js';
 import { logoFit, logoBox } from './logo-fit.js';
 import { favourable, quadrantTone, diagonalTone } from './tint.js';
@@ -109,7 +109,7 @@ export function drawScatter(model, W, narrow, mode = 'thumb', H = Math.round(W *
 
   const dots = model.pts.map((p, i) => {
     const body = full && p.logo ? `<circle class="fc-hit" r="${r}"/><image href="${esc(p.logo)}" x="${f((fit[p.logo] ||= logoFit(p.logo, logo)).x)}" y="${f(fit[p.logo].y)}" width="${f(fit[p.logo].width)}" height="${f(fit[p.logo].height)}" preserveAspectRatio="xMidYMid meet"/>`
-      : `<circle class="fc-hit" r="${dotR + P('hit-pad')}"/><circle class="fc-dot${p.team ? ' fc-team' : ''}" r="${dotR}"${p.team ? ` style="${teamColourOnSurface(p.team)}"` : ''}/>${full && !model.noLabel ? `<text class="fc-pl" x="${P('label-offset-x')}" y="${P('tick-baseline')}">${esc(p.label ?? p.id)}</text>` : ''}`;
+      : `<circle class="fc-hit" r="${dotR + P('hit-pad')}"/><circle class="fc-dot${p.team ? ' fc-team' : ''}" r="${dotR}"${p.team ? ` style="${teamColour(p.team)}"` : ''}/>${full && !model.noLabel ? `<text class="fc-pl" x="${P('label-offset-x')}" y="${P('tick-baseline')}">${esc(p.label ?? p.id)}</text>` : ''}`;
     return `<g class="fc-pt" data-open="${esc(p.id)}" data-x="${f(at[i].x)}" data-y="${f(at[i].y - (full && p.logo ? r : dotR))}" data-tip="${esc(p.tip)}" tabindex="0" role="img" aria-label="${esc(p.tip)}" transform="translate(${f(at[i].x)} ${f(at[i].y)})">${body}</g>`;
   }).join('');
   let tags = '';   // the opened card names its outliers: the 5 dots furthest above the line and the 5 furthest below (of the dots drawn), a surname each, where it fits

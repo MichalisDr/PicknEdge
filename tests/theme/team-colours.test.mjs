@@ -1,11 +1,11 @@
 // Team colours: the feed's primaryColor of all 20 teams in theme.json (component.fantasy.team-colour.primary), keyed by the public code; no team hex anywhere else.
-// The four near-black teams are listed once (team-colour.neutral.teams) and take the neutral default on a dark surface through teamColourOnSurface().
+// No team is special-cased: teamColour() gives every public code its own primary; the neutral colour is only the fallback for a code not in the registry.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 import { TEAMS } from '../../site/assets/teams.js';
-import { teamColourOnSurface, NEUTRAL_TEAMS } from '../../site/core/team-colour.js';
+import { teamColour } from '../../site/core/team-colour.js';
 
 const SITE = new URL('../../site/', import.meta.url);
 const read = rel => readFileSync(new URL(rel, SITE), 'utf8');
@@ -37,19 +37,20 @@ test('the colours live only in theme.json: no team hex in any script, style shee
   for (const f of walk('')) { const text = read(f).toLowerCase(); for (const h of hexes) assert.ok(!text.includes(h), `${f} contains ${h}`); }
 });
 
-test('teamColourOnSurface: the four listed teams get the neutral default, the other 16 their primary; the list is the theme\'s', () => {
-  assert.deepEqual([...NEUTRAL_TEAMS].sort(), DARK);
+test('teamColour: all 20 public codes give their true primary from the registry table, the four dark ones included; an unknown code gives the neutral colour', () => {
   for (const code of Object.values(PUBLIC)) {
-    const decl = teamColourOnSurface(code);
-    if (DARK.includes(code)) assert.equal(decl, '--fade-colour:var(--fantasy-team-colour-neutral-colour)', code);
-    else assert.equal(decl, `--fade-colour:var(--fantasy-team-colour-primary-${code}, var(--fantasy-team-colour-neutral-colour))`, code);
+    assert.equal(teamColour(code), `--fade-colour:var(--fantasy-team-colour-primary-${code}, var(--fantasy-team-colour-neutral-colour))`, code);
+    assert.equal(tc.primary[code], PRIMARY[code], code);
   }
-  assert.ok(!NEUTRAL_TEAMS.includes('KBA'), 'Baskonia stays as approved: the list is explicit, not a luminance threshold');
+  for (const code of DARK) assert.ok(teamColour(code).includes(`primary-${code},`), code + ' is not special-cased');
+  assert.ok(!('teams' in tc.neutral), 'no neutral list in the theme');
+  assert.ok(!(('ZZZ') in tc.primary), 'an unknown code has no primary: the CSS fallback paints the neutral colour');
+  assert.ok(teamColour('ZZZ').endsWith('var(--fantasy-team-colour-neutral-colour))'));
 });
 
 test('the card header and the chart read the one helper; the fade is the 106 degree gradient of the spec across the header', () => {
   const css = read('theme/fantasy/card-layout.css');
-  assert.ok(read('fantasy/cards/card-header.js').includes("import { teamColourOnSurface } from '../../core/team-colour.js'"), 'the card header reads the one helper');
-  assert.ok(read('fantasy/gallery/scatter.js').includes("import { teamColourOnSurface } from '../../core/team-colour.js'"), 'the chart reads the one helper');
+  assert.ok(read('fantasy/cards/card-header.js').includes("import { teamColour } from '../../core/team-colour.js'"), 'the card header reads the one helper');
+  assert.ok(read('fantasy/gallery/scatter.js').includes("import { teamColour } from '../../core/team-colour.js'"), 'the chart reads the one helper');
   assert.match(css, /linear-gradient\(var\(--fantasy-player-card-header-portrait-fade-angle\),color-mix\(in srgb,var\(--fade-colour\) var\(--fantasy-player-card-header-portrait-fade-alpha-start\),transparent\) 0,/);
 });

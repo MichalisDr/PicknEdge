@@ -1,6 +1,6 @@
 /* The header (logo, title, next-game and back buttons, optional cr box and value chip) and the controls row (sample window, games played, Profile / Shooting) of a card.
    Parts, order and which show come from config/arrangement.json (fantasy.player-card.header, .header-title, .controls); this file only says how to draw each part. */
-import { teamColourOnSurface } from '../../core/team-colour.js';
+import { teamColour } from '../../core/team-colour.js';
 import { esc } from '../../core/html.js';
 import * as Windows from '../../core/windows.js';
 import { Data } from '../../core/data.js';
@@ -40,8 +40,8 @@ function actionsHtml({ cs, next, roster }, show) {
 }
 
 const PART = 'fantasy.player-card.';
-/** The fade colour of a team's portrait: the team's primary from the theme (by public code), or the neutral default for the four near-black teams (core/team-colour.js). */
-const fadeColour = (roster, team) => teamColourOnSurface(teamCode(roster, team));
+/** The fade colour of a team's portrait: the team's primary from the theme (by public code), or the neutral default for a code not in the registry (core/team-colour.js). */
+const fadeColour = (roster, team) => teamColour(teamCode(roster, team));
 /** Optional: the player's portrait (head and upper torso). Nothing when the roster entry has no `portrait`. */
 function portraitHtml(entry) {
   return entry?.portrait ? `<span data-part="${PART}header-portrait"><img src="${esc(entry.portrait)}" alt=""></span>` : '';

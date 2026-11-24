@@ -265,24 +265,25 @@ test('the credits axis is identical with the filters on and off, and in every wi
 
 // ---- dots in the team's colour, labels on the outliers
 import { readFileSync } from 'node:fs';
-import { teamColourOnSurface } from '../../site/core/team-colour.js';
+import { teamColour } from '../../site/core/team-colour.js';
 import { teamCode } from '../../site/core/teams.js';
 import { themeVariables } from '../../site/theme/generate.mjs';
 import { pickOutliers, placeLabels, surname } from '../../site/fantasy/gallery/labels.js';
 
 const VARS = new Map(themeVariables(JSON.parse(readFileSync(new URL('../../site/theme/theme.json', import.meta.url), 'utf8'))));
-/** What the browser would paint for the declaration teamColourOnSurface() returns: the team's own key when the theme defines it, else the default key. */
+/** What the browser would paint for the declaration teamColour() returns: the team's own key when the theme defines it, else the default key. */
 const paint = decl => {
   const [, key, fallback] = /var\((--[\w-]+), var\((--[\w-]+)\)\)/.exec(decl), pick = VARS.has(key) ? key : fallback;
   return { pick, value: VARS.get(pick) };
 };
 
-test('team colour: the theme primary for a team by public code, the neutral default for the four listed teams (nothing invented)', () => {
-  assert.equal(teamColourOnSurface('BAR'), '--fade-colour:var(--fantasy-team-colour-primary-BAR, var(--fantasy-team-colour-neutral-colour))');
-  const bar = paint(teamColourOnSurface('BAR'));
+test('team colour: the theme primary for a team by public code, the neutral default only for a code not in the registry', () => {
+  assert.equal(teamColour('BAR'), '--fade-colour:var(--fantasy-team-colour-primary-BAR, var(--fantasy-team-colour-neutral-colour))');
+  const bar = paint(teamColour('BAR'));
   assert.equal(bar.pick, '--fantasy-team-colour-primary-BAR'); assert.match(bar.value, /^#[0-9a-f]{6}$/i);
-  for (const team of ['BJK', 'PAR', 'PBB', 'VIR']) assert.equal(teamColourOnSurface(team), '--fade-colour:var(--fantasy-team-colour-neutral-colour)', team + ' uses the neutral default');
-  assert.ok(!teamColourOnSurface('B<A"R').includes('<') && !teamColourOnSurface('B<A"R').includes('"'));
+  for (const team of ['BJK', 'PAR', 'PBB', 'VIR']) assert.equal(paint(teamColour(team)).pick, '--fantasy-team-colour-primary-' + team, team + ' keeps its true primary');
+  assert.equal(paint(teamColour('ZZZ')).pick, '--fantasy-team-colour-neutral-colour', 'an unknown code gets the neutral colour');
+  assert.ok(!teamColour('B<A"R').includes('<') && !teamColour('B<A"R').includes('"'));
 });
 
 test('the dots: players are drawn as team-coloured dots (thumbnail and opened card), never as logos; the Teams charts still draw logos', () => {

@@ -594,7 +594,6 @@ body{
 --fantasy-team-colour-primary-VIR:#1d1d1b;
 --fantasy-team-colour-primary-ZAL:#0c6f3e;
 --fantasy-team-colour-neutral-colour:var(--color-border-control);
---fantasy-team-colour-neutral-teams:BJK PAR PBB VIR;
 --fantasy-stat-table-buttons-focused-outline:var(--color-accent-fantasy);
 --fantasy-stat-table-buttons-focused-outline-offset:2px;
 --fantasy-stat-table-buttons-focused-outline-width:2px;
@@ -1451,7 +1450,6 @@ body[data-area=betting]{
   fantasy.team-colour.primary.VIR : (set by a script)
   fantasy.team-colour.primary.ZAL : (set by a script)
   fantasy.team-colour.neutral.colour : (set by a script)
-  fantasy.team-colour.neutral.teams : (set by a script)
   fantasy.stat-table.buttons-focused.outline : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-offset : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-width : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
