@@ -5,7 +5,6 @@ import { fitLine, lineSegment, zones, area } from '../../site/fantasy/gallery/fi
 import { between, ease, wantsMove } from '../../site/fantasy/gallery/tween.js';
 import { CHARTS, available } from '../../site/fantasy/gallery/charts.js';
 import { scatter, drawScatter } from '../../site/fantasy/gallery/scatter.js';
-import { axisScale } from '../../site/fantasy/gallery/scale.js';
 import { size } from '../../site/core/sizes.js';
 import { Data } from '../../site/core/data.js';
 
@@ -85,7 +84,7 @@ test('registration: one players chart in the Profile view, no other view gets th
   assert.ok(CHART);
   assert.deepEqual([CHART.entity, CHART.view, CHART.x, CHART.y], ['players', 'profile', 'cr', 'pir']);
   assert.equal(CHART.title, 'Performance vs price');
-  assert.equal(CHART.subtitle, 'Credits × PIR / game · line = typical PIR at that price (fit across the players shown)');
+  assert.equal(CHART.subtitle, 'Credits × PIR / game · line = typical PIR at that price (fit across all players with a price)');
   assert.deepEqual(CHART.zones, ['Above typical for the price', 'Below typical for the price']);
   assert.equal(available('players', 'profile'), true);
   assert.equal(available('players', 'shooting'), false);
@@ -95,15 +94,15 @@ test('registration: one players chart in the Profile view, no other view gets th
   assert.equal(CHARTS.filter(c => c.entity === 'players').length, 1);
 });
 
-test('the chart reads credits through its own accessor, plots the window\'s PIR, and fits the players drawn', () => {
+test('the chart reads credits through its own accessor, plots the PIR of the window, and fits the whole pool of the window', () => {
   const m = plot('season');
-  assert.equal(m.pts.length, IDS.length);
+  assert.equal(m.pts.length, IDS.length, 'the dots are the ids handed over');
   const p3 = m.pts.find(p => p.id === 'p3');
   assert.deepEqual([p3.a, p3.b], [7, rowsOf('season').p3.pir], 'x = credits, y = PIR / game of the window');
   assert.equal(m.xTitle, 'Credits'); assert.equal(m.yTitle, 'PIR / game');
-  const expect = fitLine(m.pts.map(p => ({ x: p.a, y: p.b })));
+  const expect = fitLine(Object.values(rowsOf('season')).map(r => ({ x: r.cr, y: r.pir })));
   near(m.fit.slope, expect.slope); near(m.fit.intercept, expect.intercept);
-  assert.equal(m.fit.n, IDS.length);
+  assert.equal(m.fit.n, IDS.length + 2, 'the pool = every player of the window with a price, the two below-threshold players included');
   assert.equal(m.noLabel, true);
 });
 
@@ -120,10 +119,15 @@ test('a change of window gives a different model: the dots and the line move, th
   assert.ok(s.sy.lo < lo && s.sy.hi > hi, 'the y axis holds every window');
 });
 
-test('the filters change the line: it is fitted over the players drawn, not over everyone', () => {
-  const all = modelOf(scatter(CHART, VIEWS.season, IDS, BYID, ROSTER, Object.values(VIEWS))), cheap = modelOf(scatter(CHART, VIEWS.season, IDS.slice(0, 8), BYID, ROSTER, Object.values(VIEWS)));
-  assert.equal(cheap.fit.n, 8);
-  assert.notEqual(all.fit.intercept, cheap.fit.intercept);
+test('filters never feed the line: hiding players leaves the fit and the axes exactly as they were; hidden players are not drawn but are counted in the fit', () => {
+  const draw = ids => modelOf(scatter(CHART, VIEWS.season, ids, BYID, ROSTER, Object.values(VIEWS)));
+  const all = draw(Object.keys(rowsOf('season'))), listed = draw(IDS), few = draw(IDS.slice(0, 8)), none = draw(['p1', 'p2']);
+  assert.deepEqual([all.pts.length, listed.pts.length, few.pts.length], [26, 24, 8]);
+  for (const m of [listed, few, none]) { assert.deepEqual(m.fit, all.fit); assert.deepEqual(m.sx, all.sx); assert.deepEqual(m.sy, all.sy); }
+  assert.equal(all.fit.n, 26);
+  assert.ok(!few.pts.some(p => p.id === 'z1' || p.id === 'p20'), 'a hidden player is not drawn');
+  assert.ok(all.sy.lo < -15, 'an extreme player of the pool is on the axis (not trimmed), whether he is drawn or not');
+  assert.equal((drawScatter(few, 640, false, 'thumb').match(/class="fc-pt"/g) || []).length, 8);
 });
 
 test('drawn: the tint polygons and the line stay inside the plot area, with a thumbnail and with the opened card, wide and narrow', () => {
@@ -187,29 +191,27 @@ test('a move is wanted only for a chart that asks, when the window changed, and 
   assert.ok(size('fantasy.charts-gallery.plot.move-ms') <= 500, 'a short ease');
 });
 
-// ---- the gallery: the axes come from the players the table lists, over all four windows
-test('the axes are computed once over all four windows from the players the table lists; a player with a few minutes does not stretch them (unless everyone is shown)', async () => {
+// ---- the gallery: the table hands over the ids of the dots; the axes and the line come from the pool of the window
+test('the gallery: the toggle and the thresholds change the dots only; the axes (all four windows) and the line are identical', async () => {
   const saved = { ...Data };
   const manifest = { eligibility: { availability: { window: 'l3', minGp: 1 }, windows: Object.fromEntries(WINDOWS.map(w => [w, { minGp: 3, minMin: 10, minPir: 5 }])) } };
   Object.assign(Data, { metrics: async () => ({ list: Object.values(BYID), byId: BYID }), roster: async () => ROSTER, manifest: async () => manifest, view: async (kind, w) => VIEWS[w] });
   try {
-    const { galleryHtml } = await import('../../site/fantasy/gallery/gallery.js');
-    const ids = IDS;   // the table's rows (the eligible ones)
-    const per = {};
-    for (const w of WINDOWS) per[w] = modelOf(await galleryHtml('players', 'profile', { win: w, view: 'profile', showAll: false }, ids));
-    for (const w of WINDOWS.slice(1)) { assert.deepEqual(per[w].sx, per.season.sx); assert.deepEqual(per[w].sy, per.season.sy); }
-    const real = WINDOWS.flatMap(w => IDS.map(id => rowsOf(w)[id].pir));
-    assert.ok(per.season.sy.lo > -15, 'the -15 of a 2-minute player is not on the axis');
-    assert.ok(per.season.sy.lo < Math.min(...real) && per.season.sy.hi > Math.max(...real));
+    const { galleryHtml } = await import('../../site/fantasy/gallery/gallery.js'), EVERYONE = Object.keys(rowsOf('season'));
+    const per = {}, on = {};
+    for (const w of WINDOWS) {
+      per[w] = modelOf(await galleryHtml('players', 'profile', { win: w, view: 'profile', showAll: false }, IDS));       // toggle off: the listed players
+      on[w] = modelOf(await galleryHtml('players', 'profile', { win: w, view: 'profile', showAll: true }, EVERYONE));    // toggle on: everyone
+      assert.deepEqual(per[w].sx, on[w].sx); assert.deepEqual(per[w].sy, on[w].sy); assert.deepEqual(per[w].fit, on[w].fit, w + ': the line does not depend on the toggle');
+      assert.equal(per[w].pts.length, 24); assert.equal(on[w].pts.length, 26); assert.equal(per[w].fit.n, 26);
+      assert.deepEqual(per[w].sx, per.season.sx); assert.deepEqual(per[w].sy, per.season.sy, 'the scale does not move with the window');
+    }
     assert.notEqual(per.season.fit.slope, per.l3.fit.slope);
-    const everyone = modelOf(await galleryHtml('players', 'profile', { win: 'season', view: 'profile', showAll: true }, ids));
-    assert.ok(everyone.sy.lo < -15, 'with "below the thresholds" on, the extreme is on the axis (never off the plot)');
-    assert.ok(axisScale(real).lo > -15);
-    const html = await galleryHtml('players', 'profile', { win: 'season', view: 'profile' }, ids);
-    assert.ok(html.includes('Performance vs price') && html.includes('It is not how Fantasy changes prices.'));
+    assert.ok(per.season.sy.lo < -15, 'the extreme of the pool (-15) is on the scale');
+    const html = await galleryHtml('players', 'profile', { win: 'season', view: 'profile' }, IDS);
+    assert.ok(html.includes('Performance vs price') && html.includes('filters only hide dots. It is not how Fantasy changes prices.'));
     assert.ok(!html.includes('Dashed lines = league values'), 'no league-lines key on this chart');
     assert.ok(html.includes('data-chart-id="players-price-pir"'));
-    const shooting = await galleryHtml('players', 'shooting', { win: 'season', view: 'shooting' }, ids);
-    assert.ok(shooting.includes('No comparative charts for this view yet'));
+    assert.ok((await galleryHtml('players', 'shooting', { win: 'season', view: 'shooting' }, IDS)).includes('No comparative charts for this view yet'));
   } finally { Object.assign(Data, saved); }
 });

@@ -37,7 +37,10 @@ export function scatter(chart, view, ids, byId, roster, views = [view]) {
   const fav = { x: favourable(mx.direction), y: favourable(my.direction) };
   const model = { fav, title: chart.title, xTitle: axisTitle(mx), yTitle: axisTitle(my), equal: !!chart.equal, sx, sy, avg: Number.isFinite(lx) && Number.isFinite(ly) ? { x: lx, y: ly } : null, pts };
   if (chart.entity === 'players') model.noLabel = true;   // a player without a logo is a plain dot (his id is no label)
-  if (chart.fit) Object.assign(model, { fit: fitLine(pts.map(p => ({ x: p.a, y: p.b }))), zoneLabels: chart.zones });   // the line of typical y at that x, over the points drawn
+  if (chart.fit) {   // the line of typical y at that x: over the whole pool of the window (every player of the view with both values), NOT over the dots drawn; the filters only hide dots
+    const pool = view.keys.map(id => ({ x: axisValue(view, id, chart.x), y: axisValue(view, id, chart.y) })).filter(q => Number.isFinite(q.x) && Number.isFinite(q.y));
+    Object.assign(model, { fit: fitLine(pool), zoneLabels: chart.zones });
+  }
   if (chart.move) Object.assign(model, { move: true, win: view.window });   // plot-wire.js slides the dots when the window changes
   if (chart.fit || chart.move) model.key = chart.id;
   return `<div class="fc-plot" data-plot="${esc(JSON.stringify(model))}"><div class="fc-canvas">${drawScatter(model, size('fantasy.charts-gallery.plot.plot-width'), false, 'thumb')}</div><div class="fc-tip fw-bar-tip" role="status" hidden></div></div>`;
