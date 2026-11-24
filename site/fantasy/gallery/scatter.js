@@ -4,10 +4,10 @@
 import { esc } from '../../core/html.js';
 import { size } from '../../core/sizes.js';
 import { teamLogo } from '../../core/teams.js';
-import { axisScale, equalScale, separateBoxes, overlapPairs } from './scale.js';
+import { axisScale, equalScale, integerScale, separateBoxes, overlapPairs } from './scale.js';
 import { logoFit, logoBox } from './logo-fit.js';
 import { favourable, quadrantTone, diagonalTone } from './tint.js';
-import { axisMeta, axisValue } from './axes.js';
+import { axisMeta, axisValue, axisFloor } from './axes.js';
 import { fitLine, lineSegment, zones } from './fit.js';
 
 const axisTitle = m => m.label + (m.format.suffix && !m.label.includes(m.format.suffix.trim()) ? ` (${m.format.suffix.trim()})` : '');
@@ -19,7 +19,8 @@ const allValues = (views, id) => views.flatMap(v => v.keys.map(k => axisValue(v,
 /** The axes of a chart: [x, y] scales from the min and max over all windows (the x = y chart: one shared range from the union of both metrics). */
 export function chartScales(chart, views) {
   const xs = allValues(views, chart.x), ys = allValues(views, chart.y);
-  return chart.equal ? equalScale(xs, ys) : [axisScale(xs), axisScale(ys)];
+  const scale = (id, v) => (axisFloor(id) !== undefined ? integerScale(v, axisFloor(id)) : axisScale(v));   // a quantity with a real minimum (credits) starts there and counts in whole numbers
+  return chart.equal ? equalScale(xs, ys) : [scale(chart.x, xs), scale(chart.y, ys)];
 }
 
 /** views = the view of every window (Season, Last 10 / 5 / 3); `view` is the one shown. */
@@ -61,7 +62,8 @@ export function drawScatter(model, W, narrow, mode = 'thumb', H = Math.round(W *
   const x0 = side ? L + (iw - side) / 2 : L, x1 = side ? x0 + side : W - R, y1 = H - B, y0 = side ? y1 - side : Tp;
   const { sx, sy } = model, X = v => x0 + (v - sx.lo) / (sx.hi - sx.lo) * (x1 - x0), Y = v => y1 - (v - sy.lo) / (sy.hi - sy.lo) * (y1 - y0), f = v => +v.toFixed(1);
   const tx = full ? sx.ticks : sx.thumb, ty = full ? sy.ticks : sy.thumb;
-  const grid = tx.map(v => `<line class="fc-grid" x1="${f(X(v))}" x2="${f(X(v))}" y1="${f(y0)}" y2="${f(y1)}"/><text class="fc-tick" x="${f(X(v))}" y="${f(y1 + P('tick-offset-y'))}" text-anchor="middle">${v.toFixed(sx.digits)}</text>`).join('')
+  const lx = sx.grid ? (full && !narrow ? sx.ticks : sx.thumb) : tx;   // an axis with a whole-number grid keeps every grid line; only the labels thin out (thumbnail, narrow)
+  const grid = (sx.grid || []).map(v => `<line class="fc-grid" x1="${f(X(v))}" x2="${f(X(v))}" y1="${f(y0)}" y2="${f(y1)}"/>`).join('') + lx.map(v => `${sx.grid ? '' : `<line class="fc-grid" x1="${f(X(v))}" x2="${f(X(v))}" y1="${f(y0)}" y2="${f(y1)}"/>`}<text class="fc-tick" x="${f(X(v))}" y="${f(y1 + P('tick-offset-y'))}" text-anchor="middle">${v.toFixed(sx.digits)}</text>`).join('')
     + ty.map(v => `<line class="fc-grid" x1="${f(x0)}" x2="${f(x1)}" y1="${f(Y(v))}" y2="${f(Y(v))}"/><text class="fc-tick" x="${f(x0 - P('tick-offset-x'))}" y="${f(Y(v) + P('tick-baseline'))}" text-anchor="end">${v.toFixed(sy.digits)}</text>`).join('');
   const rect = (xa, xb, ya, yb, tone) => (tone ? `<rect class="fc-q ${tone}" x="${f(xa)}" y="${f(ya)}" width="${f(xb - xa)}" height="${f(yb - ya)}"/>` : '');
   let tint = '';

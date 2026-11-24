@@ -215,3 +215,39 @@ test('the gallery: the toggle and the thresholds change the dots only; the axes 
     assert.ok((await galleryHtml('players', 'shooting', { win: 'season', view: 'shooting' }, IDS)).includes('No comparative charts for this view yet'));
   } finally { Object.assign(Data, saved); }
 });
+
+// ---- the credits axis: a real minimum of 4, whole numbers
+import { integerScale } from '../../site/fantasy/gallery/scale.js';
+import { axisFloor } from '../../site/fantasy/gallery/axes.js';
+
+test('integerScale: starts exactly at the floor, ends at the first whole number above the highest value, a tick at every whole number', () => {
+  const s = integerScale([4, 9.5, 20.2], 4);
+  assert.equal(s.lo, 4); assert.equal(s.hi, 21);
+  assert.deepEqual(s.ticks, Array.from({ length: 18 }, (_, i) => 4 + i));
+  assert.deepEqual(s.grid, s.ticks, 'the grid is every whole number');
+  assert.deepEqual(s.thumb, [4, 6, 8, 10, 12, 14, 16, 18, 20], 'labels on every second whole number');
+  assert.equal(integerScale([5, 20], 4).hi, 21, 'a highest value exactly on a whole number still gets one more');
+  assert.equal(integerScale([6.1, 7], 4).lo, 4, 'the floor, not the lowest value');
+  assert.equal(integerScale([3, 9], 4).lo, 3, 'a value below the floor is never cut off');
+  assert.equal(axisFloor('cr'), 4); assert.equal(axisFloor('pir'), undefined);
+});
+
+test('the credits axis of the chart: 4 to the next whole number above the pool\'s highest credits (all windows), drawn with a grid line at every whole number; PIR keeps the round-tick rule', () => {
+  const m = plot('season'), top = Math.max(...Object.values(rowsOf('season')).map(r => r.cr));   // 27 in the synthetic league
+  assert.equal(m.sx.lo, 4); assert.equal(m.sx.hi, Math.floor(top) + 1);
+  assert.deepEqual(m.sx.grid, m.sx.ticks);
+  assert.equal(m.sy.grid, undefined, 'PIR: the general rule');
+  assert.ok(m.sy.step > 1 || m.sy.ticks.length <= 9);
+  const grid = svg => (svg.match(/<line class="fc-grid" x1="([\d.]+)" x2="\1"/g) || []).length;
+  const label = svg => [...svg.matchAll(/<text class="fc-tick"[^>]*text-anchor="middle">([^<]+)</g)].map(x => +x[1]);
+  const all = m.sx.ticks.length;
+  assert.equal(grid(drawScatter(m, 900, false, 'full')), all); assert.deepEqual(label(drawScatter(m, 900, false, 'full')), m.sx.ticks);
+  assert.equal(grid(drawScatter(m, 640, false, 'thumb')), all, 'the thumbnail keeps every grid line'); assert.deepEqual(label(drawScatter(m, 640, false, 'thumb')), m.sx.thumb);
+  assert.equal(grid(drawScatter(m, 360, true, 'full')), all); assert.deepEqual(label(drawScatter(m, 360, true, 'full')), m.sx.thumb, 'narrow: every second label');
+});
+
+test('the credits axis is identical with the filters on and off, and in every window', () => {
+  const draw = (w, ids) => modelOf(scatter(CHART, VIEWS[w], ids, BYID, ROSTER, Object.values(VIEWS))).sx;
+  const ref = draw('season', Object.keys(rowsOf('season')));
+  for (const w of WINDOWS) for (const ids of [IDS, IDS.slice(0, 3), ['p1', 'p2']]) assert.deepEqual(draw(w, ids), ref);
+});

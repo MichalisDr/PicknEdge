@@ -1,8 +1,11 @@
 /* Chart axes that are not a metric of the registry. A chart's x / y is normally a metric id (metrics.json); an id listed here is read from the view instead.
    cr = the player's current credits in the window (the Fantasy backend's figure, the same one the table shows: view.fx(id).cr = Data.fantasyInfo(id, window).cr). */
 const AXES = {
-  cr: { id: 'cr', label: 'Credits', format: { digits: 1, suffix: '' }, direction: 0, get: (view, id) => view.fx(id)?.cr },
+  cr: { id: 'cr', label: 'Credits', format: { digits: 1, suffix: '' }, direction: 0, floor: 4, get: (view, id) => view.fx(id)?.cr },
 };
+
+/** The real minimum of an axis (credits cannot be priced below 4), or undefined: the axis then follows the general round-tick rule (scale.js). Recorded once, here, so every chart with credits gets it. */
+export const axisFloor = id => AXES[id]?.floor;
 
 /** The axis description (label, format, direction) of an id: the extra axis, or the registry metric. */
 export const axisMeta = (id, byId) => AXES[id] || byId[id];
