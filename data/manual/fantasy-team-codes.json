@@ -1,7 +1,0 @@
-{
-  "note": "Team abbreviations of the EuroLeague Fantasy backend (fantaking-api.dunkest.com) -> our team codes (data/clean/team_games.csv). Used only to match Fantasy players to ours.",
-  "codes": {
-    "ASV": "ASV", "BAR": "BAR", "BAY": "MUN", "BJK": "BES", "CZV": "RED", "DUB": "DUB", "EFS": "IST", "FBT": "ULK", "HTA": "HTA", "KBA": "BAS",
-    "MIL": "MIL", "MTA": "TEL", "OLY": "OLY", "PAO": "PAN", "PAR": "PAR", "PBB": "PRS", "RMB": "MAD", "VBC": "PAM", "VIR": "VIR", "ZAL": "ZAL"
-  }
-}

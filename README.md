@@ -80,12 +80,15 @@ Fetching new games needs network access: `node scripts/fetch/run.mjs --concurren
 - Normal run: fetch new finished games, rebuild `data/clean` and `site/data`, run the tests (nothing is committed if they fail), commit `data/` and `site/data/`, and start the Pages deploy. The deploy is started only on the default branch.
 - `probe = true`: re-fetches 5 stored games, compares them byte for byte with `data/raw` and commits nothing. Use it to check that the API still answers and returns the same data.
 
+## Team identity
+
+`site/assets/teams.js` is the one team registry: public `code` (the EuroLeague tvCode the site shows), `feed` code (the key of `data/` and `roster.json`), current `name`, short `label`, `id` and logo. `roster.logoIds` and the Fantasy-abbreviation map are derived from it at build time. A test compares names and codes with the roster snapshot (`data/raw/<season>/roster.json.gz`, which also keeps each club's `primaryColor`). Team colours: `theme.json`, `component.fantasy.team-colours`, keyed by public code.
+
 ## Manual data (`data/manual/`)
 
 - `fantasy-position-overrides.json`: player positions that override the roster (G / F / C).
 - `name-fixes.json`: display-name corrections.
 - `eligibility.json`: display-only thresholds that decide which players the tables list (computed in the browser, never stored).
-- `team-ids.json`: team code to logo id.
 
 ## The old site and what is deferred
 

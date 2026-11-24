@@ -380,23 +380,6 @@ body{
 --fantasy-player-card-header-name-font-weight:600;
 --fantasy-player-card-header-name-text:var(--color-text);
 --fantasy-player-card-header-name-line-height:32px;
---fantasy-player-card-header-portrait-fade-default-colour:var(--color-border-control);
---fantasy-player-card-header-portrait-fade-team-colour-ASV:#929292;
---fantasy-player-card-header-portrait-fade-team-colour-BAR:#023485;
---fantasy-player-card-header-portrait-fade-team-colour-BAS:#0a2240;
---fantasy-player-card-header-portrait-fade-team-colour-DUB:#f6881f;
---fantasy-player-card-header-portrait-fade-team-colour-HTA:#d71920;
---fantasy-player-card-header-portrait-fade-team-colour-IST:#002d74;
---fantasy-player-card-header-portrait-fade-team-colour-MAD:#004996;
---fantasy-player-card-header-portrait-fade-team-colour-MIL:#e1261d;
---fantasy-player-card-header-portrait-fade-team-colour-MUN:#e11837;
---fantasy-player-card-header-portrait-fade-team-colour-OLY:#d1061f;
---fantasy-player-card-header-portrait-fade-team-colour-PAM:#ff6c0e;
---fantasy-player-card-header-portrait-fade-team-colour-PAN:#007135;
---fantasy-player-card-header-portrait-fade-team-colour-RED:#e91d26;
---fantasy-player-card-header-portrait-fade-team-colour-TEL:#fff100;
---fantasy-player-card-header-portrait-fade-team-colour-ULK:#ffed00;
---fantasy-player-card-header-portrait-fade-team-colour-ZAL:#0c6f3e;
 --fantasy-player-card-header-portrait-fade-angle:106deg;
 --fantasy-player-card-header-portrait-fade-alpha-start:63%;
 --fantasy-player-card-header-portrait-fade-alpha-mid:32%;
@@ -590,6 +573,27 @@ body{
 --fantasy-shot-chart-zone-unknown-color:#aeb8c6;
 --fantasy-shot-chart-zone-very-bad-color:#d6455d;
 --fantasy-shot-chart-zone-very-good-color:#38b27f;
+--fantasy-team-colour-primary-ASV:#929292;
+--fantasy-team-colour-primary-BAR:#023485;
+--fantasy-team-colour-primary-BAY:#e11837;
+--fantasy-team-colour-primary-BJK:#000000;
+--fantasy-team-colour-primary-CZV:#e91d26;
+--fantasy-team-colour-primary-DUB:#f6881f;
+--fantasy-team-colour-primary-EFS:#002d74;
+--fantasy-team-colour-primary-FBT:#ffed00;
+--fantasy-team-colour-primary-HTA:#d71920;
+--fantasy-team-colour-primary-KBA:#0a2240;
+--fantasy-team-colour-primary-MIL:#e1261d;
+--fantasy-team-colour-primary-MTA:#fff100;
+--fantasy-team-colour-primary-OLY:#d1061f;
+--fantasy-team-colour-primary-PAO:#007135;
+--fantasy-team-colour-primary-PAR:#1d1d1b;
+--fantasy-team-colour-primary-PBB:#000000;
+--fantasy-team-colour-primary-RMB:#004996;
+--fantasy-team-colour-primary-VBC:#ff6c0e;
+--fantasy-team-colour-primary-VIR:#1d1d1b;
+--fantasy-team-colour-primary-ZAL:#0c6f3e;
+--fantasy-team-colour-neutral-colour:var(--color-border-control);
 --fantasy-stat-table-buttons-focused-outline:var(--color-accent-fantasy);
 --fantasy-stat-table-buttons-focused-outline-offset:2px;
 --fantasy-stat-table-buttons-focused-outline-width:2px;
@@ -1232,23 +1236,6 @@ body[data-area=betting]{
   fantasy.player-card.header-name.font-weight : [data-part="fantasy.player-card.header"] h2
   fantasy.player-card.header-name.text : [data-part="fantasy.player-card.header"] h2
   fantasy.player-card.header-name.line-height : [data-part="fantasy.player-card.header"] h2
-  fantasy.player-card.header-portrait-fade.default-colour : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-ASV : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-BAR : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-BAS : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-DUB : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-HTA : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-IST : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-MAD : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-MIL : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-MUN : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-OLY : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-PAM : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-PAN : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-RED : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-TEL : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-ULK : (set by a script)
-  fantasy.player-card.header-portrait-fade.team-colour-ZAL : (set by a script)
   fantasy.player-card.header-portrait-fade.angle : [data-part="fantasy.player-card.header-portrait-fade"]
   fantasy.player-card.header-portrait-fade.alpha-start : [data-part="fantasy.player-card.header-portrait-fade"]
   fantasy.player-card.header-portrait-fade.alpha-mid : [data-part="fantasy.player-card.header-portrait-fade"]
@@ -1442,6 +1429,27 @@ body[data-area=betting]{
   fantasy.shot-chart.zone-unknown.color : .sz-hex polygon.g-none  |  .sz-label rect.g-none
   fantasy.shot-chart.zone-very-bad.color : .sz-hex polygon.g0  |  .sz-label rect.g0
   fantasy.shot-chart.zone-very-good.color : .sz-hex polygon.g4  |  .sz-label rect.g4
+  fantasy.team-colour.primary.ASV : (set by a script)
+  fantasy.team-colour.primary.BAR : (set by a script)
+  fantasy.team-colour.primary.BAY : (set by a script)
+  fantasy.team-colour.primary.BJK : (set by a script)
+  fantasy.team-colour.primary.CZV : (set by a script)
+  fantasy.team-colour.primary.DUB : (set by a script)
+  fantasy.team-colour.primary.EFS : (set by a script)
+  fantasy.team-colour.primary.FBT : (set by a script)
+  fantasy.team-colour.primary.HTA : (set by a script)
+  fantasy.team-colour.primary.KBA : (set by a script)
+  fantasy.team-colour.primary.MIL : (set by a script)
+  fantasy.team-colour.primary.MTA : (set by a script)
+  fantasy.team-colour.primary.OLY : (set by a script)
+  fantasy.team-colour.primary.PAO : (set by a script)
+  fantasy.team-colour.primary.PAR : (set by a script)
+  fantasy.team-colour.primary.PBB : (set by a script)
+  fantasy.team-colour.primary.RMB : (set by a script)
+  fantasy.team-colour.primary.VBC : (set by a script)
+  fantasy.team-colour.primary.VIR : (set by a script)
+  fantasy.team-colour.primary.ZAL : (set by a script)
+  fantasy.team-colour.neutral.colour : (set by a script)
   fantasy.stat-table.buttons-focused.outline : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-offset : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-width : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible

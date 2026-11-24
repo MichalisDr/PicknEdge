@@ -277,22 +277,23 @@ const paint = decl => {
   return { pick, value: VARS.get(pick) };
 };
 
-test('team colour: the theme\'s colour for a team that has one, the index\'s own default for one that has none (nothing invented)', () => {
-  assert.match(teamColour('BAR'), /^--fade-colour:var\(--fantasy-player-card-header-portrait-fade-team-colour-BAR, var\(--fantasy-player-card-header-portrait-fade-default-colour\)\)$/);
+test('team colour: the theme primary for a team by public code, the neutral default only for a code not in the registry', () => {
+  assert.equal(teamColour('BAR'), '--fade-colour:var(--fantasy-team-colour-primary-BAR, var(--fantasy-team-colour-neutral-colour))');
   const bar = paint(teamColour('BAR'));
-  assert.equal(bar.pick, '--fantasy-player-card-header-portrait-fade-team-colour-BAR'); assert.match(bar.value, /^#[0-9a-f]{6}$/i);
-  for (const team of ['BES', 'PAR', 'PRS', 'VIR']) assert.equal(paint(teamColour(team)).pick, '--fantasy-player-card-header-portrait-fade-default-colour', team + ' uses the fallback');
+  assert.equal(bar.pick, '--fantasy-team-colour-primary-BAR'); assert.match(bar.value, /^#[0-9a-f]{6}$/i);
+  for (const team of ['BJK', 'PAR', 'PBB', 'VIR']) assert.equal(paint(teamColour(team)).pick, '--fantasy-team-colour-primary-' + team, team + ' keeps its true primary');
+  assert.equal(paint(teamColour('ZZZ')).pick, '--fantasy-team-colour-neutral-colour', 'an unknown code gets the neutral colour');
   assert.ok(!teamColour('B<A"R').includes('<') && !teamColour('B<A"R').includes('"'));
 });
 
 test('the dots: players are drawn as team-coloured dots (thumbnail and opened card), never as logos; the Teams charts still draw logos', () => {
   const ROS = { teams: {}, players: {}, logoIds: { XXX: 'barcelona' } };
   const m = modelOf(scatter(CHART, VIEWS.season, IDS, BYID, ROS, Object.values(VIEWS)));
-  assert.equal(m.plain, true); assert.ok(m.pts.every(p => p.team === 'XXX' && p.logo === ''), 'no logo on a player');
+  assert.equal(m.plain, true); assert.ok(m.pts.every(p => p.team === 'BAR' && p.logo === ''), 'no logo on a player');
   for (const [W, narrow, mode] of [[640, false, 'thumb'], [900, false, 'full'], [360, true, 'full']]) {
     const svg = drawScatter(m, W, narrow, mode);
     assert.ok(!svg.includes('<image'), 'no logos');
-    const dots = svg.match(/<circle class="fc-dot fc-team" r="(\d+)" style="--fade-colour:var\(--fantasy-player-card-header-portrait-fade-team-colour-XXX, var\(--fantasy-player-card-header-portrait-fade-default-colour\)\)"/g) || [];
+    const dots = svg.match(/<circle class="fc-dot fc-team" r="(\d+)" style="--fade-colour:var\(--fantasy-team-colour-primary-BAR, var\(--fantasy-team-colour-neutral-colour\)\)"/g) || [];
     assert.equal(dots.length, IDS.length, `every dot in the team colour (${mode})`);
     assert.ok(dots.every(d => d.includes(`r="${size('fantasy.charts-gallery.plot.dot-radius')}"`)), 'radius = the dot-radius token');
   }

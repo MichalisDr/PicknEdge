@@ -65,7 +65,7 @@ test('every variable a style sheet or script reads exists in the theme (or is a 
 
 test('nothing unused: every component token is read by a style sheet or a script', () => {
   const code = [...styles, ...scripts.filter(f => !f.startsWith('theme/'))].map(read).join('\n');
-  const unused = components(theme).filter(t => !code.includes(`var(${t.cssVar}`) && !(/-team-colour-[\w-]+$/.test(t.cssVar) && code.includes('var(' + t.cssVar.replace(/(-team-colour-)[\w-]+$/, '$1') + '${')));   // team colours are read by name from the team code (card-header.js)
+  const unused = components(theme).filter(t => !code.includes(`var(${t.cssVar}`) && !(/-team-colour-primary-[\w-]+$/.test(t.cssVar) && code.includes('var(' + t.cssVar.replace(/(-team-colour-primary-)[\w-]+$/, '$1') + '${')));   // team colours are read by name from the public code
   assert.deepEqual(unused.map(t => t.key), []);
 });
 
