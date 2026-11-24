@@ -203,7 +203,7 @@ test('Players name cell: CR then Value (chip with its sparkline), 0 is a value, 
 test('Teams name cell: club name, approved city below it (none without a city); the first column is 230 px for both tables', async () => {
   const teams = await render({ entity: 'teams' });
   assert.match(teams.html, /<th><div class="fw-namecell"><button class="fw-name" data-open="[^"]+" title="[^"]+"><span data-part="fantasy.stat-table.name-cell-team-name">[^<]+<\/span><\/button>/);
-  assert.match(teams.html, /data-open="RED"[^>]*><span data-part="fantasy.stat-table.name-cell-team-name">Crvena Zvezda mts<\/span><\/button><small data-part="fantasy.stat-table.name-cell-city">Belgrade<\/small>/, 'a team with an approved city');
+  assert.match(teams.html, /data-open="RED"[^>]*><span data-part="fantasy.stat-table.name-cell-team-name">Crvena Zvezda Meridianbet<\/span><\/button><small data-part="fantasy.stat-table.name-cell-city">Belgrade<\/small>/, 'a team with an approved city');
   assert.match(teams.html, /data-open="BAR"[^>]*><span data-part="fantasy.stat-table.name-cell-team-name">[^<]+<\/span><\/button><\/div>/, 'a team without a city: no second line');
   assert.ok(!teams.html.includes('players-name-cell') && !teams.html.includes('position-badge'), 'no badge, CR or Value on Teams');
   const TL = JSON.parse(siteFile('config/table-layouts.json')).firstCol;

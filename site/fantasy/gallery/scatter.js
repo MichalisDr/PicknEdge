@@ -4,7 +4,7 @@
 import { esc } from '../../core/html.js';
 import { size } from '../../core/sizes.js';
 import { teamLogo, teamCode } from '../../core/teams.js';
-import { teamColour } from '../../core/team-colour.js';
+import { teamColourOnSurface } from '../../core/team-colour.js';
 import { axisScale, equalScale, integerScale, separateBoxes, overlapPairs } from './scale.js';
 import { logoFit, logoBox } from './logo-fit.js';
 import { favourable, quadrantTone, diagonalTone } from './tint.js';
@@ -32,8 +32,8 @@ export function scatter(chart, view, ids, byId, roster, views = [view]) {
     const a = axisValue(view, id, chart.x), b = axisValue(view, id, chart.y);
     if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
     const name = chart.entity === 'teams' ? roster.teams[id] || id : roster.players[id]?.name || id;
-    const team = chart.entity === 'teams' ? null : view.row(id)?.team;   // a player's dot takes his team's colour (core/team-colour.js); the Teams charts keep their logos
-    pts.push({ id, a, b, name, logo: chart.entity === 'teams' ? teamLogo(roster, id) || '' : '', ...(team ? { team } : {}), tip: `${name} · ${team ? teamCode(roster, team) + ' · ' : ''}${mx.label} ${fmt(mx, a)} · ${my.label} ${fmt(my, b)}` });
+    const dataTeam = chart.entity === 'teams' ? null : view.row(id)?.team, team = dataTeam ? teamCode(roster, dataTeam) : null;   // a player's dot takes his team's colour (core/team-colour.js, by public code); the Teams charts keep their logos
+    pts.push({ id, a, b, name, label: chart.entity === 'teams' ? teamCode(roster, id) : id, logo: chart.entity === 'teams' ? teamLogo(roster, id) || '' : '', ...(team ? { team } : {}), tip: `${name} · ${team ? team + ' · ' : ''}${mx.label} ${fmt(mx, a)} · ${my.label} ${fmt(my, b)}` });
   }
   if (pts.length < 2) return '<p class="fw-empty">Not enough data for this chart.</p>';
   const [sx, sy] = chartScales(chart, views);
@@ -109,7 +109,7 @@ export function drawScatter(model, W, narrow, mode = 'thumb', H = Math.round(W *
 
   const dots = model.pts.map((p, i) => {
     const body = full && p.logo ? `<circle class="fc-hit" r="${r}"/><image href="${esc(p.logo)}" x="${f((fit[p.logo] ||= logoFit(p.logo, logo)).x)}" y="${f(fit[p.logo].y)}" width="${f(fit[p.logo].width)}" height="${f(fit[p.logo].height)}" preserveAspectRatio="xMidYMid meet"/>`
-      : `<circle class="fc-hit" r="${dotR + P('hit-pad')}"/><circle class="fc-dot${p.team ? ' fc-team' : ''}" r="${dotR}"${p.team ? ` style="${teamColour(p.team)}"` : ''}/>${full && !model.noLabel ? `<text class="fc-pl" x="${P('label-offset-x')}" y="${P('tick-baseline')}">${esc(p.id)}</text>` : ''}`;
+      : `<circle class="fc-hit" r="${dotR + P('hit-pad')}"/><circle class="fc-dot${p.team ? ' fc-team' : ''}" r="${dotR}"${p.team ? ` style="${teamColourOnSurface(p.team)}"` : ''}/>${full && !model.noLabel ? `<text class="fc-pl" x="${P('label-offset-x')}" y="${P('tick-baseline')}">${esc(p.label ?? p.id)}</text>` : ''}`;
     return `<g class="fc-pt" data-open="${esc(p.id)}" data-x="${f(at[i].x)}" data-y="${f(at[i].y - (full && p.logo ? r : dotR))}" data-tip="${esc(p.tip)}" tabindex="0" role="img" aria-label="${esc(p.tip)}" transform="translate(${f(at[i].x)} ${f(at[i].y)})">${body}</g>`;
   }).join('');
   let tags = '';   // the opened card names its outliers: the 5 dots furthest above the line and the 5 furthest below (of the dots drawn), a surname each, where it fits

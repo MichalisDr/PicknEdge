@@ -19,7 +19,7 @@ export async function fetchRoster(season, root) {
       if (!p.person?.code || !('positionName' in p) || !('active' in p)) throw new ShapeError(`API shape changed at clubs/${c.code}/people: person.code/positionName/active`);
     people[c.code] = list;
   }
-  const text = JSON.stringify({ season, clubs: clubs.data.map(({ code, name, abbreviatedName, tvCode }) => ({ code, name, abbreviatedName, tvCode })), people });
+  const text = JSON.stringify({ season, clubs: clubs.data.map(({ code, name, abbreviatedName, tvCode, primaryColor }) => ({ code, name, abbreviatedName, tvCode, primaryColor })), people });
   const file = join(root, 'roster.json.gz');
   let same = false;
   try { same = gunzipSync(await readFile(file)).toString('utf8') === text; } catch {}

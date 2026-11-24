@@ -1,6 +1,6 @@
 /* The header (logo, title, next-game and back buttons, optional cr box and value chip) and the controls row (sample window, games played, Profile / Shooting) of a card.
    Parts, order and which show come from config/arrangement.json (fantasy.player-card.header, .header-title, .controls); this file only says how to draw each part. */
-import { teamColour } from '../../core/team-colour.js';
+import { teamColourOnSurface } from '../../core/team-colour.js';
 import { esc } from '../../core/html.js';
 import * as Windows from '../../core/windows.js';
 import { Data } from '../../core/data.js';
@@ -40,8 +40,8 @@ function actionsHtml({ cs, next, roster }, show) {
 }
 
 const PART = 'fantasy.player-card.';
-/** The fade colour of a team's portrait: the theme key of that team (header-portrait-fade.team-colour-<team>, none filled yet), else the one neutral default key. */
-const fadeColour = teamColour;   // core/team-colour.js: the one place that reads the theme's team colours
+/** The fade colour of a team's portrait: the team's primary from the theme (by public code), or the neutral default for the four near-black teams (core/team-colour.js). */
+const fadeColour = (roster, team) => teamColourOnSurface(teamCode(roster, team));
 /** Optional: the player's portrait (head and upper torso). Nothing when the roster entry has no `portrait`. */
 function portraitHtml(entry) {
   return entry?.portrait ? `<span data-part="${PART}header-portrait"><img src="${esc(entry.portrait)}" alt=""></span>` : '';
@@ -102,7 +102,7 @@ export function headerHtml({ cs, players, name, team, row, roster, logo, next })
     'header-figures': () => (figures ? `<div data-part="${PART}header-figures">${figures}</div>` : ''),
   }, show).map(p => p.html).join('');
   const parts = drawParts('fantasy.player-card.header', {
-    'header-portrait-fade': () => `<span data-part="${PART}header-portrait-fade" style="${fadeColour(team)}"></span>`,
+    'header-portrait-fade': () => `<span data-part="${PART}header-portrait-fade" style="${fadeColour(roster, team)}"></span>`,
     'header-identity': () => `<div data-part="${PART}header-identity">${identity}</div>`,
     'header-actions': () => actionsHtml({ cs, next, roster }, show),
   }, show);

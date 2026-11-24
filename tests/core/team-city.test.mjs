@@ -35,5 +35,5 @@ test('the approved labels cover every catalogue team exactly once, with no unkno
     else assert.deepEqual(teamTitleLines('Any Display Name', e), { club: e.club, city: e.city }, id);
   }
   assert.deepEqual(Object.keys(CITIES.cities).filter(k => !CITIES.cities[k].city).sort(), ['barcelona', 'dubai', 'paris-basketball', 'real-madrid', 'valencia']);
-  assert.deepEqual(CITIES.cities['kk-crvena-zvezda'], { city: 'Belgrade', club: 'Crvena Zvezda mts' });
+  assert.deepEqual(CITIES.cities['kk-crvena-zvezda'], { city: 'Belgrade', club: 'Crvena Zvezda Meridianbet' });
 });

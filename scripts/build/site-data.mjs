@@ -11,6 +11,7 @@ import { parseCsv } from './csv.mjs';
 import { displayName, nameParts } from './names.mjs';
 import { buildViews, catalog, WINDOWS } from './views.mjs';
 import { fantasyForBuild } from './fantasy.mjs';
+import { TEAMS } from '../../site/assets/teams.js';   // the one team registry: public code, feed code, id
 
 const arg = (n, d) => { const i = process.argv.indexOf('--' + n); return i > 0 ? process.argv[i + 1] : d; };
 const repo = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -34,7 +35,7 @@ const lastTeam = {};
 for (const r of [...players].sort(byGame)) lastTeam[r.player_id] = r.team;
 const fantasy = fantasyForBuild({
   dir: join(repo, 'data', 'raw', season, 'fantasy'), fixes, manual: nameFixes.fantasy?.names,
-  teamCodes: JSON.parse(readFileSync(join(repo, 'data', 'manual', 'fantasy-team-codes.json'), 'utf8')).codes,
+  teamCodes: Object.fromEntries(TEAMS.map(t => [t.code, t.feed])),   // Fantasy abbreviation (= the public tvCode) -> data code
   ours: dim.map(d => ({ id: d.player_id, rawName: d.player, team: lastTeam[d.player_id] || d.team, active: d.active })),
   activeOurs: o => Number(o.active) === 1,
 });
@@ -57,7 +58,7 @@ for (const t of teams) names[t.team] = t.team_name;
 const portrait = id => (existsSync(join(repo, 'site', 'assets', 'players', id + '.webp')) ? { portrait: `assets/players/${id}.webp` } : {});
 put('roster.json', {
   teams: names,
-  logoIds: JSON.parse(readFileSync(join(repo, 'data', 'manual', 'team-ids.json'), 'utf8')).ids,
+  logoIds: Object.fromEntries(TEAMS.map(t => [t.feed, t.id])),   // data code -> catalogue id
   players: Object.fromEntries(dim.map(d => [d.player_id, { name: displayName(d.player, fixes), rawName: d.player, ...nameParts(d.player, fixes), ...portrait(d.player_id), team: lastTeam[d.player_id] || d.team, pos: d.position, dorsal: d.dorsal, height: d.height, active: d.active }])),
 });
 

@@ -265,34 +265,34 @@ test('the credits axis is identical with the filters on and off, and in every wi
 
 // ---- dots in the team's colour, labels on the outliers
 import { readFileSync } from 'node:fs';
-import { teamColour } from '../../site/core/team-colour.js';
+import { teamColourOnSurface } from '../../site/core/team-colour.js';
 import { teamCode } from '../../site/core/teams.js';
 import { themeVariables } from '../../site/theme/generate.mjs';
 import { pickOutliers, placeLabels, surname } from '../../site/fantasy/gallery/labels.js';
 
 const VARS = new Map(themeVariables(JSON.parse(readFileSync(new URL('../../site/theme/theme.json', import.meta.url), 'utf8'))));
-/** What the browser would paint for the declaration teamColour() returns: the team's own key when the theme defines it, else the default key. */
+/** What the browser would paint for the declaration teamColourOnSurface() returns: the team's own key when the theme defines it, else the default key. */
 const paint = decl => {
   const [, key, fallback] = /var\((--[\w-]+), var\((--[\w-]+)\)\)/.exec(decl), pick = VARS.has(key) ? key : fallback;
   return { pick, value: VARS.get(pick) };
 };
 
-test('team colour: the theme\'s colour for a team that has one, the index\'s own default for one that has none (nothing invented)', () => {
-  assert.match(teamColour('BAR'), /^--fade-colour:var\(--fantasy-player-card-header-portrait-fade-team-colour-BAR, var\(--fantasy-player-card-header-portrait-fade-default-colour\)\)$/);
-  const bar = paint(teamColour('BAR'));
-  assert.equal(bar.pick, '--fantasy-player-card-header-portrait-fade-team-colour-BAR'); assert.match(bar.value, /^#[0-9a-f]{6}$/i);
-  for (const team of ['BES', 'PAR', 'PRS', 'VIR']) assert.equal(paint(teamColour(team)).pick, '--fantasy-player-card-header-portrait-fade-default-colour', team + ' uses the fallback');
-  assert.ok(!teamColour('B<A"R').includes('<') && !teamColour('B<A"R').includes('"'));
+test('team colour: the theme primary for a team by public code, the neutral default for the four listed teams (nothing invented)', () => {
+  assert.equal(teamColourOnSurface('BAR'), '--fade-colour:var(--fantasy-team-colour-primary-BAR, var(--fantasy-team-colour-neutral-colour))');
+  const bar = paint(teamColourOnSurface('BAR'));
+  assert.equal(bar.pick, '--fantasy-team-colour-primary-BAR'); assert.match(bar.value, /^#[0-9a-f]{6}$/i);
+  for (const team of ['BJK', 'PAR', 'PBB', 'VIR']) assert.equal(teamColourOnSurface(team), '--fade-colour:var(--fantasy-team-colour-neutral-colour)', team + ' uses the neutral default');
+  assert.ok(!teamColourOnSurface('B<A"R').includes('<') && !teamColourOnSurface('B<A"R').includes('"'));
 });
 
 test('the dots: players are drawn as team-coloured dots (thumbnail and opened card), never as logos; the Teams charts still draw logos', () => {
   const ROS = { teams: {}, players: {}, logoIds: { XXX: 'barcelona' } };
   const m = modelOf(scatter(CHART, VIEWS.season, IDS, BYID, ROS, Object.values(VIEWS)));
-  assert.equal(m.plain, true); assert.ok(m.pts.every(p => p.team === 'XXX' && p.logo === ''), 'no logo on a player');
+  assert.equal(m.plain, true); assert.ok(m.pts.every(p => p.team === 'BAR' && p.logo === ''), 'no logo on a player');
   for (const [W, narrow, mode] of [[640, false, 'thumb'], [900, false, 'full'], [360, true, 'full']]) {
     const svg = drawScatter(m, W, narrow, mode);
     assert.ok(!svg.includes('<image'), 'no logos');
-    const dots = svg.match(/<circle class="fc-dot fc-team" r="(\d+)" style="--fade-colour:var\(--fantasy-player-card-header-portrait-fade-team-colour-XXX, var\(--fantasy-player-card-header-portrait-fade-default-colour\)\)"/g) || [];
+    const dots = svg.match(/<circle class="fc-dot fc-team" r="(\d+)" style="--fade-colour:var\(--fantasy-team-colour-primary-BAR, var\(--fantasy-team-colour-neutral-colour\)\)"/g) || [];
     assert.equal(dots.length, IDS.length, `every dot in the team colour (${mode})`);
     assert.ok(dots.every(d => d.includes(`r="${size('fantasy.charts-gallery.plot.dot-radius')}"`)), 'radius = the dot-radius token');
   }
