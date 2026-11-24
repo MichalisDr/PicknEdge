@@ -191,6 +191,9 @@ body{
 --fantasy-charts-gallery-plot-logo-size-floor:16;
 --fantasy-charts-gallery-plot-zone-label-offset:8;
 --fantasy-charts-gallery-plot-zone-label-clear:24;
+--fantasy-charts-gallery-plot-label-char-width:8;
+--fantasy-charts-gallery-plot-label-height:16;
+--fantasy-charts-gallery-plot-label-gap:4;
 --fantasy-charts-gallery-plot-move-ms:500;
 --fantasy-charts-gallery-chart-notes-gap:4px;
 --fantasy-charts-gallery-chart-notes-margin-top:12px;

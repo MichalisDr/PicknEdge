@@ -410,6 +410,9 @@
      "logo-size-floor": 16,
      "zone-label-offset": 8,
      "zone-label-clear": 24,
+     "label-char-width": 8,
+     "label-height": 16,
+     "label-gap": 4,
      "move-ms": 500
     },
     "chart-notes": {

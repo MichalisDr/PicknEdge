@@ -228,7 +228,7 @@ test('the gallery: axes from the listed players in all four windows; a below-thr
 });
 
 // ---- the credits axis: a real minimum of 4, whole numbers
-import { integerScale } from '../../site/fantasy/gallery/scale.js';
+import { integerScale, axisScale } from '../../site/fantasy/gallery/scale.js';
 import { axisFloor } from '../../site/fantasy/gallery/axes.js';
 
 test('integerScale: starts exactly at the floor, ends at the first whole number above the highest value, a tick at every whole number', () => {
@@ -261,4 +261,93 @@ test('the credits axis is identical with the filters on and off, and in every wi
   const draw = (w, ids) => modelOf(scatter(CHART, VIEWS[w], ids, BYID, ROSTER, Object.values(VIEWS))).sx;
   const ref = draw('season', Object.keys(rowsOf('season')));
   for (const w of WINDOWS) for (const ids of [IDS, IDS.slice(0, 3), ['p1', 'p2']]) assert.deepEqual(draw(w, ids), ref);
+});
+
+// ---- dots in the team's colour, labels on the outliers
+import { readFileSync } from 'node:fs';
+import { teamColour } from '../../site/core/team-colour.js';
+import { teamCode } from '../../site/core/teams.js';
+import { themeVariables } from '../../site/theme/generate.mjs';
+import { pickOutliers, placeLabels, surname } from '../../site/fantasy/gallery/labels.js';
+
+const VARS = new Map(themeVariables(JSON.parse(readFileSync(new URL('../../site/theme/theme.json', import.meta.url), 'utf8'))));
+/** What the browser would paint for the declaration teamColour() returns: the team's own key when the theme defines it, else the default key. */
+const paint = decl => {
+  const [, key, fallback] = /var\((--[\w-]+), var\((--[\w-]+)\)\)/.exec(decl), pick = VARS.has(key) ? key : fallback;
+  return { pick, value: VARS.get(pick) };
+};
+
+test('team colour: the theme\'s colour for a team that has one, the index\'s own default for one that has none (nothing invented)', () => {
+  assert.match(teamColour('BAR'), /^--fade-colour:var\(--fantasy-player-card-header-portrait-fade-team-colour-BAR, var\(--fantasy-player-card-header-portrait-fade-default-colour\)\)$/);
+  const bar = paint(teamColour('BAR'));
+  assert.equal(bar.pick, '--fantasy-player-card-header-portrait-fade-team-colour-BAR'); assert.match(bar.value, /^#[0-9a-f]{6}$/i);
+  for (const team of ['BES', 'PAR', 'PRS', 'VIR']) assert.equal(paint(teamColour(team)).pick, '--fantasy-player-card-header-portrait-fade-default-colour', team + ' uses the fallback');
+  assert.ok(!teamColour('B<A"R').includes('<') && !teamColour('B<A"R').includes('"'));
+});
+
+test('the dots: players are drawn as team-coloured dots (thumbnail and opened card), never as logos; the Teams charts still draw logos', () => {
+  const ROS = { teams: {}, players: {}, logoIds: { XXX: 'barcelona' } };
+  const m = modelOf(scatter(CHART, VIEWS.season, IDS, BYID, ROS, Object.values(VIEWS)));
+  assert.equal(m.plain, true); assert.ok(m.pts.every(p => p.team === 'XXX' && p.logo === ''), 'no logo on a player');
+  for (const [W, narrow, mode] of [[640, false, 'thumb'], [900, false, 'full'], [360, true, 'full']]) {
+    const svg = drawScatter(m, W, narrow, mode);
+    assert.ok(!svg.includes('<image'), 'no logos');
+    const dots = svg.match(/<circle class="fc-dot fc-team" r="(\d+)" style="--fade-colour:var\(--fantasy-player-card-header-portrait-fade-team-colour-XXX, var\(--fantasy-player-card-header-portrait-fade-default-colour\)\)"/g) || [];
+    assert.equal(dots.length, IDS.length, `every dot in the team colour (${mode})`);
+    assert.ok(dots.every(d => d.includes(`r="${size('fantasy.charts-gallery.plot.dot-radius')}"`)), 'radius = the dot-radius token');
+  }
+  assert.ok(m.pts[0].tip.includes(' · ' + teamCode(ROS, 'XXX') + ' · Credits '), 'the read-out names the team');
+  // the Teams charts are as they were: a logo, no team colour
+  const t = { id: 'a', a: 1, b: 2, name: 'A', logo: 'assets/logos/x.png', tip: 't' };
+  const tm = { title: 't', xTitle: 'x', yTitle: 'y', equal: false, fav: { x: 0, y: 0 }, sx: axisScale([0, 4]), sy: axisScale([0, 4]), avg: null, pts: [t, { ...t, id: 'b', a: 2, b: 3 }] };
+  assert.ok(drawScatter(tm, 900, false, 'full').includes('<image'), 'a team keeps its logo');
+  assert.ok(!drawScatter(tm, 900, false, 'full').includes('fc-team'));
+});
+
+test('outliers: the 5 furthest above and the 5 furthest below the fitted line by vertical distance; fewer when fewer are drawn', () => {
+  const line = { slope: 1, intercept: 0 };
+  const pts = Array.from({ length: 24 }, (_, i) => ({ id: 'q' + i, a: i, b: i + (i % 2 ? 1 : -1) * (i + 1) / 10 }));   // residual = +-(i + 1) / 10
+  const o = pickOutliers(pts, line);
+  assert.equal(o.length, 10);
+  assert.deepEqual(o.filter(x => x.resid > 0).map(x => x.id), ['q23', 'q21', 'q19', 'q17', 'q15'], 'above: furthest first');
+  assert.deepEqual(o.filter(x => x.resid < 0).map(x => x.id), ['q22', 'q20', 'q18', 'q16', 'q14'], 'below');
+  for (let i = 1; i < o.length; i++) assert.ok(Math.abs(o[i - 1].resid) >= Math.abs(o[i].resid));
+  assert.equal(pickOutliers(pts.slice(0, 6), line).length, 6, 'fewer than 10 drawn: every one that lies off the line');
+  assert.equal(pickOutliers(pts.slice(0, 1), line).length, 1);
+  assert.deepEqual(pickOutliers(pts, null), []);
+  assert.equal(pickOutliers([{ id: 'on', a: 1, b: 1 }], line).length, 0, 'a dot exactly on the line is neither above nor below');
+  assert.equal(surname('Nikola Mirotic'), 'Mirotic'); assert.equal(surname('Prince'), 'Prince');
+});
+
+const clash = (a, b, gap = 0) => a.x < b.x + b.w + gap && b.x < a.x + a.w + gap && a.y < b.y + b.h + gap && b.y < a.y + a.h + gap;
+
+test('labels never overlap each other, a blocked box, or leave the plot; one that cannot fit is dropped', () => {
+  const bounds = { x0: 64, x1: 620, y0: 16, y1: 432 }, w = 56, h = 16, r = 4, gap = 4;
+  const crowd = Array.from({ length: 10 }, (_, i) => ({ id: 'c' + i, x: 300 + (i % 3) * 3, y: 200 + (i % 4) * 2, r, w, h }));   // ten dots almost on top of each other
+  const edge = [{ id: 'e1', x: 66, y: 18, r, w, h }, { id: 'e2', x: 618, y: 430, r, w, h }, { id: 'e3', x: 600, y: 20, r, w: 80, h }];   // at the corners of the plot
+  const blocked = [{ x: 72, y: 24, w: 160, h }];
+  const out = placeLabels([...edge, ...crowd], bounds, blocked, gap);
+  assert.ok(out.length >= 3 && out.length < 13, 'some are placed, some are dropped: ' + out.length);
+  for (const l of out) {
+    assert.ok(l.x >= bounds.x0 && l.x + l.w <= bounds.x1 && l.y >= bounds.y0 && l.y + l.h <= bounds.y1, `${l.id} inside the plot`);
+    assert.ok(!blocked.some(b => clash(l, b)), `${l.id} clear of the zone label`);
+  }
+  for (let i = 0; i < out.length; i++) for (let j = i + 1; j < out.length; j++) assert.ok(!clash(out[i], out[j], gap), `${out[i].id} / ${out[j].id}`);
+  assert.deepEqual(placeLabels([{ id: 'big', x: 300, y: 200, r, w: 900, h }], bounds, [], gap), [], 'wider than the plot: dropped, not squeezed');
+  assert.deepEqual(placeLabels([{ id: 'ok', x: 300, y: 200, r, w, h }], bounds, [], gap).map(l => l.id), ['ok']);
+});
+
+test('drawn: the opened card names the outliers, the thumbnail names none, and no label overlaps another or leaves the plot', () => {
+  const names = Object.fromEntries(IDS.map((id, i) => [id, { name: 'First Surname' + i }]));
+  const model = modelOf(scatter(CHART, VIEWS.season, IDS, BYID, { ...ROSTER, players: names }, Object.values(VIEWS)));
+  const thumb = drawScatter(model, 640, false, 'thumb'), full = drawScatter(model, 900, false, 'full');
+  assert.ok(!/class="fc-pl"/.test(thumb), 'no labels in the thumbnail');
+  const tags = [...full.matchAll(/<text class="fc-pl" x="([\d.]+)" y="([\d.]+)" dominant-baseline="central">Surname(\d+)</g)];
+  assert.ok(tags.length > 0 && tags.length <= 10, 'labels: ' + tags.length);
+  const P = k => size('fantasy.charts-gallery.plot.' + k), L = P('margin-left'), R = P('margin-right'), H = Math.round(900 * P('aspect')), box = { x0: L, x1: 900 - R, y0: P('margin-top'), y1: H - P('margin-bottom') };
+  const rects = tags.map(t => ({ id: 'Surname' + t[3], x: +t[1], y: +t[2] - P('label-height') / 2, w: ('Surname' + t[3]).length * P('label-char-width'), h: P('label-height') }));
+  for (const r of rects) assert.ok(r.x >= box.x0 - 0.1 && r.x + r.w <= box.x1 + 0.1 && r.y >= box.y0 - 0.1 && r.y + r.h <= box.y1 + 0.1, r.id + ' inside the plot');
+  for (let i = 0; i < rects.length; i++) for (let j = i + 1; j < rects.length; j++) assert.ok(!clash(rects[i], rects[j]), `${rects[i].id} / ${rects[j].id}`);
+  const wanted = new Set(pickOutliers(model.pts, model.fit).map(o => 'Surname' + o.id.slice(1)));
+  for (const r of rects) assert.ok(wanted.has(r.id), r.id + ' is one of the 5 + 5');
 });

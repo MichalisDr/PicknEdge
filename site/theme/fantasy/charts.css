@@ -33,6 +33,8 @@
 .fc-q{stroke:none;fill-opacity:var(--fantasy-charts-gallery-quadrant-tint-opacity)}
 .fc-q.good{fill:var(--fantasy-stat-table-value-good-text)}
 .fc-q.bad{fill:var(--fantasy-stat-table-value-bad-text)}
+.fc-dot.fc-team{fill:var(--fade-colour);fill-opacity:1}   /* a player's dot: his team's colour (core/team-colour.js sets --fade-colour); the ring is the dot's own border */
+.fc-pt:hover .fc-dot.fc-team,.fc-pt:focus-visible .fc-dot.fc-team{fill:var(--fade-colour)}
 .fc-dot{fill:var(--fantasy-charts-gallery-point-fill);fill-opacity:.85;stroke:var(--fantasy-charts-gallery-point-border);stroke-width:1.5}
 .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot{fill:var(--fantasy-charts-gallery-point-hovered-fill);fill-opacity:1;stroke:var(--fantasy-charts-gallery-point-hovered-border)}
 .fc-pl{font:var(--fantasy-charts-gallery-team-label-font-size) var(--font-ui);fill:var(--fantasy-charts-gallery-axis-numbers-text);paint-order:stroke;stroke:var(--fantasy-charts-gallery-team-label-outline);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
