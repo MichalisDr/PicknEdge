@@ -125,9 +125,10 @@ test('Players toolbar: Profile / Shooting (icon above label), outlined windows, 
   assert.ok(!/>All</.test(html.slice(html.indexOf('players-position-buttons'), html.indexOf('players-search"'))), 'no All button');
 });
 
-test('Table / Charts: none for Players today (no pair, no divider); Teams have charts, so the pair follows Profile / Shooting after a divider; independent of the view', async () => {
-  const players = await render({ entity: 'players' });
-  assert.ok(!players.html.includes('data-fwmode') && !players.html.includes('players-view-divider') && players.html.includes('data-view-set="profile"'));
+test('Table / Charts: Players have charts in Profile only (the price chart), none in Shooting; Teams have charts in both, so the pair follows Profile / Shooting after a divider', async () => {
+  const players = await render({ entity: 'players', view: 'profile' }), shooting = await render({ entity: 'players', view: 'shooting' });
+  assert.ok(players.html.includes('data-fwmode="charts"') && players.html.includes('players-view-divider') && players.html.includes('data-view-set="profile"'), 'Players · Profile: the pair');
+  assert.ok(!shooting.html.includes('data-fwmode') && !shooting.html.includes('players-view-divider') && shooting.html.includes('data-view-set="profile"'), 'Players · Shooting: no pair, no divider');
   for (const view of ['profile', 'shooting']) {
     const { html } = await render({ entity: 'teams', view });
     const at = ['data-view-set="profile"', 'players-view-divider', 'data-fwmode="table"', 'data-fwmode="charts"'].map(s => html.indexOf(s));

@@ -11,10 +11,10 @@ const metrics = JSON.parse(readFileSync(new URL('../../site/data/metrics.json', 
 const dir = id => list.find(m => m.id === id).direction;
 
 test('favourable direction per axis for the six charts (+1 = high favours the opposing player)', () => {
-  const rows = CHARTS.map(c => ({ chart: c.id, x: `${c.x} ${favourable(dir(c.x))}`, y: `${c.y} ${favourable(dir(c.y))}` }));
+  const rows = CHARTS.filter(c => c.entity === 'teams').map(c => ({ chart: c.id, x: `${c.x} ${favourable(dir(c.x))}`, y: `${c.y} ${favourable(dir(c.y))}` }));
   console.log(rows.map(r => `${r.chart}: x ${r.x} | y ${r.y}`).join('\n'));
   const fav = id => favourable(dir(id));
-  assert.equal(CHARTS.length, 6);
+  assert.equal(CHARTS.filter(c => c.entity === 'teams').length, 6);
   assert.equal(fav('drtg'), 1); assert.equal(fav('o_efg'), 1); assert.equal(fav('o_exp_efg'), 1);
   assert.equal(fav('o_tov100'), -1); assert.equal(fav('t_dreb_pct'), -1);
   assert.equal(fav('pace'), 0, 'Pace has no judgement in the metric data (direction 0)');

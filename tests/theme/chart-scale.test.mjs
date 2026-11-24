@@ -70,7 +70,7 @@ test('the chart parts use the card system container queries, not viewport media 
   assert.ok(!Object.keys(sizes).concat(Object.keys(theme)).some(k => /650/.test(k)) && !props(sizes).concat(props(theme)).some(t => /650/.test(t.prop)), 'no -below-650px token');
   for (const f of readdirSync(new URL('fantasy/gallery/', SITE)).filter(f => f.endsWith('.js'))) {
     const src = read('fantasy/gallery/' + f).replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
-    assert.ok(!/matchMedia/.test(src), `${f}: no matchMedia`);
+    assert.ok(!/matchMedia/.test(src.replaceAll("matchMedia?.('(prefers-reduced-motion: reduce)')", '')), `${f}: no matchMedia (the one allowed is the reduced-motion preference, which is not a viewport query)`);
     assert.ok(!/(?<![\w.#-])\d+(\.\d+)?px/.test(src.replace(/\$\{[^}]*\}/g, '')), `${f}: no literal px`);
   }
 });

@@ -21,6 +21,11 @@
 .fc-ax{font:600 var(--fantasy-charts-gallery-axis-title-font-size) var(--font-ui);fill:var(--fantasy-charts-gallery-axis-title-text)}
 .fc-avg{stroke:var(--fantasy-charts-gallery-average-line);stroke-width:1;stroke-dasharray:5 4}
 .fc-diag{stroke:var(--fantasy-charts-gallery-diagonal-line);stroke-width:1;stroke-dasharray:2 4}
+/* The reference line of the price chart (solid, neutral) and the zone labels, coloured like the tint they sit in. */
+.fc-fit{stroke:var(--fantasy-charts-gallery-fit-line);stroke-width:var(--fantasy-charts-gallery-fit-line-width);stroke-linecap:round}
+.fc-zone{font:600 var(--fantasy-charts-gallery-zone-label-font-size) var(--font-ui);pointer-events:none}
+.fc-zone.good{fill:var(--fantasy-stat-table-value-good-text)}
+.fc-zone.bad{fill:var(--fantasy-stat-table-value-bad-text)}
 .fc-pt{cursor:pointer;outline:none}
 .fc-pt:focus-visible .fc-hit{stroke:var(--fantasy-charts-gallery-point-hovered-border)}   /* keyboard focus only; no ring or backing around a logo otherwise */
 /* A team without a logo keeps the old dot and its code. */

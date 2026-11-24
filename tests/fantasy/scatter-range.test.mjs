@@ -31,7 +31,7 @@ test('every extreme (over all windows) lies strictly inside the axis range with 
   const range = id => { const v = views.flatMap(vw => vw.keys.map(k => vw.get(k, id)?.value)).filter(Number.isFinite); return [Math.min(...v), Math.max(...v)]; };
   for (const view of ['profile', 'shooting']) {
     const m = await models(view, 'season');
-    for (const c of CHARTS.filter(c => c.view === view)) {
+    for (const c of CHARTS.filter(c => c.entity === 'teams' && c.view === view)) {
       for (const [id, s] of [[c.x, m[c.id].sx], [c.y, m[c.id].sy]]) {
         const [lo, hi] = c.equal ? [Math.min(...range(c.x), ...range(c.y)), Math.max(...range(c.x), ...range(c.y))] : range(id);
         assert.ok(s.lo < lo && s.hi > hi, `${c.id} ${id}: [${lo}, ${hi}] strictly inside [${s.lo}, ${s.hi}]`);

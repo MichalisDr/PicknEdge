@@ -407,7 +407,10 @@
      "logo-gap": 4,
      "hit-pad": 4,
      "label-offset-x": 8,
-     "logo-size-floor": 16
+     "logo-size-floor": 16,
+     "zone-label-offset": 8,
+     "zone-label-clear": 24,
+     "move-ms": 500
     },
     "chart-notes": {
      "gap": "4px",
