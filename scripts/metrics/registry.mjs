@@ -200,6 +200,8 @@ const zoneEntries = (scope, p, idp, labelp, tags) => [
 ];
 METRICS.push(
   e('fga100', 'FGA / 100 poss', P, 'per100', S('fga'), S('poss_off_on'), F, 1, 'Field-goal attempts per 100 team offensive possessions while on court.'),
+  e('sa100', 'SA / 100 poss', P, 'per100', S('sa'), S('poss_off_on'), FB, 1, 'Shot attempts (shots and free-throw trips) per 100 team offensive possessions while on court.'),
+  e('sa_att', 'SA', P, 'count', S('sa'), null, F, 0, 'Shot attempts (shots and free-throw trips) in the window.'),
   e('a2_rate', '2PA / FGA', P, 'pct', S('a2'), S('fga'), F, 1, 'Share of field-goal attempts that are two-pointers.'),
   // Player sub-area detail for the Shooting card (the six sub-areas of zones.mjs): makes, attempts, share of the player's classified shots, attempts per 100 team offensive possessions.
   ...SUBS.flatMap(z => [
@@ -249,7 +251,7 @@ METRICS.push({
 /* ---------- direction: which way is better FOR THE ENTITY (+1 higher, -1 lower, 0 style / volume, no judgement) ----------
    Opponent figures (o_*) are better when low, except opponent turnovers (a defence wants them high). The Fantasy lens
    (green = good for the opposing player) is the UI's inversion of this. */
-const NEUTRAL = new Set(['fga100', 'a2_rate', 'gp', 'gs', 'min', 'usg', 'ftr', 'load', 'bc', 'a3_rate', 'a3_g', 'a1_g', 'a3_100', 'a1_100', 'pace', 't_a3_rate']);
+const NEUTRAL = new Set(['fga100', 'sa100', 'sa_att', 'a2_rate', 'gp', 'gs', 'min', 'usg', 'ftr', 'load', 'bc', 'a3_rate', 'a3_g', 'a1_g', 'a3_100', 'a1_100', 'pace', 't_a3_rate']);
 const LOWER = new Set(['pf_g', 'pf100', 'fc100', 'tov_g', 'tov100', 'tov_pct', 'ctov', 'drtg', 't_tov100']);
 for (const m of METRICS) {
   m.direction = NEUTRAL.has(m.id) || /^(o_)?z[sm]_[a-z0-9]+_(made|att|share|a100)$/.test(m.id) || /^(o_)?(fg2|fg3|ft)_(made|att)$/.test(m.id) ? 0 : LOWER.has(m.id) || (m.scope === 'team' && m.id.startsWith('o_') && m.id !== 'o_tov100') ? -1 : 1;

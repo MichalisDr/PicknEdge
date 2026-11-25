@@ -3,6 +3,8 @@
    `fit` draws the least-squares line of y on x over the whole pool of the window (every player of the window's view with both values: the league row's players), tints the zones above (good) / below (bad) it and labels them (fit.js);
    the line never depends on a filter; `domain: 'listed'` takes the AXES from the players the table lists by its thresholds (and the "below the thresholds" toggle), over all four windows; position, search and the drawer only hide dots;
    `move` animates a change of window (tween.js).
+   `corners` tints only the right of the vertical league line (above the horizontal one good, below bad) and writes the three zone labels; `curves` draws iso-points curves (curves.js); `extremes` names that many dots farthest from the league lines;
+   `hover` lists the figures of the read-out after name and team: [metric id, label].
    An x / y that is not a metric id of metrics.json (cr) is read through axes.js. */
 export const CHARTS = [
   { id: 'teams-pace-drtg', entity: 'teams', view: 'profile', title: 'Pace × DRtg', x: 'pace', y: 'drtg' },
@@ -17,6 +19,10 @@ export const CHARTS = [
   { id: 'players-price-pir', entity: 'players', view: 'profile', title: 'Performance vs price', subtitle: 'Credits × PIR / game · line = typical PIR at that price (fit across all players with a price)', x: 'cr', y: 'pir', noAvg: true, fit: true, move: true, domain: 'listed',
     zones: ['Above typical for the price', 'Below typical for the price'],
     note: 'The line is the fit of all players with a price in the selected window; filters only hide dots. It is not how Fantasy changes prices.' },
+  { id: 'players-volume-efficiency', entity: 'players', view: 'shooting', title: 'Volume vs efficiency', subtitle: 'SA / 100 poss × TS%', x: 'sa100', y: 'ts_pct', domain: 'listed', move: true,
+    corners: { upperRight: 'High volume, efficient', lowerRight: 'High volume, below average', upperLeft: 'Low volume, efficient' }, curves: [15, 20, 25, 30, 35], extremes: 9,
+    hover: [['sa100', 'SA/100'], ['ts_pct', 'TS%'], ['pts100', 'PTS/100'], ['sa_att', 'SA'], ['efg', 'eFG%'], ['ftr', 'FT rate']],
+    note: 'Volume is how many of the team\'s possessions end in a shot or a free-throw trip while he is on court; TS% is points per shot attempt (2 x TS%). TS% moves a lot with few attempts, so check SA in the hover.' },
 ];
 
 /** Is there at least one chart for this table (entity + view)? */

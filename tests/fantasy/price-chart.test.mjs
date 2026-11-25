@@ -80,18 +80,18 @@ const ROSTER = { teams: {}, players: {}, logoIds: {} };
 const CHART = CHARTS.find(c => c.id === 'players-price-pir');
 const plot = win => modelOf(scatter(CHART, VIEWS[win], IDS, BYID, ROSTER, Object.values(VIEWS)));
 
-test('registration: one players chart in the Profile view, no other view gets the gallery, the Teams charts are as they were', () => {
+test('registration: one players chart in the Profile view, the Teams charts are as they were', () => {
   assert.ok(CHART);
   assert.deepEqual([CHART.entity, CHART.view, CHART.x, CHART.y], ['players', 'profile', 'cr', 'pir']);
   assert.equal(CHART.title, 'Performance vs price');
   assert.equal(CHART.subtitle, 'Credits × PIR / game · line = typical PIR at that price (fit across all players with a price)');
   assert.deepEqual(CHART.zones, ['Above typical for the price', 'Below typical for the price']);
   assert.equal(available('players', 'profile'), true);
-  assert.equal(available('players', 'shooting'), false);
+  assert.equal(available('players', 'shooting'), true);   // volume vs efficiency (volume-chart.test.mjs)
   assert.equal(available('teams', 'profile'), true);
   assert.equal(available('teams', 'shooting'), true);
   assert.equal(CHARTS.filter(c => c.entity === 'teams').length, 6);
-  assert.equal(CHARTS.filter(c => c.entity === 'players').length, 1);
+  assert.deepEqual(CHARTS.filter(c => c.entity === 'players' && c.view === 'profile').map(c => c.id), ['players-price-pir']);
 });
 
 test('the chart reads credits through its own accessor, plots the PIR of the window, and fits the whole pool of the window', () => {
@@ -223,7 +223,6 @@ test('the gallery: axes from the listed players in all four windows; a below-thr
     const html = await galleryHtml('players', 'profile', { win: 'season', view: 'profile' }, IDS);
     assert.ok(html.includes('Performance vs price') && html.includes('filters only hide dots. It is not how Fantasy changes prices.'));
     assert.ok(html.includes('data-chart-id="players-price-pir"'));
-    assert.ok((await galleryHtml('players', 'shooting', { win: 'season', view: 'shooting' }, IDS)).includes('No comparative charts for this view yet'));
   } finally { Object.assign(Data, saved); }
 });
 
@@ -343,10 +342,10 @@ test('drawn: the opened card names the outliers, the thumbnail names none, and n
   const model = modelOf(scatter(CHART, VIEWS.season, IDS, BYID, { ...ROSTER, players: names }, Object.values(VIEWS)));
   const thumb = drawScatter(model, 640, false, 'thumb'), full = drawScatter(model, 900, false, 'full');
   assert.ok(!/class="fc-pl"/.test(thumb), 'no labels in the thumbnail');
-  const tags = [...full.matchAll(/<text class="fc-pl" x="([\d.]+)" y="([\d.]+)" dominant-baseline="central">Surname(\d+)</g)];
+  const tags = [...full.matchAll(/<text class="fc-pl" x="([\d.]+)" y="([\d.]+)" dominant-baseline="central"(?: text-anchor="(end|middle)")?>Surname(\d+)</g)];
   assert.ok(tags.length > 0 && tags.length <= 10, 'labels: ' + tags.length);
   const P = k => size('fantasy.charts-gallery.plot.' + k), L = P('margin-left'), R = P('margin-right'), H = Math.round(900 * P('aspect')), box = { x0: L, x1: 900 - R, y0: P('margin-top'), y1: H - P('margin-bottom') };
-  const rects = tags.map(t => ({ id: 'Surname' + t[3], x: +t[1], y: +t[2] - P('label-height') / 2, w: ('Surname' + t[3]).length * P('label-char-width'), h: P('label-height') }));
+  const rects = tags.map(t => { const id = 'Surname' + t[4], w = id.length * P('label-char-width'); return { id, x: +t[1] - (t[3] === 'end' ? w : t[3] === 'middle' ? w / 2 : 0), y: +t[2] - P('label-height') / 2, w, h: P('label-height') }; });   // the box from the anchor
   for (const r of rects) assert.ok(r.x >= box.x0 - 0.1 && r.x + r.w <= box.x1 + 0.1 && r.y >= box.y0 - 0.1 && r.y + r.h <= box.y1 + 0.1, r.id + ' inside the plot');
   for (let i = 0; i < rects.length; i++) for (let j = i + 1; j < rects.length; j++) assert.ok(!clash(rects[i], rects[j]), `${rects[i].id} / ${rects[j].id}`);
   const wanted = new Set(pickOutliers(model.pts, model.fit).map(o => 'Surname' + o.id.slice(1)));

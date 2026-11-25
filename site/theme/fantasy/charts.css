@@ -37,7 +37,10 @@
 .fc-pt:hover .fc-dot.fc-team,.fc-pt:focus-visible .fc-dot.fc-team{fill:var(--fade-colour)}
 .fc-dot{fill:var(--fantasy-charts-gallery-point-fill);fill-opacity:.85;stroke:var(--fantasy-charts-gallery-point-border);stroke-width:1.5}
 .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot{fill:var(--fantasy-charts-gallery-point-hovered-fill);fill-opacity:1;stroke:var(--fantasy-charts-gallery-point-hovered-border)}
-.fc-pl{font:var(--fantasy-charts-gallery-team-label-font-size) var(--font-ui);fill:var(--fantasy-charts-gallery-axis-numbers-text);paint-order:stroke;stroke:var(--fantasy-charts-gallery-team-label-outline);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.fc-iso{fill:none;stroke:var(--fantasy-charts-gallery-diagonal-line);stroke-width:1;stroke-dasharray:2 4}
+.fc-zone.neutral{fill:var(--fantasy-charts-gallery-axis-numbers-text)}
+.fc-tip.fc-tip-long{white-space:normal;width:max-content;max-width:var(--fantasy-charts-gallery-chart-tip-max-width)}   /* a long read-out wraps */
+.fc-pl,.fc-iso-label{font:var(--fantasy-charts-gallery-team-label-font-size) var(--font-ui);fill:var(--fantasy-charts-gallery-axis-numbers-text);paint-order:stroke;stroke:var(--fantasy-charts-gallery-team-label-outline);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
 .fc-dialog{width:var(--fantasy-charts-gallery-enlarged-chart-window-width)}
 /* The body of the opened card: from 520px up it is 88% of the viewport high (title above, the plot fills what is left, notes below); narrow, it is as tall as its content and the plot fills the card width. */
 .fc-body{display:flex;flex-direction:column;height:var(--fantasy-charts-gallery-enlarged-chart-body-height-wide)}

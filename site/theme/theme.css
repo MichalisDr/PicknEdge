@@ -1120,7 +1120,7 @@ body[data-area=betting]{
   fantasy.charts-gallery.average.line : .fc-avg
   fantasy.charts-gallery.axis.line : .fc-axis
   fantasy.charts-gallery.axis-numbers.font-size : .fc-tick
-  fantasy.charts-gallery.axis-numbers.text : .fc-tick  |  .fc-pl
+  fantasy.charts-gallery.axis-numbers.text : .fc-tick  |  .fc-zone.neutral  |  .fc-pl,.fc-iso-label
   fantasy.charts-gallery.axis-numbers.font-size-narrow : .fc-tick
   fantasy.charts-gallery.axis-title.font-size : .fc-ax
   fantasy.charts-gallery.axis-title.text : .fc-ax
@@ -1146,7 +1146,7 @@ body[data-area=betting]{
   fantasy.charts-gallery.chart-title.font-size : .fc-card-title
   fantasy.charts-gallery.chart-title.text : .fc-card-title
   fantasy.charts-gallery.chart-title.line-height : .fc-card-title
-  fantasy.charts-gallery.diagonal.line : .fc-diag  |  .fc-swatch.diag
+  fantasy.charts-gallery.diagonal.line : .fc-diag  |  .fc-iso  |  .fc-swatch.diag
   fantasy.charts-gallery.fit.line : .fc-fit
   fantasy.charts-gallery.fit.line-width : .fc-fit
   fantasy.charts-gallery.zone-label.font-size : .fc-zone
@@ -1161,8 +1161,8 @@ body[data-area=betting]{
   fantasy.charts-gallery.point.fill : .fc-dot
   fantasy.charts-gallery.point-hovered.border : .fc-pt:focus-visible .fc-hit  |  .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot
   fantasy.charts-gallery.point-hovered.fill : .fc-pt:hover .fc-dot,.fc-pt:focus-visible .fc-dot
-  fantasy.charts-gallery.team-label.font-size : .fc-pl
-  fantasy.charts-gallery.team-label.outline : .fc-pl
+  fantasy.charts-gallery.team-label.font-size : .fc-pl,.fc-iso-label
+  fantasy.charts-gallery.team-label.outline : .fc-pl,.fc-iso-label
   fantasy.charts-gallery.quadrant-tint.opacity : .fc-q
   fantasy.charts-gallery.chart-legend-swatch.radius : .fc-swatch
   fantasy.player-card.box-scores-cell-note.font-size : .fw-with td small,.fw-with th small

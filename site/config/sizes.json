@@ -433,6 +433,9 @@
      "gap": "24px",
      "grid-template-rows": "minmax(0,1fr)"
     },
+    "chart-tip": {
+     "max-width": "min(280px,100%)"
+    },
     "chart-legend": {
      "gap": "8px",
      "swatch-size": "12px"
