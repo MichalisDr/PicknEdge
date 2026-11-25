@@ -1,7 +1,7 @@
 /* Fantasy · Charts mode: which comparative scatter charts exist. One entry per chart (two metric ids from metrics.json); `x` / `y` are the axes,
    `equal` draws the x = y diagonal, `residual` colours by actual minus expected, `noAvg` hides the league lines.
    `fit` draws the least-squares line of y on x over the whole pool of the window (every player of the window's view with both values: the league row's players), tints the zones above (good) / below (bad) it and labels them (fit.js);
-   the line never depends on a filter; `domain: 'listed'` takes the AXES from the players the table lists by its thresholds (and the "below the thresholds" toggle), over all four windows; position, search and the drawer only hide dots;
+   the line never depends on a filter; `domain: 'listed'` draws only the players the table lists by its thresholds and takes the AXES from them over all four windows (the "below the thresholds" toggle changes the table only); position, search and the drawer only hide dots;
    `move` animates a change of window (tween.js).
    `corners` tints only the right of the vertical league line (above the horizontal one good, below bad) and writes the three zone labels; `curves` draws iso-points curves (curves.js); `extremes` names that many dots farthest from the league lines;
    `size` ({ id, key }) gives each dot the radius of that amount (scatter.js bubbleRadius) and adds a size key with the sample amounts `key` to the opened card;

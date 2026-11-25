@@ -101,7 +101,7 @@ const P = k => size('fantasy.charts-gallery.plot.' + k);
 const plotBox = (W, H, narrow) => ({ x0: P(narrow ? 'margin-left-narrow' : 'margin-left'), x1: W - P(narrow ? 'margin-right-narrow' : 'margin-right'), y0: P('margin-top'), y1: H - P('margin-bottom') });
 const curvesOf = svg => [...svg.matchAll(/<polyline class="fc-iso" data-points="(\d+)" points="([^"]+)"/g)].map(m => m[1] + ':' + m[2]);
 
-test('axes: identical in all four windows; a below-threshold player is on them only with the toggle on; position, search and the drawer never move them', async () => {
+test('axes: identical in all four windows; a below-threshold player is never drawn or on them, with the toggle on or off; position, search and the drawer never move them', async () => {
   await withGallery(async g => {
     const per = {};
     for (const w of WINDOWS) per[w] = (await g(w)).m;
@@ -111,8 +111,11 @@ test('axes: identical in all four windows; a below-threshold player is on them o
     assert.ok(per.season.sx.lo < Math.min(...values('sa100')) && per.season.sx.hi > Math.max(...values('sa100')));
     assert.ok(per.season.sy.lo < Math.min(...values('ts_pct')) && per.season.sy.hi > Math.max(...values('ts_pct')));
     for (const s of [per.season.sx, per.season.sy]) assert.ok(s.step === 5 && s.ticks.every(t => t % 5 === 0), 'both step by 5');
-    const everyone = (await g('season', [...IDS, 'z1'], { showAll: true })).m;
-    assert.ok(everyone.sx.hi > 48 && everyone.sy.hi > 130);
+    for (const w of WINDOWS) {
+      const on = (await g(w, [...IDS, 'z1'], { showAll: true })).m;
+      assert.deepEqual(on, per[w], w + ': the same chart with the switch on');
+      assert.ok(!on.pts.some(p => p.id === 'z1'));
+    }
     const filtered = (await g('season', IDS.slice(0, 5), { position: ['C'], query: 'p1', minCr: 9 })).m;
     assert.deepEqual(filtered.sx, per.season.sx); assert.deepEqual(filtered.sy, per.season.sy);
   });

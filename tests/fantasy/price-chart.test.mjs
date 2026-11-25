@@ -211,12 +211,12 @@ test('the gallery: axes from the listed players in all four windows; a below-thr
       assert.equal(off[w].fit.n, IDS.length + 3, 'the line is fitted over the whole pool, the hidden players included');
     }
     const top = Math.max(...IDS.map((_, k) => 4 + k)), best = Math.max(...WINDOWS.flatMap(w => IDS.map(id => rowsOf(w)[id].pir)));
-    assert.equal(off.season.sx.lo, 4); assert.equal(off.season.sx.hi, top + 1, 'toggle off: ends above the highest LISTED credits (not the 40 of the hidden player)');
-    assert.ok(off.season.sy.hi < 60 && off.season.sy.lo > -15 && off.season.sy.hi > best, 'toggle off: the hidden players are not on the y axis');
-    assert.equal(on.season.sx.hi, 41, 'toggle on: the player is listed, so he is part of the axes');
-    assert.ok(on.season.sy.hi >= 60 && on.season.sy.lo < -15);
-    assert.notDeepEqual(on.season.sx, off.season.sx);
-    assert.equal(off.l3.pts.length, IDS.length); assert.equal(on.l3.pts.length, IDS.length + 3);
+    assert.equal(off.season.sx.lo, 4); assert.equal(off.season.sx.hi, top + 1, 'ends above the highest LISTED credits (not the 40 of the hidden player)');
+    assert.ok(off.season.sy.hi < 60 && off.season.sy.lo > -15 && off.season.sy.hi > best, 'the hidden players are not on the y axis');
+    for (const w of WINDOWS) {   // the switch hands the chart more players; the chart takes none of them
+      assert.deepEqual(on[w], off[w], w + ': the same chart with the switch on: no dot added, no axis moved');
+      assert.deepEqual(on[w].pts.map(p => p.id), IDS, w);
+    }
     // position, search and the drawer do not reach the axes: the dots handed over change, the axes do not
     const fewer = modelOf(await galleryHtml('players', 'profile', { win: 'season', view: 'profile', showAll: false, position: ['F'], query: 'p1', minCr: 10 }, IDS.slice(0, 4)));
     assert.deepEqual(fewer.sx, off.season.sx); assert.deepEqual(fewer.sy, off.season.sy); assert.deepEqual(fewer.fit, off.season.fit);
