@@ -203,6 +203,7 @@ body{
 --fantasy-charts-gallery-enlarged-chart-aside-width:280px;
 --fantasy-charts-gallery-enlarged-chart-aside-gap:24px;
 --fantasy-charts-gallery-enlarged-chart-aside-grid-template-rows:minmax(0,1fr);
+--fantasy-charts-gallery-chart-tip-max-width:min(280px,100%);
 --fantasy-charts-gallery-chart-legend-gap:8px;
 --fantasy-charts-gallery-chart-legend-swatch-size:12px;
 --fantasy-player-card-box-scores-margin-top:32px;

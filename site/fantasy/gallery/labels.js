@@ -11,8 +11,17 @@ export function pickOutliers(pts, line, n = 5) {
   return [...above, ...below].sort((p, q) => Math.abs(q.resid) - Math.abs(p.resid));
 }
 
-/** The surname shown on the chart: the last word of the name. */
-export const surname = name => String(name).trim().split(/\s+/).pop();
+/** The `n` drawn points furthest from a centre (the two league values) by STANDARDIZED distance: each axis measured in the standard deviation of the drawn points, so a percent and a rate count alike.
+    An axis on which every point is the same adds nothing. Returns [{ id, dist }], furthest first. A display choice, not a metric. */
+export function pickExtremes(pts, centre, n = 9) {
+  if (!centre || !pts.length) return [];
+  const sd = k => { const m = pts.reduce((s, p) => s + p[k], 0) / pts.length; return Math.sqrt(pts.reduce((s, p) => s + (p[k] - m) ** 2, 0) / pts.length); };
+  const sa = sd('a'), sb = sd('b'), z = (v, c, s) => (s > 0 ? (v - c) / s : 0);
+  return pts.map(p => ({ id: p.id, dist: Math.hypot(z(p.a, centre.x, sa), z(p.b, centre.y, sb)) })).filter(p => Number.isFinite(p.dist) && p.dist > 0).sort((p, q) => q.dist - p.dist).slice(0, n);
+}
+
+/** The surname shown on the chart: the last word of the name; a generational suffix (Jr, Sr, II, III, IV) is not a surname, so the word before it comes with it. */
+export const surname = name => { const words = String(name).trim().split(/\s+/), n = words.length; return n > 2 && /^(jr|sr|ii|iii|iv)\.?$/i.test(words[n - 1]) ? words.slice(-2).join(' ') : words[n - 1]; };
 
 const overlap = (a, b, gap) => a.x < b.x + b.w + gap && b.x < a.x + a.w + gap && a.y < b.y + b.h + gap && b.y < a.y + a.h + gap;
 
