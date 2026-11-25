@@ -1,42 +1,25 @@
-/* The one scale for every scatter of the Charts gallery: the axis ends at the next round tick beyond the data (no forced zero, no percentage margin), 6 to 8 ticks in the opened card;
+/* The one scale for every scatter of the Charts gallery. The STEP is a property of the metric (declared in axes.js); the data decides only the two ends (no forced zero, no percentage margin).
    equalScale gives both axes of x = y charts the same range; separate nudges logos that would overlap. Pure functions, no DOM. */
 
-const MANTISSAS = [1, 2, 2.5, 5];   // x 10^n (10 is 1 x 10^(n+1)): Pace by 1 or 2, DRtg by 5, TOV per 100 by 1 or 2, percentages by 2, 2.5 or 5
 const clean = v => +v.toFixed(10);
 
-/** Every round step (1, 2, 2.5, 5 x 10^n) from fine to coarse that could suit a range of this size. */
-const stepsFor = span => { const base = Math.pow(10, Math.floor(Math.log10((span || 1) / 12))), out = []; for (let e = 0; e < 3; e++) for (const m of MANTISSAS) out.push(clean(m * base * Math.pow(10, e))); return out; };
-
-/** The edges for [min, max] at a step: the next multiple of the step BEYOND each extreme (an extreme that sits exactly on a multiple goes one more step). */
-const edges = (min, max, step) => ({ step, lo: clean((Math.ceil(min / step - 1e-9) - 1) * step), hi: clean((Math.floor(max / step + 1e-9) + 1) * step) });
-
-/** Axis for a list of values. The axis ends at the next round tick beyond the highest value and starts at the previous round tick before the lowest (one more step when an extreme sits exactly on a tick);
-    nothing else adds margin, so every gap is smaller than one step. The step (1, 2, 2.5, 5 x 10^n) is picked here from the range: the one that gives 6 to 8 ticks (the smallest margin wins, then the coarser step);
-    when none does, the step whose tick count is nearest to 7. Thumbnails keep the same range and every second tick (at most 4, round numbers).
-    { lo, hi, ticks (opened card), thumb (thumbnails), step, digits }. */
-export function axisScale(values) {
-  const v = values.filter(Number.isFinite);
-  if (!v.length) return { lo: 0, hi: 1, ticks: [0, 1], thumb: [0, 1], step: 1, digits: 0 };
-  const min = Math.min(...v), max = Math.max(...v);
-  const opts = stepsFor(max - min || Math.abs(max) * .2 || 1).map(st => { const e = edges(min, max, st); return { ...e, n: Math.round((e.hi - e.lo) / st) + 1 }; });
-  const inBand = opts.filter(o => o.n >= 6 && o.n <= 8);
-  const pick = (inBand.length ? inBand : opts).sort((p, q) => (inBand.length ? 0 : Math.abs(p.n - 7) - Math.abs(q.n - 7)) || (p.hi - p.lo) - (q.hi - q.lo) || q.step - p.step)[0];
-  const ticks = Array.from({ length: pick.n }, (_, i) => clean(pick.lo + i * pick.step));
-  return { lo: pick.lo, hi: pick.hi, ticks, thumb: ticks.filter((_, i) => i % 2 === 0), step: pick.step, digits: Math.min(4, (String(+pick.step.toPrecision(6)).split('.')[1] || '').length) };
+/** Axis for a list of values and the rule of its metric ({ step, floor?, ceiling? }). The low end is the multiple of the step before the lowest value and the high end the multiple after the highest one;
+    an extreme that sits exactly on a multiple goes one more step. The step never depends on the data. A real limit wins: an axis with a floor starts exactly there (lower only if a value is below it,
+    then at the multiple at or below that value) and keeps a grid line at every step also in thumbnails; an axis never goes above its ceiling.
+    { lo, hi, ticks (every step: the opened card), thumb (every second one: thumbnails, and the labels at narrow width), grid (with a floor), step, digits (from the step) }. */
+export function axisScale(values, rule) {
+  const { step, floor, ceiling = Infinity } = rule || {};
+  if (!(step > 0)) throw new Error('an axis needs the declared step of its metric (axes.js)');
+  const v = values.filter(Number.isFinite), min = v.length ? Math.min(...v) : floor ?? 0, max = v.length ? Math.max(...v) : min;
+  const lo = clean(floor === undefined ? (Math.ceil(min / step - 1e-9) - 1) * step : Math.min(floor, Math.floor(min / step + 1e-9) * step));
+  const hi = clean(Math.min(ceiling, Math.max(lo + step, (Math.floor(max / step + 1e-9) + 1) * step)));
+  const ticks = Array.from({ length: Math.round((hi - lo) / step) + 1 }, (_, i) => clean(lo + i * step));
+  return { lo, hi, ticks, thumb: ticks.filter((_, i) => i % 2 === 0), ...(floor === undefined ? {} : { grid: ticks }), step, digits: Math.min(4, (String(+step.toPrecision(6)).split('.')[1] || '').length) };
 }
 
-/** Axis of a quantity that has a real minimum and counts in whole numbers (credits: nothing costs less than 4). It starts exactly at `floor` (lower only if a value is below it), ends at the first whole number
-    above the highest value (20.2 -> 21, 20 -> 21), and has a grid line and a tick at every whole number. `ticks` = every whole number (labels in the opened card), `thumb` = every second one (labels in thumbnails and at narrow
-    width); `grid` = every whole number always. { lo, hi, ticks, thumb, grid, step: 1, digits: 0 }. */
-export function integerScale(values, floor) {
-  const v = values.filter(Number.isFinite), lo = Math.min(floor, ...v.map(Math.floor)), hi = Math.max(lo + 1, ...v.map(x => Math.floor(x) + 1));
-  const ticks = Array.from({ length: hi - lo + 1 }, (_, i) => lo + i);
-  return { lo, hi, ticks, thumb: ticks.filter((_, i) => i % 2 === 0), grid: ticks, step: 1, digits: 0 };
-}
-
-/** One shared range for both axes (the x = y chart): the same domain and ticks for x and y, so the diagonal is exactly 45° on a square plot. */
-export function equalScale(xs, ys) {
-  const s = axisScale([...xs, ...ys]);
+/** One shared range for both axes (the x = y chart): the same domain and ticks for x and y, from both metrics, so the diagonal is exactly 45° on a square plot. */
+export function equalScale(xs, ys, rule) {
+  const s = axisScale([...xs, ...ys], rule);
   return [s, s];
 }
 

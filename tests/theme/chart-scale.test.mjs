@@ -44,7 +44,7 @@ test('spacing, heights and sizes of the chart parts are multiples of 4', () => {
   const spacing = /^(margin|padding|gap|row-gap|column-gap|height|min-height|max-height|swatch-size)(-|$)/;
   for (const t of props(sizes)) {
     if (t.part === 'plot') {   // drawing geometry: numbers in px; the data-driven ratios and the width are not sizes
-      if (typeof t.value === 'number' && !/^(aspect|logo-density)/.test(t.prop)) assert.equal(t.value % 4, 0, `${t.name}: ${t.value}`);
+      if (typeof t.value === 'number' && !/^(aspect|logo-density|bubble-radius)/.test(t.prop)) assert.equal(t.value % 4, 0, `${t.name}: ${t.value}`);
       continue;
     }
     if (spacing.test(t.prop)) for (const v of pxs(t.value)) assert.equal(v % 4, 0, `${t.name}: ${t.value}`);

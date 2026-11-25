@@ -211,12 +211,12 @@ test('the gallery: axes from the listed players in all four windows; a below-thr
       assert.equal(off[w].fit.n, IDS.length + 3, 'the line is fitted over the whole pool, the hidden players included');
     }
     const top = Math.max(...IDS.map((_, k) => 4 + k)), best = Math.max(...WINDOWS.flatMap(w => IDS.map(id => rowsOf(w)[id].pir)));
-    assert.equal(off.season.sx.lo, 4); assert.equal(off.season.sx.hi, top + 1, 'toggle off: ends above the highest LISTED credits (not the 40 of the hidden player)');
-    assert.ok(off.season.sy.hi < 60 && off.season.sy.lo > -15 && off.season.sy.hi > best, 'toggle off: the hidden players are not on the y axis');
-    assert.equal(on.season.sx.hi, 41, 'toggle on: the player is listed, so he is part of the axes');
-    assert.ok(on.season.sy.hi >= 60 && on.season.sy.lo < -15);
-    assert.notDeepEqual(on.season.sx, off.season.sx);
-    assert.equal(off.l3.pts.length, IDS.length); assert.equal(on.l3.pts.length, IDS.length + 3);
+    assert.equal(off.season.sx.lo, 4); assert.equal(off.season.sx.hi, top + 1, 'ends above the highest LISTED credits (not the 40 of the hidden player)');
+    assert.ok(off.season.sy.hi < 60 && off.season.sy.lo > -15 && off.season.sy.hi > best, 'the hidden players are not on the y axis');
+    for (const w of WINDOWS) {   // the switch hands the chart more players; the chart takes none of them
+      assert.deepEqual(on[w], off[w], w + ': the same chart with the switch on: no dot added, no axis moved');
+      assert.deepEqual(on[w].pts.map(p => p.id), IDS, w);
+    }
     // position, search and the drawer do not reach the axes: the dots handed over change, the axes do not
     const fewer = modelOf(await galleryHtml('players', 'profile', { win: 'season', view: 'profile', showAll: false, position: ['F'], query: 'p1', minCr: 10 }, IDS.slice(0, 4)));
     assert.deepEqual(fewer.sx, off.season.sx); assert.deepEqual(fewer.sy, off.season.sy); assert.deepEqual(fewer.fit, off.season.fit);
@@ -227,27 +227,26 @@ test('the gallery: axes from the listed players in all four windows; a below-thr
 });
 
 // ---- the credits axis: a real minimum of 4, whole numbers
-import { integerScale, axisScale } from '../../site/fantasy/gallery/scale.js';
-import { axisFloor } from '../../site/fantasy/gallery/axes.js';
+import { axisScale } from '../../site/fantasy/gallery/scale.js';
+import { axisRule } from '../../site/fantasy/gallery/axes.js';
 
-test('integerScale: starts exactly at the floor, ends at the first whole number above the highest value, a tick at every whole number', () => {
-  const s = integerScale([4, 9.5, 20.2], 4);
+test('the credits axis: starts exactly at the floor, ends at the first whole number above the highest value, a tick at every whole number', () => {
+  const credits = v => axisScale(v, axisRule('cr')), s = credits([4, 9.5, 20.2]);
   assert.equal(s.lo, 4); assert.equal(s.hi, 21);
   assert.deepEqual(s.ticks, Array.from({ length: 18 }, (_, i) => 4 + i));
   assert.deepEqual(s.grid, s.ticks, 'the grid is every whole number');
   assert.deepEqual(s.thumb, [4, 6, 8, 10, 12, 14, 16, 18, 20], 'labels on every second whole number');
-  assert.equal(integerScale([5, 20], 4).hi, 21, 'a highest value exactly on a whole number still gets one more');
-  assert.equal(integerScale([6.1, 7], 4).lo, 4, 'the floor, not the lowest value');
-  assert.equal(integerScale([3, 9], 4).lo, 3, 'a value below the floor is never cut off');
-  assert.equal(axisFloor('cr'), 4); assert.equal(axisFloor('pir'), undefined);
+  assert.equal(credits([5, 20]).hi, 21, 'a highest value exactly on a whole number still gets one more');
+  assert.equal(credits([6.1, 7]).lo, 4, 'the floor, not the lowest value');
+  assert.equal(credits([3, 9]).lo, 3, 'a value below the floor is never cut off');
 });
 
-test('the credits axis of the chart: 4 to the next whole number above the pool\'s highest credits (all windows), drawn with a grid line at every whole number; PIR keeps the round-tick rule', () => {
+test('the credits axis of the chart: 4 to the next whole number above the pool\'s highest credits (all windows), drawn with a grid line at every whole number; PIR steps by 5', () => {
   const m = plot('season'), top = Math.max(...Object.values(rowsOf('season')).map(r => r.cr));   // 27 in the synthetic league
   assert.equal(m.sx.lo, 4); assert.equal(m.sx.hi, Math.floor(top) + 1);
   assert.deepEqual(m.sx.grid, m.sx.ticks);
-  assert.equal(m.sy.grid, undefined, 'PIR: the general rule');
-  assert.ok(m.sy.step > 1 || m.sy.ticks.length <= 9);
+  assert.equal(m.sy.grid, undefined, 'PIR has no floor');
+  assert.equal(m.sy.step, 5);
   const grid = svg => (svg.match(/<line class="fc-grid" x1="([\d.]+)" x2="\1"/g) || []).length;
   const label = svg => [...svg.matchAll(/<text class="fc-tick"[^>]*text-anchor="middle">([^<]+)</g)].map(x => +x[1]);
   const all = m.sx.ticks.length;
@@ -299,7 +298,7 @@ test('the dots: players are drawn as team-coloured dots (thumbnail and opened ca
   assert.ok(m.pts[0].tip.includes(' · ' + teamCode(ROS, 'XXX') + ' · Credits '), 'the read-out names the team');
   // the Teams charts are as they were: a logo, no team colour
   const t = { id: 'a', a: 1, b: 2, name: 'A', logo: 'assets/logos/x.png', tip: 't' };
-  const tm = { title: 't', xTitle: 'x', yTitle: 'y', equal: false, fav: { x: 0, y: 0 }, sx: axisScale([0, 4]), sy: axisScale([0, 4]), avg: null, pts: [t, { ...t, id: 'b', a: 2, b: 3 }] };
+  const tm = { title: 't', xTitle: 'x', yTitle: 'y', equal: false, fav: { x: 0, y: 0 }, sx: axisScale([0, 4], { step: 1 }), sy: axisScale([0, 4], { step: 1 }), avg: null, pts: [t, { ...t, id: 'b', a: 2, b: 3 }] };
   assert.ok(drawScatter(tm, 900, false, 'full').includes('<image'), 'a team keeps its logo');
   assert.ok(!drawScatter(tm, 900, false, 'full').includes('fc-team'));
 });

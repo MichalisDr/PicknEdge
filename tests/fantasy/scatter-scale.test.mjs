@@ -1,64 +1,74 @@
-// The shared scale of the gallery scatters: padding, 4–6 round ticks, no forced zero, equal range for the x = y chart, logo separation.
+// The shared scale of the gallery scatters: a fixed step per metric (axes.js), the ends from the data, real limits, equal range for the x = y chart, logo separation.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { axisScale, equalScale, separate } from '../../site/fantasy/gallery/scale.js';
+import { axisRule } from '../../site/fantasy/gallery/axes.js';
+import { CHARTS } from '../../site/fantasy/gallery/charts.js';
 import { drawScatter } from '../../site/fantasy/gallery/scatter.js';
 
 const near = (a, b, eps = 1e-9) => assert.ok(Math.abs(a - b) < eps, `${a} ≈ ${b}`);
+const SETS = [[98.2, 101.5, 104.9, 110.3], [13.1, 19.4], [-4, 7], [105.4, 125.4], [71.6, 77.3], [48.3, 60.4], [70, 70.2], [3, 400]];
+const STEPS = { pace: 1, drtg: 5, o_efg: 2, o_exp_efg: 2, o_tov100: 2, t_dreb_pct: 2, o_a3_rate: 2, o_fg3_pct: 2, o_rim_rate: 2, o_zs_rim_pct: 5, cr: 1, pir: 5, sa100: 5, ts_pct: 5 };
 
-const STEP_OK = step => { const m = step / Math.pow(10, Math.floor(Math.log10(step))); return [1, 2, 2.5, 5].some(x => Math.abs(x - m) < 1e-6); };
-const SETS = [[98.2, 101.5, 104.9, 110.3], [0.46, 0.58], [13.1, 19.4], [1000, 25000], [3.001, 3.004], [-4, 7], [105.4, 125.4], [71.6, 77.3], [48.3, 60.4]];
+test('every axis of every chart has its declared step, and only two metrics have a limit: credits (floor 4) and rim FG% (ceiling 100)', () => {
+  assert.deepEqual([...new Set(CHARTS.flatMap(c => [c.x, c.y]))].sort(), Object.keys(STEPS).sort());
+  for (const [id, step] of Object.entries(STEPS)) {
+    assert.equal(axisRule(id).step, step, id);
+    assert.deepEqual([axisRule(id).floor, axisRule(id).ceiling], [id === 'cr' ? 4 : undefined, id === 'o_zs_rim_pct' ? 100 : undefined], id);
+  }
+  assert.throws(() => axisRule('efg'), /no axis step declared/);
+  assert.throws(() => axisScale([1, 2]), /declared step/);
+  for (const c of CHARTS.filter(c => c.equal)) assert.equal(axisRule(c.x).step, axisRule(c.y).step, 'an x = y chart has one step');
+});
 
-test('the axis ends at the next round tick beyond the data, with no forced zero and no percentage margin: every gap is smaller than one step', () => {
-  for (const vals of SETS) {
-    const s = axisScale(vals), lo = Math.min(...vals), hi = Math.max(...vals);
+test('the step never depends on the data: a narrow and a wide range get the same step, and a tick at every multiple of it', () => {
+  for (const step of [1, 2, 5]) for (const vals of [...SETS, [50.1, 50.2], [-300, 900]]) {
+    const s = axisScale(vals, { step });
+    assert.equal(s.step, step);
+    assert.equal(s.ticks.length, Math.round((s.hi - s.lo) / step) + 1);
+    s.ticks.forEach((t, i) => { near(t, s.lo + i * step); near(t / step, Math.round(t / step), 1e-6); });
+    assert.deepEqual(s.thumb, s.ticks.filter((_, i) => i % 2 === 0), 'every second tick');
+  }
+});
+
+test('the ends: the multiple before the lowest and after the highest value, nothing more; no forced zero, no percentage margin', () => {
+  for (const step of [1, 2, 5]) for (const vals of SETS) {
+    const s = axisScale(vals, { step }), lo = Math.min(...vals), hi = Math.max(...vals);
     assert.ok(s.lo < lo && s.hi > hi, 'strictly inside');
-    assert.ok(lo - s.lo < s.step + 1e-9 && s.hi - hi < s.step + 1e-9, `${vals}: gaps under one step (${s.step})`);
-    assert.ok(STEP_OK(s.step), `round step ${s.step}`);
+    assert.ok(lo - s.lo <= step + 1e-9 && s.hi - hi <= step + 1e-9, `${vals}: gaps of at most one step (${step})`);
   }
-  assert.ok(axisScale([98.2, 110.3]).lo > 0, 'no zero baseline');
+  assert.ok(axisScale([98.2, 110.3], { step: 5 }).lo > 0, 'no zero baseline');
 });
 
-test('an extreme value that sits exactly on a tick goes one more step', () => {
-  const s = axisScale([100, 110]);
-  assert.ok(s.lo < 100 && s.hi > 110);
-  assert.ok(100 - s.lo <= s.step && s.hi - 110 <= s.step);
+test('an extreme value that sits exactly on a multiple goes one more step', () => {
+  assert.deepEqual([axisScale([100, 110], { step: 5 }).lo, axisScale([100, 110], { step: 5 }).hi], [95, 115]);
+  assert.equal(axisScale([42.4, 100], axisRule('ts_pct')).hi, 105, 'TS% has no ceiling');
+  assert.equal(axisScale([30, 89.3], axisRule('ts_pct')).lo, 25);
+  assert.equal(axisScale([0, 20], axisRule('sa100')).lo, -5, 'and no floor');
 });
 
-test('the opened card has 6 to 8 ticks when the steps allow (otherwise the nearest count), edges and ticks are round numbers, thumbnails show every second tick', () => {
-  for (const vals of SETS) {
-    const s = axisScale(vals);
-    assert.ok(s.ticks.length >= 5 && s.ticks.length <= 9, `${vals}: ${s.ticks}`);
-    assert.ok(Math.abs(s.ticks[0] - s.lo) < 1e-9 && Math.abs(s.ticks.at(-1) - s.hi) < 1e-9, 'the axis starts and ends on a tick');
-    for (const t of s.ticks) assert.ok(Math.abs(t / s.step - Math.round(t / s.step)) < 1e-6, `${t} is a multiple of ${s.step}`);
-    assert.ok(s.thumb.length >= 2 && s.thumb.length <= 4 && s.thumb.every(t => s.ticks.includes(t)), `${vals} thumb: ${s.thumb}`);
-  }
-  assert.ok(axisScale([66.3, 78.2]).ticks.length >= 6);
-});
-
-test('the step suits the metric: Pace by 1 or 2, DRtg by 5, TOV per 100 by 1 or 2, percentages by 2, 2.5 or 5', () => {
-  assert.ok([1, 2].includes(axisScale([71.6, 72.4, 76.5, 77.3]).step), 'pace');
-  assert.equal(axisScale([105.4, 112, 119.7, 125.4]).step, 5);   // DRtg
-  assert.ok([1, 2].includes(axisScale([13.0, 16, 19.8]).step), 'tov');
-  assert.ok([2, 2.5, 5].includes(axisScale([48.3, 54.6, 60.4]).step), 'percentage');
+test('real limits: rim FG% never goes above 100; credits start at 4', () => {
+  for (const top of [97, 99.9, 100]) assert.equal(axisScale([62, top], axisRule('o_zs_rim_pct')).hi, 100, String(top));
+  assert.equal(axisScale([62, 94.9], axisRule('o_zs_rim_pct')).hi, 95);
+  assert.equal(axisScale([6.1, 7], axisRule('cr')).lo, 4);
+  assert.equal(axisScale([4, 20.2], axisRule('cr')).lo, 4);
 });
 
 test('digits follow the step so tick labels are exact', () => {
-  assert.equal(axisScale([95, 120]).digits, 0);
-  assert.equal(axisScale([0.461, 0.58]).digits, axisScale([0.461, 0.58]).step === 0.025 ? 3 : 2);
-  assert.equal(axisScale([11.3, 19.6]).digits, 0);
-  assert.equal(axisScale([1.1, 2.4]).digits, String(axisScale([1.1, 2.4]).step).split('.')[1]?.length || 0);
+  assert.equal(axisScale([95, 120], { step: 5 }).digits, 0);
+  assert.equal(axisScale([1.1, 2.4], { step: 0.5 }).digits, 1);
+  assert.equal(axisScale([0.461, 0.58], { step: 0.025 }).digits, 3);
 });
 
 test('a single value still gets a usable axis', () => {
-  const s = axisScale([52, 52]);
+  const s = axisScale([52, 52], { step: 2 });
   assert.ok(s.hi > s.lo && s.ticks.length >= 2);
 });
 
 test('equal scale: both axes share range and ticks, and the diagonal is exactly 45° on the square plot', () => {
-  const xs = [0.49, 0.51, 0.53], ys = [0.47, 0.5, 0.56], [sx, sy] = equalScale(xs, ys);
+  const xs = [49, 51, 53], ys = [47, 50, 56], [sx, sy] = equalScale(xs, ys, axisRule('o_efg'));
   assert.deepEqual(sx, sy);
-  assert.ok(sx.lo < 0.47 && sx.hi > 0.56);   // from both metrics
+  assert.deepEqual([sx.lo, sx.hi, sx.step], [46, 58, 2]);   // from both metrics
   const model = { title: 't', xTitle: 'x', yTitle: 'y', equal: true, fav: { x: 1, y: 1 }, sx, sy, avg: null, pts: [] };
   const svg = drawScatter(model, 640, false), d = svg.match(/class="fc-diag" x1="([\d.-]+)" y1="([\d.-]+)" x2="([\d.-]+)" y2="([\d.-]+)"/).slice(1).map(Number);
   near(d[2] - d[0], d[1] - d[3], 0.2);   // run = rise (svg y points down), to the rounding of the coordinates

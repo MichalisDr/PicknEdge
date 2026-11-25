@@ -5,10 +5,10 @@ import { esc } from '../../core/html.js';
 import { size } from '../../core/sizes.js';
 import { teamLogo, teamCode } from '../../core/teams.js';
 import { teamColour } from '../../core/team-colour.js';
-import { axisScale, equalScale, integerScale, separateBoxes, overlapPairs } from './scale.js';
+import { axisScale, equalScale, separateBoxes, overlapPairs } from './scale.js';
 import { logoFit, logoBox } from './logo-fit.js';
 import { favourable, quadrantTone, diagonalTone } from './tint.js';
-import { axisMeta, axisValue, axisFloor } from './axes.js';
+import { axisMeta, axisValue, axisRule } from './axes.js';
 import { fitLine, lineSegment, zones } from './fit.js';
 import { pickOutliers, pickExtremes, placeLabels, surname } from './labels.js';
 import { isoCurve, isoTs } from './curves.js';
@@ -19,11 +19,22 @@ const fmt = (m, v) => v.toFixed(m.format.digits) + m.format.suffix;
 /** Values of one metric over every entity of every window view: the axis range of a chart is computed from these, once, so it does not move when the window or a filter changes. */
 const allValues = (views, id) => views.flatMap(v => v.keys.map(k => axisValue(v, k, id))).filter(Number.isFinite);
 
-/** The axes of a chart: [x, y] scales from the min and max over all windows (the x = y chart: one shared range from the union of both metrics). */
+/** The axes of a chart: [x, y] scales, the ends from the min and max over all windows, the step from the metric (the x = y chart: one shared range from the union of both metrics, which share their step). */
 export function chartScales(chart, views) {
   const xs = allValues(views, chart.x), ys = allValues(views, chart.y);
-  const scale = (id, v) => (axisFloor(id) !== undefined ? integerScale(v, axisFloor(id)) : axisScale(v));   // a quantity with a real minimum (credits) starts there and counts in whole numbers
-  return chart.equal ? equalScale(xs, ys) : [scale(chart.x, xs), scale(chart.y, ys)];
+  return chart.equal ? equalScale(xs, ys, axisRule(chart.x)) : [axisScale(xs, axisRule(chart.x)), axisScale(ys, axisRule(chart.y))];
+}
+
+const plotSize = k => size('fantasy.charts-gallery.plot.' + k);
+
+/** The radius of a dot whose size is an amount (chart.size: shot attempts), in px at the reference size: rMin + k x sqrt(amount), so the dot's area grows with the amount. The same function in every window. */
+export const bubbleRadius = n => plotSize('bubble-radius-min') + plotSize('bubble-radius-per-root') * Math.sqrt(n > 0 ? n : 0);
+
+/** The size key of a chart whose dots have a size: sample dots at the radii of the opened card, with their amounts. '' for the other charts. */
+export function sizeKey(chart, byId) {
+  if (!chart.size) return '';
+  const label = byId[chart.size.id].label, biggest = bubbleRadius(Math.max(...chart.size.key)), box = Math.ceil(2 * biggest) + 2;   // every sample as tall as the biggest, each only as wide as its own dot
+  return `<div class="fc-sizekey" role="img" aria-label="${esc(`Dot size shows ${label}: ${chart.size.key.join(', ')}`)}"><span>Dot size = ${esc(label)}</span>${chart.size.key.map(n => { const r = +bubbleRadius(n).toFixed(2), w = Math.ceil(2 * r) + 2; return `<span class="fc-sizekey-item"><svg width="${w}" height="${box}" viewBox="0 0 ${w} ${box}" aria-hidden="true"><circle class="fc-dot" cx="${w / 2}" cy="${box / 2}" r="${r}"/></svg>${n}</span>`; }).join('')}</div>`;
 }
 
 /** The read-out of a chart that lists its own figures (chart.hover): 'name · team · label value · ...', each in its metric's format ('—' when there is none). */
@@ -37,7 +48,8 @@ export function scatter(chart, view, ids, byId, roster, views = [view]) {
     if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
     const name = chart.entity === 'teams' ? roster.teams[id] || id : roster.players[id]?.name || id;
     const dataTeam = chart.entity === 'teams' ? null : view.row(id)?.team, team = dataTeam ? teamCode(roster, dataTeam) : null;   // a player's dot takes his team's colour (core/team-colour.js, by public code); the Teams charts keep their logos
-    pts.push({ id, a, b, name, label: chart.entity === 'teams' ? teamCode(roster, id) : id, logo: chart.entity === 'teams' ? teamLogo(roster, id) || '' : '', ...(team ? { team } : {}), tip: chart.hover ? readOut(chart, view, id, byId, name, team) : `${name} · ${team ? team + ' · ' : ''}${mx.label} ${fmt(mx, a)} · ${my.label} ${fmt(my, b)}` });
+    const amount = chart.size ? axisValue(view, id, chart.size.id) : undefined;   // the size of the dot; a player without one is still drawn (the smallest dot)
+    pts.push({ id, a, b, ...(chart.size ? { n: Number.isFinite(amount) ? amount : 0 } : {}), name, label: chart.entity === 'teams' ? teamCode(roster, id) : id, logo: chart.entity === 'teams' ? teamLogo(roster, id) || '' : '', ...(team ? { team } : {}), tip: chart.hover ? readOut(chart, view, id, byId, name, team) : `${name} · ${team ? team + ' · ' : ''}${mx.label} ${fmt(mx, a)} · ${my.label} ${fmt(my, b)}` });
   }
   if (pts.length < 2) return '<p class="fw-empty">Not enough data for this chart.</p>';
   const [sx, sy] = chartScales(chart, views);
@@ -53,6 +65,7 @@ export function scatter(chart, view, ids, byId, roster, views = [view]) {
   if (chart.corners) model.corners = chart.corners;   // the league lines (model.avg: the league row of the window = the whole pool, never the dots drawn) split the plot; only the right side is tinted
   if (chart.curves) model.curves = chart.curves;
   if (chart.extremes) model.extremes = chart.extremes;
+  if (chart.size) model.sized = true;
   if (chart.fit || chart.move) model.key = chart.id;
   return `<div class="fc-plot" data-plot="${esc(JSON.stringify(model))}"><div class="fc-canvas">${drawScatter(model, size('fantasy.charts-gallery.plot.plot-width'), false, 'thumb')}</div><div class="fc-tip fw-bar-tip${chart.hover ? ' fc-tip-long' : ''}" role="status" hidden></div></div>`;
 }
@@ -64,17 +77,19 @@ export function narrowHeight(model, W) {
 }
 
 /** The svg of a model at a pixel width (1 svg unit = 1 css px, so lettering and logos are real sizes); `narrow` = phone sizes.
-    mode 'thumb' (gallery thumbnail): plain dots, no labels, every second tick; 'full' (opened card): team logos, 6-8 ticks. H = the height to fill (default: width x aspect). */
+    mode 'thumb' (gallery thumbnail): plain dots, no labels, every second tick; 'full' (opened card): team logos, a grid line and a label at every step (narrow: a label at every second one). H = the height to fill (default: width x aspect). */
 export function drawScatter(model, W, narrow, mode = 'thumb', H = Math.round(W * size('fantasy.charts-gallery.plot.' + (narrow && mode === 'full' ? 'aspect-narrow' : 'aspect')))) {
   const full = mode === 'full', P = k => size('fantasy.charts-gallery.plot.' + k);
   const L = P(narrow ? 'margin-left-narrow' : 'margin-left'), R = P(narrow ? 'margin-right-narrow' : 'margin-right'), Tp = P('margin-top'), B = P('margin-bottom');
   const iw = W - L - R, ih = H - Tp - B, side = model.equal ? Math.min(iw, ih) : null;   // the x = y chart has a square plot area: same range on both axes = exactly 45°
   const x0 = side ? L + (iw - side) / 2 : L, x1 = side ? x0 + side : W - R, y1 = H - B, y0 = side ? y1 - side : Tp;
   const { sx, sy } = model, X = v => x0 + (v - sx.lo) / (sx.hi - sx.lo) * (x1 - x0), Y = v => y1 - (v - sy.lo) / (sy.hi - sy.lo) * (y1 - y0), f = v => +v.toFixed(1);
-  const tx = full ? sx.ticks : sx.thumb, ty = full ? sy.ticks : sy.thumb;
-  const lx = sx.grid ? (full && !narrow ? sx.ticks : sx.thumb) : tx;   // an axis with a whole-number grid keeps every grid line; only the labels thin out (thumbnail, narrow)
-  const grid = (sx.grid || []).map(v => `<line class="fc-grid" x1="${f(X(v))}" x2="${f(X(v))}" y1="${f(y0)}" y2="${f(y1)}"/>`).join('') + lx.map(v => `${sx.grid ? '' : `<line class="fc-grid" x1="${f(X(v))}" x2="${f(X(v))}" y1="${f(y0)}" y2="${f(y1)}"/>`}<text class="fc-tick" x="${f(X(v))}" y="${f(y1 + P('tick-offset-y'))}" text-anchor="middle">${v.toFixed(sx.digits)}</text>`).join('')
-    + ty.map(v => `<line class="fc-grid" x1="${f(x0)}" x2="${f(x1)}" y1="${f(Y(v))}" y2="${f(Y(v))}"/><text class="fc-tick" x="${f(x0 - P('tick-offset-x'))}" y="${f(Y(v) + P('tick-baseline'))}" text-anchor="end">${v.toFixed(sy.digits)}</text>`).join('');
+  // Opened card: a grid line at every step (an axis with a floor keeps them in the thumbnail too, every other axis shows every second one there); a label on every grid line only in the wide opened card.
+  const lines = s => (full ? s.ticks : s.grid || s.thumb), labels = s => (full && !narrow ? s.ticks : s.thumb);
+  const grid = lines(sx).map(v => `<line class="fc-grid" x1="${f(X(v))}" x2="${f(X(v))}" y1="${f(y0)}" y2="${f(y1)}"/>`).join('')
+    + labels(sx).map(v => `<text class="fc-tick" x="${f(X(v))}" y="${f(y1 + P('tick-offset-y'))}" text-anchor="middle">${v.toFixed(sx.digits)}</text>`).join('')
+    + lines(sy).map(v => `<line class="fc-grid" x1="${f(x0)}" x2="${f(x1)}" y1="${f(Y(v))}" y2="${f(Y(v))}"/>`).join('')
+    + labels(sy).map(v => `<text class="fc-tick" x="${f(x0 - P('tick-offset-x'))}" y="${f(Y(v) + P('tick-baseline'))}" text-anchor="end">${v.toFixed(sy.digits)}</text>`).join('');
   const rect = (xa, xb, ya, yb, tone) => (tone ? `<rect class="fc-q ${tone}" x="${f(xa)}" y="${f(ya)}" width="${f(xb - xa)}" height="${f(yb - ya)}"/>` : '');
   let tint = '';
   if (model.corners && model.avg) {   // only the right of the volume line is judged: above the efficiency line good, below it bad; clipped to the plot
@@ -143,16 +158,21 @@ export function drawScatter(model, W, narrow, mode = 'thumb', H = Math.round(W *
   }
   const r = logo / 2, fit = {};
 
-  const dots = model.pts.map((p, i) => {
+  // A dot with a size has its own radius (in a thumbnail scaled with the plot, from the reference plot width); every other dot has the one dot radius. Largest first, so a small dot is never under a big one.
+  const radii = model.pts.map(p => (model.sized ? bubbleRadius(p.n) * (full ? 1 : W / P('plot-width')) : dotR));
+  const order = model.pts.map((_, i) => i);
+  if (model.sized) order.sort((i, j) => radii[j] - radii[i]);
+  const dots = order.map(i => {
+    const p = model.pts[i], dr = +radii[i].toFixed(2), hit = model.sized ? Math.max(dr, P('hit-radius-min')) : dotR + P('hit-pad');
     const body = full && p.logo ? `<circle class="fc-hit" r="${r}"/><image href="${esc(p.logo)}" x="${f((fit[p.logo] ||= logoFit(p.logo, logo)).x)}" y="${f(fit[p.logo].y)}" width="${f(fit[p.logo].width)}" height="${f(fit[p.logo].height)}" preserveAspectRatio="xMidYMid meet"/>`
-      : `<circle class="fc-hit" r="${dotR + P('hit-pad')}"/><circle class="fc-dot${p.team ? ' fc-team' : ''}" r="${dotR}"${p.team ? ` style="${teamColour(p.team)}"` : ''}/>${full && !model.noLabel ? `<text class="fc-pl" x="${P('label-offset-x')}" y="${P('tick-baseline')}">${esc(p.label ?? p.id)}</text>` : ''}`;
-    return `<g class="fc-pt" data-open="${esc(p.id)}" data-x="${f(at[i].x)}" data-y="${f(at[i].y - (full && p.logo ? r : dotR))}" data-tip="${esc(p.tip)}" tabindex="0" role="img" aria-label="${esc(p.tip)}" transform="translate(${f(at[i].x)} ${f(at[i].y)})">${body}</g>`;
+      : `<circle class="fc-hit" r="${hit}"/><circle class="fc-dot${p.team ? ' fc-team' : ''}" r="${dr}"${p.team ? ` style="${teamColour(p.team)}"` : ''}/>${full && !model.noLabel ? `<text class="fc-pl" x="${P('label-offset-x')}" y="${P('tick-baseline')}">${esc(p.label ?? p.id)}</text>` : ''}`;
+    return `<g class="fc-pt" data-open="${esc(p.id)}" data-x="${f(at[i].x)}" data-y="${f(at[i].y - (full && p.logo ? r : dr))}" data-tip="${esc(p.tip)}" tabindex="0" role="img" aria-label="${esc(p.tip)}" transform="translate(${f(at[i].x)} ${f(at[i].y)})">${body}</g>`;
   }).join('');
   let tags = '';   // the opened card names its outliers: the 5 dots furthest above the line and the 5 furthest below (of the dots drawn), a surname each, where it fits
   const picked = !full || !model.plain ? [] : model.fit ? pickOutliers(model.pts, model.fit, 5) : model.extremes ? pickExtremes(model.pts, model.avg, model.extremes) : [];
   if (picked.length) {
     const text = new Map(model.pts.map(p => [p.id, surname(p.name)])), index = new Map(model.pts.map((p, i) => [p.id, i]));
-    const items = picked.map(o => ({ id: o.id, x: at[index.get(o.id)].x, y: at[index.get(o.id)].y, r: dotR, w: text.get(o.id).length * P('label-char-width'), h: P('label-height') }));
+    const items = picked.map(o => ({ id: o.id, x: at[index.get(o.id)].x, y: at[index.get(o.id)].y, r: radii[index.get(o.id)], w: text.get(o.id).length * P('label-char-width'), h: P('label-height') }));
     // The box is an estimate that is wider than the real lettering: the text is anchored on the side of its own dot (left of the dot: at the box's end; above / below: centred), so it never floats away from it.
     tags = placeLabels(items, { x0, x1, y0, y1 }, blocked, P('label-gap')).map(l => {
       const cx = at[index.get(l.id)].x, anchor = l.x + l.w <= cx ? 'end' : l.x >= cx ? '' : 'middle', tx = anchor === 'end' ? l.x + l.w : anchor ? l.x + l.w / 2 : l.x;

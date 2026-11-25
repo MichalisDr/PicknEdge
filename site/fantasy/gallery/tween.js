@@ -9,7 +9,7 @@ const mix = (a, b, t) => a + (b - a) * t;
 export function between(from, to, t) {
   if (t >= 1 || !from) return to;
   const was = new Map(from.pts.map(p => [p.id, p]));
-  const pts = to.pts.map(p => { const q = was.get(p.id); return q ? { ...p, a: mix(q.a, p.a, t), b: mix(q.b, p.b, t) } : p; });
+  const pts = to.pts.map(p => { const q = was.get(p.id); return q ? { ...p, a: mix(q.a, p.a, t), b: mix(q.b, p.b, t), ...(p.n === undefined ? {} : { n: mix(q.n, p.n, t) }) } : p; });   // a dot's size changes with it
   const fit = from.fit && to.fit ? { ...to.fit, slope: mix(from.fit.slope, to.fit.slope, t), intercept: mix(from.fit.intercept, to.fit.intercept, t) } : to.fit;
   const avg = from.avg && to.avg ? { x: mix(from.avg.x, to.avg.x, t), y: mix(from.avg.y, to.avg.y, t) } : to.avg;   // the league lines slide too
   return { ...to, pts, fit, avg };
