@@ -171,6 +171,9 @@ body{
 --fantasy-charts-gallery-plot-aspect:0.75;
 --fantasy-charts-gallery-plot-width:100%;
 --fantasy-charts-gallery-plot-dot-radius:4;
+--fantasy-charts-gallery-plot-bubble-radius-min:1.5;
+--fantasy-charts-gallery-plot-bubble-radius-per-root:0.75;
+--fantasy-charts-gallery-plot-hit-radius-min:8;
 --fantasy-charts-gallery-plot-logo-size-max:40;
 --fantasy-charts-gallery-plot-logo-size-max-narrow:28;
 --fantasy-charts-gallery-plot-logo-size-min:24;
@@ -204,6 +207,8 @@ body{
 --fantasy-charts-gallery-enlarged-chart-aside-gap:24px;
 --fantasy-charts-gallery-enlarged-chart-aside-grid-template-rows:minmax(0,1fr);
 --fantasy-charts-gallery-chart-tip-max-width:min(280px,100%);
+--fantasy-charts-gallery-chart-size-key-gap:8px;
+--fantasy-charts-gallery-chart-size-key-item-gap:4px;
 --fantasy-charts-gallery-chart-legend-gap:8px;
 --fantasy-charts-gallery-chart-legend-swatch-size:12px;
 --fantasy-player-card-box-scores-margin-top:32px;

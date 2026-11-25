@@ -36,7 +36,7 @@ test('quadrant tones: both favourable = good, both unfavourable = bad, mixed = n
 });
 
 test('the drawn chart has one tint per quadrant with the right class, none for mixed ones; thumbnails and opened card both tint', () => {
-  const sx = axisScale([50, 60]), sy = axisScale([100, 120]);
+  const sx = axisScale([50, 60], { step: 2 }), sy = axisScale([100, 120], { step: 5 });
   const model = { title: 't', xTitle: 'x', yTitle: 'y', equal: false, fav: { x: 1, y: 1 }, sx, sy, avg: { x: 55, y: 110 }, pts: [] };
   for (const mode of ['thumb', 'full']) {
     const svg = drawScatter(model, 640, false, mode), tints = [...svg.matchAll(/class="fc-q (good|bad)" x="([\d.]+)" y="([\d.]+)"/g)];
@@ -51,6 +51,6 @@ test('the drawn chart has one tint per quadrant with the right class, none for m
 test('x = y chart: above the diagonal (opponent shoots better than expected) is green, below red', () => {
   assert.equal(diagonalTone({ x: 1, y: 1 }, true), 'good');
   assert.equal(diagonalTone({ x: 1, y: 1 }, false), 'bad');
-  const s = axisScale([48, 60]), svg = drawScatter({ title: 't', xTitle: 'x', yTitle: 'y', equal: true, fav: { x: 1, y: 1 }, sx: s, sy: s, avg: null, pts: [] }, 640, false, 'full');
+  const s = axisScale([48, 60], { step: 2 }), svg = drawScatter({ title: 't', xTitle: 'x', yTitle: 'y', equal: true, fav: { x: 1, y: 1 }, sx: s, sy: s, avg: null, pts: [] }, 640, false, 'full');
   assert.ok(/<polygon class="fc-q good"/.test(svg) && /<polygon class="fc-q bad"/.test(svg));
 });

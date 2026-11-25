@@ -1135,10 +1135,10 @@ body[data-area=betting]{
   fantasy.charts-gallery.chart-card-focused.outline-width : .fc-card:focus-visible
   fantasy.charts-gallery.chart-card-hovered.border : .fc-card:hover
   fantasy.charts-gallery.chart-gridline.line : .fc-grid
-  fantasy.charts-gallery.chart-note.font-size : .fc-note  |  .fc-legend
-  fantasy.charts-gallery.chart-note.text : .fc-note  |  .fc-legend
-  fantasy.charts-gallery.chart-note.font-size-narrow : .fc-note,.fc-legend
-  fantasy.charts-gallery.chart-note.line-height : .fc-note  |  .fc-legend
+  fantasy.charts-gallery.chart-note.font-size : .fc-note  |  .fc-legend  |  .fc-sizekey
+  fantasy.charts-gallery.chart-note.text : .fc-note  |  .fc-legend  |  .fc-sizekey
+  fantasy.charts-gallery.chart-note.font-size-narrow : .fc-note,.fc-legend,.fc-sizekey
+  fantasy.charts-gallery.chart-note.line-height : .fc-note  |  .fc-legend  |  .fc-sizekey
   fantasy.charts-gallery.chart-subtitle.font-size : .fc-card-sub
   fantasy.charts-gallery.chart-subtitle.text : .fc-card-sub
   fantasy.charts-gallery.chart-subtitle.font-size-narrow : .fc-card-sub

@@ -6,7 +6,7 @@ import { CHARTS, available } from '../../site/fantasy/gallery/charts.js';
 import { isoCurve, isoTs } from '../../site/fantasy/gallery/curves.js';
 import { pickExtremes, surname } from '../../site/fantasy/gallery/labels.js';
 import { between } from '../../site/fantasy/gallery/tween.js';
-import { drawScatter } from '../../site/fantasy/gallery/scatter.js';
+import { drawScatter, bubbleRadius } from '../../site/fantasy/gallery/scatter.js';
 import { size } from '../../site/core/sizes.js';
 import { Data } from '../../site/core/data.js';
 
@@ -110,7 +110,7 @@ test('axes: identical in all four windows; a below-threshold player is on them o
     const values = k => WINDOWS.flatMap(w => IDS.map(id => rowsOf(w)[id][k]));
     assert.ok(per.season.sx.lo < Math.min(...values('sa100')) && per.season.sx.hi > Math.max(...values('sa100')));
     assert.ok(per.season.sy.lo < Math.min(...values('ts_pct')) && per.season.sy.hi > Math.max(...values('ts_pct')));
-    for (const s of [per.season.sx, per.season.sy]) assert.ok(s.ticks.length >= 5 && s.ticks.length <= 9 && s.ticks.every(t => Math.abs(t / s.step - Math.round(t / s.step)) < 1e-6), 'round ticks');
+    for (const s of [per.season.sx, per.season.sy]) assert.ok(s.step === 5 && s.ticks.every(t => t % 5 === 0), 'both step by 5');
     const everyone = (await g('season', [...IDS, 'z1'], { showAll: true })).m;
     assert.ok(everyone.sx.hi > 48 && everyone.sy.hi > 130);
     const filtered = (await g('season', IDS.slice(0, 5), { position: ['C'], query: 'p1', minCr: 9 })).m;
@@ -174,4 +174,48 @@ test('hover: name · team · SA/100 · TS% · PTS/100 (the metric pts100, not x*
 test('surname on a label: a generational suffix is never the label on its own', () => {
   assert.equal(surname('Wade Baldwin IV'), 'Baldwin IV'); assert.equal(surname('Carsen Edwards'), 'Edwards');
   assert.equal(surname('Tyrique Jones Jr.'), 'Jones Jr.'); assert.equal(surname('Lonnie Walker iv'), 'Walker iv');
+});
+
+// ---- the size of a dot = the shot attempts of the window
+const circles = svg => [...svg.matchAll(/<g class="fc-pt" data-open="([^"]+)"[^>]*><circle class="fc-hit" r="([\d.]+)"\/><circle class="fc-dot fc-team" r="([\d.]+)"/g)].map(m => ({ id: m[1], hit: +m[2], r: +m[3] }));
+
+test('bubble radius: rMin + k x sqrt(SA) from the named sizes, growing with SA; no attempts = the smallest dot', () => {
+  assert.deepEqual([P('bubble-radius-min'), P('bubble-radius-per-root')], [1.5, 0.75]);
+  assert.deepEqual(CHART.size, { id: 'sa_att', key: [5, 20, 60, 190] });
+  near(bubbleRadius(0), 1.5); near(bubbleRadius(16), 4.5); near(bubbleRadius(100), 9);
+  for (let n = 1; n < 400; n++) assert.ok(bubbleRadius(n) > bubbleRadius(n - 1));
+  near(bubbleRadius(NaN), 1.5);
+  assert.ok(CHARTS.filter(c => c !== CHART).every(c => !c.size), 'only this chart');
+});
+
+test('dots: the same function in every window (not normalised), scaled with the plot in a thumbnail, largest first, a hover target at least as large as the dot and never under the minimum', async () => {
+  await withGallery(async g => {
+    for (const w of WINDOWS) {
+      const { m } = await g(w), rows = rowsOf(w);
+      assert.equal(m.pts.length, IDS.length, 'nobody is left out for low attempts');
+      for (const [W, narrow, mode] of [[900, false, 'full'], [360, true, 'full'], [320, false, 'thumb']]) {
+        const dots = circles(drawScatter(m, W, narrow, mode)), k = mode === 'thumb' ? W / P('plot-width') : 1;
+        assert.equal(dots.length, IDS.length);
+        for (const d of dots) { near(d.r, bubbleRadius(rows[d.id].sa_att) * k, 0.006); near(d.hit, Math.max(d.r, P('hit-radius-min')), 1e-9); }
+        for (let i = 1; i < dots.length; i++) assert.ok(dots[i - 1].r >= dots[i].r, 'largest drawn first, smallest on top');
+      }
+    }
+    const big = (await g('season')).m; big.pts[0].n = 400; big.pts[1].n = 0;
+    const dots = circles(drawScatter(big, 900, false, 'full'));
+    assert.equal(dots[0].id, big.pts[0].id); assert.equal(dots.at(-1).id, big.pts[1].id);
+    near(dots[0].hit, 16.5); near(dots.at(-1).hit, 8);
+    const moved = between({ ...big, pts: big.pts.map(p => ({ ...p, n: 10 })) }, { ...big, pts: big.pts.map(p => ({ ...p, n: 30 })) }, 0.5);
+    assert.ok(moved.pts.every(p => p.n === 20), 'the size changes with the window slide');
+  });
+});
+
+test('size key: sample dots with their SA at the radii of the opened card, in this chart only; the hover still shows SA', async () => {
+  await withGallery(async g => {
+    const { html, m } = await g('season');
+    const key = /<div class="fc-sizekey"[\s\S]*?<\/div>/.exec(html)[0];
+    assert.ok(key.includes('Dot size = SA'));
+    assert.deepEqual([...key.matchAll(/<circle class="fc-dot" [^>]*r="([\d.]+)"/g)].map(x => +x[1]), CHART.size.key.map(n => +bubbleRadius(n).toFixed(2)));
+    assert.deepEqual([...key.matchAll(/<\/svg>(\d+)<\/span>/g)].map(x => +x[1]), CHART.size.key);
+    assert.ok(m.pts.every(p => p.tip.includes(' · SA ')));
+  });
 });

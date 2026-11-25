@@ -57,6 +57,10 @@
 .fc-swatch.good{background:var(--fantasy-stat-table-value-good-text)}
 .fc-swatch.bad{background:var(--fantasy-stat-table-value-bad-text)}
 .fc-swatch.diag{border-bottom:var(--fantasy-charts-gallery-chart-card-border-width) dotted var(--fantasy-charts-gallery-diagonal-line);border-radius:0}
+/* The size key of a chart whose dots have a size: in the opened card only, below the plot. */
+.fc-card .fc-sizekey{display:none}
+.fc-sizekey{display:flex;flex-wrap:wrap;align-items:center;gap:var(--fantasy-charts-gallery-chart-size-key-gap);font-size:var(--fantasy-charts-gallery-chart-note-font-size);line-height:var(--fantasy-charts-gallery-chart-note-line-height);color:var(--fantasy-charts-gallery-chart-note-text)}
+.fc-sizekey-item{display:inline-flex;align-items:center;gap:var(--fantasy-charts-gallery-chart-size-key-item-gap)}
 /* Wide (780px and up), x = y charts (square by design): the plot is a square on the left, the notes and a short legend are a column on the right, so the card is not empty at the sides. */
 @container fc (min-width:780px){
 .fc-body[data-equal] .fc-main{display:grid;grid-template-columns:auto var(--fantasy-charts-gallery-enlarged-chart-aside-width);grid-template-rows:var(--fantasy-charts-gallery-enlarged-chart-aside-grid-template-rows);column-gap:var(--fantasy-charts-gallery-enlarged-chart-aside-gap);justify-content:center;align-items:start}
@@ -73,7 +77,7 @@
 .fc-mhead h2{font-size:var(--fantasy-charts-gallery-enlarged-chart-title-font-size-narrow);line-height:var(--fantasy-charts-gallery-enlarged-chart-title-line-height-narrow)}
 .fc-grid-gallery{gap:var(--fantasy-charts-gallery-chart-grid-gap-narrow)}
 .fc-card-sub{font-size:var(--fantasy-charts-gallery-chart-subtitle-font-size-narrow)}
-.fc-note,.fc-legend{font-size:var(--fantasy-charts-gallery-chart-note-font-size-narrow)}
+.fc-note,.fc-legend,.fc-sizekey{font-size:var(--fantasy-charts-gallery-chart-note-font-size-narrow)}
 .fc-tick{font-size:var(--fantasy-charts-gallery-axis-numbers-font-size-narrow)}
 .fc-ax{font-size:var(--fantasy-charts-gallery-axis-title-font-size-narrow)}
 }

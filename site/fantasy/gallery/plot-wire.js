@@ -51,16 +51,17 @@ export function wirePlots(root, onOpen, win = globalThis.window, mode = 'thumb')
       tip.style.top = (+g.dataset.y - 4) + 'px';
     };
     const pt = e => e.target.closest?.('.fc-pt');
+    const lift = g => { if (!model.sized && g.nextElementSibling) g.parentNode.appendChild(g); };   // to the front; not where the dots have a size: the order largest-first keeps every small dot reachable
     plot.addEventListener('pointerdown', e => { touch = e.pointerType !== 'mouse'; });
-    plot.addEventListener('pointerover', e => { const g = pt(e); if (!g || touch) return; if (g.nextElementSibling) g.parentNode.appendChild(g); show(g); });   // already last = no move, so no flicker
+    plot.addEventListener('pointerover', e => { const g = pt(e); if (!g || touch) return; lift(g); show(g); });   // already last = no move, so no flicker
     plot.addEventListener('pointerout', e => { if (pt(e) && !touch) hide(); });
-    plot.addEventListener('focusin', e => { const g = pt(e); if (!g) return; if (g.nextElementSibling) g.parentNode.appendChild(g); show(g); });   // the focused logo comes to the front too
+    plot.addEventListener('focusin', e => { const g = pt(e); if (!g) return; lift(g); show(g); });   // the focused logo comes to the front too
     plot.addEventListener('focusout', e => { if (pt(e)) hide(); });
     plot.addEventListener('keydown', e => { const g = pt(e); if (g && onOpen && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); e.stopPropagation(); onOpen(g.dataset.open); } });
     plot.addEventListener('click', e => {
       const g = pt(e);
       if (!g) { hide(); return; }
-      if (touch && tipFor !== g.dataset.open) { e.stopPropagation(); if (g.nextElementSibling) g.parentNode.appendChild(g); show(g); return; }
+      if (touch && tipFor !== g.dataset.open) { e.stopPropagation(); lift(g); show(g); return; }
       if (onOpen) { e.stopPropagation(); onOpen(g.dataset.open); }
     });
     draw();

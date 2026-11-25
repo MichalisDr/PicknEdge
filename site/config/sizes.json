@@ -390,6 +390,9 @@
      "aspect": 0.75,
      "width": "100%",
      "dot-radius": 4,
+     "bubble-radius-min": 1.5,
+     "bubble-radius-per-root": 0.75,
+     "hit-radius-min": 8,
      "logo-size-max": 40,
      "logo-size-max-narrow": 28,
      "logo-size-min": 24,
@@ -435,6 +438,10 @@
     },
     "chart-tip": {
      "max-width": "min(280px,100%)"
+    },
+    "chart-size-key": {
+     "gap": "8px",
+     "item-gap": "4px"
     },
     "chart-legend": {
      "gap": "8px",
