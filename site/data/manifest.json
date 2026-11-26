@@ -1,15 +1,15 @@
 {
  "season": "E2026",
- "games": 130,
- "lastGame": 129,
- "lastDate": "2026-11-20T19:45:00.000Z",
+ "games": 140,
+ "lastGame": 139,
+ "lastDate": "2026-11-25T19:45:00.000Z",
  "windows": [
   "season",
   "l3",
   "l5",
   "l10"
  ],
- "version": "522673799e",
+ "version": "05b0377bb3",
  "eligibility": {
   "note": "Display-only rule used by the site to decide which players to list. Nothing is stored: the site evaluates it at display time. 1) Availability gate, evaluated once per player for every window: he must have played at least availability.minGp of his team's last games, read from the gp of the availability.window view (l3). 2) Then the selected window's thresholds: gp, average minutes and PIR per game must all be met. The 'Show players below the thresholds' checkbox lists everyone, including players hidden by the gate. l3 and l5 follow the old Fantasy filter (GP3 >= 1, MIN3 >= 10, GP5 >= 3, PIR >= 5); season and l10 are placeholders to confirm.",
   "availability": {
