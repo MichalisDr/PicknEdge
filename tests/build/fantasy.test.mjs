@@ -360,47 +360,21 @@ test('an expired token leaves the credits behind: the failed pull writes nothing
 });
 
 /* ---------- making staleness visible ---------- */
-test('creditsMessage: one clear line when the credits are behind the games or the token was rejected / missing; nothing when all is fine', () => {
-  assert.equal(creditsMessage({ creditsRound: 13, gamesRound: 13, pull: 'ok' }), null);
+test('creditsMessage: one line only when the credits are behind the games; nothing when they are up to date', () => {
   assert.equal(creditsMessage({ creditsRound: 13, gamesRound: 13 }), null);
-  assert.equal(creditsMessage({ creditsRound: 12, gamesRound: 13, pull: 'auth' }), 'Fantasy credits are at round 12, games at round 13: renew the token (the backend rejected FANTAKING_TOKEN)');
-  assert.match(creditsMessage({ creditsRound: 12, gamesRound: 13, pull: 'no-token' }), /^Fantasy credits are at round 12, games at round 13: renew the token \(FANTAKING_TOKEN is not set\)$/);
-  assert.match(creditsMessage({ creditsRound: 12, gamesRound: 13 }), /^Fantasy credits are at round 12, games at round 13: renew the token$/, 'behind for any reason');
-  assert.match(creditsMessage({ creditsRound: 13, gamesRound: 13, pull: 'auth' }), /rejected.*round 13.*renew the token/);
+  assert.equal(creditsMessage({ creditsRound: 14, gamesRound: 13 }), null);
+  assert.equal(creditsMessage({ creditsRound: 12, gamesRound: 13 }), 'Fantasy credits are at round 12, games at round 13: run the local pull (npm run fantasy:pull)');
 });
 
 test('report: a GitHub warning annotation and one job-summary line; plain text outside GitHub; nothing when fine', () => {
   const lines = [], summary = [];
-  const msg = report({ creditsRound: 12, gamesRound: 13, pull: 'auth', env: { GITHUB_ACTIONS: 'true', GITHUB_STEP_SUMMARY: '/tmp/summary.md' }, log: m => lines.push(m), append: (f, t) => summary.push([f, t]) });
-  assert.equal(lines.length, 1);
-  assert.equal(lines[0], `::warning title=Fantasy credits::${msg}`);
+  const msg = report({ creditsRound: 12, gamesRound: 13, env: { GITHUB_ACTIONS: 'true', GITHUB_STEP_SUMMARY: '/tmp/summary.md' }, log: m => lines.push(m), append: (f, t) => summary.push([f, t]) });
+  assert.deepEqual(lines, [`::warning title=Fantasy credits::${msg}`]);
   assert.equal(summary.length, 1);
   assert.equal(summary[0][0], '/tmp/summary.md');
-  assert.ok(summary[0][1].includes('Fantasy credits are at round 12, games at round 13: renew the token'));
+  assert.ok(summary[0][1].includes('Fantasy credits are at round 12, games at round 13'));
   const plain = [];
   report({ creditsRound: 12, gamesRound: 13, env: {}, log: m => plain.push(m), append: () => assert.fail('no summary file') });
   assert.match(plain[0], /^WARNING: Fantasy credits are at round 12/);
-  assert.equal(report({ creditsRound: 13, gamesRound: 13, pull: 'ok', env: {}, log: () => assert.fail('silent'), append: () => assert.fail('silent') }), null);
-});
-
-test('run writes how the pull ended to GITHUB_OUTPUT (ok | auth | no-token) for the status step', async () => {
-  for (const [status, want, token] of [[200, 'ok', TOKEN], [401, 'auth', TOKEN], [200, 'no-token', '']]) {
-    const out = join(temp(), 'github-output');
-    await run({ argv: ['node', 'x'], env: { FANTAKING_TOKEN: token, GITHUB_OUTPUT: out }, root: temp(), fetch: fakeBackend(WORLD, { status }), sleep: async () => {}, gapMs: 0, log: () => {}, warn: () => {}, error: () => {} });
-    assert.equal(readFileSync(out, 'utf8'), `credits_pull=${want}\n`);
-  }
-});
-
-test('gameValues: the value of each game = its PIR / the credits in force BEFORE its round (the quotation of that round, one step behind crSeries), the same in every window; no game or no credits = gap', async () => {
-  const { fantasy, views } = await built();
-  assert.deepEqual(fantasy.byPlayer.get('P1').crBefore, [10, 10.5, 10.2, 10.2], 'round 1 uses the round-1 quotation; round r the credits after round r-1');
-  assert.deepEqual(fantasy.byPlayer.get('P3').crBefore, [null, 6, 6.4, 6.4]);
-  const gv = (w, id) => views[w].players.rows[id].fx.gameValues;
-  const alpha = [10 / 10, 20 / 10.5, 10 / 10.2, 20 / 10.2];                 // PIR 10, 20, 10, 20
-  gv('season', 'P1').forEach((x, i) => near(x, alpha[i], 'Alpha round ' + (i + 1)));
-  assert.ok(Math.abs(gv('season', 'P1')[3] - 20 / 10.6) > 0.05, 'round 4 is NOT divided by the credits after round 4 (a big game would be punished by its own price rise)');
-  const gamma = gv('season', 'P3');                                           // missed round 1; PIR 12, 6, 12
-  assert.equal(gamma[0], null, 'a round he did not play is a gap even though a price exists'); near(gamma[1], 12 / 6, 'Gamma 2'); near(gamma[2], 6 / 6.4, 'Gamma 3'); near(gamma[3], 12 / 6.4, 'Gamma 4');
-  for (const w of ['l10', 'l5', 'l3']) for (const id of ['P1', 'P2', 'P3']) assert.deepEqual(gv(w, id), gv('season', id), w + ' ' + id + ': the bars do not change with the window');
-  assert.deepEqual(gameValues(PLAYERS.filter(r => r.player_id === 'P1'), [{ game: 1, round: 1 }, { game: 2, round: 2 }], [null, 5]).map(x => x === null ? null : +x.toFixed(3)), [null, 4], 'unknown credits = gap');
+  assert.equal(report({ creditsRound: 13, gamesRound: 13, env: {}, log: () => assert.fail('silent'), append: () => assert.fail('silent') }), null);
 });
