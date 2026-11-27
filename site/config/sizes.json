@@ -778,6 +778,36 @@
     },
     "credits-bar": {
      "height": "8px"
+    },
+    "card-identity": {
+     "gap": "8px 16px",
+     "padding": "16px 0"
+    },
+    "card-name": {
+     "gap": "4px"
+    },
+    "name-button": {
+     "width": "32px",
+     "height": "32px",
+     "width-coarse": "48px",
+     "height-coarse": "48px"
+    },
+    "name-input": {
+     "width": "208px",
+     "height": "32px",
+     "padding": "0 8px"
+    },
+    "cap-meter": {
+     "gap": "8px 16px",
+     "bar-min-width": "160px"
+    },
+    "cap-figures": {
+     "gap": "8px"
+    },
+    "cap-input": {
+     "width": "72px",
+     "height": "32px",
+     "padding": "0 8px"
     }
    },
    "stat-table": {

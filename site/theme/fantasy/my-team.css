@@ -21,3 +21,21 @@ main:has(.mt-page){margin-top:0}
 [data-part="fantasy.my-team.credits-fill"]{display:block;height:var(--fantasy-my-team-credits-bar-height);background:var(--fantasy-my-team-credits-fill-background)}
 [data-part="fantasy.my-team.credits-meter"][data-over=true] [data-part="fantasy.my-team.credits-fill"]{background:var(--fantasy-my-team-credits-fill-over-background)}
 [data-part="fantasy.my-team.team-slot-count"]{font-size:var(--fantasy-my-team-team-slot-count-font-size);line-height:var(--fantasy-my-team-team-slot-count-line-height);color:var(--fantasy-my-team-team-slot-count-text)}
+/* The team card: header, chips and icon buttons are the player card's parts; these are only the name editor, the credits meter and the idle toolbar buttons. */
+[data-part="fantasy.my-team.card-identity"]{display:flex;flex-wrap:wrap;align-items:center;align-self:center;gap:var(--fantasy-my-team-card-identity-gap);min-width:0;padding:var(--fantasy-my-team-card-identity-padding)}
+[data-part="fantasy.my-team.card-name"]{display:flex;align-items:center;gap:var(--fantasy-my-team-card-name-gap);min-width:0}
+[data-part="fantasy.my-team.card-name"] h2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+[data-part="fantasy.my-team.name-button"]{display:flex;flex:none;align-items:center;justify-content:center;width:var(--fantasy-my-team-name-button-width);height:var(--fantasy-my-team-name-button-height);padding:0;background:transparent;border:0;border-radius:var(--fantasy-my-team-name-button-radius);color:var(--fantasy-my-team-name-button-text);font-size:var(--fantasy-my-team-name-button-font-size)}
+[data-part="fantasy.my-team.name-button"]:hover{background:var(--fantasy-my-team-name-button-hovered-background)}
+[data-part="fantasy.my-team.name-input"],[data-part="fantasy.my-team.cap-input"]{display:block;margin:0;background:var(--fantasy-my-team-name-input-background);border:var(--fantasy-my-team-name-input-border-width) solid var(--fantasy-my-team-name-input-border);border-radius:var(--fantasy-my-team-name-input-radius);color:var(--fantasy-my-team-name-input-text);font-size:var(--fantasy-my-team-name-input-font-size);line-height:var(--fantasy-my-team-name-input-line-height)}
+[data-part="fantasy.my-team.name-input"]{min-width:0;width:var(--fantasy-my-team-name-input-width);height:var(--fantasy-my-team-name-input-height);padding:var(--fantasy-my-team-name-input-padding)}
+[data-part="fantasy.my-team.cap-input"]{width:var(--fantasy-my-team-cap-input-width);height:var(--fantasy-my-team-cap-input-height);padding:var(--fantasy-my-team-cap-input-padding);font-variant-numeric:tabular-nums}
+[data-part="fantasy.my-team.cap-meter"]{display:flex;flex-wrap:wrap;align-items:center;gap:var(--fantasy-my-team-cap-meter-gap)}
+[data-part="fantasy.my-team.cap-meter"] [data-part="fantasy.my-team.credits-bar"]{flex:1;min-width:var(--fantasy-my-team-cap-meter-bar-min-width)}
+[data-part="fantasy.my-team.cap-meter"][data-over=true] [data-part="fantasy.my-team.credits-fill"]{background:var(--fantasy-my-team-credits-fill-over-background)}
+[data-part="fantasy.my-team.cap-label"]{font-size:var(--fantasy-my-team-cap-label-font-size);line-height:var(--fantasy-my-team-cap-label-line-height);font-weight:var(--fantasy-my-team-cap-label-font-weight);letter-spacing:0.04em;color:var(--fantasy-my-team-cap-label-text)}
+[data-part="fantasy.my-team.cap-figures"]{display:flex;align-items:center;gap:var(--fantasy-my-team-cap-figures-gap);font-size:var(--fantasy-my-team-credits-text-font-size);font-weight:var(--fantasy-my-team-credits-text-font-weight);font-variant-numeric:tabular-nums}
+[data-part="fantasy.my-team.cap-status"]{font-size:var(--fantasy-my-team-cap-status-font-size);line-height:var(--fantasy-my-team-cap-status-line-height);color:var(--fantasy-my-team-cap-status-text);font-variant-numeric:tabular-nums}
+[data-part="fantasy.my-team.cap-meter"][data-over=true] :is([data-part="fantasy.my-team.cap-status"],[data-part="fantasy.my-team.cap-figures"]){color:var(--fantasy-my-team-credits-text-over-text)}
+.fw-dialog [data-action][aria-disabled=true]{opacity:.4;cursor:default}
+@media(pointer:coarse){[data-part="fantasy.my-team.name-button"]{width:var(--fantasy-my-team-name-button-width-coarse);height:var(--fantasy-my-team-name-button-height-coarse)}}

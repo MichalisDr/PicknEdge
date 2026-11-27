@@ -1250,6 +1250,34 @@
      "font-size": "12px",
      "line-height": "16px",
      "text": "{semantic.muted}"
+    },
+    "name-button": {
+     "text": "{semantic.muted}",
+     "radius": "8px",
+     "font-size": "16px"
+    },
+    "name-button-hovered": {
+     "background": "{semantic.chip}"
+    },
+    "name-input": {
+     "background": "{semantic.field}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "4px",
+     "text": "{semantic.text}",
+     "font-size": "14px",
+     "line-height": "20px"
+    },
+    "cap-label": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "600",
+     "text": "{semantic.muted}"
+    },
+    "cap-status": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "text": "{semantic.muted}"
     }
    },
    "stat-table": {

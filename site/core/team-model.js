@@ -49,6 +49,9 @@ export function setPlayer(team, area, index, id) {
   return { ...team, [area]: slots.map((v, i) => (i === index ? id : v)) };
 }
 
+/** Empty every slot (starters, bench and coach); the name, formation and cap stay. */
+export const clearPlayers = team => (idsOf(team).length ? { ...team, starters: Array(STARTERS).fill(null), bench: Array(BENCH).fill(null) } : team);
+
 /** A new name (trimmed). An empty name keeps the old one. */
 export function setName(team, name) {
   const next = String(name ?? '').trim();

@@ -108,6 +108,14 @@ test('cleaning: bad fields take the fallback, bad or repeated ids leave an empty
   assert.deepEqual(M.cleanTeam(null, fallback), fallback);
 });
 
+test('clearing the players keeps the name, formation and cap, and undo brings them back', () => {
+  const start = M.startHistory(frozen(full()));
+  const cleared = M.change(start, M.clearPlayers(start.team));
+  assert.deepEqual(cleared.team, M.emptyTeam('T', '2-2-1'));
+  assert.deepEqual(M.undo(cleared).team, full());
+  assert.equal(M.clearPlayers(cleared.team), cleared.team, 'nothing to clear is not a change');
+});
+
 test('cleaning keeps exactly two teams', () => {
   assert.deepEqual(M.cleanTeams([{ name: 'A' }]).map(t => t.name), ['A', 'Team 2']);
   assert.deepEqual(M.cleanTeams([{ name: 'A' }, { name: 'B' }, { name: 'C' }]).map(t => t.name), ['A', 'B']);

@@ -1,0 +1,107 @@
+/* The team card of My Team, as a dialog: the same dialog, header, chips and icon buttons as the player and team cards (their classes and data-parts),
+   plus the name editor and the credits meter. It is drawn once and then updated in place, so a click that follows an edit of the name or the cap is
+   never lost to a redraw. The state is the page's: get() returns the undo entry { team, history } of this team, set(entry) keeps and saves it. */
+import { esc } from '../../core/html.js';
+import { icon } from '../../core/icons.js';
+import { FORMATIONS, change, undo, clearPlayers, credits, idsOf, setCap, setFormation, setName } from '../../core/team-model.js';
+
+/** Icons to load (core/icons.js loadIcons) before the card is opened. */
+export const CARD_ICONS = ['pencil', 'check', 'undo', 'reset'];
+
+const CARD = 'fantasy.player-card.';
+const part = key => `data-part="fantasy.my-team.${key}"`;
+
+const nameButton = (attrs, iconName, label) => `<button ${attrs} ${part('name-button')} aria-label="${label}" title="${label}">${icon(iconName)}</button>`;
+const toolButton = (action, iconName, label) => `<button type="button" data-part="${CARD}view-button" data-action="${action}"><span data-part="${CARD}view-icon" aria-hidden="true">${icon(iconName)}</span><span>${label}</span></button>`;
+
+/** The card without its values (update() fills them in). The empty close slot takes the dialog's close button. */
+export function cardHtml() {
+  return `<header class="fw-identity" data-part="${CARD}header">
+    <div ${part('card-identity')}>
+      <div ${part('card-name')} data-name-view><h2></h2>${nameButton('type="button" data-rename', 'pencil', 'Rename the team')}</div>
+      <form ${part('card-name')} data-name-form hidden><input ${part('name-input')} data-name-input aria-label="Team name" autocomplete="off">${nameButton('type="submit"', 'check', 'Save the name')}</form>
+      <span data-part="${CARD}cr-box"><span data-part="${CARD}cr-box-label">CR</span><span data-part="${CARD}cr-box-value" data-used></span></span>
+    </div>
+    <div data-part="${CARD}header-actions"><span data-close-slot></span></div>
+  </header>
+  <div class="fw-card-controls">
+    <div role="group" aria-label="Formation" data-part="${CARD}window-buttons">${FORMATIONS.map(f => `<button type="button" data-formation="${f}">${f}</button>`).join('')}</div>
+    <div role="group" aria-label="Team actions" data-part="${CARD}view-buttons">${toolButton('undo', 'undo', 'Undo')}${toolButton('reset', 'reset', 'Reset')}</div>
+  </div>
+  <div ${part('cap-meter')} data-meter>
+    <span ${part('cap-label')}>CREDITS</span>
+    <span ${part('cap-figures')}><span data-used></span><span aria-hidden="true">/</span><input ${part('cap-input')} data-cap inputmode="decimal" aria-label="Credit cap" autocomplete="off"></span>
+    <span ${part('credits-bar')} aria-hidden="true"><span ${part('credits-fill')} data-fill></span></span>
+    <span ${part('cap-status')} data-status role="status"></span>
+  </div>
+  <div data-body></div>`;
+}
+
+/** The values the card shows for a team: credits used, the bar and what is left or over. */
+export function meterValues(team, crOf) {
+  const c = credits(team, crOf);
+  return {
+    used: c.used.toFixed(1),
+    over: c.isOver,
+    percent: c.cap === null ? 0 : Math.min(100, (c.used / c.cap) * 100),
+    status: c.isOver ? `${c.over.toFixed(1)} over the cap` : `${(c.left ?? 0).toFixed(1)} left`,
+  };
+}
+
+let dialog = null;
+
+/** Open the card. state: { get, set, crOf }; onClose runs after the person closes it (not when the route changes under it). */
+export function open({ get, set, crOf }, onClose) {
+  close();
+  const previous = document.activeElement;
+  dialog = document.createElement('dialog');
+  dialog.className = 'fw-dialog';
+  dialog.innerHTML = '<button type="button" class="fw-close" aria-label="Close card">×</button><div class="fw-card"></div>';
+  const root = dialog.querySelector('.fw-card'), closeButton = dialog.querySelector('.fw-close');
+  root.innerHTML = cardHtml();
+  root.querySelector('[data-close-slot]').replaceWith(closeButton);
+  const $ = s => root.querySelector(s);
+  const view = $('[data-name-view]'), form = $('[data-name-form]'), nameInput = $('[data-name-input]'), capInput = $('[data-cap]');
+
+  function update() {
+    const { team, history } = get(), m = meterValues(team, crOf);
+    dialog.setAttribute('aria-label', team.name);
+    const title = view.querySelector('h2');
+    title.textContent = title.title = team.name;
+    root.querySelectorAll('[data-used]').forEach(el => { el.textContent = m.used; });
+    root.querySelectorAll('[data-formation]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.formation === team.formation)));
+    /* aria-disabled, not disabled: the button keeps the keyboard focus when there is nothing left to do. */
+    $('[data-action="undo"]').setAttribute('aria-disabled', String(!history.length));
+    $('[data-action="reset"]').setAttribute('aria-disabled', String(!idsOf(team).length));
+    capInput.value = team.capText;
+    $('[data-meter]').dataset.over = m.over;
+    $('[data-fill]').style.width = m.percent + '%';
+    $('[data-status]').textContent = m.status;
+  }
+  const apply = next => { if (next !== get()) set(next); update(); };
+  const edit = fn => apply(change(get(), fn(get().team)));
+
+  const rename = on => { view.hidden = on; form.hidden = !on; };
+  $('[data-rename]').onclick = () => { nameInput.value = get().team.name; rename(true); nameInput.select(); };
+  const endRename = () => { rename(false); $('[data-rename]').focus(); };
+  form.onsubmit = e => { e.preventDefault(); edit(team => setName(team, nameInput.value)); endRename(); };
+  nameInput.onkeydown = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); endRename(); } };   // Esc leaves the editor, not the card
+
+  capInput.onchange = () => edit(team => setCap(team, capInput.value));   // a text that is not a number goes back to the old cap
+  capInput.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); capInput.blur(); capInput.focus(); } };
+  root.querySelectorAll('[data-formation]').forEach(b => { b.onclick = () => edit(team => setFormation(team, b.dataset.formation)); });
+  $('[data-action="undo"]').onclick = () => apply(undo(get()));
+  $('[data-action="reset"]').onclick = () => edit(clearPlayers);
+
+  const done = () => { close(); previous?.focus?.(); onClose?.(); };
+  closeButton.onclick = done;
+  dialog.oncancel = e => { e.preventDefault(); done(); };
+  dialog.onclick = e => { if (e.target === dialog) done(); };
+  update();
+  document.body.append(dialog);
+  dialog.showModal();
+  closeButton.focus();   // as on the player card, where Close is the first control; otherwise the dialog would start on the pencil
+}
+
+export function close() { if (dialog) { dialog.close(); dialog.remove(); dialog = null; } }
+globalThis.window?.addEventListener('hashchange', close);
