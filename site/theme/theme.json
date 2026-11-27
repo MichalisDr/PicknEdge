@@ -1197,6 +1197,61 @@
      "colour": "{semantic.border-control}"
     }
    },
+   "my-team": {
+    "team-slot": {
+     "background": "{semantic.panel}",
+     "text": "{semantic.text}",
+     "border": "{semantic.border-soft}",
+     "border-width": "1px",
+     "radius": "8px"
+    },
+    "team-slot-hovered": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "team-slot-name": {
+     "font-size": "16px",
+     "line-height": "24px",
+     "font-weight": "600"
+    },
+    "team-slot-formation": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "text": "{semantic.muted}"
+    },
+    "slot-portrait": {
+     "background": "{semantic.field}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "50%"
+    },
+    "slot-portrait-filled": {
+     "background": "{semantic.chip}"
+    },
+    "credits-text": {
+     "font-size": "14px",
+     "line-height": "20px",
+     "font-weight": "600",
+     "text": "{semantic.text}"
+    },
+    "credits-text-over": {
+     "text": "{semantic.eval-bad-text}"
+    },
+    "credits-bar": {
+     "background": "{semantic.chip}",
+     "radius": "4px"
+    },
+    "credits-fill": {
+     "background": "{semantic.positive}"
+    },
+    "credits-fill-over": {
+     "background": "{semantic.eval-bad-text}"
+    },
+    "team-slot-count": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "text": "{semantic.muted}"
+    }
+   },
    "stat-table": {
     "buttons-focused": {
      "outline": "{semantic.accent-fantasy}",

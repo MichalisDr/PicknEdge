@@ -754,6 +754,30 @@
    "my-team": {
     "title-row": {
      "min-height": "48px"
+    },
+    "gallery": {
+     "grid-template-columns": "repeat(auto-fit,minmax(min(320px,100%),400px))",
+     "gap": "16px"
+    },
+    "team-slot": {
+     "padding": "16px",
+     "gap": "12px"
+    },
+    "team-slot-header": {
+     "gap": "12px"
+    },
+    "portrait-row": {
+     "gap": "8px"
+    },
+    "slot-portrait": {
+     "width": "48px",
+     "height": "48px"
+    },
+    "credits-meter": {
+     "gap": "4px"
+    },
+    "credits-bar": {
+     "height": "8px"
     }
    },
    "stat-table": {

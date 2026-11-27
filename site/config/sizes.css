@@ -367,6 +367,16 @@ body{
 --fantasy-shot-chart-view-button-min-height:32px;
 --fantasy-shot-chart-view-buttons-gap:4px;
 --fantasy-my-team-title-row-min-height:48px;
+--fantasy-my-team-gallery-grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),400px));
+--fantasy-my-team-gallery-gap:16px;
+--fantasy-my-team-team-slot-padding:16px;
+--fantasy-my-team-team-slot-gap:12px;
+--fantasy-my-team-team-slot-header-gap:12px;
+--fantasy-my-team-portrait-row-gap:8px;
+--fantasy-my-team-slot-portrait-width:48px;
+--fantasy-my-team-slot-portrait-height:48px;
+--fantasy-my-team-credits-meter-gap:4px;
+--fantasy-my-team-credits-bar-height:8px;
 --fantasy-stat-table-cell-padding:9px 8px;
 --fantasy-stat-table-cell-height:auto;
 --fantasy-stat-table-cell-button-padding:4px 0;

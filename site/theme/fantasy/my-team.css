@@ -3,3 +3,21 @@ main:has(.mt-page){margin-top:0}
 .mt-page>[data-part="fantasy.stat-table.title-row"]{display:flex;align-items:center;min-height:var(--fantasy-my-team-title-row-min-height)}
 /* Where the sidebar is a row (730 px and below), the short page must not stretch it. */
 @media(max-width:730px){.layout:has(.mt-page){align-content:start}}
+/* The gallery: one card per team, the whole card is a button. */
+[data-part="fantasy.my-team.gallery"]{display:grid;grid-template-columns:var(--fantasy-my-team-gallery-grid-template-columns);gap:var(--fantasy-my-team-gallery-gap)}
+[data-part="fantasy.my-team.team-slot"]{display:flex;flex-direction:column;gap:var(--fantasy-my-team-team-slot-gap);min-width:0;padding:var(--fantasy-my-team-team-slot-padding);text-align:left;background:var(--fantasy-my-team-team-slot-background);color:var(--fantasy-my-team-team-slot-text);border:var(--fantasy-my-team-team-slot-border-width) solid var(--fantasy-my-team-team-slot-border);border-radius:var(--fantasy-my-team-team-slot-radius)}
+[data-part="fantasy.my-team.team-slot"]:hover{border-color:var(--fantasy-my-team-team-slot-hovered-border)}
+[data-part="fantasy.my-team.team-slot-header"]{display:flex;align-items:baseline;justify-content:space-between;gap:var(--fantasy-my-team-team-slot-header-gap)}
+[data-part="fantasy.my-team.team-slot-name"]{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--fantasy-my-team-team-slot-name-font-size);line-height:var(--fantasy-my-team-team-slot-name-line-height);font-weight:var(--fantasy-my-team-team-slot-name-font-weight)}
+[data-part="fantasy.my-team.team-slot-formation"]{font-size:var(--fantasy-my-team-team-slot-formation-font-size);line-height:var(--fantasy-my-team-team-slot-formation-line-height);color:var(--fantasy-my-team-team-slot-formation-text)}
+[data-part="fantasy.my-team.portrait-row"]{display:flex;gap:var(--fantasy-my-team-portrait-row-gap)}
+[data-part="fantasy.my-team.slot-portrait"]{display:flex;justify-content:center;overflow:hidden;width:var(--fantasy-my-team-slot-portrait-width);height:var(--fantasy-my-team-slot-portrait-height);background:var(--fantasy-my-team-slot-portrait-background);border:var(--fantasy-my-team-slot-portrait-border-width) solid var(--fantasy-my-team-slot-portrait-border);border-radius:var(--fantasy-my-team-slot-portrait-radius)}
+[data-part="fantasy.my-team.slot-portrait"][data-filled]{background:var(--fantasy-my-team-slot-portrait-filled-background)}
+[data-part="fantasy.my-team.slot-portrait"] img{width:var(--fantasy-my-team-slot-portrait-width);height:var(--fantasy-my-team-slot-portrait-height);object-fit:cover;object-position:top}
+[data-part="fantasy.my-team.credits-meter"]{display:flex;flex-direction:column;gap:var(--fantasy-my-team-credits-meter-gap)}
+[data-part="fantasy.my-team.credits-text"]{font-size:var(--fantasy-my-team-credits-text-font-size);line-height:var(--fantasy-my-team-credits-text-line-height);font-weight:var(--fantasy-my-team-credits-text-font-weight);font-variant-numeric:tabular-nums;color:var(--fantasy-my-team-credits-text-text)}
+[data-part="fantasy.my-team.credits-meter"][data-over=true] [data-part="fantasy.my-team.credits-text"]{color:var(--fantasy-my-team-credits-text-over-text)}
+[data-part="fantasy.my-team.credits-bar"]{display:block;overflow:hidden;height:var(--fantasy-my-team-credits-bar-height);background:var(--fantasy-my-team-credits-bar-background);border-radius:var(--fantasy-my-team-credits-bar-radius)}
+[data-part="fantasy.my-team.credits-fill"]{display:block;height:var(--fantasy-my-team-credits-bar-height);background:var(--fantasy-my-team-credits-fill-background)}
+[data-part="fantasy.my-team.credits-meter"][data-over=true] [data-part="fantasy.my-team.credits-fill"]{background:var(--fantasy-my-team-credits-fill-over-background)}
+[data-part="fantasy.my-team.team-slot-count"]{font-size:var(--fantasy-my-team-team-slot-count-font-size);line-height:var(--fantasy-my-team-team-slot-count-line-height);color:var(--fantasy-my-team-team-slot-count-text)}
