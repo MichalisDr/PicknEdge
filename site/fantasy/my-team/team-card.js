@@ -3,6 +3,7 @@
    never lost to a redraw. The state is the page's: get() returns the undo entry { team, history } of this team, set(entry) keeps and saves it. */
 import { esc } from '../../core/html.js';
 import { icon } from '../../core/icons.js';
+import { courtHtml } from './court-view.js';
 import { FORMATIONS, change, undo, clearPlayers, credits, idsOf, setCap, setFormation, setName } from '../../core/team-model.js';
 
 /** Icons to load (core/icons.js loadIcons) before the card is opened. */
@@ -18,8 +19,8 @@ const toolButton = (action, iconName, label) => `<button type="button" data-part
 export function cardHtml() {
   return `<header class="fw-identity" data-part="${CARD}header">
     <div ${part('card-identity')}>
-      <div ${part('card-name')} data-name-view><h2></h2>${nameButton('type="button" data-rename', 'pencil', 'Rename the team')}</div>
-      <form ${part('card-name')} data-name-form hidden><input ${part('name-input')} data-name-input aria-label="Team name" autocomplete="off">${nameButton('type="submit"', 'check', 'Save the name')}</form>
+      <div ${part('name-editor')} data-name-view><h2></h2>${nameButton('type="button" data-rename', 'pencil', 'Rename the team')}</div>
+      <form ${part('name-editor')} data-name-form hidden><input ${part('name-input')} data-name-input aria-label="Team name" autocomplete="off">${nameButton('type="submit"', 'check', 'Save the name')}</form>
       <span data-part="${CARD}cr-box"><span data-part="${CARD}cr-box-label">CR</span><span data-part="${CARD}cr-box-value" data-used></span></span>
     </div>
     <div data-part="${CARD}header-actions"><span data-close-slot></span></div>
@@ -50,8 +51,8 @@ export function meterValues(team, crOf) {
 
 let dialog = null;
 
-/** Open the card. state: { get, set, crOf }; onClose runs after the person closes it (not when the route changes under it). */
-export function open({ get, set, crOf }, onClose) {
+/** Open the card. state: { get, set, crOf, playerOf } (playerOf: the court card's data, court-view.js); onClose runs after the person closes it (not when the route changes under it). */
+export function open({ get, set, crOf, playerOf }, onClose) {
   close();
   const previous = document.activeElement;
   dialog = document.createElement('dialog');
@@ -62,6 +63,12 @@ export function open({ get, set, crOf }, onClose) {
   root.querySelector('[data-close-slot]').replaceWith(closeButton);
   const $ = s => root.querySelector(s);
   const view = $('[data-name-view]'), form = $('[data-name-form]'), nameInput = $('[data-name-input]'), capInput = $('[data-cap]');
+
+  let drawn = '';   // what the court shows now
+  function drawBody(team) {
+    const key = `${team.formation}|${team.starters.join()}`;
+    if (key !== drawn) { drawn = key; $('[data-body]').innerHTML = courtHtml(team, playerOf); }
+  }
 
   function update() {
     const { team, history } = get(), m = meterValues(team, crOf);
@@ -77,6 +84,7 @@ export function open({ get, set, crOf }, onClose) {
     $('[data-meter]').dataset.over = m.over;
     $('[data-fill]').style.width = m.percent + '%';
     $('[data-status]').textContent = m.status;
+    drawBody(team);
   }
   const apply = next => { if (next !== get()) set(next); update(); };
   const edit = fn => apply(change(get(), fn(get().team)));
