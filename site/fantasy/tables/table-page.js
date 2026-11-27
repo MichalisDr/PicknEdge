@@ -123,4 +123,5 @@ export function mount(target, entity = 'teams') {
   host.innerHTML = loadingHtml;
   draw();
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.filters && host?.isConnected) { state.filters = false; draw(); } });
+/* Only while the drawer is on screen: after leaving the page, host (#content) is still connected and a redraw would put the table over the new page. */
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.filters && host?.querySelector('.fw-table-area[data-drawer="true"]')) { state.filters = false; draw(); } });
