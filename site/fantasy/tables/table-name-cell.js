@@ -11,28 +11,37 @@ const A = 'fantasy.stat-table.';
 const part = key => `data-part="${A}${key}"`;
 
 const initial = first => [...String(first).trim()][0].toUpperCase();
+/** "S. Vezenkov" when the roster entry has both names, else the display name. */
+export const shortName = (entry, name) => (entry?.first && entry?.last ? initial(entry.first) + '. ' + entry.last : name);
+
+/** The CR box and the Value chip (with its sparkline) of Data.fantasyInfo, in the configured order; '' while there is no data. Also used by the My Team court. */
+export function figuresHtml(info) {
+  const hasCr = info?.cr != null, hasValue = info?.value != null;
+  const show = { players: true, 'when-data': info !== null && (hasCr || hasValue) };
+  return drawParts(A + 'name-cell-figures', {
+    'cr-box': () => (hasCr ? `<span class="fw-cr-box" ${part('name-cell-cr-box')}>${esc(info.cr)}</span>` : ''),
+    'value-chip': () => (hasValue ? `<span class="fw-value-chip" ${part('name-cell-value-chip')}>${drawParts(A + 'name-cell-value-chip', {
+      'name-cell-value': () => `<span>${esc(Data.formatMetric('value', info.value))}</span>`,
+      'name-cell-sparkline': () => sparklineSvg(info.valueSeries, A + 'name-cell-sparkline'),
+    }, { 'when-data': validSeries(info.valueSeries) }).map(p => p.html).join('')}</span>` : ''),
+  }, show).map(p => p.html).join('');
+}
 
 /** r: the row ({ id, name, full, team, pos, next }; next = Data.nextGame of the team or null), roster, info: Data.fantasyInfo(id, window) (null while there is no data). */
 export function playerNameCellHtml(r, roster, info) {
   const entry = roster.players?.[r.id], split = !!(entry?.first && entry?.last);   // given and family name only when both are known; else the display name intact
-  const code = teamCode(roster, r.team), hasCr = info?.cr != null, hasValue = info?.value != null;
-  const show = { players: true, 'when-data': info !== null && (hasCr || hasValue) };
+  const code = teamCode(roster, r.team);
+  const show = { players: true, 'when-data': info !== null && (info.cr != null || info.value != null) };
   const draw = {
     'name-cell-position-badge': () => (['G', 'F', 'C'].includes(r.pos) ? `<span ${part('name-cell-position-badge')} title="Position">${r.pos}</span>` : ''),
     'name-cell-identity': () => `<div ${part('name-cell-identity')}>${drawParts(A + 'name-cell-identity', {
       'name': () => `<button class="fw-name" data-open="${esc(r.id)}" title="${esc(r.full)}">${split ? drawParts(A + 'name-cell-name', {
-        'name-cell-family-name': () => `<span ${part('name-cell-family-name')}>${esc(initial(entry.first) + '. ' + entry.last)}</span>`,   // one element, one style: "S. Vezenkov"
+        'name-cell-family-name': () => `<span ${part('name-cell-family-name')}>${esc(shortName(entry, r.name))}</span>`,   // one element, one style: "S. Vezenkov"
       }, show).map(p => p.html).join('') : esc(r.name)}</button>`,
       'team-and-position': () => (code ? `<small class="fw-who" title="${esc(roster.teams[r.team] || r.team)}${r.next ? ' ' + (r.next.home ? 'vs' : '@') + ' ' + esc(roster.teams[r.next.opp] || r.next.oppName || r.next.opp) : ''}">${esc(code)}${r.next ? ` ${r.next.home ? 'vs' : '@'} ${esc(teamCode(roster, r.next.opp))}` : ''}</small>` : ''),   // line 2: team code + next game, 'OLY @ MTA' away, 'OLY vs BAY' home (Data.nextGame, the player card's source)
     }, show).map(p => p.html).join('')}</div>`,
     'name-cell-figures': () => {
-      const figures = drawParts(A + 'name-cell-figures', {
-        'cr-box': () => (hasCr ? `<span class="fw-cr-box" ${part('name-cell-cr-box')}>${esc(info.cr)}</span>` : ''),
-        'value-chip': () => (hasValue ? `<span class="fw-value-chip" ${part('name-cell-value-chip')}>${drawParts(A + 'name-cell-value-chip', {
-          'name-cell-value': () => `<span>${esc(Data.formatMetric('value', info.value))}</span>`,
-          'name-cell-sparkline': () => sparklineSvg(info.valueSeries, A + 'name-cell-sparkline'),
-        }, { 'when-data': validSeries(info.valueSeries) }).map(p => p.html).join('')}</span>` : ''),
-      }, show).map(p => p.html).join('');
+      const figures = figuresHtml(info);
       return figures ? `<div ${part('name-cell-figures')}>${figures}</div>` : '';   // no figures: no group, no spacing
     },
   };
