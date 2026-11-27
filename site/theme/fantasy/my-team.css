@@ -1,0 +1,5 @@
+/* My Team. Reads variables only. The page is short, so it is held at the top (main centres with margin:auto), and its title row has the height of the Players toolbar row, which puts the title where it is on Players. */
+main:has(.mt-page){margin-top:0}
+.mt-page>[data-part="fantasy.stat-table.title-row"]{display:flex;align-items:center;min-height:var(--fantasy-my-team-title-row-min-height)}
+/* Where the sidebar is a row (730 px and below), the short page must not stretch it. */
+@media(max-width:730px){.layout:has(.mt-page){align-content:start}}

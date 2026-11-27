@@ -99,6 +99,9 @@
     }
    },
    "sidebar": {
+    "group": {
+     "margin-top": "24px"
+    },
     "link": {
      "margin": {
       "default": "8px 0",
@@ -746,6 +749,11 @@
     },
     "view-buttons": {
      "gap": "4px"
+    }
+   },
+   "my-team": {
+    "title-row": {
+     "min-height": "48px"
     }
    },
    "stat-table": {

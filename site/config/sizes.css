@@ -39,6 +39,7 @@ body{
 --app-research-overview-card-text-max-width:440px;
 --app-research-saved-card-margin-top:12px;
 --app-research-section-heading-margin:32px 0 15px;
+--app-sidebar-group-margin-top:24px;
 --app-sidebar-link-margin:8px 0;
 --app-sidebar-link-padding:12px;
 --app-sidebar-note-margin-top:65px;
@@ -365,6 +366,7 @@ body{
 --fantasy-shot-chart-view-button-padding:0 12px;
 --fantasy-shot-chart-view-button-min-height:32px;
 --fantasy-shot-chart-view-buttons-gap:4px;
+--fantasy-my-team-title-row-min-height:48px;
 --fantasy-stat-table-cell-padding:9px 8px;
 --fantasy-stat-table-cell-height:auto;
 --fantasy-stat-table-cell-button-padding:4px 0;
