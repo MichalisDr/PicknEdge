@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { courtHtml, courtCardHtml } from '../../site/fantasy/my-team/court-view.js';
+import { courtHtml, courtCardHtml, benchHtml } from '../../site/fantasy/my-team/court-view.js';
 import { courtPlayer } from '../../site/fantasy/my-team/team-page.js';
 import { FORMATIONS, emptyTeam, positionsOf } from '../../site/core/team-model.js';
 
@@ -64,4 +64,26 @@ test('the court and the card around it never share a part name (one name, one lo
   const card = keys('fantasy/my-team/team-card.js'), court = keys('fantasy/my-team/court-view.js'), gallery = keys('fantasy/my-team/gallery-view.js');
   assert.ok(card.size > 5 && court.size > 10);
   assert.deepEqual([...court].filter(k => card.has(k) || gallery.has(k)), []);
+});
+
+test('bench: six labelled slots in order; empty ones are buttons with a plus, filled ones are the court card', () => {
+  const team = { ...emptyTeam('T'), bench: ['six', null, 'b', null, null, null] };
+  const html = benchHtml(team, () => player);
+  assert.deepEqual([...html.matchAll(/fantasy\.my-team\.bench-label">([^<]+)</g)].map(m => m[1]), ['6TH MAN', 'BENCH', 'BENCH', 'BENCH', 'BENCH', 'COACH']);
+  assert.deepEqual([...html.matchAll(/data-slot="bench:(\d)"/g)].map(m => +m[1]), [0, 1, 2, 3, 4, 5]);
+  assert.equal(html.match(/fantasy\.my-team\.court-card"/g).length, 2);
+  assert.equal(html.match(/fantasy\.my-team\.bench-empty"/g).length, 3);
+  assert.ok(html.includes('aria-label="Add a bench player"'));
+  assert.ok(benchHtml(emptyTeam('T'), () => null).includes('aria-label="Add a 6th man"'));
+});
+
+test('the coach slot is only an empty state, even if something is stored in it', () => {
+  const html = benchHtml({ ...emptyTeam('T'), bench: [null, null, null, null, null, 'someone'] }, () => { throw new Error('no coach data is read'); });
+  assert.match(html, /<div data-part="fantasy\.my-team\.bench-coach" data-slot="bench:5"><span data-part="fantasy\.my-team\.bench-note">No data yet</);
+  assert.ok(!html.includes('court-card'));
+});
+
+test('the bench is as wide as the court through one token', () => {
+  const css = readFileSync(new URL('../../site/theme/fantasy/my-team.css', import.meta.url), 'utf8');
+  for (const key of ['court', 'bench']) assert.match(css, new RegExp(`\\[data-part="fantasy\\.my-team\\.${key}"\\]\\{[^}]*width:var\\(--fantasy-my-team-court-width\\)`), key);
 });

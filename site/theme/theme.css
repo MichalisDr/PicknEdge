@@ -676,6 +676,20 @@ body{
 --fantasy-my-team-empty-label-font-size:12px;
 --fantasy-my-team-empty-label-line-height:16px;
 --fantasy-my-team-empty-label-font-weight:600;
+--fantasy-my-team-bench-label-font-size:12px;
+--fantasy-my-team-bench-label-line-height:16px;
+--fantasy-my-team-bench-label-font-weight:600;
+--fantasy-my-team-bench-label-text:var(--color-muted);
+--fantasy-my-team-bench-empty-background:var(--color-field);
+--fantasy-my-team-bench-empty-border:var(--color-border-control);
+--fantasy-my-team-bench-empty-border-width:1px;
+--fantasy-my-team-bench-empty-radius:8px;
+--fantasy-my-team-bench-empty-text:var(--color-muted);
+--fantasy-my-team-bench-empty-font-size:16px;
+--fantasy-my-team-bench-empty-hovered-border:var(--color-accent-fantasy);
+--fantasy-my-team-bench-note-font-size:12px;
+--fantasy-my-team-bench-note-line-height:16px;
+--fantasy-my-team-bench-note-text:var(--color-muted);
 --fantasy-stat-table-buttons-focused-outline:var(--color-accent-fantasy);
 --fantasy-stat-table-buttons-focused-outline-offset:2px;
 --fantasy-stat-table-buttons-focused-outline-width:2px;
@@ -1614,6 +1628,20 @@ body[data-area=betting]{
   fantasy.my-team.empty-label.font-size : [data-part="fantasy.my-team.empty-label"]
   fantasy.my-team.empty-label.line-height : [data-part="fantasy.my-team.empty-label"]
   fantasy.my-team.empty-label.font-weight : [data-part="fantasy.my-team.empty-label"]
+  fantasy.my-team.bench-label.font-size : [data-part="fantasy.my-team.bench-label"]
+  fantasy.my-team.bench-label.line-height : [data-part="fantasy.my-team.bench-label"]
+  fantasy.my-team.bench-label.font-weight : [data-part="fantasy.my-team.bench-label"]
+  fantasy.my-team.bench-label.text : [data-part="fantasy.my-team.bench-label"]
+  fantasy.my-team.bench-empty.background : [data-part="fantasy.my-team.bench-empty"],[data-part="fantasy.my-team.bench-coach"]
+  fantasy.my-team.bench-empty.border : [data-part="fantasy.my-team.bench-empty"],[data-part="fantasy.my-team.bench-coach"]
+  fantasy.my-team.bench-empty.border-width : [data-part="fantasy.my-team.bench-empty"],[data-part="fantasy.my-team.bench-coach"]
+  fantasy.my-team.bench-empty.radius : [data-part="fantasy.my-team.bench-empty"],[data-part="fantasy.my-team.bench-coach"]
+  fantasy.my-team.bench-empty.text : [data-part="fantasy.my-team.bench-empty"],[data-part="fantasy.my-team.bench-coach"]
+  fantasy.my-team.bench-empty.font-size : [data-part="fantasy.my-team.bench-empty"],[data-part="fantasy.my-team.bench-coach"]
+  fantasy.my-team.bench-empty-hovered.border : [data-part="fantasy.my-team.bench-empty"]:hover
+  fantasy.my-team.bench-note.font-size : [data-part="fantasy.my-team.bench-note"]
+  fantasy.my-team.bench-note.line-height : [data-part="fantasy.my-team.bench-note"]
+  fantasy.my-team.bench-note.text : [data-part="fantasy.my-team.bench-note"]
   fantasy.stat-table.buttons-focused.outline : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-offset : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-width : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible

@@ -857,6 +857,21 @@
     "empty-circle": {
      "width": "64px",
      "height": "64px"
+    },
+    "bench": {
+     "margin": "16px auto 0"
+    },
+    "bench-row": {
+     "grid-template-columns": "repeat(6,auto)",
+     "grid-template-columns-narrow": "repeat(3,auto)",
+     "column-gap": "4px",
+     "row-gap": "16px"
+    },
+    "bench-slot": {
+     "gap": "8px"
+    },
+    "bench-empty": {
+     "min-height": "232px"
     }
    },
    "stat-table": {

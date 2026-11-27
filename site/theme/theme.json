@@ -1339,6 +1339,28 @@
      "font-size": "12px",
      "line-height": "16px",
      "font-weight": "600"
+    },
+    "bench-label": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "600",
+     "text": "{semantic.muted}"
+    },
+    "bench-empty": {
+     "background": "{semantic.field}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px",
+     "text": "{semantic.muted}",
+     "font-size": "16px"
+    },
+    "bench-empty-hovered": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "bench-note": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "text": "{semantic.muted}"
     }
    },
    "stat-table": {

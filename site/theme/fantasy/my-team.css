@@ -72,3 +72,15 @@ main:has(.mt-page){margin-top:0}
 [data-part="fantasy.my-team.card-frame"] img{width:var(--fantasy-my-team-court-card-width-below-560px);height:var(--fantasy-my-team-court-card-width-below-560px)}
 [data-part="fantasy.my-team.card-next-row"]{flex-direction:column;align-items:flex-start;min-height:var(--fantasy-my-team-card-next-row-min-height-below-560px)}
 [data-part="fantasy.my-team.card-stats"]{flex-direction:column}}
+/* The bench: one row of six, as wide as the court (the court's width token). Where the court is too narrow for six cards it breaks into rows of three. */
+[data-part="fantasy.my-team.bench"]{container-type:inline-size;width:var(--fantasy-my-team-court-width);margin:var(--fantasy-my-team-bench-margin)}
+[data-part="fantasy.my-team.bench-row"]{display:grid;grid-template-columns:var(--fantasy-my-team-bench-row-grid-template-columns);justify-content:space-between;column-gap:var(--fantasy-my-team-bench-row-column-gap);row-gap:var(--fantasy-my-team-bench-row-row-gap)}
+[data-part="fantasy.my-team.bench-slot"]{display:flex;flex-direction:column;gap:var(--fantasy-my-team-bench-slot-gap);width:var(--fantasy-my-team-court-card-width)}
+[data-part="fantasy.my-team.bench-label"]{text-align:center;white-space:nowrap;font-size:var(--fantasy-my-team-bench-label-font-size);line-height:var(--fantasy-my-team-bench-label-line-height);font-weight:var(--fantasy-my-team-bench-label-font-weight);letter-spacing:0.04em;color:var(--fantasy-my-team-bench-label-text)}
+[data-part="fantasy.my-team.bench-empty"],[data-part="fantasy.my-team.bench-coach"]{display:flex;flex:1;align-items:center;justify-content:center;min-height:var(--fantasy-my-team-bench-empty-min-height);padding:0;background:var(--fantasy-my-team-bench-empty-background);border:var(--fantasy-my-team-bench-empty-border-width) dashed var(--fantasy-my-team-bench-empty-border);border-radius:var(--fantasy-my-team-bench-empty-radius);color:var(--fantasy-my-team-bench-empty-text);font-size:var(--fantasy-my-team-bench-empty-font-size)}
+[data-part="fantasy.my-team.bench-empty"]:hover{border-color:var(--fantasy-my-team-bench-empty-hovered-border)}
+[data-part="fantasy.my-team.bench-note"]{text-align:center;font-size:var(--fantasy-my-team-bench-note-font-size);line-height:var(--fantasy-my-team-bench-note-line-height);color:var(--fantasy-my-team-bench-note-text)}
+/* Six cards of 136 px and five gaps of at least 4 px need 836 px. The court is 856 px, but a scrolling dialog loses the width of its scrollbar, so the one
+   row must not need all of it; space-between gives the gaps whatever is left. */
+@container (max-width:835px){[data-part="fantasy.my-team.bench-row"]{grid-template-columns:var(--fantasy-my-team-bench-row-grid-template-columns-narrow);justify-content:space-evenly}}
+@media(max-width:560px){[data-part="fantasy.my-team.bench-slot"]{width:var(--fantasy-my-team-court-card-width-below-560px)}}

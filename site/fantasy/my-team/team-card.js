@@ -3,7 +3,7 @@
    never lost to a redraw. The state is the page's: get() returns the undo entry { team, history } of this team, set(entry) keeps and saves it. */
 import { esc } from '../../core/html.js';
 import { icon } from '../../core/icons.js';
-import { courtHtml } from './court-view.js';
+import { courtHtml, benchHtml } from './court-view.js';
 import { FORMATIONS, change, undo, clearPlayers, credits, idsOf, setCap, setFormation, setName } from '../../core/team-model.js';
 
 /** Icons to load (core/icons.js loadIcons) before the card is opened. */
@@ -64,10 +64,10 @@ export function open({ get, set, crOf, playerOf }, onClose) {
   const $ = s => root.querySelector(s);
   const view = $('[data-name-view]'), form = $('[data-name-form]'), nameInput = $('[data-name-input]'), capInput = $('[data-cap]');
 
-  let drawn = '';   // what the court shows now
+  let drawn = '';   // what the court and the bench show now
   function drawBody(team) {
-    const key = `${team.formation}|${team.starters.join()}`;
-    if (key !== drawn) { drawn = key; $('[data-body]').innerHTML = courtHtml(team, playerOf); }
+    const key = `${team.formation}|${team.starters.join()}|${team.bench.join()}`;
+    if (key !== drawn) { drawn = key; $('[data-body]').innerHTML = courtHtml(team, playerOf) + benchHtml(team, playerOf); }
   }
 
   function update() {
