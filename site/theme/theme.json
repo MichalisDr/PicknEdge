@@ -1197,6 +1197,237 @@
      "colour": "{semantic.border-control}"
     }
    },
+   "my-team": {
+    "team-slot": {
+     "background": "{semantic.panel}",
+     "text": "{semantic.text}",
+     "border": "{semantic.border-soft}",
+     "border-width": "1px",
+     "radius": "8px"
+    },
+    "team-slot-hovered": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "team-slot-name": {
+     "font-size": "16px",
+     "line-height": "24px",
+     "font-weight": "600"
+    },
+    "team-slot-formation": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "text": "{semantic.muted}"
+    },
+    "slot-portrait": {
+     "background": "{semantic.field}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "50%"
+    },
+    "slot-portrait-filled": {
+     "background": "{semantic.chip}"
+    },
+    "credits-text": {
+     "font-size": "14px",
+     "line-height": "20px",
+     "font-weight": "600",
+     "text": "{semantic.text}"
+    },
+    "credits-text-over": {
+     "text": "{semantic.eval-bad-text}"
+    },
+    "credits-bar": {
+     "background": "{semantic.chip}",
+     "radius": "4px"
+    },
+    "credits-fill": {
+     "background": "{semantic.positive}"
+    },
+    "credits-fill-over": {
+     "background": "{semantic.eval-bad-text}"
+    },
+    "team-slot-count": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "text": "{semantic.muted}"
+    },
+    "name-button": {
+     "text": "{semantic.muted}",
+     "radius": "8px",
+     "font-size": "16px"
+    },
+    "name-button-hovered": {
+     "background": "{semantic.chip}"
+    },
+    "name-input": {
+     "background": "{semantic.field}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "4px",
+     "text": "{semantic.text}",
+     "font-size": "14px",
+     "line-height": "20px"
+    },
+    "cap-label": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "600",
+     "text": "{semantic.muted}"
+    },
+    "cap-status": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "text": "{semantic.muted}"
+    },
+    "court": {
+     "background": "{semantic.bg}",
+     "radius": "8px"
+    },
+    "court-lines": {
+     "line": "{semantic.border-control}",
+     "line-width": "1px"
+    },
+    "court-card": {
+     "background": "{semantic.panel}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px",
+     "text": "{semantic.text}"
+    },
+    "card-frame": {
+     "background": "{semantic.violet-header}"
+    },
+    "card-strip": {
+     "background": "{semantic.violet-header}"
+    },
+    "card-name": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "600",
+     "text": "{semantic.text}"
+    },
+    "card-next": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "text": "{semantic.muted}"
+    },
+    "card-stat": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "600",
+     "text": "{semantic.text}"
+    },
+    "card-stat-label": {
+     "font-weight": "500",
+     "text": "{semantic.muted}"
+    },
+    "empty-slot": {
+     "text": "{semantic.muted}",
+     "radius": "8px"
+    },
+    "empty-circle": {
+     "background": "{semantic.field}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "50%",
+     "font-size": "16px"
+    },
+    "empty-circle-hovered": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "empty-label": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "600"
+    },
+    "bench-label": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "600",
+     "text": "{semantic.muted}"
+    },
+    "bench-empty": {
+     "background": "{semantic.field}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px",
+     "text": "{semantic.muted}",
+     "font-size": "16px"
+    },
+    "bench-empty-hovered": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "bench-note": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "text": "{semantic.muted}"
+    },
+    "picker-search": {
+     "font-size": "14px",
+     "line-height": "20px",
+     "background": "{semantic.field}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "4px",
+     "text": "{semantic.text}"
+    },
+    "picker-row": {
+     "background": "transparent",
+     "radius": "8px",
+     "text": "{semantic.text}"
+    },
+    "picker-row-hovered": {
+     "background": "{semantic.row-hover}"
+    },
+    "picker-name": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "600"
+    },
+    "picker-next": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "text": "{semantic.muted}"
+    },
+    "picker-stat": {
+     "font-size": "12px",
+     "line-height": "16px",
+     "font-weight": "600"
+    },
+    "picker-stat-label": {
+     "font-weight": "500",
+     "text": "{semantic.muted}"
+    },
+    "slot-active": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "court-card-hovered": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "card-open-focused": {
+     "outline": "{semantic.accent-fantasy}",
+     "outline-width": "2px",
+     "outline-offset": "-2px"
+    },
+    "card-remove": {
+     "background": "{semantic.field}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px",
+     "text": "{semantic.text}",
+     "font-size": "16px"
+    },
+    "card-remove-hovered": {
+     "background": "{semantic.chip}"
+    },
+    "card-unknown": {
+     "text": "{semantic.muted}",
+     "font-size": "16px"
+    },
+    "court-card-unavailable": {
+     "text": "{semantic.muted}"
+    }
+   },
    "stat-table": {
     "buttons-focused": {
      "outline": "{semantic.accent-fantasy}",

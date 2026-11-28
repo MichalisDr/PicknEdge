@@ -36,10 +36,11 @@ One folder per purpose; a file does one thing (data, markup or behaviour), named
 |---|---|
 | `index.html` | The only page; loads `theme/` and `app/main.js` |
 | `app/` | Entry point and shell: routes, sidebar |
-| `core/` | Logic with no screen: data loader (`data-loader.js`, `data.js`), windows, per-game series (`game-series.js`), eligibility, table model (ranks, order), card stack order, team lookups |
+| `core/` | Logic with no screen: data loader (`data-loader.js`, `data.js`), windows, per-game series (`game-series.js`), eligibility, table model (ranks, order), card stack order, team lookups, the My Team model (`team-model.js`: formations, slots, credits, undo) |
 | `fantasy/tables/` | Players / Teams tables: `table-data.js` (rows, ranks, order), `table-view.js` (markup), `table-page.js` (state, events), `table-popups.js`, `game-sparkline.js` (hover) |
 | `fantasy/cards/` | Player and team cards: `card.js` (dialog), `metric-grid.js`, `card-trend.js` and `bars-chart.js` (per-game bars), `box-scores.js`, `card-data.js` |
 | `fantasy/shotchart/` | Shot chart: `shot-data.js`, `shot-view.js`, `shotchart.js` (interactions), `shot-zones.js` (court geometry and grading) |
+| `fantasy/my-team/` | My Team, the personal virtual team builder (this browser only): `team-page.js` (the page), `gallery-view.js` (the team slots, markup), `team-card.js` (the team card dialog), `court-view.js` (court, bench, slots and court card, markup), `picker.js` (the player picker of an empty slot), `team-store.js` (browser storage: one versioned `localStorage` key); styles in `theme/fantasy/my-team.css` |
 | `fantasy/gallery/` | Comparative charts: `charts.js` (which charts), `scatter.js`, `gallery.js`, `gallery-dialog.js` |
 | `betting/` | Betting statistics (`table-data.js`, `table-view.js`, `table-page.js`, `columns.js`) and the research pages (`research*.js`) |
 | `config/` | `layout.json` (card grids), `table-layouts.json` (tables), `sizes.json` (layout of every named element), `arrangement.json` (order and alignment of parts) and their generated `sizes.css` / `arrangement.css` |
@@ -83,6 +84,15 @@ Fetching new games needs network access: `node scripts/fetch/run.mjs --concurren
 ## Team identity
 
 `site/assets/teams.js` is the one team registry: public `code` (the EuroLeague tvCode the site shows), `feed` code (the key of `data/` and `roster.json`), current `name`, short `label`, `id` and logo. `roster.logoIds` and the Fantasy-abbreviation map are derived from it at build time. A test compares names and codes with the roster snapshot (`data/raw/<season>/roster.json.gz`, which also keeps each club's `primaryColor`). Team colours: `theme.json`, `component.fantasy.team-colours`, keyed by public code.
+
+## My Team
+
+`#fantasy/my-team` is a personal virtual team builder (not the real Fantasy teams). It has no backend and no sharing, adds no data files and makes no EuroLeague calls.
+
+- **Storage:** this browser only, one `localStorage` key, `picknedge.my-team.v1`, as JSON with a version. A team is `{ name, capText, formation, starters[5], bench[6] }` with player ids only; `bench[0]` is the 6th man, `bench[5]` the coach. Blocked or corrupt storage falls back to the two empty default teams. The undo history (20 changes per team) is not stored; it lasts until the page is left.
+- **Rules** (`core/team-model.js`): two teams; formations count guards-forwards-centres from the bottom of the court; a player is in a team at most once; changing formation keeps players by position and drops the extra ones. The credit cap is soft: going over is shown, never blocked. The coach is not counted, and has no data yet.
+- **Players:** the picker lists the players of the Season view who are still on a roster. Figures are the Season ones (`Data.fantasyInfo`, `Data.nextGame`). A player without credits counts as 0 and the meter says so; one who has left the roster shows `Off roster`; one no longer in the data shows as unavailable and keeps the id until removed.
+- **Look:** sizes and colours are `fantasy.my-team.*` in the two token files; the dialog, header, chips and icon buttons are the player card's parts. The court and the bench share one width token.
 
 ## Manual data (`data/manual/`)
 

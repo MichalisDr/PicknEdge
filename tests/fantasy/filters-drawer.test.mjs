@@ -179,3 +179,8 @@ test('every new element is a token: the sizes exist and no raw px is in the draw
   assert.ok(!/\d\s*px\b/.test(code), 'no px in table-filters.js');
   for (const rule of css.split('\n').filter(l => /\.fw-fd|\.fw-table-area/.test(l))) assert.ok(!/(?<![\w.-])\d*\.?\d+px/.test(rule.replace(/@media\(max-width:\d+px\)/, '')), rule.slice(0, 80));
 });
+
+test('Esc redraws the table only while the drawer is on screen, never over a page opened after it', () => {
+  const page = readFileSync(new URL('../../site/fantasy/tables/table-page.js', import.meta.url), 'utf8');
+  assert.match(page, /e\.key === 'Escape' && state\.filters && host\?\.querySelector\('\.fw-table-area\[data-drawer="true"\]'\)/);
+});

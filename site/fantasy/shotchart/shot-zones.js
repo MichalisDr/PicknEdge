@@ -102,12 +102,21 @@ const polar=(deg,r)=>[r*Math.cos(deg*Math.PI/180),r*Math.sin(deg*Math.PI/180)];
 const edge=deg=>{const c=Math.abs(Math.cos(deg*Math.PI/180)),s=Math.abs(Math.sin(deg*Math.PI/180));return Math.min(SIDE/(c||1e-9),HALF/(s||1e-9));};
 /* Where a ray from the hoop leaves the paint (only the part outside the paint is drawn). */
 const paintExit=deg=>{const c=Math.cos(deg*Math.PI/180),s=Math.sin(deg*Math.PI/180);return Math.min(c>1e-9?LANE/c:Infinity,s>1e-9?FT/s:Infinity);};
+/* The painted lines of the half court (no zones): boundary, paint, rim area, three-point line, free-throw half circle, backboard. */
+function courtMarks(){
+ const marks=`M${P(-SIDE,BASELINE)}V${Y(HALF)}H${X(SIDE)}V${Y(BASELINE)}Z M${P(-LANE,BASELINE)}V${Y(FT)}H${X(LANE)}V${Y(BASELINE)} M${P(-RIM_R,RIM_STRIP_Y)}V${Y(0)}A${R(RIM_R)} ${R(RIM_R)} 0 0 0 ${P(RIM_R,0)}V${Y(RIM_STRIP_Y)}Z M${P(-CORNER_X,BASELINE)}V${Y(CORNER_Y)}A${R(ARC)} ${R(ARC)} 0 0 0 ${P(CORNER_X,CORNER_Y)}V${Y(BASELINE)} M${P(-180,FT)}A${R(180)} ${R(180)} 0 0 1 ${P(180,FT)} M${P(-90,-37.5)}H${X(90)}`;
+ return marks;
+}
+/* The lines inside the boundary and the hoop as SVG without paint (the style sheet of the screen sets stroke and fill), and the box of the half court, basket at
+   the top. The boundary (the first subpath, closed with Z) is left out: the screen draws it as the border of its box, which may be taller than a half court. */
+const courtLines=()=>`<path d="${courtMarks().split('Z').slice(1).join('Z').trim()}"/><circle cx="${X(0)}" cy="${Y(0)}" r="${R(22.5)}"/>`;
+const COURT_BOX=[X(-SIDE),Y(BASELINE),SC*2*SIDE,SC*(HALF-BASELINE)];
 function court(){
+ const marks=courtMarks();
  const rays=[];
  for(const sx of [-1,1]){const dir=d=>sx<0?180-d:d;
   const seg=(d,r0,r1)=>{const [a,b]=polar(dir(d),r0),[c,e]=polar(dir(d),r1);return `M${P(a,b)}L${P(c,e)}`;};
   rays.push(seg(DIAG_DEG,paintExit(DIAG_DEG),edge(DIAG_DEG)),seg(B_DEG,paintExit(B_DEG),ARC),`M${P(sx*CORNER_X,CORNER_Y)}H${X(sx*SIDE)}`);}
- const marks=`M${P(-SIDE,BASELINE)}V${Y(HALF)}H${X(SIDE)}V${Y(BASELINE)}Z M${P(-LANE,BASELINE)}V${Y(FT)}H${X(LANE)}V${Y(BASELINE)} M${P(-RIM_R,RIM_STRIP_Y)}V${Y(0)}A${R(RIM_R)} ${R(RIM_R)} 0 0 0 ${P(RIM_R,0)}V${Y(RIM_STRIP_Y)}Z M${P(-CORNER_X,BASELINE)}V${Y(CORNER_Y)}A${R(ARC)} ${R(ARC)} 0 0 0 ${P(CORNER_X,CORNER_Y)}V${Y(BASELINE)} M${P(-180,FT)}A${R(180)} ${R(180)} 0 0 1 ${P(180,FT)} M${P(-90,-37.5)}H${X(90)}`;
  return `<g class="sz-borders" fill="none" stroke="var(--fantasy-shot-chart-court-outline-line)" stroke-width=".8" stroke-dasharray="3 3"><path d="${rays.join('')}"/></g><g class="sz-lines" fill="none" stroke="var(--fantasy-shot-chart-court-markings-line)" stroke-width="1"><path d="${marks}"/><circle cx="${X(0)}" cy="${Y(0)}" r="${R(22.5)}"/></g>`;
 }
-export const ShotZones={BASELINE,LANE,FT,RIM_R,RIM_STRIP_Y,ARC,CORNER_X,CORNER_Y,DIAG_DEG,B_DEG,ZONES,SUBS,MAINS,COUNT,CELL,MAX_R,DOT_R,GAP_CUTS,LEVEL_NAMES,LABELS,model,grade,teamRanks,levelClass,levelName,VIEW,SC,classify,rollup,cellOf,cellCenter,hexPts,bin,court,X,Y};
+export const ShotZones={BASELINE,LANE,FT,RIM_R,RIM_STRIP_Y,ARC,CORNER_X,CORNER_Y,DIAG_DEG,B_DEG,ZONES,SUBS,MAINS,COUNT,CELL,MAX_R,DOT_R,GAP_CUTS,LEVEL_NAMES,LABELS,model,grade,teamRanks,levelClass,levelName,VIEW,SC,classify,rollup,cellOf,cellCenter,hexPts,bin,court,courtLines,COURT_BOX,X,Y};
