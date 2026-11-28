@@ -11,8 +11,11 @@ import { figuresHtml } from '../tables/table-name-cell.js';
 const part = key => `data-part="fantasy.my-team.${key}"`;
 export const POSITION_NAMES = { G: 'Guard', F: 'Forward', C: 'Center' };
 
-/** The round portrait of a player (gallery and picker); player: { name, portrait } or null. A filled circle without an image when there is no portrait. */
-export const portraitHtml = player => `<span ${part('slot-portrait')} data-filled title="${esc(player?.name ?? '')}">${player?.portrait ? `<img src="${esc(player.portrait)}" alt="">` : ''}</span>`;
+/* The picture of a player: the portrait, else the team logo (as on the player card), else nothing. */
+const pictureHtml = (player, logoKey) => (player.portrait ? `<img src="${esc(player.portrait)}" alt="">` : player.logo ? `<img ${part(logoKey)} src="${esc(player.logo)}" alt="">` : '');
+
+/** The round portrait of a player (gallery and picker); player: { name, portrait, logo }, or null for a player who is not in the data any more. */
+export const portraitHtml = player => `<span ${part('slot-portrait')} data-filled title="${esc(player ? player.name : 'Unavailable player')}">${player ? pictureHtml(player, 'slot-logo') : '<span aria-hidden="true">?</span>'}</span>`;
 
 export const emptyPortraitHtml = () => `<span ${part('slot-portrait')}></span>`;
 
@@ -21,23 +24,36 @@ export function emptySlotHtml(label, attrs) {
   return `<button type="button" ${part('empty-slot')} ${attrs} aria-label="Add a ${esc(label.toLowerCase())}"><span ${part('empty-circle')} aria-hidden="true">+</span><span ${part('empty-label')}>${esc(label.toUpperCase())}</span></button>`;
 }
 
+const stat = (label, value) => `<span ${part('card-stat')}><span ${part('card-stat-label')}>${label}</span>${esc(value)}</span>`;
+const removeHtml = label => `<button type="button" ${part('card-remove')} data-remove title="Remove from the team" aria-label="${label}"><span aria-hidden="true">×</span></button>`;
+
+const unavailableCardHtml = attrs => `<div ${part('court-card')} ${attrs} data-unavailable>
+    <span ${part('card-frame')}><span ${part('card-unknown')} aria-hidden="true">?</span></span>
+    <span ${part('card-strip')}><span ${part('card-name')}>Unavailable</span></span>
+    <span ${part('card-panel')}>
+      <span ${part('card-next-row')}><span ${part('card-next')}>No data</span><span ${part('card-figures')}></span></span>
+      <span ${part('card-stats')}>${stat('PIR', '—')}${stat('MIN', '—')}</span>
+    </span>
+    ${removeHtml('Remove the unavailable player from the team')}
+  </div>`;
+
 /**
- * A filled slot. player: { name, fullName, portrait, pos, teamCode, next: { home, code } | null, info: Data.fantasyInfo | null, pir, min } (pir and min
- * are formatted Season averages). A figure without data draws nothing; its line keeps its height, so every card is the same size.
+ * A filled slot. player: { name, fullName, portrait, logo, pos, teamCode, next: { home, code } | null, offRoster, info: Data.fantasyInfo | null, pir, min }
+ * (pir and min are formatted Season averages), or { unavailable: true } for an id the data no longer has: the same card, which can only be removed. A figure without data draws nothing; its line keeps its height, so every card is the same size.
  * Two buttons lie over the card, never one inside the other: one covers it and opens the player card, a small one empties the slot.
  */
 export function courtCardHtml(player, attrs) {
-  const next = player.next ? `${player.next.home ? 'vs' : '@'} ${player.next.code}` : '';
-  const stat = (label, value) => `<span ${part('card-stat')}><span ${part('card-stat-label')}>${label}</span>${esc(value)}</span>`;
+  if (player.unavailable) return unavailableCardHtml(attrs);
+  const next = player.offRoster ? 'Off roster' : player.next ? `${player.next.home ? 'vs' : '@'} ${player.next.code}` : '';
   return `<div ${part('court-card')} ${attrs}>
-    <span ${part('card-frame')}><span data-part="fantasy.player-card.header-portrait-fade" style="${teamColour(player.teamCode)}"></span>${player.portrait ? `<img src="${esc(player.portrait)}" alt="">` : ''}</span>
+    <span ${part('card-frame')}><span data-part="fantasy.player-card.header-portrait-fade" style="${teamColour(player.teamCode)}"></span>${pictureHtml(player, 'card-logo')}</span>
     <span ${part('card-strip')}>${['G', 'F', 'C'].includes(player.pos) ? `<span data-part="fantasy.stat-table.name-cell-position-badge" title="Position">${player.pos}</span>` : ''}<span ${part('card-name')} title="${esc(player.fullName)}">${esc(player.name)}</span></span>
     <span ${part('card-panel')}>
       <span ${part('card-next-row')}><span ${part('card-next')}>${esc(next)}</span><span ${part('card-figures')}>${figuresHtml(player.info && { ...player.info, valueSeries: null })}</span></span>
       <span ${part('card-stats')}>${stat('PIR', player.pir)}${stat('MIN', player.min)}</span>
     </span>
     <button type="button" ${part('card-open')} data-open-player title="${esc(player.fullName)}" aria-label="Open the player card of ${esc(player.fullName)}"></button>
-    <button type="button" ${part('card-remove')} data-remove title="Remove from the team" aria-label="Remove ${esc(player.fullName)} from the team"><span aria-hidden="true">×</span></button>
+    ${removeHtml(`Remove ${esc(player.fullName)} from the team`)}
   </div>`;
 }
 

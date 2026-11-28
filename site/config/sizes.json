@@ -821,11 +821,13 @@
      "height": "100%"
     },
     "court-row": {
-     "gap": "8px"
+     "gap": "8px",
+     "gap-below-380px": "4px"
     },
     "court-card": {
      "width": "136px",
-     "width-below-560px": "96px"
+     "width-below-560px": "96px",
+     "width-below-380px": "88px"
     },
     "card-strip": {
      "gap": "4px",
@@ -834,11 +836,12 @@
     },
     "card-panel": {
      "gap": "4px",
-     "padding": "8px"
+     "padding": "8px",
+     "padding-below-380px": "8px 4px"
     },
     "card-next-row": {
      "gap": "4px",
-     "min-height": "24px",
+     "min-height": "28px",
      "min-height-below-560px": "48px"
     },
     "card-figures": {
@@ -918,6 +921,14 @@
      "height": "24px",
      "width-coarse": "32px",
      "height-coarse": "32px"
+    },
+    "card-logo": {
+     "width": "64px",
+     "height": "64px"
+    },
+    "slot-logo": {
+     "width": "32px",
+     "height": "32px"
     }
    },
    "stat-table": {

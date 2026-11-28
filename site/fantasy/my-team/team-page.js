@@ -4,7 +4,7 @@
 import { Data } from '../../core/data.js';
 import { esc } from '../../core/html.js';
 import { loadIcons } from '../../core/icons.js';
-import { teamCode } from '../../core/teams.js';
+import { teamCode, teamLogo } from '../../core/teams.js';
 import { startHistory } from '../../core/team-model.js';
 import { load, save } from './team-store.js';
 import { galleryHtml } from './gallery-view.js';
@@ -17,10 +17,12 @@ export const pageHtml = (body = '') => `<section class="fantasy-stats fw-workben
 
 /** What a court card shows of a player: Season averages, credits and value (Data.fantasyInfo), the team's next game (Data.nextGame, the player card's source). */
 export function courtPlayer(id, { roster, season, nextOf }) {
-  const entry = roster.players[id], row = season.row(id), team = row?.team ?? entry?.team, next = nextOf.get(team);
+  const entry = roster.players[id], row = season.row(id);
+  if (!entry && !row) return { unavailable: true };   // the player left the data; the team keeps the id
+  const offRoster = !!entry && !entry.active, team = row?.team ?? entry?.team, next = offRoster ? null : nextOf.get(team);   // the old club's next game is not theirs
   const fullName = entry?.name ?? row?.name ?? id, average = metric => Data.formatMetric(metric, season.get(id, metric)?.value ?? null);
   return {
-    fullName, name: shortName(entry, fullName), portrait: entry?.portrait ?? null, pos: row?.pos ?? entry?.pos, teamCode: teamCode(roster, team),
+    fullName, name: shortName(entry, fullName), portrait: entry?.portrait ?? null, logo: teamLogo(roster, team) ?? null, offRoster, pos: row?.pos ?? entry?.pos, teamCode: teamCode(roster, team),
     next: next ? { home: next.home, code: teamCode(roster, next.opp) } : null, info: Data.fantasyInfo(id, 'season'), pir: average('pir'), min: average('min'),
   };
 }
@@ -48,7 +50,12 @@ export async function mount(target) {
   if (!loading.isConnected) return;   // another page was opened while the data was loading
 
   const entries = load().map(startHistory);
-  const lookups = { playerOf: id => roster.players[id] ?? null, crOf: id => Data.fantasyInfo(id, 'season')?.cr ?? null };
+  /* The gallery's circles need only the name and the picture. */
+  const pictureOf = id => {
+    const player = courtPlayer(id, { roster, season, nextOf });
+    return player.unavailable ? null : { name: player.fullName, portrait: player.portrait, logo: player.logo };
+  };
+  const lookups = { playerOf: pictureOf, crOf: id => Data.fantasyInfo(id, 'season')?.cr ?? null };
   const slot = i => target.querySelector(`[data-team-slot="${i}"]`);
   let players = null;   // built when the picker is first opened
   const draw = () => {

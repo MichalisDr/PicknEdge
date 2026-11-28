@@ -36,3 +36,8 @@ test('meter: what is left, then how far over; the bar stops at 100%', () => {
   assert.deepEqual(meterValues(team, () => 20), { used: '20.0', over: false, percent: 100, status: '0.0 left' });
   assert.deepEqual(meterValues(team, () => 22.5), { used: '22.5', over: true, percent: 100, status: '2.5 over the cap' });
 });
+
+test('meter: players without credits count as 0 and the status says how many', () => {
+  const team = { ...emptyTeam('T', '2-2-1', '20'), starters: ['a', 'b', null, null, null] };
+  assert.equal(meterValues(team, id => (id === 'a' ? 5 : null)).status, '15.0 left · 1 without CR');
+});

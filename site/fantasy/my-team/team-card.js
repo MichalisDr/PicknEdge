@@ -46,7 +46,7 @@ export function meterValues(team, crOf) {
     used: c.used.toFixed(1),
     over: c.isOver,
     percent: c.cap === null ? 0 : Math.min(100, (c.used / c.cap) * 100),
-    status: c.isOver ? `${c.over.toFixed(1)} over the cap` : `${(c.left ?? 0).toFixed(1)} left`,
+    status: (c.isOver ? `${c.over.toFixed(1)} over the cap` : `${(c.left ?? 0).toFixed(1)} left`) + (c.missing ? ` · ${c.missing} without CR` : ''),   // they count as 0
   };
 }
 

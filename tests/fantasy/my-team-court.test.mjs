@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { courtHtml, courtCardHtml, benchHtml } from '../../site/fantasy/my-team/court-view.js';
+import { courtHtml, courtCardHtml, benchHtml, portraitHtml } from '../../site/fantasy/my-team/court-view.js';
 import { courtPlayer } from '../../site/fantasy/my-team/team-page.js';
 import { FORMATIONS, emptyTeam, positionsOf } from '../../site/core/team-model.js';
 
@@ -53,9 +53,15 @@ test('the court has its painted lines and no shot zones', () => {
   assert.ok(!/sz-borders|sz-zone|stroke-dasharray/.test(html));
 });
 
-test('the court card data of a player the files do not know does not break', () => {
+test('an id the files do not know is an unavailable player', () => {
   const p = courtPlayer('P0', { roster: { players: {}, teams: {} }, season: { row: () => null, get: () => null }, nextOf: new Map() });
-  assert.deepEqual([p.fullName, p.name, p.portrait, p.next, p.info, p.pir, p.min], ['P0', 'P0', null, null, null, '—', '—']);
+  assert.deepEqual(p, { unavailable: true });
+});
+
+test('a roster player without appearances: no figures, dashes for the averages', () => {
+  const roster = { teams: {}, players: { P1: { name: 'New Signing', pos: 'C', team: 'X', active: 1 } } };
+  const p = courtPlayer('P1', { roster, season: { row: () => null, get: () => null }, nextOf: new Map() });
+  assert.deepEqual([p.name, p.portrait, p.next, p.info, p.pir, p.min], ['New Signing', null, null, null, '—', '—']);
 });
 
 test('the court and the card around it never share a part name (one name, one look)', async () => {
@@ -100,4 +106,27 @@ test('the team card opens the existing player card and adds nothing to it', () =
   const site = rel => readFileSync(new URL('../../site/' + rel, import.meta.url), 'utf8');
   assert.match(site('fantasy/my-team/team-page.js'), /import\('\.\.\/cards\/card\.js'\)\)\.open\('players', id, \{ previous: trigger \}\)/);
   assert.ok(!site('fantasy/cards/card.js').includes('my-team') && !site('fantasy/cards/card-header.js').includes('my-team'));
+});
+
+test('without a portrait the team logo stands in, in the card and in the round portrait', () => {
+  const noPhoto = { ...player, portrait: null, logo: 'assets/logos/x.png' };
+  assert.match(courtCardHtml(noPhoto, ''), /fantasy\.my-team\.card-logo" src="assets\/logos\/x\.png"/);
+  assert.match(portraitHtml({ name: 'N', portrait: null, logo: 'assets/logos/x.png' }), /fantasy\.my-team\.slot-logo" src=/);
+  assert.ok(!courtCardHtml({ ...noPhoto, logo: null }, '').includes('<img'));
+});
+
+test('a player who left the data: same card shape, marked unavailable, nothing to open, can be removed', () => {
+  const html = courtCardHtml({ unavailable: true }, 'data-slot="bench:2"');
+  assert.match(html, /^<div data-part="fantasy\.my-team\.court-card" data-slot="bench:2" data-unavailable>/);
+  for (const key of ['card-frame', 'card-strip', 'card-panel', 'card-next-row', 'card-figures', 'card-stats']) assert.ok(html.includes(`fantasy.my-team.${key}"`), key);
+  assert.ok(html.includes('>Unavailable<') && !html.includes('data-open-player') && html.includes('aria-label="Remove the unavailable player from the team"'));
+  assert.ok(portraitHtml(null).includes('title="Unavailable player"'));
+});
+
+test('off the roster: says so and shows no next game of the old club', () => {
+  const roster = { teams: {}, players: { gone: { name: 'Gone Guard', pos: 'G', team: 'X', active: 0 } } };
+  const season = { row: () => ({ team: 'X', pos: 'G' }), get: () => ({ value: 3 }) };
+  const p = courtPlayer('gone', { roster, season, nextOf: new Map([['X', { home: true, opp: 'Y' }]]) });
+  assert.deepEqual([p.offRoster, p.next], [true, null]);
+  assert.ok(courtCardHtml(p, '').includes('>Off roster<'));
 });

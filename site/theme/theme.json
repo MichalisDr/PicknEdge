@@ -1419,6 +1419,13 @@
     },
     "card-remove-hovered": {
      "background": "{semantic.chip}"
+    },
+    "card-unknown": {
+     "text": "{semantic.muted}",
+     "font-size": "16px"
+    },
+    "court-card-unavailable": {
+     "text": "{semantic.muted}"
     }
    },
    "stat-table": {

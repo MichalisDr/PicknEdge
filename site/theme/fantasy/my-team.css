@@ -121,3 +121,17 @@ main:has(.mt-page){margin-top:0}
 [data-part="fantasy.my-team.card-remove"]:hover{background:var(--fantasy-my-team-card-remove-hovered-background)}
 @media(hover:none),(pointer:coarse){[data-part="fantasy.my-team.card-remove"]{opacity:1}}
 @media(pointer:coarse){[data-part="fantasy.my-team.card-remove"]{width:var(--fantasy-my-team-card-remove-width-coarse);height:var(--fantasy-my-team-card-remove-height-coarse)}}
+/* Missing data: the team logo stands in for a portrait; a player who left the data keeps a card that can only be removed. */
+[data-part="fantasy.my-team.card-frame"] [data-part="fantasy.my-team.card-logo"]{align-self:center;width:var(--fantasy-my-team-card-logo-width);height:var(--fantasy-my-team-card-logo-height);object-fit:contain}
+[data-part="fantasy.my-team.slot-portrait"]{align-items:center}
+[data-part="fantasy.my-team.slot-portrait"] [data-part="fantasy.my-team.slot-logo"]{width:var(--fantasy-my-team-slot-logo-width);height:var(--fantasy-my-team-slot-logo-height);object-fit:contain}
+[data-part="fantasy.my-team.card-unknown"]{align-self:center;font-size:var(--fantasy-my-team-card-unknown-font-size);color:var(--fantasy-my-team-card-unknown-text)}
+[data-part="fantasy.my-team.court-card"][data-unavailable]{border-style:dashed}
+[data-part="fantasy.my-team.court-card"][data-unavailable] [data-part="fantasy.my-team.card-name"]{color:var(--fantasy-my-team-court-card-unavailable-text)}
+[data-part="fantasy.my-team.court-card"][data-unavailable] [data-part="fantasy.my-team.card-remove"]{opacity:1}
+/* 360 px phones: three cards and their gaps must still fit inside the court. */
+@media(max-width:380px){[data-part="fantasy.my-team.court-row"]{gap:var(--fantasy-my-team-court-row-gap-below-380px)}
+[data-part="fantasy.my-team.card-panel"]{padding:var(--fantasy-my-team-card-panel-padding-below-380px)}
+[data-part="fantasy.my-team.court-card"],[data-part="fantasy.my-team.empty-slot"],[data-part="fantasy.my-team.bench-slot"]{width:var(--fantasy-my-team-court-card-width-below-380px)}
+[data-part="fantasy.my-team.card-frame"]{height:var(--fantasy-my-team-court-card-width-below-380px)}
+[data-part="fantasy.my-team.card-frame"] img{width:var(--fantasy-my-team-court-card-width-below-380px);height:var(--fantasy-my-team-court-card-width-below-380px)}}

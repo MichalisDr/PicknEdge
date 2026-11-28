@@ -85,6 +85,15 @@ Fetching new games needs network access: `node scripts/fetch/run.mjs --concurren
 
 `site/assets/teams.js` is the one team registry: public `code` (the EuroLeague tvCode the site shows), `feed` code (the key of `data/` and `roster.json`), current `name`, short `label`, `id` and logo. `roster.logoIds` and the Fantasy-abbreviation map are derived from it at build time. A test compares names and codes with the roster snapshot (`data/raw/<season>/roster.json.gz`, which also keeps each club's `primaryColor`). Team colours: `theme.json`, `component.fantasy.team-colours`, keyed by public code.
 
+## My Team
+
+`#fantasy/my-team` is a personal virtual team builder (not the real Fantasy teams). It has no backend and no sharing, adds no data files and makes no EuroLeague calls.
+
+- **Storage:** this browser only, one `localStorage` key, `picknedge.my-team.v1`, as JSON with a version. A team is `{ name, capText, formation, starters[5], bench[6] }` with player ids only; `bench[0]` is the 6th man, `bench[5]` the coach. Blocked or corrupt storage falls back to the two empty default teams. The undo history (20 changes per team) is not stored; it lasts until the page is left.
+- **Rules** (`core/team-model.js`): two teams; formations count guards-forwards-centres from the bottom of the court; a player is in a team at most once; changing formation keeps players by position and drops the extra ones. The credit cap is soft: going over is shown, never blocked. The coach is not counted, and has no data yet.
+- **Players:** the picker lists the players of the Season view who are still on a roster. Figures are the Season ones (`Data.fantasyInfo`, `Data.nextGame`). A player without credits counts as 0 and the meter says so; one who has left the roster shows `Off roster`; one no longer in the data shows as unavailable and keeps the id until removed.
+- **Look:** sizes and colours are `fantasy.my-team.*` in the two token files; the dialog, header, chips and icon buttons are the player card's parts. The court and the bench share one width token.
+
 ## Manual data (`data/manual/`)
 
 - `fantasy-position-overrides.json`: player positions that override the roster (G / F / C).

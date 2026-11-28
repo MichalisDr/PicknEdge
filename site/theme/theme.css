@@ -724,6 +724,9 @@ body{
 --fantasy-my-team-card-remove-text:var(--color-text);
 --fantasy-my-team-card-remove-font-size:16px;
 --fantasy-my-team-card-remove-hovered-background:var(--color-chip);
+--fantasy-my-team-card-unknown-text:var(--color-muted);
+--fantasy-my-team-card-unknown-font-size:16px;
+--fantasy-my-team-court-card-unavailable-text:var(--color-muted);
 --fantasy-stat-table-buttons-focused-outline:var(--color-accent-fantasy);
 --fantasy-stat-table-buttons-focused-outline-offset:2px;
 --fantasy-stat-table-buttons-focused-outline-width:2px;
@@ -1710,6 +1713,9 @@ body[data-area=betting]{
   fantasy.my-team.card-remove.text : [data-part="fantasy.my-team.card-remove"]
   fantasy.my-team.card-remove.font-size : [data-part="fantasy.my-team.card-remove"]
   fantasy.my-team.card-remove-hovered.background : [data-part="fantasy.my-team.card-remove"]:hover
+  fantasy.my-team.card-unknown.text : [data-part="fantasy.my-team.card-unknown"]
+  fantasy.my-team.card-unknown.font-size : [data-part="fantasy.my-team.card-unknown"]
+  fantasy.my-team.court-card-unavailable.text : [data-part="fantasy.my-team.court-card"][data-unavailable] [data-part="fantasy.my-team.card-name"]
   fantasy.stat-table.buttons-focused.outline : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-offset : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-width : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
