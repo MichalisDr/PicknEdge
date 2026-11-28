@@ -713,6 +713,17 @@ body{
 --fantasy-my-team-picker-stat-label-font-weight:500;
 --fantasy-my-team-picker-stat-label-text:var(--color-muted);
 --fantasy-my-team-slot-active-border:var(--color-accent-fantasy);
+--fantasy-my-team-court-card-hovered-border:var(--color-accent-fantasy);
+--fantasy-my-team-card-open-focused-outline:var(--color-accent-fantasy);
+--fantasy-my-team-card-open-focused-outline-width:2px;
+--fantasy-my-team-card-open-focused-outline-offset:-2px;
+--fantasy-my-team-card-remove-background:var(--color-field);
+--fantasy-my-team-card-remove-border:var(--color-border-control);
+--fantasy-my-team-card-remove-border-width:1px;
+--fantasy-my-team-card-remove-radius:8px;
+--fantasy-my-team-card-remove-text:var(--color-text);
+--fantasy-my-team-card-remove-font-size:16px;
+--fantasy-my-team-card-remove-hovered-background:var(--color-chip);
 --fantasy-stat-table-buttons-focused-outline:var(--color-accent-fantasy);
 --fantasy-stat-table-buttons-focused-outline-offset:2px;
 --fantasy-stat-table-buttons-focused-outline-width:2px;
@@ -1688,6 +1699,17 @@ body[data-area=betting]{
   fantasy.my-team.picker-stat-label.font-weight : [data-part="fantasy.my-team.picker-stat-label"]
   fantasy.my-team.picker-stat-label.text : [data-part="fantasy.my-team.picker-stat-label"]
   fantasy.my-team.slot-active.border : [data-part="fantasy.my-team.empty-slot"][data-active] [data-part="fantasy.my-team.empty-circle"],[data-part="fantasy.my-team.bench-empty"][data-active]
+  fantasy.my-team.court-card-hovered.border : [data-part="fantasy.my-team.court-card"]:hover
+  fantasy.my-team.card-open-focused.outline : .fw-dialog [data-part="fantasy.my-team.card-open"]:focus-visible
+  fantasy.my-team.card-open-focused.outline-width : .fw-dialog [data-part="fantasy.my-team.card-open"]:focus-visible
+  fantasy.my-team.card-open-focused.outline-offset : .fw-dialog [data-part="fantasy.my-team.card-open"]:focus-visible
+  fantasy.my-team.card-remove.background : [data-part="fantasy.my-team.card-remove"]
+  fantasy.my-team.card-remove.border : [data-part="fantasy.my-team.card-remove"]
+  fantasy.my-team.card-remove.border-width : [data-part="fantasy.my-team.card-remove"]
+  fantasy.my-team.card-remove.radius : [data-part="fantasy.my-team.card-remove"]
+  fantasy.my-team.card-remove.text : [data-part="fantasy.my-team.card-remove"]
+  fantasy.my-team.card-remove.font-size : [data-part="fantasy.my-team.card-remove"]
+  fantasy.my-team.card-remove-hovered.background : [data-part="fantasy.my-team.card-remove"]:hover
   fantasy.stat-table.buttons-focused.outline : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-offset : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-width : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible

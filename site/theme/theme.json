@@ -1400,6 +1400,25 @@
     },
     "slot-active": {
      "border": "{semantic.accent-fantasy}"
+    },
+    "court-card-hovered": {
+     "border": "{semantic.accent-fantasy}"
+    },
+    "card-open-focused": {
+     "outline": "{semantic.accent-fantasy}",
+     "outline-width": "2px",
+     "outline-offset": "-2px"
+    },
+    "card-remove": {
+     "background": "{semantic.field}",
+     "border": "{semantic.border-control}",
+     "border-width": "1px",
+     "radius": "8px",
+     "text": "{semantic.text}",
+     "font-size": "16px"
+    },
+    "card-remove-hovered": {
+     "background": "{semantic.chip}"
     }
    },
    "stat-table": {

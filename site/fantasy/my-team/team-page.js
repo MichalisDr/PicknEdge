@@ -60,6 +60,8 @@ export async function mount(target) {
         crOf: lookups.crOf,
         playerOf: id => courtPlayer(id, { roster, season, nextOf }),
         pool: () => (players ??= pickerPool({ roster, season, nextOf })),
+        /* The player card of the tables, as it is: it stacks over the team card and gives the focus back to the slot. Imported when needed: it needs a window. */
+        openPlayer: async (id, trigger) => (await import('../cards/card.js')).open('players', id, { previous: trigger }),
       }, () => slot(i)?.focus());   // the slot was redrawn: give the focus back to the new button
     });
   };

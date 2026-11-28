@@ -52,8 +52,9 @@ export function meterValues(team, crOf) {
 
 let dialog = null;
 
-/** Open the card. state: { get, set, crOf, playerOf, pool } (playerOf: the court card's data, court-view.js; pool: the players of the picker); onClose runs after the person closes it (not when the route changes under it). */
-export function open({ get, set, crOf, playerOf, pool }, onClose) {
+/** Open the card. state: { get, set, crOf, playerOf, pool } (playerOf: the court card's data, court-view.js; pool: the players of the picker;
+    openPlayer(id, trigger): the existing player card, on top of this one); onClose runs after the person closes it (not when the route changes under it). */
+export function open({ get, set, crOf, playerOf, pool, openPlayer }, onClose) {
   close();
   const previous = document.activeElement;
   dialog = document.createElement('dialog');
@@ -100,7 +101,7 @@ export function open({ get, set, crOf, playerOf, pool }, onClose) {
         closePicker(false);
         edit(t => setPlayer(t, where.area, where.index, id));
         const filled = slotElement(slot);   // the focus goes to the card that took the slot's place
-        if (filled) { filled.tabIndex = -1; filled.focus(); }
+        filled?.querySelector('[data-open-player]')?.focus();
       },
       onClose: () => closePicker(true),
     });
@@ -137,9 +138,19 @@ export function open({ get, set, crOf, playerOf, pool }, onClose) {
   root.querySelectorAll('[data-formation]').forEach(b => { b.onclick = () => edit(team => setFormation(team, b.dataset.formation)); });
   $('[data-action="undo"]').onclick = () => apply(undo(get()));
   $('[data-action="reset"]').onclick = () => edit(clearPlayers);
+  /* An empty slot (itself a button) opens the picker. On a filled one, the card opens the existing player card and the small button empties the slot;
+     another player is then picked from the empty slot. */
   $('[data-body]').onclick = e => {
-    const empty = e.target.closest('button[data-slot]');   // only empty slots are buttons
-    if (empty) openPicker(empty.dataset.slot);
+    const empty = e.target.closest('button[data-slot]');
+    if (empty) return openPicker(empty.dataset.slot);
+    const button = e.target.closest('[data-open-player], [data-remove]');
+    if (!button) return;
+    const slot = button.closest('[data-slot]').dataset.slot, [area, index] = slot.split(':');
+    closePicker(false);
+    if (button.hasAttribute('data-remove')) {
+      edit(team => setPlayer(team, area, Number(index), null));
+      slotElement(slot)?.focus();   // now the empty slot: Enter picks a replacement, Undo brings the player back
+    } else openPlayer(get().team[area][Number(index)], button);
   };
 
   const done = () => { close(); previous?.focus?.(); onClose?.(); };

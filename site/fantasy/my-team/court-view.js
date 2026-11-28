@@ -24,6 +24,7 @@ export function emptySlotHtml(label, attrs) {
 /**
  * A filled slot. player: { name, fullName, portrait, pos, teamCode, next: { home, code } | null, info: Data.fantasyInfo | null, pir, min } (pir and min
  * are formatted Season averages). A figure without data draws nothing; its line keeps its height, so every card is the same size.
+ * Two buttons lie over the card, never one inside the other: one covers it and opens the player card, a small one empties the slot.
  */
 export function courtCardHtml(player, attrs) {
   const next = player.next ? `${player.next.home ? 'vs' : '@'} ${player.next.code}` : '';
@@ -35,6 +36,8 @@ export function courtCardHtml(player, attrs) {
       <span ${part('card-next-row')}><span ${part('card-next')}>${esc(next)}</span><span ${part('card-figures')}>${figuresHtml(player.info && { ...player.info, valueSeries: null })}</span></span>
       <span ${part('card-stats')}>${stat('PIR', player.pir)}${stat('MIN', player.min)}</span>
     </span>
+    <button type="button" ${part('card-open')} data-open-player title="${esc(player.fullName)}" aria-label="Open the player card of ${esc(player.fullName)}"></button>
+    <button type="button" ${part('card-remove')} data-remove title="Remove from the team" aria-label="Remove ${esc(player.fullName)} from the team"><span aria-hidden="true">×</span></button>
   </div>`;
 }
 

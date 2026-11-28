@@ -87,3 +87,17 @@ test('the bench is as wide as the court through one token', () => {
   const css = readFileSync(new URL('../../site/theme/fantasy/my-team.css', import.meta.url), 'utf8');
   for (const key of ['court', 'bench']) assert.match(css, new RegExp(`\\[data-part="fantasy\\.my-team\\.${key}"\\]\\{[^}]*width:var\\(--fantasy-my-team-court-width\\)`), key);
 });
+
+test('a filled slot has two buttons side by side: open the player card, and remove; the slot itself is not a button', () => {
+  const html = courtCardHtml(player, 'data-slot="starters:0"');
+  assert.match(html, /^<div data-part="fantasy\.my-team\.court-card" data-slot="starters:0">/);
+  assert.equal(html.match(/<button /g).length, 2);
+  assert.ok(!/<button(?:(?!<\/button>)[\s\S])*<button/.test(html), 'no button inside a button');
+  assert.ok(html.includes('aria-label="Open the player card of Sasha Vezenkov"') && html.includes('aria-label="Remove Sasha Vezenkov from the team"'));
+});
+
+test('the team card opens the existing player card and adds nothing to it', () => {
+  const site = rel => readFileSync(new URL('../../site/' + rel, import.meta.url), 'utf8');
+  assert.match(site('fantasy/my-team/team-page.js'), /import\('\.\.\/cards\/card\.js'\)\)\.open\('players', id, \{ previous: trigger \}\)/);
+  assert.ok(!site('fantasy/cards/card.js').includes('my-team') && !site('fantasy/cards/card-header.js').includes('my-team'));
+});

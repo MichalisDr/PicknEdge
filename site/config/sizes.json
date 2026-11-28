@@ -910,6 +910,14 @@
     },
     "picker-cr": {
      "min-width": "35px"
+    },
+    "card-remove": {
+     "top": "4px",
+     "right": "4px",
+     "width": "24px",
+     "height": "24px",
+     "width-coarse": "32px",
+     "height-coarse": "32px"
     }
    },
    "stat-table": {

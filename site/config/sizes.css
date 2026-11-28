@@ -441,6 +441,12 @@ body{
 --fantasy-my-team-picker-meta-gap:4px;
 --fantasy-my-team-picker-stat-min-width:32px;
 --fantasy-my-team-picker-cr-min-width:35px;
+--fantasy-my-team-card-remove-top:4px;
+--fantasy-my-team-card-remove-right:4px;
+--fantasy-my-team-card-remove-width:24px;
+--fantasy-my-team-card-remove-height:24px;
+--fantasy-my-team-card-remove-width-coarse:32px;
+--fantasy-my-team-card-remove-height-coarse:32px;
 --fantasy-stat-table-cell-padding:9px 8px;
 --fantasy-stat-table-cell-height:auto;
 --fantasy-stat-table-cell-button-padding:4px 0;
