@@ -28,14 +28,16 @@ document.fonts?.ready.then(fit);
 
 async function draw() {
   if (!host || !host.isConnected) return;
-  const mine = ++drawId;
+  /* host (#content) stays connected on every route; what another page replaces is its child. A draw is stale after a newer draw, and once that child is gone. */
+  const mine = ++drawId, page = host.firstElementChild;
+  const stale = () => mine !== drawId || !page?.isConnected;
   let M;
   try {
     await loadIcons(TOOLBAR_ICONS);
-    M = await loadTable(state, widthsOf, () => mine !== drawId);
-    if (!M) return;
+    M = await loadTable(state, widthsOf, stale);
+    if (!M || stale()) return;
   } catch (e) {
-    host.innerHTML = errorHtml(state, e.message);
+    if (!stale()) host.innerHTML = errorHtml(state, e.message);
     return;
   }
   shown = M;
@@ -112,7 +114,7 @@ function wire() {
   on('[data-open]', 'onclick', b => openCard(state.entity, b.dataset.open, { win: state.win, mode: state.view }));
   wirePopups(host, state, shown);
   const search = host.querySelector('input[type=search]');
-  search.oninput = e => { state.query = e.target.value; draw().then(() => { const i = host.querySelector('input[type=search]'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }); };
+  search.oninput = e => { state.query = e.target.value; draw().then(() => { const i = host.querySelector('input[type=search]'); if (!i) return; i.focus(); i.setSelectionRange(i.value.length, i.value.length); }); };
 }
 
 export function mount(target, entity = 'teams') {
