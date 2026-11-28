@@ -46,9 +46,9 @@ main:has(.mt-page){margin-top:0}
 [data-part="fantasy.my-team.court-lines"] svg *{vector-effect:non-scaling-stroke;stroke-width:var(--fantasy-my-team-court-lines-line-width)}
 [data-part="fantasy.my-team.court-row"]{display:flex;align-items:center;justify-content:space-evenly;gap:var(--fantasy-my-team-court-row-gap)}
 [data-part="fantasy.my-team.court-card"]{position:relative;display:flex;flex:none;flex-direction:column;overflow:hidden;width:var(--fantasy-my-team-court-card-width);background:var(--fantasy-my-team-court-card-background);border:var(--fantasy-my-team-court-card-border-width) solid var(--fantasy-my-team-court-card-border);border-radius:var(--fantasy-my-team-court-card-radius);color:var(--fantasy-my-team-court-card-text)}
-[data-part="fantasy.my-team.card-frame"]{position:relative;isolation:isolate;display:flex;justify-content:center;overflow:hidden;height:var(--fantasy-my-team-court-card-width);background:var(--fantasy-my-team-card-frame-background)}
-[data-part="fantasy.my-team.card-frame"] img{flex:none;width:var(--fantasy-my-team-court-card-width);height:var(--fantasy-my-team-court-card-width);object-fit:cover;object-position:top}
-/* the header's fade, over the whole square at every width (on the header it is shorter below 500 px) */
+[data-part="fantasy.my-team.card-frame"]{position:relative;isolation:isolate;display:flex;justify-content:center;overflow:hidden;height:var(--fantasy-my-team-card-frame-height);background:var(--fantasy-my-team-card-frame-background)}
+[data-part="fantasy.my-team.card-frame"] img{flex:none;align-self:flex-start;width:var(--fantasy-my-team-card-frame-image-width);height:auto}
+/* the header's fade, over the whole frame at every width (on the header it is shorter below 500 px) */
 [data-part="fantasy.my-team.card-frame"] [data-part="fantasy.player-card.header-portrait-fade"]{bottom:0;height:auto}
 [data-part="fantasy.my-team.card-strip"]{display:flex;align-items:center;gap:var(--fantasy-my-team-card-strip-gap);min-width:0;min-height:var(--fantasy-my-team-card-strip-min-height);padding:var(--fantasy-my-team-card-strip-padding);background:var(--fantasy-my-team-card-strip-background)}
 [data-part="fantasy.my-team.card-name"]{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--fantasy-my-team-card-name-font-size);line-height:var(--fantasy-my-team-card-name-line-height);font-weight:var(--fantasy-my-team-card-name-font-weight);color:var(--fantasy-my-team-card-name-text)}
@@ -68,8 +68,7 @@ main:has(.mt-page){margin-top:0}
 /* Narrow screens: three cards must fit side by side; in the card the two lines of figures stack. */
 @media(max-width:560px){[data-part="fantasy.my-team.court"]{padding:var(--fantasy-my-team-court-padding-below-560px)}
 [data-part="fantasy.my-team.court-card"],[data-part="fantasy.my-team.empty-slot"]{width:var(--fantasy-my-team-court-card-width-below-560px)}
-[data-part="fantasy.my-team.card-frame"]{height:var(--fantasy-my-team-court-card-width-below-560px)}
-[data-part="fantasy.my-team.card-frame"] img{width:var(--fantasy-my-team-court-card-width-below-560px);height:var(--fantasy-my-team-court-card-width-below-560px)}
+[data-part="fantasy.my-team.card-frame"] img{width:var(--fantasy-my-team-card-frame-image-width-below-560px)}
 [data-part="fantasy.my-team.card-next-row"]{flex-direction:column;align-items:flex-start;min-height:var(--fantasy-my-team-card-next-row-min-height-below-560px)}
 [data-part="fantasy.my-team.card-stats"]{flex-direction:column}}
 /* The bench: one row of six, as wide as the court (the court's width token). Where the court is too narrow for six cards it breaks into rows of three. */
@@ -133,5 +132,4 @@ main:has(.mt-page){margin-top:0}
 @media(max-width:380px){[data-part="fantasy.my-team.court-row"]{gap:var(--fantasy-my-team-court-row-gap-below-380px)}
 [data-part="fantasy.my-team.card-panel"]{padding:var(--fantasy-my-team-card-panel-padding-below-380px)}
 [data-part="fantasy.my-team.court-card"],[data-part="fantasy.my-team.empty-slot"],[data-part="fantasy.my-team.bench-slot"]{width:var(--fantasy-my-team-court-card-width-below-380px)}
-[data-part="fantasy.my-team.card-frame"]{height:var(--fantasy-my-team-court-card-width-below-380px)}
-[data-part="fantasy.my-team.card-frame"] img{width:var(--fantasy-my-team-court-card-width-below-380px);height:var(--fantasy-my-team-court-card-width-below-380px)}}
+[data-part="fantasy.my-team.card-frame"] img{width:var(--fantasy-my-team-card-frame-image-width-below-380px)}}

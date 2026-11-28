@@ -402,11 +402,15 @@ body{
 --fantasy-my-team-court-lines-height:100%;
 --fantasy-my-team-court-row-gap:8px;
 --fantasy-my-team-court-row-gap-below-380px:4px;
---fantasy-my-team-court-card-width:136px;
+--fantasy-my-team-court-card-width:124px;
 --fantasy-my-team-court-card-width-below-560px:96px;
 --fantasy-my-team-court-card-width-below-380px:88px;
+--fantasy-my-team-card-frame-height:80px;
+--fantasy-my-team-card-frame-image-width:96px;
+--fantasy-my-team-card-frame-image-width-below-560px:80px;
+--fantasy-my-team-card-frame-image-width-below-380px:72px;
 --fantasy-my-team-card-strip-gap:4px;
---fantasy-my-team-card-strip-min-height:32px;
+--fantasy-my-team-card-strip-min-height:28px;
 --fantasy-my-team-card-strip-padding:0 8px;
 --fantasy-my-team-card-panel-gap:4px;
 --fantasy-my-team-card-panel-padding:8px;
@@ -427,7 +431,7 @@ body{
 --fantasy-my-team-bench-row-column-gap:4px;
 --fantasy-my-team-bench-row-row-gap:16px;
 --fantasy-my-team-bench-slot-gap:8px;
---fantasy-my-team-bench-empty-min-height:232px;
+--fantasy-my-team-bench-empty-min-height:174px;
 --fantasy-my-team-picker-dialog-width:min(1256px,98vw);
 --fantasy-my-team-card-body-gap:16px;
 --fantasy-my-team-card-main-flex-basis:min(856px,100%);
