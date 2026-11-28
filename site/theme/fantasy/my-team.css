@@ -84,3 +84,30 @@ main:has(.mt-page){margin-top:0}
    row must not need all of it; space-between gives the gaps whatever is left. */
 @container (max-width:835px){[data-part="fantasy.my-team.bench-row"]{grid-template-columns:var(--fantasy-my-team-bench-row-grid-template-columns-narrow);justify-content:space-evenly}}
 @media(max-width:560px){[data-part="fantasy.my-team.bench-slot"]{width:var(--fantasy-my-team-court-card-width-below-560px)}}
+/* The picker (picker.js). By default a bottom sheet over the card; from 1280 px the card grows while it is open and the panel stands to the right of the
+   court, which keeps its size, so no player is covered. Surface, border and corners are the Filters drawer's. */
+[data-part="fantasy.my-team.card-body"]{display:flex;justify-content:center;align-items:flex-start;gap:var(--fantasy-my-team-card-body-gap)}
+[data-part="fantasy.my-team.card-main"]{flex:0 1 var(--fantasy-my-team-card-main-flex-basis);min-width:0}
+[data-part="fantasy.my-team.picker"]{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;flex-direction:column;gap:var(--fantasy-my-team-picker-gap);height:var(--fantasy-my-team-picker-sheet-height);padding:var(--fantasy-stat-table-filters-drawer-padding);background:var(--fantasy-stat-table-filters-drawer-background);border:var(--fantasy-stat-table-filters-drawer-border-width) solid var(--fantasy-stat-table-filters-drawer-border);border-radius:var(--fantasy-stat-table-filters-drawer-radius-below-650px);color:var(--fantasy-stat-table-filters-drawer-text)}
+[data-part="fantasy.my-team.picker"] .fw-fd-head{margin-bottom:0}
+[data-part="fantasy.my-team.picker-search"]{flex:none;display:block;margin:0;height:var(--fantasy-my-team-picker-search-height);padding:var(--fantasy-my-team-picker-search-padding);background:var(--fantasy-my-team-picker-search-background);border:var(--fantasy-my-team-picker-search-border-width) solid var(--fantasy-my-team-picker-search-border);border-radius:var(--fantasy-my-team-picker-search-radius);color:var(--fantasy-my-team-picker-search-text);font-size:var(--fantasy-my-team-picker-search-font-size);line-height:var(--fantasy-my-team-picker-search-line-height)}
+[data-part="fantasy.my-team.picker-chips"]{flex:none;display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(--fantasy-my-team-picker-chips-gap)}
+[data-part="fantasy.my-team.picker-list"]{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:var(--fantasy-my-team-picker-list-gap);margin:0;padding:0;list-style:none;scrollbar-width:thin;scrollbar-color:var(--fantasy-stat-table-scrollbar-thumb-background) var(--fantasy-stat-table-scrollbar-track-background)}
+[data-part="fantasy.my-team.picker-row"]{display:flex;align-items:center;flex:1;gap:var(--fantasy-my-team-picker-row-gap);min-width:0;padding:var(--fantasy-my-team-picker-row-padding);text-align:left;background:var(--fantasy-my-team-picker-row-background);border:0;border-radius:var(--fantasy-my-team-picker-row-radius);color:var(--fantasy-my-team-picker-row-text)}
+[data-part="fantasy.my-team.picker-list"] li{display:flex;flex:none}
+[data-part="fantasy.my-team.picker-row"]:hover:not([aria-disabled=true]){background:var(--fantasy-my-team-picker-row-hovered-background)}
+[data-part="fantasy.my-team.picker-row"][aria-disabled=true]{opacity:.4;cursor:default}
+[data-part="fantasy.my-team.picker-row"] [data-part="fantasy.my-team.slot-portrait"]{flex:none}
+[data-part="fantasy.my-team.picker-player"]{display:flex;flex:1;flex-direction:column;min-width:0}
+[data-part="fantasy.my-team.picker-meta"]{display:flex;align-items:center;gap:var(--fantasy-my-team-picker-meta-gap);min-width:0}
+[data-part="fantasy.my-team.picker-name"]{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--fantasy-my-team-picker-name-font-size);line-height:var(--fantasy-my-team-picker-name-line-height);font-weight:var(--fantasy-my-team-picker-name-font-weight)}
+[data-part="fantasy.my-team.picker-next"]{white-space:nowrap;font-size:var(--fantasy-my-team-picker-next-font-size);line-height:var(--fantasy-my-team-picker-next-line-height);color:var(--fantasy-my-team-picker-next-text)}
+[data-part="fantasy.my-team.picker-stat"]{display:flex;flex:none;flex-direction:column;align-items:flex-end;min-width:var(--fantasy-my-team-picker-stat-min-width);font-variant-numeric:tabular-nums;font-size:var(--fantasy-my-team-picker-stat-font-size);line-height:var(--fantasy-my-team-picker-stat-line-height);font-weight:var(--fantasy-my-team-picker-stat-font-weight)}
+[data-part="fantasy.my-team.picker-stat-label"]{font-weight:var(--fantasy-my-team-picker-stat-label-font-weight);color:var(--fantasy-my-team-picker-stat-label-text)}
+[data-part="fantasy.my-team.picker-cr"]{display:flex;flex:none;justify-content:flex-end;min-width:var(--fantasy-my-team-picker-cr-min-width)}
+/* the slot the picker was opened for */
+[data-part="fantasy.my-team.empty-slot"][data-active] [data-part="fantasy.my-team.empty-circle"],[data-part="fantasy.my-team.bench-empty"][data-active]{border-color:var(--fantasy-my-team-slot-active-border)}
+/* under the sheet the card does not scroll (its scrollbar would be drawn over the sheet) */
+@media(max-width:1279px){.fw-dialog[data-picker]{overflow:hidden}}
+@media(min-width:1280px){.fw-dialog[data-picker]{width:var(--fantasy-my-team-picker-dialog-width);max-width:var(--fantasy-my-team-picker-dialog-width)}
+[data-part="fantasy.my-team.picker"]{position:sticky;top:0;left:auto;right:auto;bottom:auto;flex:1 1 0;min-width:0;height:var(--fantasy-my-team-picker-height);margin:var(--fantasy-my-team-picker-margin);border-radius:var(--fantasy-my-team-court-radius)}}

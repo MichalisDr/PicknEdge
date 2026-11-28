@@ -690,6 +690,29 @@ body{
 --fantasy-my-team-bench-note-font-size:12px;
 --fantasy-my-team-bench-note-line-height:16px;
 --fantasy-my-team-bench-note-text:var(--color-muted);
+--fantasy-my-team-picker-search-font-size:14px;
+--fantasy-my-team-picker-search-line-height:20px;
+--fantasy-my-team-picker-search-background:var(--color-field);
+--fantasy-my-team-picker-search-border:var(--color-border-control);
+--fantasy-my-team-picker-search-border-width:1px;
+--fantasy-my-team-picker-search-radius:4px;
+--fantasy-my-team-picker-search-text:var(--color-text);
+--fantasy-my-team-picker-row-background:transparent;
+--fantasy-my-team-picker-row-radius:8px;
+--fantasy-my-team-picker-row-text:var(--color-text);
+--fantasy-my-team-picker-row-hovered-background:var(--color-row-hover);
+--fantasy-my-team-picker-name-font-size:12px;
+--fantasy-my-team-picker-name-line-height:16px;
+--fantasy-my-team-picker-name-font-weight:600;
+--fantasy-my-team-picker-next-font-size:12px;
+--fantasy-my-team-picker-next-line-height:16px;
+--fantasy-my-team-picker-next-text:var(--color-muted);
+--fantasy-my-team-picker-stat-font-size:12px;
+--fantasy-my-team-picker-stat-line-height:16px;
+--fantasy-my-team-picker-stat-font-weight:600;
+--fantasy-my-team-picker-stat-label-font-weight:500;
+--fantasy-my-team-picker-stat-label-text:var(--color-muted);
+--fantasy-my-team-slot-active-border:var(--color-accent-fantasy);
 --fantasy-stat-table-buttons-focused-outline:var(--color-accent-fantasy);
 --fantasy-stat-table-buttons-focused-outline-offset:2px;
 --fantasy-stat-table-buttons-focused-outline-width:2px;
@@ -1594,7 +1617,7 @@ body[data-area=betting]{
   fantasy.my-team.cap-status.line-height : [data-part="fantasy.my-team.cap-status"]
   fantasy.my-team.cap-status.text : [data-part="fantasy.my-team.cap-status"]
   fantasy.my-team.court.background : [data-part="fantasy.my-team.court"]
-  fantasy.my-team.court.radius : [data-part="fantasy.my-team.court"]
+  fantasy.my-team.court.radius : [data-part="fantasy.my-team.court"]  |  [data-part="fantasy.my-team.picker"]
   fantasy.my-team.court-lines.line : [data-part="fantasy.my-team.court"]  |  [data-part="fantasy.my-team.court-lines"] svg
   fantasy.my-team.court-lines.line-width : [data-part="fantasy.my-team.court"]  |  [data-part="fantasy.my-team.court-lines"] svg *
   fantasy.my-team.court-card.background : [data-part="fantasy.my-team.court-card"]
@@ -1642,6 +1665,29 @@ body[data-area=betting]{
   fantasy.my-team.bench-note.font-size : [data-part="fantasy.my-team.bench-note"]
   fantasy.my-team.bench-note.line-height : [data-part="fantasy.my-team.bench-note"]
   fantasy.my-team.bench-note.text : [data-part="fantasy.my-team.bench-note"]
+  fantasy.my-team.picker-search.font-size : [data-part="fantasy.my-team.picker-search"]
+  fantasy.my-team.picker-search.line-height : [data-part="fantasy.my-team.picker-search"]
+  fantasy.my-team.picker-search.background : [data-part="fantasy.my-team.picker-search"]
+  fantasy.my-team.picker-search.border : [data-part="fantasy.my-team.picker-search"]
+  fantasy.my-team.picker-search.border-width : [data-part="fantasy.my-team.picker-search"]
+  fantasy.my-team.picker-search.radius : [data-part="fantasy.my-team.picker-search"]
+  fantasy.my-team.picker-search.text : [data-part="fantasy.my-team.picker-search"]
+  fantasy.my-team.picker-row.background : [data-part="fantasy.my-team.picker-row"]
+  fantasy.my-team.picker-row.radius : [data-part="fantasy.my-team.picker-row"]
+  fantasy.my-team.picker-row.text : [data-part="fantasy.my-team.picker-row"]
+  fantasy.my-team.picker-row-hovered.background : [data-part="fantasy.my-team.picker-row"]:hover:not([aria-disabled=true])
+  fantasy.my-team.picker-name.font-size : [data-part="fantasy.my-team.picker-name"]
+  fantasy.my-team.picker-name.line-height : [data-part="fantasy.my-team.picker-name"]
+  fantasy.my-team.picker-name.font-weight : [data-part="fantasy.my-team.picker-name"]
+  fantasy.my-team.picker-next.font-size : [data-part="fantasy.my-team.picker-next"]
+  fantasy.my-team.picker-next.line-height : [data-part="fantasy.my-team.picker-next"]
+  fantasy.my-team.picker-next.text : [data-part="fantasy.my-team.picker-next"]
+  fantasy.my-team.picker-stat.font-size : [data-part="fantasy.my-team.picker-stat"]
+  fantasy.my-team.picker-stat.line-height : [data-part="fantasy.my-team.picker-stat"]
+  fantasy.my-team.picker-stat.font-weight : [data-part="fantasy.my-team.picker-stat"]
+  fantasy.my-team.picker-stat-label.font-weight : [data-part="fantasy.my-team.picker-stat-label"]
+  fantasy.my-team.picker-stat-label.text : [data-part="fantasy.my-team.picker-stat-label"]
+  fantasy.my-team.slot-active.border : [data-part="fantasy.my-team.empty-slot"][data-active] [data-part="fantasy.my-team.empty-circle"],[data-part="fantasy.my-team.bench-empty"][data-active]
   fantasy.stat-table.buttons-focused.outline : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-offset : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
   fantasy.stat-table.buttons-focused.outline-width : .fw-dialog button:focus-visible,.fw-workbench button:focus-visible
@@ -1672,12 +1718,12 @@ body[data-area=betting]{
   fantasy.stat-table.filters-credits-number.font-weight : .fw-fd-num
   fantasy.stat-table.filters-credits-number.line-height : .fw-fd-num
   fantasy.stat-table.filters-credits-number.text : .fw-fd-num
-  fantasy.stat-table.filters-drawer.background : .fw-fd
-  fantasy.stat-table.filters-drawer.border : .fw-fd
-  fantasy.stat-table.filters-drawer.border-width : .fw-fd
+  fantasy.stat-table.filters-drawer.background : [data-part="fantasy.my-team.picker"]  |  .fw-fd
+  fantasy.stat-table.filters-drawer.border : [data-part="fantasy.my-team.picker"]  |  .fw-fd
+  fantasy.stat-table.filters-drawer.border-width : [data-part="fantasy.my-team.picker"]  |  .fw-fd
   fantasy.stat-table.filters-drawer.radius : .fw-fd
-  fantasy.stat-table.filters-drawer.radius-below-650px : .fw-fd
-  fantasy.stat-table.filters-drawer.text : .fw-fd
+  fantasy.stat-table.filters-drawer.radius-below-650px : [data-part="fantasy.my-team.picker"]  |  .fw-fd
+  fantasy.stat-table.filters-drawer.text : [data-part="fantasy.my-team.picker"]  |  .fw-fd
   fantasy.stat-table.filters-field.background : .fw-fd input[type=number]
   fantasy.stat-table.filters-field.border : .fw-fd input[type=number]
   fantasy.stat-table.filters-field.border-width : .fw-fd input[type=number]
@@ -1835,10 +1881,10 @@ body[data-area=betting]{
   fantasy.stat-table.rank-chip.radius : .fw-t .fw-rk
   fantasy.stat-table.rank-chip.text : .fw-t .fw-rk
   fantasy.stat-table.row-hovered.background : .fw-t tbody tr:hover>*
-  fantasy.stat-table.scrollbar-thumb.background : .fw-table-wrap  |  .fw-table-wrap::-webkit-scrollbar-thumb  |  .fw-fd-body
+  fantasy.stat-table.scrollbar-thumb.background : [data-part="fantasy.my-team.picker-list"]  |  .fw-table-wrap  |  .fw-table-wrap::-webkit-scrollbar-thumb  |  .fw-fd-body
   fantasy.stat-table.scrollbar-thumb.radius : .fw-table-wrap::-webkit-scrollbar-thumb
   fantasy.stat-table.scrollbar-thumb-hovered.background : .fw-table-wrap::-webkit-scrollbar-thumb:hover
-  fantasy.stat-table.scrollbar-track.background : .fw-table-wrap  |  .fw-table-wrap::-webkit-scrollbar-track  |  .fw-fd-body
+  fantasy.stat-table.scrollbar-track.background : [data-part="fantasy.my-team.picker-list"]  |  .fw-table-wrap  |  .fw-table-wrap::-webkit-scrollbar-track  |  .fw-fd-body
   fantasy.stat-table.sorted-column.background : .fw-t td.fw-sorted
   fantasy.stat-table.sorted-column.font-weight : .fw-t td.fw-sorted
   fantasy.stat-table.status-and-footer.font-size : .fw-foot

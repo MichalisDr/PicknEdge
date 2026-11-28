@@ -4,7 +4,8 @@
 import { esc } from '../../core/html.js';
 import { icon } from '../../core/icons.js';
 import { courtHtml, benchHtml } from './court-view.js';
-import { FORMATIONS, change, undo, clearPlayers, credits, idsOf, setCap, setFormation, setName } from '../../core/team-model.js';
+import { mountPicker, slotRequest } from './picker.js';
+import { FORMATIONS, change, undo, clearPlayers, credits, idsOf, setCap, setFormation, setName, setPlayer } from '../../core/team-model.js';
 
 /** Icons to load (core/icons.js loadIcons) before the card is opened. */
 export const CARD_ICONS = ['pencil', 'check', 'undo', 'reset'];
@@ -35,7 +36,7 @@ export function cardHtml() {
     <span ${part('credits-bar')} aria-hidden="true"><span ${part('credits-fill')} data-fill></span></span>
     <span ${part('cap-status')} data-status role="status"></span>
   </div>
-  <div data-body></div>`;
+  <div ${part('card-body')} data-card-body><div ${part('card-main')} data-body></div></div>`;
 }
 
 /** The values the card shows for a team: credits used, the bar and what is left or over. */
@@ -51,8 +52,8 @@ export function meterValues(team, crOf) {
 
 let dialog = null;
 
-/** Open the card. state: { get, set, crOf, playerOf } (playerOf: the court card's data, court-view.js); onClose runs after the person closes it (not when the route changes under it). */
-export function open({ get, set, crOf, playerOf }, onClose) {
+/** Open the card. state: { get, set, crOf, playerOf, pool } (playerOf: the court card's data, court-view.js; pool: the players of the picker); onClose runs after the person closes it (not when the route changes under it). */
+export function open({ get, set, crOf, playerOf, pool }, onClose) {
   close();
   const previous = document.activeElement;
   dialog = document.createElement('dialog');
@@ -67,7 +68,43 @@ export function open({ get, set, crOf, playerOf }, onClose) {
   let drawn = '';   // what the court and the bench show now
   function drawBody(team) {
     const key = `${team.formation}|${team.starters.join()}|${team.bench.join()}`;
-    if (key !== drawn) { drawn = key; $('[data-body]').innerHTML = courtHtml(team, playerOf) + benchHtml(team, playerOf); }
+    if (key === drawn) return;
+    closePicker(false);   // the slot it was opened for may be gone or have another position
+    drawn = key;
+    $('[data-body]').innerHTML = courtHtml(team, playerOf) + benchHtml(team, playerOf);
+  }
+
+  /* The picker, for one empty slot at a time. Picking is an edit like any other, so Undo takes it back. */
+  let picker = null;   // { el, slot: 'starters:2' }
+  const slotElement = slot => root.querySelector(`[data-slot="${slot}"]`);
+  function closePicker(giveFocusBack) {
+    if (!picker) return;
+    const { el, slot } = picker;
+    picker = null;
+    el.remove();
+    delete dialog.dataset.picker;
+    const trigger = slotElement(slot);
+    trigger?.removeAttribute('data-active');
+    if (giveFocusBack) trigger?.focus();
+  }
+  function openPicker(slot) {
+    closePicker(false);
+    const [area, index] = slot.split(':'), where = { area, index: Number(index) }, { team } = get();
+    dialog.dataset.picker = '';   // wide screens: the card grows and the panel stands beside the court
+    slotElement(slot).setAttribute('data-active', '');
+    const el = mountPicker($('[data-card-body]'), {
+      request: slotRequest(team, where),
+      pool: pool(),
+      taken: idsOf(team),
+      onPick: id => {
+        closePicker(false);
+        edit(t => setPlayer(t, where.area, where.index, id));
+        const filled = slotElement(slot);   // the focus goes to the card that took the slot's place
+        if (filled) { filled.tabIndex = -1; filled.focus(); }
+      },
+      onClose: () => closePicker(true),
+    });
+    picker = { el, slot };
   }
 
   function update() {
@@ -100,10 +137,16 @@ export function open({ get, set, crOf, playerOf }, onClose) {
   root.querySelectorAll('[data-formation]').forEach(b => { b.onclick = () => edit(team => setFormation(team, b.dataset.formation)); });
   $('[data-action="undo"]').onclick = () => apply(undo(get()));
   $('[data-action="reset"]').onclick = () => edit(clearPlayers);
+  $('[data-body]').onclick = e => {
+    const empty = e.target.closest('button[data-slot]');   // only empty slots are buttons
+    if (empty) openPicker(empty.dataset.slot);
+  };
 
   const done = () => { close(); previous?.focus?.(); onClose?.(); };
+  /* Esc closes the picker first, then the card. Handled on the key, so the dialog never gets its cancel while the picker is open. */
+  dialog.onkeydown = e => { if (e.key === 'Escape' && picker) { e.preventDefault(); closePicker(true); } };
   closeButton.onclick = done;
-  dialog.oncancel = e => { e.preventDefault(); done(); };
+  dialog.oncancel = e => { e.preventDefault(); if (picker) closePicker(true); else done(); };
   dialog.onclick = e => { if (e.target === dialog) done(); };
   update();
   document.body.append(dialog);

@@ -872,6 +872,44 @@
     },
     "bench-empty": {
      "min-height": "232px"
+    },
+    "picker-dialog": {
+     "width": "min(1256px,98vw)"
+    },
+    "card-body": {
+     "gap": "16px"
+    },
+    "card-main": {
+     "flex-basis": "min(856px,100%)"
+    },
+    "picker": {
+     "gap": "8px",
+     "margin": "16px 0 0",
+     "height": "calc(92vh - 48px)",
+     "sheet-height": "70vh"
+    },
+    "picker-search": {
+     "height": "32px",
+     "padding": "0 8px"
+    },
+    "picker-chips": {
+     "gap": "8px"
+    },
+    "picker-list": {
+     "gap": "4px"
+    },
+    "picker-row": {
+     "gap": "8px",
+     "padding": "4px 8px 4px 4px"
+    },
+    "picker-meta": {
+     "gap": "4px"
+    },
+    "picker-stat": {
+     "min-width": "32px"
+    },
+    "picker-cr": {
+     "min-width": "35px"
     }
    },
    "stat-table": {

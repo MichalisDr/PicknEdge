@@ -25,6 +25,14 @@ export function courtPlayer(id, { roster, season, nextOf }) {
   };
 }
 
+/** The players the picker offers: those of the Season view (they have played) who are still on a roster, with the numbers the list is ordered by. */
+export function pickerPool({ roster, season, nextOf }) {
+  return season.keys.filter(id => roster.players[id]?.active).map(id => {
+    const player = courtPlayer(id, { roster, season, nextOf });
+    return { id, ...player, sort: { cr: player.info?.cr ?? null, pir: season.get(id, 'pir')?.value ?? null, min: season.get(id, 'min')?.value ?? null } };
+  });
+}
+
 export async function mount(target) {
   target.innerHTML = pageHtml(status('Loading data…'));
   const loading = target.firstElementChild;
@@ -42,6 +50,7 @@ export async function mount(target) {
   const entries = load().map(startHistory);
   const lookups = { playerOf: id => roster.players[id] ?? null, crOf: id => Data.fantasyInfo(id, 'season')?.cr ?? null };
   const slot = i => target.querySelector(`[data-team-slot="${i}"]`);
+  let players = null;   // built when the picker is first opened
   const draw = () => {
     target.innerHTML = pageHtml(galleryHtml(entries.map(e => e.team), lookups));
     entries.forEach((_, i) => {
@@ -50,6 +59,7 @@ export async function mount(target) {
         set: entry => { entries[i] = entry; save(entries.map(e => e.team)); draw(); },   // the gallery behind the card stays current
         crOf: lookups.crOf,
         playerOf: id => courtPlayer(id, { roster, season, nextOf }),
+        pool: () => (players ??= pickerPool({ roster, season, nextOf })),
       }, () => slot(i)?.focus());   // the slot was redrawn: give the focus back to the new button
     });
   };

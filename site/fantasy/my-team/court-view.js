@@ -11,6 +11,11 @@ import { figuresHtml } from '../tables/table-name-cell.js';
 const part = key => `data-part="fantasy.my-team.${key}"`;
 export const POSITION_NAMES = { G: 'Guard', F: 'Forward', C: 'Center' };
 
+/** The round portrait of a player (gallery and picker); player: { name, portrait } or null. A filled circle without an image when there is no portrait. */
+export const portraitHtml = player => `<span ${part('slot-portrait')} data-filled title="${esc(player?.name ?? '')}">${player?.portrait ? `<img src="${esc(player.portrait)}" alt="">` : ''}</span>`;
+
+export const emptyPortraitHtml = () => `<span ${part('slot-portrait')}></span>`;
+
 /** An empty slot: a circle with a plus and its label. */
 export function emptySlotHtml(label, attrs) {
   return `<button type="button" ${part('empty-slot')} ${attrs} aria-label="Add a ${esc(label.toLowerCase())}"><span ${part('empty-circle')} aria-hidden="true">+</span><span ${part('empty-label')}>${esc(label.toUpperCase())}</span></button>`;
