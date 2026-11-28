@@ -130,6 +130,5 @@ main:has(.mt-page){margin-top:0}
 [data-part="fantasy.my-team.court-card"][data-unavailable] [data-part="fantasy.my-team.card-remove"]{opacity:1}
 /* 360 px phones: three cards and their gaps must still fit inside the court. */
 @media(max-width:380px){[data-part="fantasy.my-team.court-row"]{gap:var(--fantasy-my-team-court-row-gap-below-380px)}
-[data-part="fantasy.my-team.card-panel"]{padding:var(--fantasy-my-team-card-panel-padding-below-380px)}
 [data-part="fantasy.my-team.court-card"],[data-part="fantasy.my-team.empty-slot"],[data-part="fantasy.my-team.bench-slot"]{width:var(--fantasy-my-team-court-card-width-below-380px)}
 [data-part="fantasy.my-team.card-frame"] img{width:var(--fantasy-my-team-card-frame-image-width-below-380px)}}

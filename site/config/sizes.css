@@ -413,8 +413,7 @@ body{
 --fantasy-my-team-card-strip-min-height:28px;
 --fantasy-my-team-card-strip-padding:0 8px;
 --fantasy-my-team-card-panel-gap:4px;
---fantasy-my-team-card-panel-padding:8px;
---fantasy-my-team-card-panel-padding-below-380px:8px 4px;
+--fantasy-my-team-card-panel-padding:8px 4px;
 --fantasy-my-team-card-next-row-gap:4px;
 --fantasy-my-team-card-next-row-min-height:28px;
 --fantasy-my-team-card-next-row-min-height-below-560px:48px;
